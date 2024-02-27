@@ -13,7 +13,6 @@ class User implements Model
     private string $username,
     private string $email,
     private ?int $id = null,
-    private ?string $company = null,
     private ?DataTimeStamp $timeStamp = null,
   ) {
   }
@@ -46,16 +45,6 @@ class User implements Model
   public function setEmail(string $email): void
   {
     $this->email = $email;
-  }
-
-  public function getCompany(): ?string
-  {
-    return $this->company;
-  }
-
-  public function setCompany(?string $company): void
-  {
-    $this->company = $company;
   }
 
   public function getTimeStamp(): ?DataTimeStamp

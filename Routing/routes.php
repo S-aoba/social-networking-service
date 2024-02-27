@@ -41,7 +41,6 @@ return [
         'email' => ValueType::EMAIL,
         'password' => ValueType::PASSWORD,
         'confirm_password' => ValueType::PASSWORD,
-        'company' => ValueType::STRING,
       ];
 
       $userDao = DAOFactory::getUserDAO();
@@ -64,7 +63,6 @@ return [
       $user = new User(
         username: $validatedData['username'],
         email: $validatedData['email'],
-        company: $validatedData['company']
       );
 
       // データベースにユーザーを作成しようとします
