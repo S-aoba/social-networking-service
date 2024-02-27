@@ -1,0 +1,6 @@
+ALTER TABLE users
+ADD COLUMN subscription VARCHAR(50),
+ADD COLUMN subscription_status VARCHAR(50),
+ADD COLUMN subscription_created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN subscription_ended_at DATETIME DEFAULT CURRENT_TIMESTAMP;
+
