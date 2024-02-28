@@ -14,13 +14,13 @@ use Models\User;
 use Exceptions\AuthenticationFailureException;
 
 return [
-  'top' => function (): HTTPRenderer {
-    return new HTMLRenderer('page/top');
+  'home' => function (): HTTPRenderer {
+    return new HTMLRenderer('page/home');
   },
   'register' => function (): HTTPRenderer {
     if (Authenticate::isLoggedIn()) {
       FlashData::setFlashData('error', 'Cannot register as you are already logged in.');
-      return new RedirectRenderer('top');
+      return new RedirectRenderer('home');
     }
 
     return new HTMLRenderer('page/register');
@@ -29,7 +29,7 @@ return [
     // ユーザが現在ログインしている場合、登録ページにアクセスすることはできません。
     if (Authenticate::isLoggedIn()) {
       FlashData::setFlashData('error', 'Cannot register as you are already logged in.');
-      return new RedirectRenderer('top');
+      return new RedirectRenderer('home');
     }
 
     try {
@@ -74,7 +74,7 @@ return [
       Authenticate::loginAsUser($user);
 
       FlashData::setFlashData('success', 'Account successfully created.');
-      return new RedirectRenderer('top');
+      return new RedirectRenderer('home');
     } catch (\InvalidArgumentException $e) {
       error_log($e->getMessage());
 
@@ -90,7 +90,7 @@ return [
   'logout' => function (): HTTPRenderer {
     if (!Authenticate::isLoggedIn()) {
       FlashData::setFlashData('error', 'Already logged out.');
-      return new RedirectRenderer('top');
+      return new RedirectRenderer('home');
     }
 
     Authenticate::logoutUser();
@@ -100,7 +100,7 @@ return [
   'login' => function (): HTTPRenderer {
     if (Authenticate::isLoggedIn()) {
       FlashData::setFlashData('error', 'You are already logged in.');
-      return new RedirectRenderer('top');
+      return new RedirectRenderer('home');
     }
 
     return new HTMLRenderer('page/login');
@@ -108,7 +108,7 @@ return [
   'form/login' => function (): HTTPRenderer {
     if (Authenticate::isLoggedIn()) {
       FlashData::setFlashData('error', 'You are already logged in.');
-      return new RedirectRenderer('top');
+      return new RedirectRenderer('home');
     }
 
     try {
@@ -124,7 +124,7 @@ return [
       Authenticate::authenticate($validatedData['email'], $validatedData['password']);
 
       FlashData::setFlashData('success', 'Logged in successfully.');
-      return new RedirectRenderer('top');
+      return new RedirectRenderer('home');
     } catch (AuthenticationFailureException $e) {
       error_log($e->getMessage());
 

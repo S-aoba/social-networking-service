@@ -1,12 +1,8 @@
-</main> <!-- end of content -->
-
-<footer class="bg-light text-center text-lg-start">
-  <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-    © <?= date('Y') ?>:
-    <a class="text-dark" href="/">MyComputerPartsStore.com</a>
+<footer class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 p-4 w-full max-w-screen-lg mx-auto">
+  <div class="text-sm text-gray-600 text-center">
+    &copy; <?= date('Y') ?> <a href="#" class="text-blue-500">Twitter.com</a>
   </div>
 </footer>
-
 </body>
 
 </html>
