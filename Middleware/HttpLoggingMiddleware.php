@@ -46,7 +46,7 @@ class HttpLoggingMiddleware implements Middleware
 
     $logContent = ob_get_clean();
 
-    file_put_contents("../storage/logs/request_log.txt", $logContent, FILE_APPEND);
+    file_put_contents("../Storage/Logs/request_log.txt", $logContent, FILE_APPEND);
 
     $response =  $next();
 
@@ -65,7 +65,7 @@ class HttpLoggingMiddleware implements Middleware
     print_r($headers);
 
     $logContent = ob_get_clean();
-    file_put_contents("../storage/logs/request_log.txt", $logContent, FILE_APPEND);
+    file_put_contents("../Storage/Logs/request_log.txt", $logContent, FILE_APPEND);
 
     return $response;
   }
