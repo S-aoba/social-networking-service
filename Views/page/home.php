@@ -1,5 +1,4 @@
-<div id="wrapper" class="flex-grow flex justify-center items-start mt-10">
-  <main class="max-w-screen-lg mx-auto w-full">
+
     <!-- 投稿フォーム -->
     <div class="bg-white p-4 rounded-lg shadow-md">
       <form action="#" method="post" id="post-form">
@@ -37,6 +36,5 @@
         <p class="mt-2">これもダミーツイートです。タイムライン風に表示されています。</p>
       </div>
     </div>
-  </main>
-</div>
+
 <script src="js/post.js"></script>
