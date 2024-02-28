@@ -1,7 +1,19 @@
-<div id="wrapper" class="flex-grow flex justify-center items-start mt-16">
+<div id="wrapper" class="flex-grow flex justify-center items-start mt-10">
   <main class="max-w-screen-lg mx-auto w-full">
+    <!-- 投稿フォーム -->
+    <div class="bg-white p-4 rounded-lg shadow-md">
+      <form>
+        <div class="flex items-center">
+          <img src="https://via.placeholder.com/40" alt="プロフィール画像" class="w-10 h-10 rounded-full">
+          <textarea id="tweet" class="p-3 ml-4 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full" rows="3" placeholder="何かつぶやく..."></textarea>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">投稿する</button>
+        </div>
+      </form>
+    </div>
     <!-- タイムライン -->
-    <div class="flex flex-col space-y-4">
+    <div class="flex flex-col space-y-4 mt-4">
       <!-- ダミーツイート -->
       <div class="bg-white p-4 rounded-lg shadow-md">
         <div class="flex items-center">
