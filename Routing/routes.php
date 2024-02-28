@@ -2,7 +2,6 @@
 
 use Helpers\ValidationHelper;
 use Helpers\Authenticate;
-use Models\ComputerPart;
 use Response\HTTPRenderer;
 use Response\FlashData;
 use Response\Render\RedirectRenderer;
@@ -142,4 +141,15 @@ return [
       return new RedirectRenderer('login');
     }
   },
+  // Post
+  'form/post' => function (): HTTPRenderer {
+    if (!Authenticate::isLoggedIn()) {
+      FlashData::setFlashData('error', 'Cannot post as you are not logged in.');
+      return new RedirectRenderer('home');
+    }
+    // TODO: 入力された内容を検証する
+    // TODO: DBに保村する
+    
+    return new JSONRenderer(['status' => 'success', 'message' => '投稿が完了しました!']);
+  }
 ];
