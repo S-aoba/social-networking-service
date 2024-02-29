@@ -1,4 +1,4 @@
-const tweetForm = document.getElementById('post-form');
+const tweetForm = document.getElementById('postForm');
 
 tweetForm.addEventListener('submit', function (event) {
   event.preventDefault();
