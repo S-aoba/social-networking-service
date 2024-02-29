@@ -4,7 +4,7 @@ namespace Database\DataAccess;
 
 use Database\DataAccess\Implementations\ComputerPartDAOImpl;
 use Database\DataAccess\Implementations\UserDAOImpl;
-// use Database\DataAccess\Implementations\ComputerPartDAOMemcachedImpl;
+use Database\DataAccess\Implementations\PostDAOImpl;
 use Database\DataAccess\Interfaces\ComputerPartDAO;
 use Helpers\Settings;
 
@@ -27,6 +27,16 @@ class DAOFactory
     return match ($driver) {
       // 'memcached' => new ComputerPartDAOMemcachedImpl(),
       default => new UserDAOImpl(),
+    };
+  }
+
+  public static function getPostDAO(): PostDAOImpl
+  {
+    $driver = Settings::env('DATABASE_DRIVER');
+
+    return match ($driver) {
+      // 'memcached' => new ComputerPartDAOMemcachedImpl(),
+      default => new PostDAOImpl(),
     };
   }
 }
