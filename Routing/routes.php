@@ -118,8 +118,22 @@ return [
   })->setMiddleware(['auth']),
 
   'home' => Route::create('home', function (): HTTPRenderer {
+    // DBから投稿を取得
+    $postDAO = DAOFactory::getPostDAO();
 
-    return new HTMLRenderer('page/home');
+    $posts = $postDAO->getAllPosts(0, 10);
+
+    $post_list = [];
+
+    foreach ($posts as $post) {
+      $post_list[] = [
+        "id" => $post->getId(),
+        "content" => $post->getContent(),
+        "timeStamp" => $post->getTimeStamp(),
+        "user_id" => $post->getUserId()
+      ];
+    }
+    return new HTMLRenderer('page/home', ['post_list' => $post_list]);
   })->setMiddleware(['auth']),
 
   // Post
@@ -136,7 +150,7 @@ return [
       // TODO: 入力された内容を検証する
       // TODO: DBに保存する
       $postDAO = DAOFactory::getPostDAO();
-      
+
       $postDAO->create($_POST['content'], $_SESSION['user_id']);
 
       return new JSONRenderer(['status' => 'success', 'message' => '投稿が完了しました!']);

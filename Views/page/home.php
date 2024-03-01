@@ -13,28 +13,19 @@
 </div>
 <!-- タイムライン -->
 <div class="flex flex-col space-y-4 mt-4">
-  <!-- ダミーツイート -->
+  <?php foreach ($post_list as $post) : ?>
   <div class="bg-white p-4 rounded-lg shadow-md">
     <div class="flex items-center">
       <img src="https://via.placeholder.com/40" alt="プロフィール画像" class="w-10 h-10 rounded-full">
       <div class="ml-4">
-        <h2 class="text-lg font-bold">ユーザー名</h2>
-        <p class="text-gray-600">@ユーザー名</p>
+        <p class="text-sm font-bold"><?= htmlspecialchars($post["id"]) ?></p>
+        <p class="text-xs text-gray-500"><?= htmlspecialchars($post["timeStamp"]->getCreatedAt()) ?></p>
       </div>
     </div>
-    <p class="mt-2">これはダミーツイートです。Twitter風のUIを作成しています。</p>
-  </div>
-  <!-- 他のツイート -->
-  <div class="bg-white p-4 rounded-lg shadow-md">
-    <div class="flex items-center">
-      <img src="https://via.placeholder.com/40" alt="プロフィール画像" class="w-10 h-10 rounded-full">
-      <div class="ml-4">
-        <h2 class="text-lg font-bold">ユーザー名</h2>
-        <p class="text-gray-600">@ユーザー名</p>
-      </div>
+    <div class="mt-4">
+      <p class="text-lg"><?= htmlspecialchars($post['content']) ?></p>
     </div>
-    <p class="mt-2">これもダミーツイートです。タイムライン風に表示されています。</p>
   </div>
+  <?php endforeach; ?>
 </div>
-
 <script src="js/post.js"></script>

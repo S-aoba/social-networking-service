@@ -29,6 +29,36 @@ class PostDAOImpl implements PostDAO
     return false;
   }
 
+  public function getAllPosts(int $offset, int $limit): array
+  {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT * FROM posts LIMIT ?, ?";
+
+    $results = $mysqli->prepareAndFetchAll($query, 'ii', [$offset, $limit]);
+
+    return $results === null ? [] : $this->resultsPosts($results);
+  }
+
+  private function resultToPost(array $data): Post
+  {
+    return new Post(
+      content: $data['content'],
+      id: $data['id'],
+      timeStamp: new DataTimeStamp($data['created_at'], $data['created_at']),
+      user_id: $data['user_id']
+    );
+  }
+
+  private function resultsPosts(array $results): array
+  {
+    $posts = [];
+    foreach ($results as $result) {
+      $posts[] = $this->resultToPost($result);
+    }
+    return $posts;
+  }
+
   private function getRawById(int $id): ?array
   {
 
@@ -48,7 +78,7 @@ class PostDAOImpl implements PostDAO
       id: $rawData['id'],
       content: $rawData['content'],
       user_id: $rawData['user_id'],
-      timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at'])
+      timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['created_at'])
     );
   }
   public function getById(int $id): ?Post
