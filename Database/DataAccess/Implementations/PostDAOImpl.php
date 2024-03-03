@@ -6,6 +6,8 @@ use Database\DataAccess\Interfaces\PostDAO;
 use Database\DatabaseManager;
 use Models\DataTimeStamp;
 use Models\Post;
+use Models\User;
+
 
 class PostDAOImpl implements PostDAO
 {
@@ -33,30 +35,49 @@ class PostDAOImpl implements PostDAO
   {
     $mysqli = DatabaseManager::getMysqliConnection();
 
-    $query = "SELECT * FROM posts LIMIT ?, ?";
+    $query =
+      "SELECT posts.*, users.*
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      LIMIT ?, ?
+    ";
 
     $results = $mysqli->prepareAndFetchAll($query, 'ii', [$offset, $limit]);
 
     return $results === null ? [] : $this->resultsPosts($results);
   }
 
-  private function resultToPost(array $data): Post
+  private function resultToPost(array $data): array
   {
-    return new Post(
-      content: $data['content'],
-      id: $data['id'],
-      timeStamp: new DataTimeStamp($data['created_at'], $data['created_at']),
-      user_id: $data['user_id']
-    );
+    return [
+      "post" =>
+      new Post(
+        content: $data['content'],
+        id: $data['id'],
+        timeStamp: new DataTimeStamp($data['created_at'], $data['created_at']),
+        user_id: $data['user_id']
+      ),
+      'user' =>
+      new User(
+        id: $data['user_id'],
+        username: $data['username'],
+        age: $data['age'],
+        email: $data['email'],
+        address: $data['address'],
+        hobby: $data['hobby'],
+        self_introduction: $data['self_introduction'],
+        profile_image: $data['profile_image']
+      )
+    ];
   }
 
   private function resultsPosts(array $results): array
   {
-    $posts = [];
+    $data_list = [];
     foreach ($results as $result) {
-      $posts[] = $this->resultToPost($result);
+      $data_list[] = $this->resultToPost($result);
     }
-    return $posts;
+    return $data_list;
   }
 
   private function getRawById(int $id): ?array

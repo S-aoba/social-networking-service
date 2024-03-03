@@ -13,19 +13,19 @@
 </div>
 <!-- タイムライン -->
 <div class="flex flex-col space-y-4 mt-4">
-  <?php foreach ($post_list as $post) : ?>
-  <div class="bg-white p-4 rounded-lg shadow-md">
-    <div class="flex items-center">
-      <img src="https://via.placeholder.com/40" alt="プロフィール画像" class="w-10 h-10 rounded-full">
-      <div class="ml-4">
-        <p class="text-sm font-bold"><?= htmlspecialchars($post["id"]) ?></p>
-        <p class="text-xs text-gray-500"><?= htmlspecialchars($post["timeStamp"]->getCreatedAt()) ?></p>
+  <?php foreach ($data_list as $data) : ?>
+    <div class="bg-white p-4 rounded-lg shadow-md">
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="プロフィール画像" class="w-10 h-10 rounded-full">
+        <div class="ml-4">
+          <p class="text-sm font-bold"><?= htmlspecialchars($data["user"]->getUserName()) ?></p>
+          <p class="text-xs text-gray-500"><?= htmlspecialchars($data["post"]->getTimeStamp()->getCreatedAt()) ?></p>
+        </div>
+      </div>
+      <div class="mt-4">
+        <p class="text-lg"><?= htmlspecialchars($data['post']->getContent()) ?></p>
       </div>
     </div>
-    <div class="mt-4">
-      <p class="text-lg"><?= htmlspecialchars($post['content']) ?></p>
-    </div>
-  </div>
   <?php endforeach; ?>
 </div>
 <script src="js/post.js"></script>

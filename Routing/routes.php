@@ -14,6 +14,7 @@ use Types\ValueType;
 use Models\User;
 
 return [
+
   'login' => Route::create('login', function (): HTTPRenderer {
     return new HTMLRenderer('page/login');
   })->setMiddleware(['guest']),
@@ -49,9 +50,11 @@ return [
       return new RedirectRenderer('login');
     }
   })->setMiddleware(['guest']),
+
   'register' => Route::create('register', function (): HTTPRenderer {
     return new HTMLRenderer('page/register');
   })->setMiddleware(['guest']),
+
   'form/register' => Route::create('form/register', function (): HTTPRenderer {
     try {
       // リクエストメソッドがPOSTかどうかをチェックします
@@ -108,6 +111,7 @@ return [
       return new RedirectRenderer('register');
     }
   })->setMiddleware(['guest']),
+
   'logout' => Route::create('logout', function (): HTTPRenderer {
 
     Authenticate::logoutUser();
@@ -121,19 +125,17 @@ return [
     // DBから投稿を取得
     $postDAO = DAOFactory::getPostDAO();
 
-    $posts = $postDAO->getAllPosts(0, 10);
+    $data = $postDAO->getAllPosts(0, 10);
 
-    $post_list = [];
+    $data_list = [];
 
-    foreach ($posts as $post) {
-      $post_list[] = [
-        "id" => $post->getId(),
-        "content" => $post->getContent(),
-        "timeStamp" => $post->getTimeStamp(),
-        "user_id" => $post->getUserId()
+    foreach ($data as $data) {
+      $data_list[] = [
+        "user" => $data['user'],
+        'post' => $data['post'],
       ];
     }
-    return new HTMLRenderer('page/home', ['post_list' => $post_list]);
+    return new HTMLRenderer('page/home', ['data_list' => $data_list]);
   })->setMiddleware(['auth']),
 
   // Post
@@ -155,5 +157,17 @@ return [
 
       return new JSONRenderer(['status' => 'success', 'message' => '投稿が完了しました!']);
     }
-  )->setMiddleware(['auth'])
+  )->setMiddleware(['auth']),
+
+  // Userのプロフィール
+  'profile' => Route::create('profile', function (): HTTPRenderer {
+
+    $user_id = $_SESSION['user_id'];
+
+    $userDAO = DAOFactory::getUserDAO();
+
+    $user = $userDAO->getById($user_id);
+
+    return new HTMLRenderer('page/profile', ['user' => $user]);
+  })->setMiddleware(['auth']),
 ];
