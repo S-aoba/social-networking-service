@@ -15,13 +15,12 @@ class UserDAOImpl implements UserDAO
 
     $mysqli = DatabaseManager::getMysqliConnection();
 
-    $query = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+    $query = "INSERT INTO users (email, password) VALUES (?, ?)";
 
     $result = $mysqli->prepareAndExecute(
       $query,
-      'sss',
+      'ss',
       [
-        $user->getUsername(),
         $user->getEmail(),
         password_hash($password, PASSWORD_DEFAULT), // store the hashed password
       ]
@@ -62,15 +61,9 @@ class UserDAOImpl implements UserDAO
   private function rawDataToUser(array $rawData): User
   {
     return new User(
-      username: $rawData['username'],
       email: $rawData['email'],
       id: $rawData['id'],
       timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at']),
-      age: $rawData['age'],
-      address: $rawData['address'],
-      hobby: $rawData['hobby'],
-      self_introduction: $rawData['self_introduction'],
-      profile_image: $rawData['profile_image']
     );
   }
 
