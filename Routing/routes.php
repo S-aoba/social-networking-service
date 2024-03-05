@@ -165,23 +165,21 @@ return [
 
     $user_id = $_SESSION['user_id'];
 
-    $userDAO = DAOFactory::getUserDAO();
+    $profileDAO = DAOFactory::getProfileDAO();
 
-    $user = $userDAO->getById($user_id);
+    $profile = $profileDAO->getById($user_id);
 
-    $profile_image = $user->getProfileImage();
+    $profile_image = $profile->getProfileImage();
     $profile_image_path = null;
 
     if ($profile_image) {
       $profile_image_path = FileHelper::getProfileImagePath($profile_image);
     }
 
-    return new HTMLRenderer('page/profile', ['user' => $user, "profile_image_path" => $profile_image_path]);
+    return new HTMLRenderer('page/profile', ['profile' => $profile, "profile_image_path" => $profile_image_path]);
   })->setMiddleware(['auth']),
 
   'form/update/profile' => Route::create('form/update/profile', function (): HTTPRenderer {
-    $file = $_FILES['image'];
-
     // [name] => twitterIcon.png
     // [full_path] => twitterIcon.png
     // [type] => image/png
@@ -189,9 +187,22 @@ return [
     // [error] => 0
     // [size] => 37191
     // FlashData::setFlashData('success', 'Update Profile Image in successfully.');
-    $file_name = $file['name'];
-    FileHelper::saveImageFile($file_name);
+    try {
+      $file_name = $_FILES['file']['name'];
+      $file_size = $_FILES['image']['size'];
+      $file_type = $_FILES['image']['type'];
 
-    return new JSONRenderer(["status" => "success"]);
+      // アップロードされた画像のファイルの種類を確認する(対応可能拡張子: jpg, jpeg, png, gif)
+      if (!ValidationHelper::checkFileExtension($file_type)) return new JSONRenderer(["status" => "アップロードされたファイルの拡張子が対応していません。"]);
+      // アップロードされた画像のファイルサイズを確認する　一回のアップロードの最大サイズ3MBに設定
+      if (!FileHelper::checkUploadFileSize($file_size)) return new JSONRenderer(["status" => "アップロードされたファイルのサイズが3MBを超えています。"]);
+      // private/uploads/images/に保存
+      $hashed_file_name = FileHelper::saveImageFile($file_name);
+
+      // DBに保存
+      return new JSONRenderer(["status" => "success"]);
+    } catch (Exception $e) {
+      return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しください。"]);
+    }
   })->setMiddleware(['auth']),
 ];
