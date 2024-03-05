@@ -65,5 +65,15 @@ class ValidationHelper
 
     return $validatedData;
   }
+
+  public static function checkFileExtension(string $file_type)
+  {
+    $file_type = strtolower($file_type);
+    $allowed_extensions = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
+    if (!in_array($file_type, $allowed_extensions)) {
+      return false;
+    }
+    return true;
+  }
 }
 //
