@@ -6,16 +6,28 @@ class FileHelper
 {
   public static function getProfileImagePath(string $path): string
   {
-    $dir_path = "http://localhost:8000/private/uploads/images/";
+    $base_path = "private/uploads/images/";
 
     $parent_path = self::generateParentPath($path);
 
-    $image_data = base64_encode((file_get_contents($dir_path . $parent_path)));
+    $image_path = $base_path . '/' . $parent_path . '/' . $path;
 
-    $data_uri = "data:image/png;base64,$image_data";
+    $image_data = base64_encode(file_get_contents($image_path));
+
+    $image_type = self::getImageType($path);
+
+    $data_uri = "data:image/ " . $image_type . "png;base64,$image_data";
 
     return $data_uri;
   }
+
+  private static function getImageType(string $image_type): string
+  {
+    $extension = pathinfo($image_type, PATHINFO_EXTENSION);
+
+    return $extension;
+  }
+
 
   private static function generateParentPath(string $path): string
   {
@@ -23,7 +35,7 @@ class FileHelper
     return $parent_dir;
   }
 
-  public static function saveImageFile(string $profile_image_path): void
+  public static function saveImageFile(string $profile_image_path): string
   {
     $hashed_file_name = self::hashedFileName($profile_image_path);
     $root_dir = "private/uploads/images/";
@@ -36,6 +48,8 @@ class FileHelper
     $target_file = $root_dir . $parent_dir . '/' . $hashed_file_name;
 
     move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
+
+    return $hashed_file_name;
   }
 
   private static function hashedFileName(string $fileName): string
@@ -45,6 +59,12 @@ class FileHelper
     $extension = pathinfo($fileName, PATHINFO_EXTENSION);
     $hashedFileName = hash('sha256', $fileName) . '.' . $extension;
     return $hashedFileName;
+  }
+
+  public static function checkUploadFileSize(string $file_size)
+  {
+    if ($file_size > 3 * 1024 * 1024) return false;
+    return true;
   }
 }
 
