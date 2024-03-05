@@ -3,6 +3,7 @@
 use Exceptions\AuthenticationFailureException;
 use Helpers\ValidationHelper;
 use Helpers\Authenticate;
+use Helpers\FileHelper;
 use Response\FlashData;
 use Response\HTTPRenderer;
 use Response\Render\HTMLRenderer;
@@ -168,6 +169,29 @@ return [
 
     $user = $userDAO->getById($user_id);
 
-    return new HTMLRenderer('page/profile', ['user' => $user]);
+    $profile_image = $user->getProfileImage();
+    $profile_image_path = null;
+
+    if ($profile_image) {
+      $profile_image_path = FileHelper::getProfileImagePath($profile_image);
+    }
+
+    return new HTMLRenderer('page/profile', ['user' => $user, "profile_image_path" => $profile_image_path]);
+  })->setMiddleware(['auth']),
+
+  'form/update/profile' => Route::create('form/update/profile', function (): HTTPRenderer {
+    $file = $_FILES['image'];
+
+    // [name] => twitterIcon.png
+    // [full_path] => twitterIcon.png
+    // [type] => image/png
+    // [tmp_name] => /private/var/folders/g6/9qb0xxw146x3ngklcstwx6240000gn/T/phpEDaVAq
+    // [error] => 0
+    // [size] => 37191
+    // FlashData::setFlashData('success', 'Update Profile Image in successfully.');
+    $file_name = $file['name'];
+    FileHelper::saveImageFile($file_name);
+
+    return new JSONRenderer(["status" => "success"]);
   })->setMiddleware(['auth']),
 ];
