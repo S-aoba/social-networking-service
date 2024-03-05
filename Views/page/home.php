@@ -18,7 +18,6 @@
       <div class="flex items-center">
         <img src="https://via.placeholder.com/40" alt="プロフィール画像" class="w-10 h-10 rounded-full">
         <div class="ml-4">
-          <p class="text-sm font-bold"><?= htmlspecialchars($data["user"]->getUserName()) ?></p>
           <p class="text-xs text-gray-500"><?= htmlspecialchars($data["post"]->getTimeStamp()->getCreatedAt()) ?></p>
         </div>
       </div>

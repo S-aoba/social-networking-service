@@ -60,13 +60,7 @@ class PostDAOImpl implements PostDAO
       'user' =>
       new User(
         id: $data['user_id'],
-        username: $data['username'],
-        age: $data['age'],
         email: $data['email'],
-        address: $data['address'],
-        hobby: $data['hobby'],
-        self_introduction: $data['self_introduction'],
-        profile_image: $data['profile_image']
       )
     ];
   }
