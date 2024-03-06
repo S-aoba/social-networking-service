@@ -15,10 +15,10 @@ class UserDAOImpl implements UserDAO
 
     $mysqli = DatabaseManager::getMysqliConnection();
 
-    $query = "INSERT INTO users (email, password) VALUES (?, ?)";
-
-    $result = $mysqli->prepareAndExecute(
-      $query,
+    // ユーザーテーブルにユーザーを挿入
+    $queryUser = "INSERT INTO users (email, password) VALUES (?, ?)";
+    $resultUser = $mysqli->prepareAndExecute(
+      $queryUser,
       'ss',
       [
         $user->getEmail(),
@@ -26,12 +26,30 @@ class UserDAOImpl implements UserDAO
       ]
     );
 
-    if (!$result) return false;
+    if (!$resultUser) return false;
 
+    // 挿入されたユーザーIDを取得
+    $userId = $mysqli->insert_id;
     $user->setId($mysqli->insert_id);
+
+
+    // プロフィールテーブルにプロフィールを挿入
+    $queryProfile = "INSERT INTO profiles (user_id) VALUES (?)";
+    $resultProfile = $mysqli->prepareAndExecute(
+      $queryProfile,
+      'i',
+      [
+        $userId,
+      ]
+    );
+
+    if (!$resultProfile) {
+      return false;
+    }
 
     return true;
   }
+
 
   private function getRawById(int $id): ?array
   {
