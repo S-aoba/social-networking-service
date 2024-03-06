@@ -9,6 +9,7 @@ use Response\HTTPRenderer;
 use Response\Render\HTMLRenderer;
 use Response\Render\RedirectRenderer;
 use Database\DataAccess\DAOFactory;
+use Models\Profile;
 use Response\Render\JSONRenderer;
 use Routing\Route;
 use Types\ValueType;
@@ -180,15 +181,32 @@ return [
   })->setMiddleware(['auth']),
 
   'form/update/profile' => Route::create('form/update/profile', function (): HTTPRenderer {
-    // [name] => twitterIcon.png
-    // [full_path] => twitterIcon.png
-    // [type] => image/png
-    // [tmp_name] => /private/var/folders/g6/9qb0xxw146x3ngklcstwx6240000gn/T/phpEDaVAq
-    // [error] => 0
-    // [size] => 37191
-    // FlashData::setFlashData('success', 'Update Profile Image in successfully.');
     try {
-      $file_name = $_FILES['file']['name'];
+      $data = $_POST;
+
+      $profileDAO = DAOFactory::getProfileDAO();
+
+      $profile = new Profile(
+        user_id: $_SESSION['user_id'],
+        username: $data['username'],
+        age: intval($data['age']),
+        address: $data['address'],
+        hobby: $data['hobby'],
+        self_introduction: $data['self_introduction'],
+        // profile_image_path: $hashed_file_name
+      );
+
+      $profileDAO->updateProfile($profile);
+
+      return new JSONRenderer(["status" => "success"]);
+    } catch (Exception $e) {
+      return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しください。"]);
+    }
+  })->setMiddleware(['auth']),
+  'form/update/profile-image' => Route::create('form/update/profile-image', function (): HTTPRenderer {
+
+    try {
+      $file_name = $_FILES['image']['name'];
       $file_size = $_FILES['image']['size'];
       $file_type = $_FILES['image']['type'];
 
@@ -199,10 +217,12 @@ return [
       // private/uploads/images/に保存
       $hashed_file_name = FileHelper::saveImageFile($file_name);
 
-      // DBに保存
+      $profileDAO = DAOFactory::getProfileDAO();
+
+      $profileDAO->updateProfileImage($hashed_file_name);
       return new JSONRenderer(["status" => "success"]);
-    } catch (Exception $e) {
-      return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しください。"]);
+    } catch (\Throwable $th) {
+      return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しくください。"]);
     }
   })->setMiddleware(['auth']),
 ];

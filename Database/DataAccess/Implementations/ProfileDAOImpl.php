@@ -32,6 +32,46 @@ class ProfileDAOImpl implements ProfileDAO
     return true;
   }
 
+  public static function updateProfile(Profile $profile): bool
+  {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "UPDATE profiles SET username = ?, age = ?, address = ?, hobby = ?, self_introduction = ? WHERE user_id = ?";
+
+    $result = $mysqli->prepareAndExecute(
+      $query,
+      'sssssi',
+      [
+        $profile->getUsername(),
+        $profile->getAge(),
+        $profile->getAddress(),
+        $profile->getHobby(),
+        $profile->getSelfIntroduction(),
+        $profile->getUserId()
+      ]
+    );
+
+    return $result;
+  }
+
+  public static function updateProfileImage(string $profile_image_path): bool
+  {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "UPDATE profiles SET profile_image_path = ? WHERE user_id = ?";
+
+    $result = $mysqli->prepareAndExecute(
+      $query,
+      'si',
+      [
+        $profile_image_path,
+        $_SESSION['user_id']
+      ]
+    );
+
+    return $result;
+  }
+
   private function getRawById(int $user_id): ?array
   {
     $mysqli = DatabaseManager::getMysqliConnection();
