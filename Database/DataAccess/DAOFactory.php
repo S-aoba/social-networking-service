@@ -6,6 +6,8 @@ use Database\DataAccess\Implementations\ComputerPartDAOImpl;
 use Database\DataAccess\Implementations\PostDAOImpl;
 use Database\DataAccess\Implementations\UserDAOImpl;
 use Database\DataAccess\Implementations\ProfileDAOImpl;
+use Database\DataAccess\Implementations\FollowDAOImpl;
+
 use Helpers\Settings;
 
 class DAOFactory
@@ -43,6 +45,15 @@ class DAOFactory
 
     return match ($driver) {
       default => new ProfileDAOImpl(),
+    };
+  }
+
+  public static function getFollowDAO(): FollowDAOImpl
+  {
+    $driver = Settings::env('DATABASE_DRIVER');
+
+    return match ($driver) {
+      default => new FollowDAOImpl(),
     };
   }
 }
