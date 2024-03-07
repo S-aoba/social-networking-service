@@ -131,10 +131,11 @@ return [
 
     foreach ($data as $data) {
       $data_list[] = [
-        "user" => $data['user'],
+        "profile" => $data['profile'],
         'post' => $data['post'],
       ];
     }
+
     return new HTMLRenderer('page/home', ['data_list' => $data_list]);
   })->setMiddleware(['auth']),
 
@@ -222,5 +223,9 @@ return [
     } catch (\Throwable $th) {
       return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しくください。"]);
     }
+  })->setMiddleware(['auth']),
+
+  'profile' => Route::create('profile', function (): HTTPRenderer {
+    return new HTMLRenderer('page/profile');
   })->setMiddleware(['auth']),
 ];

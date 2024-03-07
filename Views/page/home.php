@@ -16,7 +16,10 @@
   <?php foreach ($data_list as $data) : ?>
     <div class="bg-white p-4 rounded-lg shadow-md">
       <div class="flex items-center">
-        <img src="https://via.placeholder.com/40" alt="プロフィール画像" class="w-10 h-10 rounded-full">
+        <!-- hrefにユーザー名を入れる (profile/{username}) -->
+        <a href="profile/<?= htmlspecialchars($data["profile"]->getUsername()) ?>">
+          <img src="<?= htmlspecialchars($data["profile"]->getProfileImage()) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full">
+        </a>
         <div class="ml-4">
           <p class="text-xs text-gray-500"><?= htmlspecialchars($data["post"]->getTimeStamp()->getCreatedAt()) ?></p>
         </div>
