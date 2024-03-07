@@ -226,7 +226,7 @@ return [
   })->setMiddleware(['auth']),
 
   'profile' => Route::create('profile', function (): HTTPRenderer {
-    $url = "/profile/admin";
+    $url = $_SERVER['PATH_INFO'];
     preg_match('/\/profile\/(.+)/', $url, $matches);
     $username = $matches[1];
 
