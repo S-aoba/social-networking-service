@@ -6,7 +6,8 @@ use Database\DataAccess\Interfaces\PostDAO;
 use Database\DatabaseManager;
 use Models\DataTimeStamp;
 use Models\Post;
-use Models\User;
+use Models\Profile;
+use Helpers\FileHelper;
 
 
 class PostDAOImpl implements PostDAO
@@ -36,9 +37,9 @@ class PostDAOImpl implements PostDAO
     $mysqli = DatabaseManager::getMysqliConnection();
 
     $query =
-      "SELECT posts.*, users.*
+      "SELECT posts.*, profiles.*
       FROM posts
-      JOIN users ON posts.user_id = users.id
+      JOIN profiles ON posts.user_id = profiles.user_id
       LIMIT ?, ?
     ";
 
@@ -49,6 +50,8 @@ class PostDAOImpl implements PostDAO
 
   private function resultToPost(array $data): array
   {
+    // profile Imageをbase64に変換する
+    $data['profile_image_path'] = FileHelper::getProfileImagePath($data['profile_image_path']);
     return [
       "post" =>
       new Post(
@@ -57,10 +60,15 @@ class PostDAOImpl implements PostDAO
         timeStamp: new DataTimeStamp($data['created_at'], $data['created_at']),
         user_id: $data['user_id']
       ),
-      'user' =>
-      new User(
-        id: $data['user_id'],
-        email: $data['email'],
+      'profile' =>
+      new Profile(
+        user_id: $data['user_id'],
+        username: $data['username'],
+        age: $data['age'],
+        address: $data['address'],
+        hobby: $data['hobby'],
+        self_introduction: $data['self_introduction'],
+        profile_image_path: $data['profile_image_path']
       )
     ];
   }
