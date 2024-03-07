@@ -1,5 +1,5 @@
 <!-- 投稿フォーム -->
-<div class="bg-white p-4 rounded-lg shadow-md">
+<div class="bg-white mx-6 p-4 rounded-lg shadow-md">
   <form action="#" method="POST" id="postForm" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
     <div class="flex items-center">
@@ -12,7 +12,7 @@
   </form>
 </div>
 <!-- タイムライン -->
-<div class="flex flex-col space-y-4 mt-4">
+<div class="flex flex-col space-y-4 m-6">
   <?php foreach ($data_list as $data) : ?>
     <div class="bg-white p-4 rounded-lg shadow-md">
       <div class="flex items-center">
