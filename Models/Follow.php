@@ -13,7 +13,7 @@ class Follow extends Model
 
   public function __construct(
     private int $follow_id,
-    private int $followed_id,
+    private int $followee_id,
     private ?int $id = null,
     private string $created_at = null
   ) {
@@ -29,14 +29,14 @@ class Follow extends Model
     $this->follow_id = $follow_id;
   }
 
-  public function getFollowedId(): int
+  public function getFolloweeId(): int
   {
-    return $this->followed_id;
+    return $this->followee_id;
   }
 
-  public function setFollowedId(int $followed_id): void
+  public function setFolloweeId(int $followee_id): void
   {
-    $this->followed_id = $followed_id;
+    $this->followee_id = $followee_id;
   }
 
   public function getId(): ?int
