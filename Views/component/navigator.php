@@ -4,7 +4,7 @@
     <nav>
       <ul class="flex space-x-4">
         <li><a href="/home" class="text-gray-600 hover:text-blue-400">ホーム</a></li>
-        <li><a href="edit/profile" class="text-gray-600 hover:text-blue-400">プロフィール</a></li>
+        <li><a href="/edit/profile" class="text-gray-600 hover:text-blue-400">プロフィール</a></li>
         <li><a href="#" class="text-gray-600 hover:text-blue-400">通知</a></li>
         <li><a href="#" class="text-gray-600 hover:text-blue-400">メッセージ</a></li>
       </ul>
