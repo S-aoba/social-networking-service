@@ -159,8 +159,8 @@ return [
     }
   )->setMiddleware(['auth']),
 
-  // Userのプロフィール
-  'profile' => Route::create('profile', function (): HTTPRenderer {
+  // Userのプロフィールの編集画面
+  'edit/profile' => Route::create('profile', function (): HTTPRenderer {
 
     $user_id = $_SESSION['user_id'];
 
