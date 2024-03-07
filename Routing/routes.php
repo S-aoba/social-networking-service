@@ -226,6 +226,19 @@ return [
   })->setMiddleware(['auth']),
 
   'profile' => Route::create('profile', function (): HTTPRenderer {
-    return new HTMLRenderer('page/profile');
+    $url = "/profile/admin";
+    preg_match('/\/profile\/(.+)/', $url, $matches);
+    $username = $matches[1];
+
+    $profileDAO = DAOFactory::getProfileDAO();
+    $profile = $profileDAO->getByUsername($username);
+
+    if (!$profile) {
+      throw new AuthenticationFailureException();
+    }
+
+    $profile_image_path = FileHelper::getProfileImagePath($profile->getProfileImage());
+
+    return new HTMLRenderer('page/profile', ['profile' => $profile, "profile_image_path" => $profile_image_path]);
   })->setMiddleware(['auth']),
 ];

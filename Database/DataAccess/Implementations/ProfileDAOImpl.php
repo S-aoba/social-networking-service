@@ -6,6 +6,7 @@ use Database\DataAccess\Interfaces\ProfileDAO;
 use Database\DatabaseManager;
 use Models\DataTimeStamp;
 use Models\Profile;
+use Helpers\FileHelper;
 
 class ProfileDAOImpl implements ProfileDAO
 {
@@ -85,7 +86,7 @@ class ProfileDAOImpl implements ProfileDAO
     return $result;
   }
 
-  private function rawDataToUser(array $rawData): Profile
+  private function rawDataToProfile(array $rawData): Profile
   {
     return new Profile(
       user_id: $rawData['user_id'],
@@ -105,6 +106,19 @@ class ProfileDAOImpl implements ProfileDAO
     $userRaw = $this->getRawById($user_id);
     if ($userRaw === null) return null;
 
-    return $this->rawDataToUser($userRaw);
+    return $this->rawDataToProfile($userRaw);
+  }
+
+  public function getByUsername(string $username): ?Profile
+  {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT * FROM profiles WHERE username = ?";
+
+    $result = $mysqli->prepareAndFetchAll($query, 's', [$username])[0] ?? null;
+
+    if ($result === null) return null;
+
+    return $this->rawDataToProfile($result);
   }
 }
