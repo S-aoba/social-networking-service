@@ -263,32 +263,46 @@ return [
   })->setMiddleware(['auth']),
 
   'form/follow' => Route::create('form/follow', function (): HTTPRenderer {
-    $data = $_POST;
+    try {
+      $data = $_POST;
 
-    $followDAO = DAOFactory::getFollowDAO();
+      $followDAO = DAOFactory::getFollowDAO();
 
-    $follow = new Follow(
-      follow_id: $data['userId'],
-      followee_id: $data['profileId'],
-    );
+      $follow = new Follow(
+        follow_id: $data['userId'],
+        followee_id: $data['profileId'],
+      );
 
-    $followDAO->addFollow($follow);
+      $followDAO->addFollow($follow);
 
-    return new JSONRenderer(["status" => "success"]);
+      return new JSONRenderer(["status" => "success"]);
+    } catch (Exception $e) {
+      error_log($e->getMessage());
+
+      FlashData::setFlashData('error', 'An error occurred.');
+      return new JSONRenderer(["status" => "error."]);
+    }
   })->setMiddleware(['auth']),
 
   'form/unfollow' => Route::create('form/unfollow', function (): HTTPRenderer {
-    $data = $_POST;
+    try {
+      $data = $_POST;
 
-    $followDAO = DAOFactory::getFollowDAO();
+      $followDAO = DAOFactory::getFollowDAO();
 
-    $follow = new Follow(
-      follow_id: $data['userId'],
-      followee_id: $data['profileId'],
-    );
+      $follow = new Follow(
+        follow_id: $data['userId'],
+        followee_id: $data['profileId'],
+      );
 
-    $followDAO->removeFollow($follow);
+      $followDAO->removeFollow($follow);
 
-    return new JSONRenderer(["status" => "success"]);
+      return new JSONRenderer(["status" => "success"]);
+    } catch (Exception $e) {
+      error_log($e->getMessage());
+
+      FlashData::setFlashData('error', 'An error occurred.');
+      return new JSONRenderer(["status" => "error."]);
+    }
   })->setMiddleware(['auth']),
 ];
