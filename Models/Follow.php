@@ -5,7 +5,7 @@ namespace Models;
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
 
-class Follow extends Model
+class Follow implements Model
 {
   use GenericModel;
 
@@ -15,7 +15,7 @@ class Follow extends Model
     private int $follow_id,
     private int $followee_id,
     private ?int $id = null,
-    private string $created_at = null
+    private ?string $created_at = null
   ) {
   }
 
@@ -44,7 +44,7 @@ class Follow extends Model
     return $this->id;
   }
 
-  public function getCreatedAt(): string
+  public function getCreatedAt(): ?string
   {
     return $this->created_at;
   }
