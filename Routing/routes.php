@@ -156,11 +156,13 @@ return [
 
         $postDAO->create($_POST['content'], $_SESSION['user_id']);
 
+        FlashData::setFlashData('success', '投稿が完了しました!');
+
         return new JSONRenderer(['status' => 'success', 'message' => '投稿が完了しました!']);
       } catch (Exception $e) {
         error_log($e->getMessage());
 
-        FlashData::setFlashData('error', 'An error occurred.');
+        FlashData::setFlashData('error', '投稿に失敗しました.');
         return new JSONRenderer(["status" => "error."]);
       }
     }
