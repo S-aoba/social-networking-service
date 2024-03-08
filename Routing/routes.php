@@ -146,19 +146,11 @@ return [
     return new HTMLRenderer('page/home', ['data_list' => $data_list, "profile_image_path" => $profile_image_path]);
   })->setMiddleware(['auth']),
 
-  // Post
   'form/post' => Route::create(
     'form/post',
     function (): HTTPRenderer {
-      if (!Authenticate::isLoggedIn()) {
-
-        FlashData::setFlashData('error', 'Cannot post as you are not logged in.');
-
-        return new RedirectRenderer('home');
-      }
-
       // TODO: 入力された内容を検証する
-      // TODO: DBに保存する
+
       $postDAO = DAOFactory::getPostDAO();
 
       $postDAO->create($_POST['content'], $_SESSION['user_id']);
