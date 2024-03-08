@@ -149,13 +149,20 @@ return [
   'form/post' => Route::create(
     'form/post',
     function (): HTTPRenderer {
-      // TODO: 入力された内容を検証する
+      try {
+        // TODO: 入力された内容を検証する
 
-      $postDAO = DAOFactory::getPostDAO();
+        $postDAO = DAOFactory::getPostDAO();
 
-      $postDAO->create($_POST['content'], $_SESSION['user_id']);
+        $postDAO->create($_POST['content'], $_SESSION['user_id']);
 
-      return new JSONRenderer(['status' => 'success', 'message' => '投稿が完了しました!']);
+        return new JSONRenderer(['status' => 'success', 'message' => '投稿が完了しました!']);
+      } catch (Exception $e) {
+        error_log($e->getMessage());
+
+        FlashData::setFlashData('error', 'An error occurred.');
+        return new JSONRenderer(["status" => "error."]);
+      }
     }
   )->setMiddleware(['auth']),
 
