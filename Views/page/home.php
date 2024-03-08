@@ -4,7 +4,7 @@
     <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
     <div class="flex items-center">
       <img src="<?= htmlspecialchars($profile_image_path) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full">
-      <textarea id="content" name="content" class="p-3 ml-4 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full" rows="3" placeholder="何かつぶやく..."></textarea>
+      <textarea id="content" name="content" class="p-3 ml-4 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full" rows="3" placeholder="何かつぶやく..." maxlength="255"></textarea>
     </div>
     <div class="mt-4 flex justify-end">
       <button id="post" type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">投稿する</button>
