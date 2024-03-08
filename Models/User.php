@@ -10,7 +10,6 @@ class User implements Model
   use GenericModel;
 
   public function __construct(
-    private string $username,
     private string $email,
     private ?int $id = null,
     private ?DataTimeStamp $timeStamp = null,
@@ -27,15 +26,6 @@ class User implements Model
     $this->id = $id;
   }
 
-  public function getUsername(): string
-  {
-    return $this->username;
-  }
-
-  public function setUsername(string $username): void
-  {
-    $this->username = $username;
-  }
 
   public function getEmail(): string
   {
@@ -47,13 +37,12 @@ class User implements Model
     $this->email = $email;
   }
 
-  public function getTimeStamp(): ?DataTimeStamp
+  public function toArray(): array
   {
-    return $this->timeStamp;
-  }
-
-  public function setTimeStamp(DataTimeStamp $timeStamp): void
-  {
-    $this->timeStamp = $timeStamp;
+    return [
+      'id' => $this->id,
+      'email' => $this->email,
+      'timeStamp' => $this->timeStamp,
+    ];
   }
 }

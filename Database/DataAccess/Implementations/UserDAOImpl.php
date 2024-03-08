@@ -15,24 +15,41 @@ class UserDAOImpl implements UserDAO
 
     $mysqli = DatabaseManager::getMysqliConnection();
 
-    $query = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-
-    $result = $mysqli->prepareAndExecute(
-      $query,
-      'sss',
+    // ユーザーテーブルにユーザーを挿入
+    $queryUser = "INSERT INTO users (email, password) VALUES (?, ?)";
+    $resultUser = $mysqli->prepareAndExecute(
+      $queryUser,
+      'ss',
       [
-        $user->getUsername(),
         $user->getEmail(),
         password_hash($password, PASSWORD_DEFAULT), // store the hashed password
       ]
     );
 
-    if (!$result) return false;
+    if (!$resultUser) return false;
 
+    // 挿入されたユーザーIDを取得
+    $userId = $mysqli->insert_id;
     $user->setId($mysqli->insert_id);
+
+
+    // プロフィールテーブルにプロフィールを挿入
+    $queryProfile = "INSERT INTO profiles (user_id) VALUES (?)";
+    $resultProfile = $mysqli->prepareAndExecute(
+      $queryProfile,
+      'i',
+      [
+        $userId,
+      ]
+    );
+
+    if (!$resultProfile) {
+      return false;
+    }
 
     return true;
   }
+
 
   private function getRawById(int $id): ?array
   {
@@ -62,10 +79,9 @@ class UserDAOImpl implements UserDAO
   private function rawDataToUser(array $rawData): User
   {
     return new User(
-      username: $rawData['username'],
       email: $rawData['email'],
       id: $rawData['id'],
-      timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at'])
+      timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at']),
     );
   }
 

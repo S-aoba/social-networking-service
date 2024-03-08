@@ -9,6 +9,10 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|js|css|html)$/', $_SERVER["REQUEST_URI"])
   return false;
 }
 
+if(preg_match('/^\/profile\/([a-zA-Z0-9_]+)$/', $_SERVER["REQUEST_URI"], $matches)) {
+  $_SERVER["REQUEST_URI"] = "/profile";
+}
+
 // ルートをロードします
 $routes = include('Routing/routes.php');
 

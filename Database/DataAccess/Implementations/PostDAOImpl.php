@@ -6,6 +6,9 @@ use Database\DataAccess\Interfaces\PostDAO;
 use Database\DatabaseManager;
 use Models\DataTimeStamp;
 use Models\Post;
+use Models\Profile;
+use Helpers\FileHelper;
+
 
 class PostDAOImpl implements PostDAO
 {
@@ -33,30 +36,50 @@ class PostDAOImpl implements PostDAO
   {
     $mysqli = DatabaseManager::getMysqliConnection();
 
-    $query = "SELECT * FROM posts LIMIT ?, ?";
+    $query =
+      "SELECT posts.*, profiles.*
+      FROM posts
+      JOIN profiles ON posts.user_id = profiles.user_id
+      LIMIT ?, ?
+    ";
 
     $results = $mysqli->prepareAndFetchAll($query, 'ii', [$offset, $limit]);
 
     return $results === null ? [] : $this->resultsPosts($results);
   }
 
-  private function resultToPost(array $data): Post
+  private function resultToPost(array $data): array
   {
-    return new Post(
-      content: $data['content'],
-      id: $data['id'],
-      timeStamp: new DataTimeStamp($data['created_at'], $data['created_at']),
-      user_id: $data['user_id']
-    );
+    // profile Imageをbase64に変換する
+    $data['profile_image_path'] = FileHelper::getProfileImagePath($data['profile_image_path']);
+    return [
+      "post" =>
+      new Post(
+        content: $data['content'],
+        id: $data['id'],
+        timeStamp: new DataTimeStamp($data['created_at'], $data['created_at']),
+        user_id: $data['user_id']
+      ),
+      'profile' =>
+      new Profile(
+        user_id: $data['user_id'],
+        username: $data['username'],
+        age: $data['age'],
+        address: $data['address'],
+        hobby: $data['hobby'],
+        self_introduction: $data['self_introduction'],
+        profile_image_path: $data['profile_image_path']
+      )
+    ];
   }
 
   private function resultsPosts(array $results): array
   {
-    $posts = [];
+    $data_list = [];
     foreach ($results as $result) {
-      $posts[] = $this->resultToPost($result);
+      $data_list[] = $this->resultToPost($result);
     }
-    return $posts;
+    return $data_list;
   }
 
   private function getRawById(int $id): ?array
