@@ -14,6 +14,8 @@ use Response\Render\JSONRenderer;
 use Routing\Route;
 use Types\ValueType;
 use Models\User;
+use Models\Follow;
+
 
 return [
 
@@ -244,6 +246,49 @@ return [
 
     $profile_image_path = FileHelper::getProfileImagePath($profile->getProfileImage());
 
-    return new HTMLRenderer('page/profile', ['profile' => $profile, "profile_image_path" => $profile_image_path]);
+    if ($profile->getUserId() === $_SESSION['user_id']) {
+      return new HTMLRenderer('page/selfProfile', ['profile' => $profile, "profile_image_path" => $profile_image_path]);
+    }
+
+    $followDAO = DAOFactory::getFollowDAO();
+
+    $follow = new Follow(
+      follow_id: $_SESSION['user_id'],
+      followee_id: $profile->getUserId(),
+    );
+
+    $is_follow = $followDAO->checkFollow($follow);
+
+    return new HTMLRenderer('page/profile', ['profile' => $profile, "profile_image_path" => $profile_image_path, "is_follow" => $is_follow]);
+  })->setMiddleware(['auth']),
+
+  'form/follow' => Route::create('form/follow', function (): HTTPRenderer {
+    $data = $_POST;
+
+    $followDAO = DAOFactory::getFollowDAO();
+
+    $follow = new Follow(
+      follow_id: $data['userId'],
+      followee_id: $data['profileId'],
+    );
+
+    $followDAO->addFollow($follow);
+
+    return new JSONRenderer(["status" => "success"]);
+  })->setMiddleware(['auth']),
+
+  'form/unfollow' => Route::create('form/unfollow', function (): HTTPRenderer {
+    $data = $_POST;
+
+    $followDAO = DAOFactory::getFollowDAO();
+
+    $follow = new Follow(
+      follow_id: $data['userId'],
+      followee_id: $data['profileId'],
+    );
+
+    $followDAO->removeFollow($follow);
+
+    return new JSONRenderer(["status" => "success"]);
   })->setMiddleware(['auth']),
 ];

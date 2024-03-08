@@ -14,7 +14,7 @@ class FollowDAOImpl implements FollowDAO
   {
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = 'INSERT INTO follows (follow_id, followee_id) VALUES (?, ?)';
+    $query = 'INSERT INTO follows (follower_id, followee_id) VALUES (?, ?)';
 
     $result = $db->prepareAndExecute(
       $query,
@@ -29,12 +29,34 @@ class FollowDAOImpl implements FollowDAO
     return false;
   }
 
+  public static function checkFollow(Follow $follow): bool
+  {
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query = 'SELECT * FROM follows WHERE follower_id = ? AND followee_id = ?';
+
+    $result = $db->prepareAndFetchAll(
+      $query,
+      'ii',
+      [
+        $follow->getFollowId(),
+        $follow->getFolloweeId()
+      ]
+    );
+
+    return (
+      count($result) > 0
+      && $result[0]['follower_id'] === $follow->getFollowId()
+      && $result[0]['followee_id'] === $follow->getFolloweeId()
+    );
+  }
+
 
   public function removeFollow(Follow $follow): bool
   {
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = 'DELETE FROM follows WHERE follow_id = ? AND followee_id = ?';
+    $query = 'DELETE FROM follows WHERE follower_id = ? AND followee_id = ?';
 
     $result = $db->prepareAndExecute(
       $query,
@@ -45,10 +67,7 @@ class FollowDAOImpl implements FollowDAO
       ]
     );
 
-    if ($result) {
-      return true;
-    } else {
-      return false;
-    }
+    if ($result) return true;
+    return false;
   }
 }
