@@ -136,7 +136,12 @@ return [
       ];
     }
 
-    return new HTMLRenderer('page/home', ['data_list' => $data_list]);
+    $profile = DAOFactory::getProfileDAO()->getById($_SESSION['user_id']);
+    if ($profile) {
+      $profile_image_path = FileHelper::getProfileImagePath($profile->getProfileImage());
+    }
+
+    return new HTMLRenderer('page/home', ['data_list' => $data_list, "profile_image_path" => $profile_image_path]);
   })->setMiddleware(['auth']),
 
   // Post

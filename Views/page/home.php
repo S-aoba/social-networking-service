@@ -3,7 +3,7 @@
   <form action="#" method="POST" id="postForm" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
     <div class="flex items-center">
-      <img src="https://via.placeholder.com/40" alt="プロフィール画像" class="w-10 h-10 rounded-full">
+      <img src="<?= htmlspecialchars($profile_image_path) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full">
       <textarea id="content" name="content" class="p-3 ml-4 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full" rows="3" placeholder="何かつぶやく..."></textarea>
     </div>
     <div class="mt-4 flex justify-end">
@@ -21,6 +21,7 @@
           <img src="<?= htmlspecialchars($data["profile"]->getProfileImage()) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full">
         </a>
         <div class="ml-4">
+          <p class="text-lg font-bold"><?= htmlspecialchars($data["profile"]->getUsername()) ?></p>
           <p class="text-xs text-gray-500"><?= htmlspecialchars($data["post"]->getTimeStamp()->getCreatedAt()) ?></p>
         </div>
       </div>
