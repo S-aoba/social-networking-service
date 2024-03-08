@@ -8,6 +8,8 @@
       <p class="text-sm text-gray-600">Hobby: <?= htmlspecialchars($profile->getHobby()) ?></p>
       <p class="text-sm text-gray-600">Self Introduction: <?= htmlspecialchars($profile->getSelfIntroduction()) ?></p>
     </div>
-    <a href="/edit/profile" class="block w-full mt-6 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Edit</a>
+    <?php if ($user->getId() === $profile->getUserId()) : ?>
+      <a href="/edit/profile" class="block w-full mt-6 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Edit</a>
+    <?php endif; ?>
   </div>
 </div>

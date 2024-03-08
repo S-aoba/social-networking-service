@@ -31,6 +31,9 @@ class HTMLRenderer implements HTTPRenderer
       throw new \Exception("View file {$viewPath} does not exist.");
     }
 
+    // ユーザー情報を追加
+    $this->data['user'] = Authenticate::getAuthenticatedUser();
+
     // ob_startはすべての出力をバッファに取り込みます。
     // このバッファはob_get_cleanによって取得することができ、バッファの内容を返し、バッファをクリアします。
     ob_start();
