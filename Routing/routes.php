@@ -150,10 +150,15 @@ return [
     function (): HTTPRenderer {
       try {
         // TODO: 入力された内容を検証する
+        $request_fields = [
+          'content' => ValueType::CONTENT,
+        ];
+
+        $validatedData = ValidationHelper::validateFields($request_fields, $_POST);
 
         $postDAO = DAOFactory::getPostDAO();
 
-        $postDAO->create($_POST['content'], $_SESSION['user_id']);
+        $postDAO->create($validatedData['content'], $_SESSION['user_id']);
 
         FlashData::setFlashData('success', '投稿が完了しました!');
 
@@ -162,6 +167,11 @@ return [
         error_log($e->getMessage());
 
         FlashData::setFlashData('error', '投稿に失敗しました.');
+        return new JSONRenderer(["status" => "error."]);
+      } catch (\InvalidArgumentException $e) {
+        error_log($e->getMessage());
+
+        FlashData::setFlashData('error', 'Invalid Data.');
         return new JSONRenderer(["status" => "error."]);
       }
     }
