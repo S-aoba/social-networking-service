@@ -37,7 +37,7 @@ class PostDAOImpl implements PostDAO
     $mysqli = DatabaseManager::getMysqliConnection();
 
     $query =
-      "SELECT posts.*, profiles.*, posts.created_at AS post_created_at
+      "SELECT posts.*, profiles.*, posts.created_at AS post_created_at, posts.id AS post_id
       FROM posts
       JOIN profiles ON posts.user_id = profiles.user_id
       ORDER BY posts.created_at DESC
@@ -45,7 +45,7 @@ class PostDAOImpl implements PostDAO
     ";
 
     $results = $mysqli->prepareAndFetchAll($query, 'ii', [$offset, $limit]);
-
+    
     return $results === null ? [] : $this->resultsPosts($results);
   }
 
@@ -57,13 +57,14 @@ class PostDAOImpl implements PostDAO
       "post" =>
       new Post(
         content: $data['content'],
-        id: $data['id'],
+        id: $data['post_id'],
         timeStamp: new DataTimeStamp($data['post_created_at'], $data['post_created_at']),
         user_id: $data['user_id']
       ),
       'profile' =>
       new Profile(
         user_id: $data['user_id'],
+        id: $data['id'],
         username: $data['username'],
         age: $data['age'],
         address: $data['address'],
@@ -119,9 +120,9 @@ class PostDAOImpl implements PostDAO
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $stmt = $db->prepare('DELETE FROM posts WHERE id = ?');
-    $stmt->bind_param('i', $id);
-    $result = $stmt->execute();
+    $query = 'DELETE FROM posts WHERE id = ?';
+
+    $result = $db->prepareAndExecute($query, 'i', [$id]);
 
     if ($result) return true;
     return false;
