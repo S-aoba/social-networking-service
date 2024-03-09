@@ -9,13 +9,14 @@ use Response\HTTPRenderer;
 use Response\Render\HTMLRenderer;
 use Response\Render\RedirectRenderer;
 use Database\DataAccess\DAOFactory;
-use Models\Profile;
 use Response\Render\JSONRenderer;
 use Routing\Route;
 use Types\ValueType;
+use Models\Profile;
 use Models\User;
 use Models\Follow;
-
+use Models\Post;
+use Models\DataTimeStamp;
 
 return [
 
@@ -133,17 +134,15 @@ return [
 
     foreach ($data as $data) {
       $data_list[] = [
-        "profile" => $data['profile'],
         'post' => $data['post'],
+        "profile" => $data["profile"],
       ];
     }
 
-    $profile = DAOFactory::getProfileDAO()->getById($_SESSION['user_id']);
-    if ($profile) {
-      $profile_image_path = FileHelper::getProfileImagePath($profile->getProfileImage());
-    }
+    $login_user_profile = DAOFactory::getProfileDAO()->getById($_SESSION['user_id']);
+    $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
 
-    return new HTMLRenderer('page/home', ['data_list' => $data_list, "profile_image_path" => $profile_image_path]);
+    return new HTMLRenderer('page/home', ['data_list' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path]);
   })->setMiddleware(['auth']),
 
   'form/post' => Route::create(

@@ -37,10 +37,10 @@ class PostDAOImpl implements PostDAO
     $mysqli = DatabaseManager::getMysqliConnection();
 
     $query =
-      "SELECT posts.*, profiles.*
+      "SELECT posts.*, profiles.*, posts.created_at AS post_created_at
       FROM posts
       JOIN profiles ON posts.user_id = profiles.user_id
-      LIMIT ?, ?
+      LIMIT ?, ?;
     ";
 
     $results = $mysqli->prepareAndFetchAll($query, 'ii', [$offset, $limit]);
@@ -57,7 +57,7 @@ class PostDAOImpl implements PostDAO
       new Post(
         content: $data['content'],
         id: $data['id'],
-        timeStamp: new DataTimeStamp($data['created_at'], $data['created_at']),
+        timeStamp: new DataTimeStamp($data['post_created_at'], $data['post_created_at']),
         user_id: $data['user_id']
       ),
       'profile' =>
@@ -68,7 +68,8 @@ class PostDAOImpl implements PostDAO
         address: $data['address'],
         hobby: $data['hobby'],
         self_introduction: $data['self_introduction'],
-        profile_image_path: $data['profile_image_path']
+        profile_image_path: $data['profile_image_path'],
+        timeStamp: new DataTimeStamp($data['created_at'], $data['updated_at'])
       )
     ];
   }
