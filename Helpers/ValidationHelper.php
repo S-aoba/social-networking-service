@@ -73,9 +73,8 @@ class ValidationHelper
     $file_type = strtolower($file_type);
     $allowed_extensions = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
     if (!in_array($file_type, $allowed_extensions)) {
-      return false;
+      throw new \InvalidArgumentException("無効なファイルが提供されました。有効なファイルをアップロードしてください。");
     }
-    return true;
   }
 
   public static function isUserPost(int $login_user_id, int $post_user_id): void
