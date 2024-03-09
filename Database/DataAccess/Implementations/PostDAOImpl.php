@@ -40,6 +40,7 @@ class PostDAOImpl implements PostDAO
       "SELECT posts.*, profiles.*, posts.created_at AS post_created_at
       FROM posts
       JOIN profiles ON posts.user_id = profiles.user_id
+      ORDER BY posts.created_at DESC
       LIMIT ?, ?;
     ";
 
