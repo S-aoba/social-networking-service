@@ -77,5 +77,12 @@ class ValidationHelper
     }
     return true;
   }
+
+  public static function isUserPost(int $login_user_id, int $post_user_id): void
+  {
+
+    if ($login_user_id !== $post_user_id) {
+      throw new \InvalidArgumentException(sprintf("Invalid value for field: User ID does not match post's user ID"));
+    }
+  }
 }
-//

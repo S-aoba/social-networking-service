@@ -20,8 +20,18 @@
         <a href="profile/<?= htmlspecialchars($data["profile"]->getUsername()) ?>">
           <img src="<?= htmlspecialchars($data["profile"]->getProfileImage()) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full">
         </a>
-        <div class="ml-4">
-          <p class="text-lg font-bold"><?= htmlspecialchars($data["profile"]->getUsername()) ?></p>
+        <div class="ml-4 w-full">
+          <div class="flex items-center justify-between py-2">
+            <p class="text-lg font-bold"><?= htmlspecialchars($data["profile"]->getUsername()) ?></p>
+            <?php if ($data['post']->getUserId() === $_SESSION['user_id']) : ?>
+              <form id="deletePostForm" method="post" action="#">
+                <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
+                <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+                <input type="hidden" name="post_user_id" value="<?= $data['post']->getUserId() ?>">
+                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-2 py-1 rounded-md">削除</button>
+              </form>
+            <?php endif; ?>
+          </div>
           <p class="text-xs text-gray-500"><?= htmlspecialchars($data["post"]->getTimeStamp()->getCreatedAt()) ?></p>
         </div>
       </div>

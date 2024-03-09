@@ -23,6 +23,7 @@ return [
   'login' => Route::create('login', function (): HTTPRenderer {
     return new HTMLRenderer('page/login');
   })->setMiddleware(['guest']),
+
   'form/login' => Route::create('form/login', function (): HTTPRenderer {
     try {
       if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -177,7 +178,37 @@ return [
     }
   )->setMiddleware(['auth']),
 
-  // Userのプロフィールの編集画面
+  'form/post/delete' => Route::create('form/post/delete', function (): HTTPRenderer {
+    try {
+      $data = $_POST;
+
+      // 削除対象がログインしているユーザーのものかを検証
+      $login_user_id = $_SESSION['user_id'];
+      $post_user_id = intval($data['post_user_id']);
+
+      ValidationHelper::isUserPost($login_user_id, $post_user_id);
+
+      $postDAO = DAOFactory::getPostDAO();
+
+      $target_post_id = intval($data['post_id']);
+
+      $is_post_deleted = $postDAO->delete($target_post_id);
+
+      if (!$is_post_deleted) throw new Exception("");
+
+      FlashData::setFlashData('success', '投稿の削除に成功しました');
+      return new JSONRenderer(['status' => 'success']);
+    } catch (\InvalidArgumentException $e) {
+
+      error_log($e->getMessage());
+      return new JSONRenderer(['status' => 'error']);
+    } catch (Exception $e) {
+
+      error_log($e->getMessage());
+      return new JSONRenderer(['status' => 'error']);
+    }
+  })->setMiddleware(['auth']),
+
   'edit/profile' => Route::create('profile', function (): HTTPRenderer {
 
     $user_id = $_SESSION['user_id'];
@@ -219,6 +250,7 @@ return [
       return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しください。"]);
     }
   })->setMiddleware(['auth']),
+
   'form/update/profile-image' => Route::create('form/update/profile-image', function (): HTTPRenderer {
 
     try {
