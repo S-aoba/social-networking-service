@@ -1,23 +1,34 @@
-const tweetForm = document.getElementById('postForm');
+document.getElementById('image').addEventListener('change', function () {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById('preview-image').setAttribute('src', e.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
 
-tweetForm.addEventListener('submit', function (event) {
-  event.preventDefault();
+  const tweetForm = document.getElementById('postForm');
 
-  const formData = new FormData(tweetForm);
+  tweetForm.addEventListener('submit', function (event) {
+    event.preventDefault();
 
-  fetch('form/post', {
-    method: 'POST',
-    body: formData,
-  }).then((response) => {
-    response.json().then((data) => {
-      if (data.status === 'success') {
-        tweetForm.reset();
-        // 画面を更新する（遅延させる）
-        setTimeout(() => {
-          location.reload();
-        }, 1000);
-      }
-      //TODO: エラーの場合の処理は必要なのか
+    const formData = new FormData(tweetForm);
+
+    fetch('form/post', {
+      method: 'POST',
+      body: formData,
+    }).then((response) => {
+      response.json().then((data) => {
+        if (data.status === 'success') {
+          tweetForm.reset();
+          // 画面を更新する（遅延させる）
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+        }
+        //TODO: エラーの場合の処理は必要なのか
+      });
     });
   });
 });
