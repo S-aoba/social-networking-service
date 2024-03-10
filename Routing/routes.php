@@ -139,7 +139,6 @@ return [
       ];
     }
 
-    error_log(print_r($data['post'], true));
     $login_user_profile = DAOFactory::getProfileDAO()->getById($_SESSION['user_id']);
     $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
 
@@ -161,7 +160,6 @@ return [
 
         $post_image_path = null;
 
-        // Imageの存在を確認
         if (FileHelper::isExitUserUploadFile($_FILES)) {
           // 存在していればハッシュ化されたimage_pathを取得
           $post_image_path = FileHelper::generatePostImage_path($_FILES);
