@@ -13,7 +13,8 @@ class Post implements Model
     private string $content,
     private ?int $id = null,
     private ?DataTimeStamp $timeStamp = null,
-    private ?int $user_id = null
+    private ?int $user_id = null,
+    private ?string $image_path = null
   ) {
   }
 
@@ -55,5 +56,15 @@ class Post implements Model
   public function setUserId(int $user_id): void
   {
     $this->user_id = $user_id;
+  }
+
+  public function getImagePath(): ?string
+  {
+    return $this->image_path;
+  }
+
+  public function setImagePah(string $image_path): void
+  {
+    $this->image_path = $image_path;
   }
 }
