@@ -7,10 +7,12 @@
       <textarea id="content" name="content" class="p-3 ml-4 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full" rows="3" placeholder="何かつぶやく..." maxlength="255" required></textarea>
     </div>
     <div class="mt-3">
-      <input id="image" name="image" type="file" accept=".png, .jpg, .jpeg, .gif">
+      <input id="image" name="image" type="file" accept=".png, .jpg, .jpeg, .gif, .mp4">
     </div>
     <div class="mt-3 max-h-96 w-full flex justify-center">
       <img id="preview-image" src="" class="object-cover max-h-96">
+      <video id="preview-video" src="">
+      </video>
     </div>
     <div class="mt-4 flex justify-end">
       <button id="post" type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">投稿する</button>

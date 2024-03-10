@@ -1,13 +1,26 @@
 document.getElementById('image').addEventListener('change', function () {
   const file = this.files[0];
   if (file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      document.getElementById('preview-image').setAttribute('src', e.target.result);
-    };
-    reader.readAsDataURL(file);
+    if (file.type.startsWith('video/')) {
+      // ファイルが動画であるかを確認
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        // プレビューを表示する処理
+        const videoElement = document.getElementById('preview-video');
+        videoElement.setAttribute('src', e.target.result);
+        videoElement.setAttribute('controls', ''); // controls属性を追加
+      };
+      reader.readAsDataURL(file);
+    } else {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById('preview-image').setAttribute('src', e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
   }
 });
+
 const tweetForm = document.getElementById('postForm');
 
 tweetForm.addEventListener('submit', function (event) {
