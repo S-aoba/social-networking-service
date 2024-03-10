@@ -12,19 +12,20 @@ use Helpers\FileHelper;
 
 class PostDAOImpl implements PostDAO
 {
-  public function create(string $content, int $userId): bool
+  public function create(Post $post): bool
   {
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = 'INSERT INTO posts (content, user_id) VALUES (?, ?)';
+    $query = 'INSERT INTO posts (content, user_id, image_path) VALUES (?, ?, ?)';
 
     $result = $db->prepareAndExecute(
       $query,
-      'si',
+      'sis',
       [
-        $content,
-        $userId
+        $post->getContent(),
+        $post->getUserId(),
+        $post->getImagePath()
       ]
     );
 
@@ -45,7 +46,7 @@ class PostDAOImpl implements PostDAO
     ";
 
     $results = $mysqli->prepareAndFetchAll($query, 'ii', [$offset, $limit]);
-    
+
     return $results === null ? [] : $this->resultsPosts($results);
   }
 

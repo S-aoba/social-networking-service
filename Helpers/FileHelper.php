@@ -74,17 +74,23 @@ class FileHelper
   {
     if ($file_size > 3 * 1024 * 1024) throw new \InvalidArgumentException("アップロードされたファイルのサイズが3MBを超えています。");
   }
+
+  public static function isExitUserUploadFile(array $file): bool
+  {
+    return !empty($file['image']['tmp_name']);
+  }
+
+  public static function generatePostImage_path(array $file): string
+  {
+    $file_size = $file['image']['size'];
+    $file_type = $file['image']['type'];
+
+    self::checkFileExtension($file_type);
+
+    self::checkUploadFileSize($file_size);
+
+    $file_name = $file['image']['name'];
+
+    return self::hashedFileName($file_name);
+  }
 }
-
-
-
-// <?php
-// // 画像ファイルのパス
-// $image_path = "{path}/private/uploads/images/{imagefile}";
-
-// // 画像ファイルのデータをbase64でエンコードする
-// $image_data = base64_encode(file_get_contents($image_path));
-
-// // data URI スキームの生成
-// $data_uri = "data:image/png;base64,$image_data";
-//

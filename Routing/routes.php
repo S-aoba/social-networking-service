@@ -157,21 +157,29 @@ return [
         ];
 
         $validatedData = ValidationHelper::validateFields($request_fields, $_POST);
-        //TODO ファイルのバリデーションをvalidateFieldsで行えるようにする
-        $file_size = $_FILES['image']['size'];
-        $file_type = $_FILES['image']['type'];
-        FileHelper::checkFileExtension($file_type);
-
-        FileHelper::checkUploadFileSize($file_size);
 
         $postDAO = DAOFactory::getPostDAO();
 
+        $post_image_path = null;
+
+        // Imageの存在を確認
+        if (FileHelper::isExitUserUploadFile($_FILES)) {
+          // 存在していればハッシュ化されたimage_pathを取得
+          $post_image_path = FileHelper::generatePostImage_path($_FILES);
+        }
+
+        $post = new Post(
+          content: $validatedData['content'],
+          user_id: $_SESSION['user_id'],
+          image_path: $post_image_path
+        );
+
         //TODO: 画像を保存するロジックの追加をする
-        $postDAO->create($validatedData['content'], $_SESSION['user_id']);
+        $postDAO->create($post);
 
         FlashData::setFlashData('success', '投稿が完了しました!');
 
-        return new JSONRenderer(['status' => 'success', 'message' => '投稿が完了しました!']);
+        return new JSONRenderer(['status' => 'success']);
       } catch (Exception $e) {
         error_log($e->getMessage());
 
@@ -182,9 +190,6 @@ return [
 
         FlashData::setFlashData('error', $e->getMessage());
         return new JSONRenderer(["status" => "error."]);
-      } catch (Exception $e) {
-        FlashData::setFlashData('error', $e->getMessage());
-        return new JSONRenderer(['status' => 'error']);
       }
     }
   )->setMiddleware(['auth']),
