@@ -140,6 +140,7 @@ return [
       ];
     }
 
+
     $login_user_profile = DAOFactory::getProfileDAO()->getById($_SESSION['user_id']);
     $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
 
@@ -156,9 +157,16 @@ return [
         ];
 
         $validatedData = ValidationHelper::validateFields($request_fields, $_POST);
+        //TODO ファイルのバリデーションをvalidateFieldsで行えるようにする
+        $file_size = $_FILES['image']['size'];
+        $file_type = $_FILES['image']['type'];
+        FileHelper::checkFileExtension($file_type);
+
+        FileHelper::checkUploadFileSize($file_size);
 
         $postDAO = DAOFactory::getPostDAO();
 
+        //TODO: 画像を保存するロジックの追加をする
         $postDAO->create($validatedData['content'], $_SESSION['user_id']);
 
         FlashData::setFlashData('success', '投稿が完了しました!');
@@ -172,8 +180,11 @@ return [
       } catch (\InvalidArgumentException $e) {
         error_log($e->getMessage());
 
-        FlashData::setFlashData('error', 'Invalid Data.');
+        FlashData::setFlashData('error', $e->getMessage());
         return new JSONRenderer(["status" => "error."]);
+      } catch (Exception $e) {
+        FlashData::setFlashData('error', $e->getMessage());
+        return new JSONRenderer(['status' => 'error']);
       }
     }
   )->setMiddleware(['auth']),
@@ -259,9 +270,12 @@ return [
       $file_type = $_FILES['image']['type'];
 
       // アップロードされた画像のファイルの種類を確認する(対応可能拡張子: jpg, jpeg, png, gif)
-      if (!ValidationHelper::checkFileExtension($file_type)) return new JSONRenderer(["status" => "アップロードされたファイルの拡張子が対応していません。"]);
+      FileHelper::checkFileExtension($file_type);
+
       // アップロードされた画像のファイルサイズを確認する　一回のアップロードの最大サイズ3MBに設定
-      if (!FileHelper::checkUploadFileSize($file_size)) return new JSONRenderer(["status" => "アップロードされたファイルのサイズが3MBを超えています。"]);
+      FileHelper::checkUploadFileSize($file_size);
+
+
       // private/uploads/images/に保存
       $hashed_file_name = FileHelper::saveImageFile($file_name);
 
