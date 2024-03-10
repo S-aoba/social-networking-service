@@ -16,7 +16,6 @@ use Models\Profile;
 use Models\User;
 use Models\Follow;
 use Models\Post;
-use Models\DataTimeStamp;
 
 return [
 
@@ -140,7 +139,7 @@ return [
       ];
     }
 
-    error_log(print_r($data['post'],true));
+    error_log(print_r($data['post'], true));
     $login_user_profile = DAOFactory::getProfileDAO()->getById($_SESSION['user_id']);
     $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
 
@@ -176,6 +175,8 @@ return [
 
         //TODO: 画像を保存するロジックの追加をする
         $postDAO->create($post);
+
+        if (!is_null($post_image_path)) FileHelper::saveImageFile($_FILES['image']['name']);
 
         FlashData::setFlashData('success', '投稿が完了しました!');
 
