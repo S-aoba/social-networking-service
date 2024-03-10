@@ -61,10 +61,18 @@ class FileHelper
     return $hashedFileName;
   }
 
+  public static function checkFileExtension(string $file_type)
+  {
+    $file_type = strtolower($file_type);
+    $allowed_extensions = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
+    if (!in_array($file_type, $allowed_extensions)) {
+      throw new \InvalidArgumentException("無効なファイルが提供されました。有効なファイルをアップロードしてください。");
+    }
+  }
+
   public static function checkUploadFileSize(string $file_size)
   {
-    if ($file_size > 3 * 1024 * 1024) return false;
-    return true;
+    if ($file_size > 3 * 1024 * 1024) throw new \InvalidArgumentException("アップロードされたファイルのサイズが3MBを超えています。");
   }
 }
 
