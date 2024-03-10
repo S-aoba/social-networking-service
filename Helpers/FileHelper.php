@@ -64,7 +64,7 @@ class FileHelper
   public static function checkFileExtension(string $file_type)
   {
     $file_type = strtolower($file_type);
-    $allowed_extensions = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
+    $allowed_extensions = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'video/mp4'];
     if (!in_array($file_type, $allowed_extensions)) {
       throw new \InvalidArgumentException("無効なファイルが提供されました。有効なファイルをアップロードしてください。");
     }
