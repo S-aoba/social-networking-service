@@ -140,7 +140,7 @@ return [
       ];
     }
 
-
+    error_log(print_r($data['post'],true));
     $login_user_profile = DAOFactory::getProfileDAO()->getById($_SESSION['user_id']);
     $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
 

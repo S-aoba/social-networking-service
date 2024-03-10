@@ -54,13 +54,16 @@ class PostDAOImpl implements PostDAO
   {
     // profile Imageをbase64に変換する
     $data['profile_image_path'] = FileHelper::getProfileImagePath($data['profile_image_path']);
+    $data['image_path'] = is_null($data['image_path']) ? null : FileHelper::getProfileImagePath($data['image_path']);
+
     return [
       "post" =>
       new Post(
         content: $data['content'],
         id: $data['post_id'],
         timeStamp: new DataTimeStamp($data['post_created_at'], $data['post_created_at']),
-        user_id: $data['user_id']
+        user_id: $data['user_id'],
+        image_path: $data['image_path'],
       ),
       'profile' =>
       new Profile(

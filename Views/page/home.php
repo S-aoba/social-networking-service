@@ -43,6 +43,11 @@
       </div>
       <div class="mt-4">
         <p class="text-lg"><?= htmlspecialchars($data['post']->getContent()) ?></p>
+        <?php if (!is_null($data["post"]->getImagePath())) : ?>
+          <div class="flex justify-center">
+            <img src="<?= htmlspecialchars($data["post"]->getImagePath()) ?>" class="w-96 h-96">
+          </div>
+        <?php endif; ?>
       </div>
     </div>
   <?php endforeach; ?>
