@@ -7,7 +7,7 @@
       <textarea id="content" name="content" class="p-3 ml-4 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full" rows="3" placeholder="何かつぶやく..." maxlength="255"></textarea>
     </div>
     <div class="mt-3">
-      <input id="image" name="image" type="file" accept=".png, .jpg, .jpeg, .gif" required>
+      <input id="image" name="image" type="file" accept=".png, .jpg, .jpeg, .gif">
     </div>
     <div class="mt-3 max-h-96 w-full flex justify-center">
       <img id="preview-image" src="" class="object-cover max-h-96">
