@@ -41,7 +41,7 @@ class FileHelper
 
   public static function checkUploadFileSize(string $file_size, string $file_type)
   {
-    $file_type = self::getImageType($file_type);
+    $file_type = self::getFIleType($file_type);
 
     $max_upload_file_size = $file_type === 'mp4' ? 10 * 1024 * 1024 : 3 * 1024 * 1024;
 
@@ -59,7 +59,7 @@ class FileHelper
 
   public static function saveImageFile(string $image_path): void
   {
-    $file_type = self::getImageType($image_path);
+    $file_type = self::getFIleType($image_path);
 
     $root_dir = $file_type === 'mp4' ? "private/uploads/video/" : "private/uploads/images/";
     $parent_dir = substr($image_path, 0, 2);
@@ -95,14 +95,14 @@ class FileHelper
 
     $image_data = base64_encode(file_get_contents($image_path));
 
-    $image_type = self::getImageType($path);
+    $image_type = self::getFIleType($path);
 
     $data_uri = "data:image/ " . $image_type . "png;base64,$image_data";
 
     return $data_uri;
   }
 
-  private static function getImageType(string $file_type): string
+  private static function getFIleType(string $file_type): string
   {
     $extension = pathinfo($file_type, PATHINFO_EXTENSION);
     return $extension;
