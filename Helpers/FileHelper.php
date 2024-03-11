@@ -12,7 +12,7 @@ class FileHelper
     return !empty($file['image']['tmp_name']);
   }
 
-  public static function generatePostImage_path(array $file): string
+  public static function getFilePath(array $file): string
   {
     $file_size = $file['image']['size'];
     $file_type = $file['image']['type'];

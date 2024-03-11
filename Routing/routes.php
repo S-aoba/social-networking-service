@@ -162,7 +162,7 @@ return [
 
         if (FileHelper::isExitUserUploadFile($_FILES)) {
           // 存在していればハッシュ化されたimage_pathを取得
-          $post_image_path = FileHelper::generatePostImage_path($_FILES);
+          $post_image_path = FileHelper::getFilePath($_FILES);
         }
 
         $post = new Post(
