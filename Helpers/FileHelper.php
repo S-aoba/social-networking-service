@@ -23,7 +23,7 @@ class FileHelper
 
     $file_name = $file['image']['name'];
 
-    return self::hashedFileName($file_name);
+    return self::generateHashedFileName($file_name);
   }
 
 
@@ -47,6 +47,27 @@ class FileHelper
 
     if ($file_size > $max_upload_file_size) throw new \InvalidArgumentException("アップロードされたファイルのサイズが3MBを超えています。");
   }
+
+  private static function generateHashedFileName(string $fileName): string
+  {
+    // hash値.拡張子
+    // 画像のファイル名をハッシュ化する
+    $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+    $hashedFileName = hash('sha256', $fileName) . '.' . $extension;
+    return $hashedFileName;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   public static function getProfileImagePath(string $path): string
@@ -82,7 +103,7 @@ class FileHelper
 
   public static function saveImageFile(string $profile_image_path): string
   {
-    $hashed_file_name = self::hashedFileName($profile_image_path);
+    $hashed_file_name = self::generateHashedFileName($profile_image_path);
     $root_dir = "private/uploads/images/";
     $parent_dir = substr($hashed_file_name, 0, 2);
 
@@ -97,12 +118,5 @@ class FileHelper
     return $hashed_file_name;
   }
 
-  private static function hashedFileName(string $fileName): string
-  {
-    // hash値.拡張子
-    // 画像のファイル名をハッシュ化する
-    $extension = pathinfo($fileName, PATHINFO_EXTENSION);
-    $hashedFileName = hash('sha256', $fileName) . '.' . $extension;
-    return $hashedFileName;
-  }
+
 }
