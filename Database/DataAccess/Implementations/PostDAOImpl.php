@@ -52,9 +52,8 @@ class PostDAOImpl implements PostDAO
 
   private function resultToPost(array $data): array
   {
-    // profile Imageをbase64に変換する
-    $data['profile_image_path'] = FileHelper::getProfileImagePath($data['profile_image_path']);
-    $data['image_path'] = is_null($data['image_path']) ? null : FileHelper::getProfileImagePath($data['image_path']);
+    $profile_image_path = FileHelper::getProfileImagePath($data['profile_image_path']);
+    $post_file_path = is_null($data['image_path']) ? null : FileHelper::getProfileImagePath($data['image_path']);
 
     return [
       "post" =>
@@ -63,7 +62,7 @@ class PostDAOImpl implements PostDAO
         id: $data['post_id'],
         timeStamp: new DataTimeStamp($data['post_created_at'], $data['post_created_at']),
         user_id: $data['user_id'],
-        image_path: $data['image_path'],
+        image_path: $post_file_path,
       ),
       'profile' =>
       new Profile(
@@ -74,7 +73,7 @@ class PostDAOImpl implements PostDAO
         address: $data['address'],
         hobby: $data['hobby'],
         self_introduction: $data['self_introduction'],
-        profile_image_path: $data['profile_image_path'],
+        profile_image_path: $profile_image_path,
         timeStamp: new DataTimeStamp($data['created_at'], $data['updated_at'])
       )
     ];

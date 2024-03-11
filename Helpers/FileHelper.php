@@ -73,33 +73,15 @@ class FileHelper
     move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
   public static function getProfileImagePath(string $path): string
   {
-    $base_path = "private/uploads/images/";
+    $base_path = "/private/uploads/images";
 
     $parent_path = self::generateParentPath($path);
 
     $image_path = $base_path . '/' . $parent_path . '/' . $path;
 
-    $image_data = base64_encode(file_get_contents($image_path));
-
-    $image_type = self::getFIleType($path);
-
-    $data_uri = "data:image/ " . $image_type . "png;base64,$image_data";
-
-    return $data_uri;
+    return $image_path;
   }
 
   private static function getFIleType(string $file_type): string
