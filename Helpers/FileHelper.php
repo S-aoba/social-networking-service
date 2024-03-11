@@ -2,8 +2,53 @@
 
 namespace Helpers;
 
+
+
+
 class FileHelper
 {
+  public static function isExitUserUploadFile(array $file): bool
+  {
+    return !empty($file['image']['tmp_name']);
+  }
+
+  public static function generatePostImage_path(array $file): string
+  {
+    $file_size = $file['image']['size'];
+    $file_type = $file['image']['type'];
+
+    self::checkFileExtension($file_type);
+
+    self::checkUploadFileSize($file_size, $file_type);
+
+    $file_name = $file['image']['name'];
+
+    return self::hashedFileName($file_name);
+  }
+
+
+  public static function checkFileExtension(string $file_type)
+  {
+    $file_type = strtolower($file_type);
+
+    $allowed_extensions = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'video/mp4'];
+
+    if (!in_array($file_type, $allowed_extensions)) {
+      throw new \InvalidArgumentException("無効なファイルが提供されました。有効なファイルをアップロードしてください。");
+    }
+  }
+
+  public static function checkUploadFileSize(string $file_size, string $file_type)
+  {
+
+    $file_type = self::getImageType($file_type);
+
+    $max_upload_file_size = $file_size === 'mp4' ? 10 * 1024 * 1024 : 3 * 1024 * 1024;
+
+    if ($file_size > $max_upload_file_size) throw new \InvalidArgumentException("アップロードされたファイルのサイズが3MBを超えています。");
+  }
+
+
   public static function getProfileImagePath(string $path): string
   {
     $base_path = "private/uploads/images/";
@@ -59,38 +104,5 @@ class FileHelper
     $extension = pathinfo($fileName, PATHINFO_EXTENSION);
     $hashedFileName = hash('sha256', $fileName) . '.' . $extension;
     return $hashedFileName;
-  }
-
-  public static function checkFileExtension(string $file_type)
-  {
-    $file_type = strtolower($file_type);
-    $allowed_extensions = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'video/mp4'];
-    if (!in_array($file_type, $allowed_extensions)) {
-      throw new \InvalidArgumentException("無効なファイルが提供されました。有効なファイルをアップロードしてください。");
-    }
-  }
-
-  public static function checkUploadFileSize(string $file_size)
-  {
-    if ($file_size > 3 * 1024 * 1024) throw new \InvalidArgumentException("アップロードされたファイルのサイズが3MBを超えています。");
-  }
-
-  public static function isExitUserUploadFile(array $file): bool
-  {
-    return !empty($file['image']['tmp_name']);
-  }
-
-  public static function generatePostImage_path(array $file): string
-  {
-    $file_size = $file['image']['size'];
-    $file_type = $file['image']['type'];
-
-    self::checkFileExtension($file_type);
-
-    self::checkUploadFileSize($file_size);
-
-    $file_name = $file['image']['name'];
-
-    return self::hashedFileName($file_name);
   }
 }
