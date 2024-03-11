@@ -269,23 +269,19 @@ return [
   'form/update/profile-image' => Route::create('form/update/profile-image', function (): HTTPRenderer {
 
     try {
-      $file_name = $_FILES['image']['name'];
-      $file_size = $_FILES['image']['size'];
-      $file_type = $_FILES['image']['type'];
+      $profile_image_path = null;
 
-      // アップロードされた画像のファイルの種類を確認する(対応可能拡張子: jpg, jpeg, png, gif)
-      FileHelper::checkFileExtension($file_type);
+      if(FileHelper::isExitUserUploadFile($_FILES)){
+        $profile_image_path = FileHelper::getFilePath($_FILES);
+      }
+      $profileDAO = DAOFactory::getProfileDAO();
 
-      // アップロードされた画像のファイルサイズを確認する　一回のアップロードの最大サイズ3MBに設定
-      FileHelper::checkUploadFileSize($file_size);
+      $profileDAO->updateProfileImage($profile_image_path);
 
 
       // private/uploads/images/に保存
-      $hashed_file_name = FileHelper::saveImageFile($file_name);
+      // $hashed_file_name = FileHelper::saveImageFile($file_name);
 
-      $profileDAO = DAOFactory::getProfileDAO();
-
-      $profileDAO->updateProfileImage($hashed_file_name);
       return new JSONRenderer(["status" => "success"]);
     } catch (\Throwable $th) {
       return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しくください。"]);
