@@ -153,7 +153,7 @@ return [
         $request_fields = [
           'content' => ValueType::CONTENT,
         ];
-
+        
         $validatedData = ValidationHelper::validateFields($request_fields, $_POST);
 
         $postDAO = DAOFactory::getPostDAO();
@@ -174,7 +174,7 @@ return [
         //TODO: 画像を保存するロジックの追加をする
         $postDAO->create($post);
 
-        if (!is_null($post_image_path)) FileHelper::saveImageFile($_FILES['image']['name']);
+        if (!is_null($post_image_path)) FileHelper::saveImageFile($post_image_path);
 
         FlashData::setFlashData('success', '投稿が完了しました!');
 

@@ -16,10 +16,11 @@ class FileHelper
   {
     $file_size = $file['image']['size'];
     $file_type = $file['image']['type'];
+    $file_name = $file['image']['name'];
 
     self::checkFileExtension($file_type);
 
-    self::checkUploadFileSize($file_size, $file_type);
+    self::checkUploadFileSize($file_size, $file_name);
 
     $file_name = $file['image']['name'];
 
@@ -40,12 +41,11 @@ class FileHelper
 
   public static function checkUploadFileSize(string $file_size, string $file_type)
   {
-
     $file_type = self::getImageType($file_type);
 
-    $max_upload_file_size = $file_size === 'mp4' ? 10 * 1024 * 1024 : 3 * 1024 * 1024;
+    $max_upload_file_size = $file_type === 'mp4' ? 10 * 1024 * 1024 : 3 * 1024 * 1024;
 
-    if ($file_size > $max_upload_file_size) throw new \InvalidArgumentException("アップロードされたファイルのサイズが3MBを超えています。");
+    if ($file_size > $max_upload_file_size) throw new \InvalidArgumentException("アップロードされたファイルのサイズが最大容量を超えています。");
   }
 
   private static function generateHashedFileName(string $fileName): string
@@ -57,6 +57,21 @@ class FileHelper
     return $hashedFileName;
   }
 
+  public static function saveImageFile(string $image_path): void
+  {
+    $file_type = self::getImageType($image_path);
+
+    $root_dir = $file_type === 'mp4' ? "private/uploads/video/" : "private/uploads/images/";
+    $parent_dir = substr($image_path, 0, 2);
+
+    // $parent_dirが存在しているかどうか
+    if (!is_dir($root_dir . $parent_dir)) {
+      mkdir($root_dir . $parent_dir, 0777, true);
+    }
+    $target_file = $root_dir . $parent_dir . '/' . $image_path;
+
+    move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
+  }
 
 
 
@@ -87,10 +102,9 @@ class FileHelper
     return $data_uri;
   }
 
-  private static function getImageType(string $image_type): string
+  private static function getImageType(string $file_type): string
   {
-    $extension = pathinfo($image_type, PATHINFO_EXTENSION);
-
+    $extension = pathinfo($file_type, PATHINFO_EXTENSION);
     return $extension;
   }
 
@@ -100,23 +114,4 @@ class FileHelper
     $parent_dir = substr($path, 0, 2);
     return $parent_dir;
   }
-
-  public static function saveImageFile(string $profile_image_path): string
-  {
-    $hashed_file_name = self::generateHashedFileName($profile_image_path);
-    $root_dir = "private/uploads/images/";
-    $parent_dir = substr($hashed_file_name, 0, 2);
-
-    // $parent_dirが存在しているかどうか
-    if (!is_dir($root_dir . $parent_dir)) {
-      mkdir($root_dir . $parent_dir, 0777, true);
-    }
-    $target_file = $root_dir . $parent_dir . '/' . $hashed_file_name;
-
-    move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
-
-    return $hashed_file_name;
-  }
-
-
 }
