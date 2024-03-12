@@ -50,6 +50,11 @@
             <img src="<?= htmlspecialchars($data["post"]->getImagePath()) ?>" class="w-96 h-96">
           </div>
         <?php endif; ?>
+        <?php if (!is_null($data["post"]->getVideoPath())) : ?>
+          <div class="flex justify-center">
+            <video src="<?= htmlspecialchars($data["post"]->getVideoPath()) ?>" class="w-96 h-96" controls>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
   <?php endforeach; ?>

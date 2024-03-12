@@ -75,11 +75,12 @@ class FileHelper
 
   public static function getProfileImagePath(string $path): string
   {
-    $base_path = "/private/uploads/images";
+    $file_type = self::getFIleType($path);
+
+    $root_dir = $file_type === 'mp4' ? "private/uploads/video/" : "private/uploads/images/";
 
     $parent_path = self::generateParentPath($path);
-
-    $image_path = $base_path . '/' . $parent_path . '/' . $path;
+    $image_path = $root_dir . $parent_path . '/' . $path;
 
     return $image_path;
   }
