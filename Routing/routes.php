@@ -153,28 +153,31 @@ return [
         $request_fields = [
           'content' => ValueType::CONTENT,
         ];
-        
+
         $validatedData = ValidationHelper::validateFields($request_fields, $_POST);
 
         $postDAO = DAOFactory::getPostDAO();
 
-        $post_image_path = null;
+        $post_file_path = null;
 
         if (FileHelper::isExitUserUploadFile($_FILES)) {
           // 存在していればハッシュ化されたimage_pathを取得
-          $post_image_path = FileHelper::getFilePath($_FILES);
+          $post_file_path = FileHelper::getFilePath($_FILES);
         }
+        $file_type = $_FILES['image']['type'];
+        error_log($file_type);
 
         $post = new Post(
           content: $validatedData['content'],
           user_id: $_SESSION['user_id'],
-          image_path: $post_image_path
+          image_path: $file_type === "video/mp4" ? null : $post_file_path,
+          video_path: $file_type === "video/mp4" ? $post_file_path : null,
         );
 
         //TODO: 画像を保存するロジックの追加をする
         $postDAO->create($post);
 
-        if (!is_null($post_image_path)) FileHelper::saveImageFile($post_image_path);
+        if (!is_null($post_file_path)) FileHelper::saveImageFile($post_file_path);
 
         FlashData::setFlashData('success', '投稿が完了しました!');
 
@@ -271,7 +274,7 @@ return [
     try {
       $profile_image_path = null;
 
-      if(FileHelper::isExitUserUploadFile($_FILES)){
+      if (FileHelper::isExitUserUploadFile($_FILES)) {
         $profile_image_path = FileHelper::getFilePath($_FILES);
       }
       $profileDAO = DAOFactory::getProfileDAO();

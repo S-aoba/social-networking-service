@@ -17,15 +17,16 @@ class PostDAOImpl implements PostDAO
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = 'INSERT INTO posts (content, user_id, image_path) VALUES (?, ?, ?)';
+    $query = 'INSERT INTO posts (content, user_id, image_path, video_path) VALUES (?, ?, ?, ?)';
 
     $result = $db->prepareAndExecute(
       $query,
-      'sis',
+      'siss',
       [
         $post->getContent(),
         $post->getUserId(),
-        $post->getImagePath()
+        $post->getImagePath(),
+        $post->getVideoPath(),
       ]
     );
 
@@ -54,7 +55,7 @@ class PostDAOImpl implements PostDAO
   {
     $profile_image_path = FileHelper::getProfileImagePath($data['profile_image_path']);
     $post_image_path = is_null($data['image_path']) ? null : FileHelper::getProfileImagePath($data['image_path']);
-    $post_video_path = is_null($data['video_path']) ? null : FileHelper::getProfileImagePath($data['video_image']);
+    $post_video_path = is_null($data['video_path']) ? null : FileHelper::getProfileImagePath($data['video_path']);
 
     return [
       "post" =>
