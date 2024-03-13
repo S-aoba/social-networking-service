@@ -99,7 +99,10 @@
           <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
           <div class="flex ">
             <img src="<?= htmlspecialchars($login_user_profile_image_path) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
-            <textarea placeholder="返信をポスト" name="reply" id="reply" cols="30" rows="10" class="p-3 ml-4 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full h-20" maxlength="255"></textarea>
+            <textarea placeholder="返信をポスト" name="reply_content" id="reply_content" cols="30" rows="10" class="p-3 ml-4 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full h-20" maxlength="255"></textarea>
+          </div>
+          <div class="mt-4 flex justify-end">
+            <button id="reply" type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">返信</button>
           </div>
         </form>
         <!-- 返信リスト -->
