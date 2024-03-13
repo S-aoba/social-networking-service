@@ -134,14 +134,17 @@ return [
     $data_list = [];
     $postLikeDAO = DAOFactory::getPostLikeDAO();
 
+    $login_user_id = $_SESSION['user_id'];
+
     foreach ($data as $data) {
       $data_list[] = [
         'post' => $data['post'],
         "profile" => $data["profile"],
         'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
+        'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
       ];
     }
-    $login_user_profile = DAOFactory::getProfileDAO()->getById($_SESSION['user_id']);
+    $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
     $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
 
     return new HTMLRenderer('page/home', ['data_list' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path]);

@@ -67,4 +67,24 @@ class PostLikeDAOImpl implements PostLikeDAO
 
     return $result ?? [];
   }
+
+  public function getLikeByUserId(int $user_id, int $post_id): bool
+  {
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT * FROM post_likes WHERE user_id = ? AND post_id = ?";
+
+    $result = $db->prepareAndFetchAll(
+      $query,
+      'ii',
+      [
+        $user_id,
+        $post_id
+      ]
+    );
+    return (
+      count($result) > 0
+      && $result[0]['user_id'] === $user_id
+      && $result[0]['post_id'] === $post_id);
+  }
 }

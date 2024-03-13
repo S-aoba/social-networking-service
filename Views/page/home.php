@@ -59,37 +59,39 @@
       <!-- Comment -->
       <div class="border-t border-blue-800 py-3 flex justify-start items-center">
         <!-- unLike -->
-        <form action="#" method="POST" id="unlikeForm">
-          <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
-          <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
-          <button class="group inline-block text-lg text-pink-500">
-            <span class="inline-flex items-center justify-center h-10 w-10 rounded-full">
-              <span class="transition-colors duration-300 group-hover:border-pink-500 group-hover:bg-pink-100 group-hover:text-pink-500 rounded-full px-2 py-1">
-                ♡
+        <?php if ($data['isLike']) : ?>
+          <form action="#" method="POST" id="unlikeForm">
+            <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
+            <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+            <button class="group inline-block text-lg text-pink-500">
+              <span class="inline-flex items-center justify-center h-10 w-10 rounded-full">
+                <span class="transition-colors duration-300 group-hover:border-pink-500 group-hover:bg-pink-100 group-hover:text-pink-500 rounded-full px-2 py-1">
+                  ♡
+                </span>
               </span>
-            </span>
-            <span class="transition-colors duration-300 group-hover:text-pink-500 -ml-3">
-              <?= $data['postLikeCount'][0]["COUNT(*)"] ?>
-            </span>
-          </button>
-
-        </form>
-
-        <!-- like -->
-        <form action="#" method="POST" id="likeForm">
-          <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
-          <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
-          <button id="likeBtn" type="submit" class="group inline-block text-lg">
-            <span class="inline-flex items-center justify-center h-10 w-10 rounded-full">
-              <span class="transition-colors duration-300 group-hover:border-pink-500 group-hover:bg-pink-100 group-hover:text-pink-500 rounded-full px-2 py-1">
-                ♡
+              <span class="transition-colors duration-300 group-hover:text-pink-500 -ml-3">
+                <?= $data['postLikeCount'][0]["COUNT(*)"] ?>
               </span>
-            </span>
-            <span class="transition-colors duration-300 group-hover:text-pink-500 -ml-3">
-              100
-            </span>
-          </button>
-        </form>
+            </button>
+
+          </form>
+        <?php else : ?>
+          <!-- like -->
+          <form action="#" method="POST" id="likeForm">
+            <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
+            <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+            <button id="likeBtn" type="submit" class="group inline-block text-lg">
+              <span class="inline-flex items-center justify-center h-10 w-10 rounded-full">
+                <span class="transition-colors duration-300 group-hover:border-pink-500 group-hover:bg-pink-100 group-hover:text-pink-500 rounded-full px-2 py-1">
+                  ♡
+                </span>
+              </span>
+              <span class="transition-colors duration-300 group-hover:text-pink-500 -ml-3">
+                <?= $data['postLikeCount'][0]["COUNT(*)"] ?>
+              </span>
+            </button>
+          </form>
+        <?php endif; ?>
       </div>
     </div>
   <?php endforeach; ?>

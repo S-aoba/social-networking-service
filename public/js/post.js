@@ -90,7 +90,11 @@ unLikeForms.forEach((unLikeForm) => {
       body: unLikeFormData,
     }).then((res) => {
       res.json().then((data) => {
-        console.log(data.status);
+        if (data.status === 'success') {
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+        }
       });
     });
   });
@@ -109,7 +113,11 @@ LikeForms.forEach((LikeForm) => {
       body: LikeFormData,
     }).then((res) => {
       res.json().then((data) => {
-        console.log(data.status);
+        if (data.status === 'success') {
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+        }
       });
     });
   });
