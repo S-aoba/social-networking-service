@@ -3,7 +3,7 @@
   <form action="#" method="POST" id="postForm" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
     <div class="flex items-center">
-      <img src="<?= htmlspecialchars($login_user_profile_image_path) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full">
+      <img src="<?= htmlspecialchars($login_user_profile_image_path) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
       <textarea id="content" name="content" class="p-3 ml-4 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full" rows="3" placeholder="何かつぶやく..." maxlength="255" required></textarea>
     </div>
     <div class="mt-3">
@@ -26,7 +26,7 @@
       <div class="flex items-center">
         <!-- hrefにユーザー名を入れる (profile/{username}) -->
         <a href="profile/<?= htmlspecialchars($data["profile"]->getUsername()) ?>">
-          <img src="<?= htmlspecialchars($data["profile"]->getProfileImage()) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full">
+          <img src="<?= htmlspecialchars($data["profile"]->getProfileImage()) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
         </a>
         <div class="ml-4 w-full">
           <div class="flex items-center justify-between py-2">
@@ -56,8 +56,7 @@
           </div>
         <?php endif; ?>
       </div>
-      <!-- Comment -->
-      <div class="border-t border-blue-800 py-3 flex justify-start items-center">
+      <div class="mt-2 border-t border-gray-300 py-3 flex justify-start items-center">
         <!-- unLike -->
         <?php if ($data['isLike']) : ?>
           <form action="#" method="POST" id="unlikeForm">
@@ -92,6 +91,28 @@
             </button>
           </form>
         <?php endif; ?>
+      </div>
+      <div class="flex flex-col space-y-4 border-t border-gray-300 pt-5">
+        <!-- 返信フォーム -->
+        <form action="#" method="POST" id="replyForm">
+          <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
+          <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+          <div class="flex ">
+            <img src="<?= htmlspecialchars($login_user_profile_image_path) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
+            <textarea placeholder="返信をポスト" name="reply" id="reply" cols="30" rows="10" class="p-3 ml-4 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full h-20" maxlength="255"></textarea>
+          </div>
+        </form>
+        <!-- 返信リスト -->
+        <h3 class="text-lg font-bold text-start text-blue-800">--返信--</h3>
+        <div id="reply-List">
+          <!-- 個別の返信 -->
+          <div class="p-3 border-t border-b border-gray-300 w-full flex">
+            <!-- TODO:返信したユーザーのプロフィール画像に変更すること。今はとりあえずUIを確認したいのでログインユーザーの画像を挟んでいる -->
+            <img src="<?= htmlspecialchars($login_user_profile_image_path) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
+            <p class="ml-2">毎日のように笑顔で過ごしましょう。小さな幸せを見つけ、大切な人たちと楽しい時間を過ごしましょう。困難な時でも希望を持ち、前向きに挑戦しましょう。自分自身を信じ、努力と忍耐を持って目標に向かって進みましょう。明日への希望を胸に、心豊かな日々を送りましょう。
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   <?php endforeach; ?>
