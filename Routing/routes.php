@@ -16,6 +16,7 @@ use Models\Profile;
 use Models\User;
 use Models\Follow;
 use Models\Post;
+use Models\PostLike;
 
 return [
 
@@ -363,5 +364,41 @@ return [
       FlashData::setFlashData('error', 'An error occurred.');
       return new JSONRenderer(["status" => "error."]);
     }
+  })->setMiddleware(['auth']),
+
+  'form/unlike' => Route::create('form/unlike', function (): HTTPRenderer {
+
+    $post__id = $_POST['post_id'];
+    $login_user_id = $_SESSION['user_id'];
+
+
+    $postLikeDAO = DAOFactory::getPostLikeDAO();
+
+    $postLike = new PostLike(
+      user_id: $login_user_id,
+      post_id: $post__id,
+    );
+
+
+    $postLikeDAO->removePostLike($postLike);
+    return new JSONRenderer(['status' => 'success']);
+  })->setMiddleware(['auth']),
+
+  'form/like' => Route::create('form/like', function (): HTTPRenderer {
+
+    $post__id = $_POST['post_id'];
+    $login_user_id = $_SESSION['user_id'];
+    error_log($post__id);
+
+    $postLikeDAO = DAOFactory::getPostLikeDAO();
+
+    $postLike = new PostLike(
+      user_id: $login_user_id,
+      post_id: $post__id,
+    );
+
+
+    $postLikeDAO->addPostLike($postLike);
+    return new JSONRenderer(['status' => 'success']);
   })->setMiddleware(['auth']),
 ];
