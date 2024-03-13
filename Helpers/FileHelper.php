@@ -77,7 +77,7 @@ class FileHelper
   {
     $file_type = self::getFIleType($path);
 
-    $root_dir = $file_type === 'mp4' ? "private/uploads/video/" : "private/uploads/images/";
+    $root_dir = $file_type === 'mp4' ? "/private/uploads/video/" : "/private/uploads/images/";
 
     $parent_path = self::generateParentPath($path);
     $image_path = $root_dir . $parent_path . '/' . $path;
