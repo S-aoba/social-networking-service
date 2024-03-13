@@ -69,7 +69,7 @@
               </span>
             </span>
             <span class="transition-colors duration-300 group-hover:text-pink-500 -ml-3">
-              100
+              <?= $data['postLikeCount'][0]["COUNT(*)"] ?>
             </span>
           </button>
 

@@ -50,4 +50,21 @@ class PostLikeDAOImpl implements PostLikeDAO
     if ($result) return true;
     return false;
   }
+
+  public function getLikeCountByPostId(int $post_id): array
+  {
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT COUNT(*) FROM post_likes WHERE post_id = ?";
+
+    $result = $db->prepareAndFetchAll(
+      $query,
+      'i',
+      [
+        $post_id
+      ]
+    );
+
+    return $result ?? [];
+  }
 }

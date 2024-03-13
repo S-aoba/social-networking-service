@@ -132,14 +132,15 @@ return [
     $data = $postDAO->getAllPosts(0, 10);
 
     $data_list = [];
+    $postLikeDAO = DAOFactory::getPostLikeDAO();
 
     foreach ($data as $data) {
       $data_list[] = [
         'post' => $data['post'],
         "profile" => $data["profile"],
+        'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
       ];
     }
-
     $login_user_profile = DAOFactory::getProfileDAO()->getById($_SESSION['user_id']);
     $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
 
