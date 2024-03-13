@@ -57,7 +57,7 @@ class Reply implements Model
     $this->post_id = $post_id;
   }
 
-  public function getIdEdited(): int
+  public function getIsEdited(): int
   {
     return $this->is_edited;
   }
