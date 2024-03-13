@@ -371,38 +371,50 @@ return [
   })->setMiddleware(['auth']),
 
   'form/unlike' => Route::create('form/unlike', function (): HTTPRenderer {
-
-    $post__id = $_POST['post_id'];
-    $login_user_id = $_SESSION['user_id'];
-
-
-    $postLikeDAO = DAOFactory::getPostLikeDAO();
-
-    $postLike = new PostLike(
-      user_id: $login_user_id,
-      post_id: $post__id,
-    );
+    try {
+      $post__id = $_POST['post_id'];
+      $login_user_id = $_SESSION['user_id'];
 
 
-    $postLikeDAO->removePostLike($postLike);
-    return new JSONRenderer(['status' => 'success']);
+      $postLikeDAO = DAOFactory::getPostLikeDAO();
+
+      $postLike = new PostLike(
+        user_id: $login_user_id,
+        post_id: $post__id,
+      );
+
+
+      $postLikeDAO->removePostLike($postLike);
+      return new JSONRenderer(['status' => 'success']);
+    } catch (\Exception $e) {
+
+      error_log($e->getMessage());
+
+      return new JSONRenderer(['status' => 'error']);
+    }
   })->setMiddleware(['auth']),
 
   'form/like' => Route::create('form/like', function (): HTTPRenderer {
 
-    $post__id = $_POST['post_id'];
-    $login_user_id = $_SESSION['user_id'];
-    error_log($post__id);
+    try {
+      $post__id = $_POST['post_id'];
+      $login_user_id = $_SESSION['user_id'];
 
-    $postLikeDAO = DAOFactory::getPostLikeDAO();
+      $postLikeDAO = DAOFactory::getPostLikeDAO();
 
-    $postLike = new PostLike(
-      user_id: $login_user_id,
-      post_id: $post__id,
-    );
+      $postLike = new PostLike(
+        user_id: $login_user_id,
+        post_id: $post__id,
+      );
 
 
-    $postLikeDAO->addPostLike($postLike);
-    return new JSONRenderer(['status' => 'success']);
+      $postLikeDAO->addPostLike($postLike);
+      return new JSONRenderer(['status' => 'success']);
+    } catch (\Exception $e) {
+
+      error_log($e->getMessage());
+
+      return new JSONRenderer(['status' => 'error']);
+    }
   })->setMiddleware(['auth']),
 ];

@@ -94,6 +94,10 @@ unLikeForms.forEach((unLikeForm) => {
           setTimeout(() => {
             location.reload();
           }, 1000);
+        } else if (data.success === 'error') {
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
         }
       });
     });
@@ -114,6 +118,10 @@ LikeForms.forEach((LikeForm) => {
     }).then((res) => {
       res.json().then((data) => {
         if (data.status === 'success') {
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+        } else if (data.success === 'error') {
           setTimeout(() => {
             location.reload();
           }, 1000);
