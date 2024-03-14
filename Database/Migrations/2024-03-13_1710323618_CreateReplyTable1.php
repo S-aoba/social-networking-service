@@ -31,7 +31,7 @@ class CreateReplyTable1 implements SchemaMigration
     {
         // ロールバックロジックを追加してください
         return [
-            'DROP TABLE IF EXITS replies'
+            'DROP TABLE IF EXISTS replies'
         ];
     }
 }
