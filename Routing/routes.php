@@ -17,6 +17,7 @@ use Models\User;
 use Models\Follow;
 use Models\Post;
 use Models\PostLike;
+use Models\Reply;
 
 return [
 
@@ -417,4 +418,35 @@ return [
       return new JSONRenderer(['status' => 'error']);
     }
   })->setMiddleware(['auth']),
+
+  'form/reply' => Route::create('form/reply', function (): HTTPRenderer {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+    try {
+      $request_field = [
+        "reply_content" => ValueType::STRING,
+      ];
+
+      $validationData = ValidationHelper::validateFields($request_field, $_POST);
+
+      $replyDAO = DAOFactory::getReplyDAO();
+
+      $reply = new Reply(
+        content: $validationData['reply_content'],
+        user_id: $_SESSION['user_id'],
+        post_id: $_POST['post_id'],
+        is_edited: 2,
+      );
+
+      $replyDAO->createReply($reply);
+
+      return new JSONRenderer(['status' => 'success']);
+    } catch (\InvalidArgumentException $e) {
+      error_log($e->getMessage());
+    } catch (\Exception $e) {
+      error_log($e->getMessage());
+    }
+
+    // TODO: Validation
+  })->setMiddleware(['auth'])
 ];
