@@ -70,13 +70,14 @@ class ReplyDAOImpl implements ReplyDAO
     return false;
   }
 
-  public function getReplyById(int $replyId): ?Reply
+  public function getReplyByPostId(int $postId): ?array
   {
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = $db->prepare('SELECT * FROM replies WHERE id = ?');
-    $result = $db->prepareAndFetchAll($query, 'i', [$replyId])[0] ?? null;
+    $query = 'SELECT * FROM replies WHERE post_id = ?';
+
+    $result = $db->prepareAndFetchAll($query, 'i', [$postId]) ?? null;
 
     if ($result === null) return null;
     return $this->resultsToReply($result);
@@ -87,7 +88,7 @@ class ReplyDAOImpl implements ReplyDAO
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = $db->prepare('SELECT COUNT(*) FROM replies WHERE post_id = ?');
+    $query = 'SELECT COUNT(*) FROM replies WHERE post_id = ?';
     $result = $db->prepareAndFetchAll($query, 'i', [$postId])[0] ?? null;
     if ($result === null) return 0;
     return $result['COUNT(*)'];
@@ -96,7 +97,6 @@ class ReplyDAOImpl implements ReplyDAO
 
   private function resultToReply(array $results): ?Reply
   {
-    if ($results === null) return null;
     return new Reply(
       $results['content'],
       $results['user_id'],

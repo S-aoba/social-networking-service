@@ -135,16 +135,20 @@ return [
     $data_list = [];
     $postLikeDAO = DAOFactory::getPostLikeDAO();
 
+    $replyDAO = DAOFactory::getReplyDAO();
+
     $login_user_id = $_SESSION['user_id'];
 
     foreach ($data as $data) {
       $data_list[] = [
         'post' => $data['post'],
         "profile" => $data["profile"],
+        'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
         'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
         'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
       ];
     }
+
     $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
     $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
 

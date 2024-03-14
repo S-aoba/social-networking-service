@@ -105,17 +105,28 @@
             <button id="reply" type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">返信</button>
           </div>
         </form>
-        <!-- 返信リスト -->
-        <h3 class="text-lg font-bold text-start text-blue-800">--返信--</h3>
-        <div id="reply-List">
-          <!-- 個別の返信 -->
-          <div class="p-3 border-t border-b border-gray-300 w-full flex">
-            <!-- TODO:返信したユーザーのプロフィール画像に変更すること。今はとりあえずUIを確認したいのでログインユーザーの画像を挟んでいる -->
-            <img src="<?= htmlspecialchars($login_user_profile_image_path) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
-            <p class="ml-2">毎日のように笑顔で過ごしましょう。小さな幸せを見つけ、大切な人たちと楽しい時間を過ごしましょう。困難な時でも希望を持ち、前向きに挑戦しましょう。自分自身を信じ、努力と忍耐を持って目標に向かって進みましょう。明日への希望を胸に、心豊かな日々を送りましょう。
-            </p>
+        <?php if ($data['reply']) : ?>
+          <!-- 返信リスト -->
+          <h3 class="text-lg font-bold text-start text-blue-800">--返信--</h3>
+          <div id="reply-List">
+            <?php foreach ($data['reply'] as $reply) : ?>
+              <!-- 個別の返信 -->
+              <div class="p-3 border-t border-b border-gray-300 w-full flex flex-col space-y-3">
+                <div class="flex space-x-5 items-center">
+                  <!-- TODO:返信したユーザーのプロフィール画像に変更すること。今はとりあえずUIを確認したいのでログインユーザーの画像を挟んでいる -->
+                  <img src="<?= htmlspecialchars($login_user_profile_image_path) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
+                  <!-- TODO:本当はここは返信ユーザーのユーザーネーム -->
+                  <span><?= $reply->getUserId() ?></span>
+                </div>
+                <div class="py-3">
+                  <p class="ml-2">
+                    <?= $reply->getContent() ?>
+                  </p>
+                </div>
+              </div>
+            <?php endforeach; ?>
           </div>
-        </div>
+        <?php endif; ?>
       </div>
     </div>
   <?php endforeach; ?>
