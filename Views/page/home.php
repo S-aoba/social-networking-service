@@ -9,10 +9,7 @@
     <div class="mt-3">
       <input id="image" name="image" type="file" accept=".png, .jpg, .jpeg, .gif, .mp4">
     </div>
-    <div class="mt-3 max-h-96 w-full flex justify-center">
-      <img id="preview-image" src="" class="object-cover max-h-96">
-      <video id="preview-video" src="">
-      </video>
+    <div id="preview" class="mt-3 max-h-96 w-full flex justify-center">
     </div>
     <div class="mt-4 flex justify-end">
       <button id="post" type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">投稿する</button>
