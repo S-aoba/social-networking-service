@@ -451,5 +451,40 @@ return [
     }
 
     // TODO: Validation
+  })->setMiddleware(['auth']),
+
+  'form/reply/delete' => Route::create('form/reply/delete', function (): HTTPRenderer {
+
+    try {
+      $reply_id = $_POST['reply_id'];
+
+      $replyDAO = DAOFactory::getReplyDAO();
+
+      $replyDAO->deleteReply($reply_id);
+
+      return new JSONRenderer(['status' => 'success']);
+    } catch (\Exception $e) {
+      error_log($e->getMessage());
+    }
   })->setMiddleware(['auth'])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ];

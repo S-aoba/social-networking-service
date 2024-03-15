@@ -112,10 +112,19 @@
             <?php foreach ($data['reply'] as $data) : ?>
               <!-- 個別の返信 -->
               <div class="p-3 border-t border-b border-gray-300 w-full flex flex-col space-y-3">
-                <div class="flex space-x-5 items-center">
-                  <img src="<?= htmlspecialchars($data['reply_user_profile']->getProfileImage()) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
-                  <span><?= htmlspecialchars($data['reply_user_profile']->getUserName()) ?></span>
-                  <p class="text-xs text-gray-500"><?= htmlspecialchars($data["reply"]->getDataTimeStamp()->getCreatedAt()) ?></p>
+                <div class="flex items-center justify-between">
+                  <div class="flex space-x-5 items-center">
+                    <img src="<?= htmlspecialchars($data['reply_user_profile']->getProfileImage()) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
+                    <span><?= htmlspecialchars($data['reply_user_profile']->getUserName()) ?></span>
+                    <p class="text-xs text-gray-500"><?= htmlspecialchars($data["reply"]->getDataTimeStamp()->getCreatedAt()) ?></p>
+                  </div>
+                  <?php if ($data['reply']->getUserId() === $_SESSION['user_id']) : ?>
+                    <form action="#" method="POST" id="deleteReplyForm">
+                      <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
+                      <input type="hidden" name="reply_id" value="<?= $data['reply']->getId() ?>">
+                      <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-2 py-1 rounded-md">削除</button>
+                    </form>
+                  <?php endif; ?>
                 </div>
                 <div class="py-3">
                   <p class="ml-2">
