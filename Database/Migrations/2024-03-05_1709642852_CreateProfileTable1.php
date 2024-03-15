@@ -4,7 +4,7 @@ namespace Database\Migrations;
 
 use Database\SchemaMigration;
 
-class AddProfileTable1 implements SchemaMigration
+class CreateProfileTable1 implements SchemaMigration
 {
     public function up(): array
     {

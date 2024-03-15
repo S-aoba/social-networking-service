@@ -9,19 +9,22 @@ use Response\HTTPRenderer;
 use Response\Render\HTMLRenderer;
 use Response\Render\RedirectRenderer;
 use Database\DataAccess\DAOFactory;
-use Models\Profile;
 use Response\Render\JSONRenderer;
 use Routing\Route;
 use Types\ValueType;
+use Models\Profile;
 use Models\User;
 use Models\Follow;
-
+use Models\Post;
+use Models\PostLike;
+use Models\Reply;
 
 return [
 
   'login' => Route::create('login', function (): HTTPRenderer {
     return new HTMLRenderer('page/login');
   })->setMiddleware(['guest']),
+
   'form/login' => Route::create('form/login', function (): HTTPRenderer {
     try {
       if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -130,20 +133,26 @@ return [
     $data = $postDAO->getAllPosts(0, 10);
 
     $data_list = [];
+    $postLikeDAO = DAOFactory::getPostLikeDAO();
+
+    $replyDAO = DAOFactory::getReplyDAO();
+
+    $login_user_id = $_SESSION['user_id'];
 
     foreach ($data as $data) {
       $data_list[] = [
-        "profile" => $data['profile'],
         'post' => $data['post'],
+        "profile" => $data["profile"],
+        'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
+        'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
+        'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
       ];
     }
 
-    $profile = DAOFactory::getProfileDAO()->getById($_SESSION['user_id']);
-    if ($profile) {
-      $profile_image_path = FileHelper::getProfileImagePath($profile->getProfileImage());
-    }
+    $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
+    $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
 
-    return new HTMLRenderer('page/home', ['data_list' => $data_list, "profile_image_path" => $profile_image_path]);
+    return new HTMLRenderer('page/home', ['data_list' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path]);
   })->setMiddleware(['auth']),
 
   'form/post' => Route::create(
@@ -151,22 +160,83 @@ return [
     function (): HTTPRenderer {
       try {
         // TODO: 入力された内容を検証する
+        $request_fields = [
+          'content' => ValueType::CONTENT,
+        ];
+
+        $validatedData = ValidationHelper::validateFields($request_fields, $_POST);
 
         $postDAO = DAOFactory::getPostDAO();
 
-        $postDAO->create($_POST['content'], $_SESSION['user_id']);
+        $post_file_path = null;
 
-        return new JSONRenderer(['status' => 'success', 'message' => '投稿が完了しました!']);
+        if (FileHelper::isExitUserUploadFile($_FILES)) {
+          // 存在していればハッシュ化されたimage_pathを取得
+          $post_file_path = FileHelper::getFilePath($_FILES);
+        }
+        $file_type = $_FILES['image']['type'];
+        error_log($file_type);
+
+        $post = new Post(
+          content: $validatedData['content'],
+          user_id: $_SESSION['user_id'],
+          image_path: $file_type === "video/mp4" ? null : $post_file_path,
+          video_path: $file_type === "video/mp4" ? $post_file_path : null,
+        );
+
+        //TODO: 画像を保存するロジックの追加をする
+        $postDAO->create($post);
+
+        if (!is_null($post_file_path)) FileHelper::saveImageFile($post_file_path);
+
+        FlashData::setFlashData('success', '投稿が完了しました!');
+
+        return new JSONRenderer(['status' => 'success']);
       } catch (Exception $e) {
         error_log($e->getMessage());
 
-        FlashData::setFlashData('error', 'An error occurred.');
+        FlashData::setFlashData('error', '投稿に失敗しました.');
+        return new JSONRenderer(["status" => "error."]);
+      } catch (\InvalidArgumentException $e) {
+        error_log($e->getMessage());
+
+        FlashData::setFlashData('error', $e->getMessage());
         return new JSONRenderer(["status" => "error."]);
       }
     }
   )->setMiddleware(['auth']),
 
-  // Userのプロフィールの編集画面
+  'form/post/delete' => Route::create('form/post/delete', function (): HTTPRenderer {
+    try {
+      $data = $_POST;
+
+      // 削除対象がログインしているユーザーのものかを検証
+      $login_user_id = $_SESSION['user_id'];
+      $post_user_id = intval($data['post_user_id']);
+
+      ValidationHelper::isUserPost($login_user_id, $post_user_id);
+
+      $postDAO = DAOFactory::getPostDAO();
+
+      $target_post_id = intval($data['post_id']);
+
+      $is_post_deleted = $postDAO->delete($target_post_id);
+
+      if (!$is_post_deleted) throw new Exception("");
+
+      FlashData::setFlashData('success', '投稿の削除に成功しました');
+      return new JSONRenderer(['status' => 'success']);
+    } catch (\InvalidArgumentException $e) {
+
+      error_log($e->getMessage());
+      return new JSONRenderer(['status' => 'error']);
+    } catch (Exception $e) {
+
+      error_log($e->getMessage());
+      return new JSONRenderer(['status' => 'error']);
+    }
+  })->setMiddleware(['auth']),
+
   'edit/profile' => Route::create('profile', function (): HTTPRenderer {
 
     $user_id = $_SESSION['user_id'];
@@ -208,23 +278,23 @@ return [
       return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しください。"]);
     }
   })->setMiddleware(['auth']),
+
   'form/update/profile-image' => Route::create('form/update/profile-image', function (): HTTPRenderer {
 
     try {
-      $file_name = $_FILES['image']['name'];
-      $file_size = $_FILES['image']['size'];
-      $file_type = $_FILES['image']['type'];
+      $profile_image_path = null;
 
-      // アップロードされた画像のファイルの種類を確認する(対応可能拡張子: jpg, jpeg, png, gif)
-      if (!ValidationHelper::checkFileExtension($file_type)) return new JSONRenderer(["status" => "アップロードされたファイルの拡張子が対応していません。"]);
-      // アップロードされた画像のファイルサイズを確認する　一回のアップロードの最大サイズ3MBに設定
-      if (!FileHelper::checkUploadFileSize($file_size)) return new JSONRenderer(["status" => "アップロードされたファイルのサイズが3MBを超えています。"]);
-      // private/uploads/images/に保存
-      $hashed_file_name = FileHelper::saveImageFile($file_name);
-
+      if (FileHelper::isExitUserUploadFile($_FILES)) {
+        $profile_image_path = FileHelper::getFilePath($_FILES);
+      }
       $profileDAO = DAOFactory::getProfileDAO();
 
-      $profileDAO->updateProfileImage($hashed_file_name);
+      $profileDAO->updateProfileImage($profile_image_path);
+
+
+      // private/uploads/images/に保存
+      // $hashed_file_name = FileHelper::saveImageFile($file_name);
+
       return new JSONRenderer(["status" => "success"]);
     } catch (\Throwable $th) {
       return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しくください。"]);
@@ -304,4 +374,149 @@ return [
       return new JSONRenderer(["status" => "error."]);
     }
   })->setMiddleware(['auth']),
+
+  'form/unlike' => Route::create('form/unlike', function (): HTTPRenderer {
+    try {
+      $post__id = $_POST['post_id'];
+      $login_user_id = $_SESSION['user_id'];
+
+
+      $postLikeDAO = DAOFactory::getPostLikeDAO();
+
+      $postLike = new PostLike(
+        user_id: $login_user_id,
+        post_id: $post__id,
+      );
+
+
+      $postLikeDAO->removePostLike($postLike);
+      return new JSONRenderer(['status' => 'success']);
+    } catch (\Exception $e) {
+
+      error_log($e->getMessage());
+
+      return new JSONRenderer(['status' => 'error']);
+    }
+  })->setMiddleware(['auth']),
+
+  'form/like' => Route::create('form/like', function (): HTTPRenderer {
+
+    try {
+      $post__id = $_POST['post_id'];
+      $login_user_id = $_SESSION['user_id'];
+
+      $postLikeDAO = DAOFactory::getPostLikeDAO();
+
+      $postLike = new PostLike(
+        user_id: $login_user_id,
+        post_id: $post__id,
+      );
+
+
+      $postLikeDAO->addPostLike($postLike);
+      return new JSONRenderer(['status' => 'success']);
+    } catch (\Exception $e) {
+
+      error_log($e->getMessage());
+
+      return new JSONRenderer(['status' => 'error']);
+    }
+  })->setMiddleware(['auth']),
+
+  'form/reply' => Route::create('form/reply', function (): HTTPRenderer {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+    try {
+      $request_field = [
+        "reply_content" => ValueType::STRING,
+      ];
+
+      $validationData = ValidationHelper::validateFields($request_field, $_POST);
+
+      $replyDAO = DAOFactory::getReplyDAO();
+
+      $reply = new Reply(
+        content: $validationData['reply_content'],
+        user_id: $_SESSION['user_id'],
+        post_id: $_POST['post_id'],
+      );
+
+      $replyDAO->createReply($reply);
+
+      return new JSONRenderer(['status' => 'success']);
+    } catch (\InvalidArgumentException $e) {
+      error_log($e->getMessage());
+    } catch (\Exception $e) {
+      error_log($e->getMessage());
+    }
+
+    // TODO: Validation
+  })->setMiddleware(['auth']),
+
+  'form/reply/delete' => Route::create('form/reply/delete', function (): HTTPRenderer {
+
+    try {
+      $reply_id = $_POST['reply_id'];
+
+      $replyDAO = DAOFactory::getReplyDAO();
+
+      $replyDAO->deleteReply($reply_id);
+
+      return new JSONRenderer(['status' => 'success']);
+    } catch (\Exception $e) {
+      error_log($e->getMessage());
+    }
+  })->setMiddleware(['auth']),
+
+  'tweet' => Route::create('tweet', function (): HTTPRenderer {
+
+    $url = $_SERVER['PATH_INFO'];
+
+    preg_match('/\/tweet\/(.+)/', $url, $matches);
+
+    $post_id = $matches[1];
+
+    $postDAO = DAOFactory::getPostDAO();
+
+    $postLikeDAO = DAOFactory::getPostLikeDAO();
+
+    $replyDAO = DAOFactory::getReplyDAO();
+
+    $data = $postDAO->getByPostId($post_id);
+
+    $login_user_id = $_SESSION['user_id'];
+
+    $data_list = [
+      'post' => $data['post'],
+      "profile" => $data["profile"],
+      'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
+      'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
+      'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
+    ];
+
+    $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
+    $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
+
+    return new HTMLRenderer('page/tweet', ['data' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path]);
+  })->setMiddleware(['auth'])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ];

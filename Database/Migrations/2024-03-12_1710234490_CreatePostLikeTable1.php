@@ -11,12 +11,13 @@ class CreatePostLikeTable1 implements SchemaMigration
         // マイグレーションロジックをここに追加してください
         return [
             "CREATE TABLE IF NOT EXISTS post_likes (
-                user_id BIGINT,
-                post_id INT,
+                user_id INT NOT NULL,
+                post_id INT NOT NULL,
+                PRIMARY KEY (user_id, post_id),
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
-              );
-              "
+            );
+            "
         ];
     }
 
@@ -24,7 +25,7 @@ class CreatePostLikeTable1 implements SchemaMigration
     {
         // ロールバックロジックを追加してください
         return [
-            "DROP TABLE IF EXISTS post_likes;"
+            "DROP TABLE IF EXISTS post_likes"
         ];
     }
 }

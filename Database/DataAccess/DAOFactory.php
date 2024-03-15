@@ -7,6 +7,8 @@ use Database\DataAccess\Implementations\PostDAOImpl;
 use Database\DataAccess\Implementations\UserDAOImpl;
 use Database\DataAccess\Implementations\ProfileDAOImpl;
 use Database\DataAccess\Implementations\FollowDAOImpl;
+use Database\DataAccess\Implementations\PostLikeDAOImpl;
+use Database\DataAccess\Implementations\ReplyDAOImpl;
 
 use Helpers\Settings;
 
@@ -54,6 +56,24 @@ class DAOFactory
 
     return match ($driver) {
       default => new FollowDAOImpl(),
+    };
+  }
+
+  public static function getPostLikeDAO(): PostLikeDAOImpl
+  {
+    $driver = Settings::env('DATABASE_DRIVER');
+
+    return match ($driver) {
+      default => new PostLikeDAOImpl(),
+    };
+  }
+
+  public static function getReplyDAO(): ReplyDAOImpl
+  {
+    $driver = Settings::env('DATABASE_DRIVER');
+
+    return match ($driver) {
+      default => new ReplyDAOImpl(),
     };
   }
 }

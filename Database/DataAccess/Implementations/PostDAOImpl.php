@@ -12,19 +12,21 @@ use Helpers\FileHelper;
 
 class PostDAOImpl implements PostDAO
 {
-  public function create(string $content, int $userId): bool
+  public function create(Post $post): bool
   {
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = 'INSERT INTO posts (content, user_id) VALUES (?, ?)';
+    $query = 'INSERT INTO posts (content, user_id, image_path, video_path) VALUES (?, ?, ?, ?)';
 
     $result = $db->prepareAndExecute(
       $query,
-      'si',
+      'siss',
       [
-        $content,
-        $userId
+        $post->getContent(),
+        $post->getUserId(),
+        $post->getImagePath(),
+        $post->getVideoPath(),
       ]
     );
 
@@ -37,10 +39,11 @@ class PostDAOImpl implements PostDAO
     $mysqli = DatabaseManager::getMysqliConnection();
 
     $query =
-      "SELECT posts.*, profiles.*
+      "SELECT posts.*, profiles.*, posts.created_at AS post_created_at, posts.id AS post_id
       FROM posts
       JOIN profiles ON posts.user_id = profiles.user_id
-      LIMIT ?, ?
+      ORDER BY posts.created_at DESC
+      LIMIT ?, ?;
     ";
 
     $results = $mysqli->prepareAndFetchAll($query, 'ii', [$offset, $limit]);
@@ -50,25 +53,31 @@ class PostDAOImpl implements PostDAO
 
   private function resultToPost(array $data): array
   {
-    // profile Imageをbase64に変換する
-    $data['profile_image_path'] = FileHelper::getProfileImagePath($data['profile_image_path']);
+    $profile_image_path = FileHelper::getProfileImagePath($data['profile_image_path']);
+    $post_image_path = is_null($data['image_path']) ? null : FileHelper::getProfileImagePath($data['image_path']);
+    $post_video_path = is_null($data['video_path']) ? null : FileHelper::getProfileImagePath($data['video_path']);
+
     return [
       "post" =>
       new Post(
         content: $data['content'],
-        id: $data['id'],
-        timeStamp: new DataTimeStamp($data['created_at'], $data['created_at']),
-        user_id: $data['user_id']
+        id: $data['post_id'],
+        timeStamp: new DataTimeStamp($data['post_created_at'], $data['post_created_at']),
+        user_id: $data['user_id'],
+        image_path: $post_image_path,
+        video_path: $post_video_path,
       ),
       'profile' =>
       new Profile(
         user_id: $data['user_id'],
+        id: $data['id'],
         username: $data['username'],
         age: $data['age'],
         address: $data['address'],
         hobby: $data['hobby'],
         self_introduction: $data['self_introduction'],
-        profile_image_path: $data['profile_image_path']
+        profile_image_path: $profile_image_path,
+        timeStamp: new DataTimeStamp($data['created_at'], $data['updated_at'])
       )
     ];
   }
@@ -82,32 +91,57 @@ class PostDAOImpl implements PostDAO
     return $data_list;
   }
 
-  private function getRawById(int $id): ?array
+  private function getRawByPostId(int $id): ?array
   {
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = $db->prepare('SELECT * FROM posts WHERE id = ?');
-    $result = $db->prepareAndFetchAll($query, 'i', [$id])[0] ?? null;
+    $query =
+      "SELECT posts.*, profiles.*, posts.created_at AS post_created_at, posts.id AS post_id
+      FROM posts
+      JOIN profiles ON posts.user_id = profiles.user_id
+      WHERE posts.id = ?
+    ";
+    $result = $db->prepareAndFetchAll($query, 'i', [$id]) ?? null;
 
     if ($result === null) return null;
 
-    return $result;
+    return $result[0];
   }
 
-  private function rawDataToPost(array $rawData): Post
+  private function rawDataToPost(array $rawData): array
   {
-    return new Post(
-      id: $rawData['id'],
-      content: $rawData['content'],
-      user_id: $rawData['user_id'],
-      timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['created_at'])
-    );
+    $profile_image_path = FileHelper::getProfileImagePath($rawData['profile_image_path']);
+    $post_image_path = is_null($rawData['image_path']) ? null : FileHelper::getProfileImagePath($rawData['image_path']);
+    $post_video_path = is_null($rawData['video_path']) ? null : FileHelper::getProfileImagePath($rawData['video_path']);
+    return [
+      'post' =>
+      new Post(
+        content: $rawData['content'],
+        id: $rawData['id'],
+        user_id: $rawData['user_id'],
+        timeStamp: new DataTimeStamp($rawData['post_created_at'], $rawData['post_created_at']),
+        image_path: $post_image_path,
+        video_path: $post_video_path
+      ),
+      'profile' =>
+      new Profile(
+        user_id: $rawData['user_id'],
+        id: $rawData['id'],
+        username: $rawData['username'],
+        age: $rawData['age'],
+        address: $rawData['address'],
+        hobby: $rawData['hobby'],
+        self_introduction: $rawData['self_introduction'],
+        profile_image_path: $profile_image_path,
+        timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at'])
+      )
+    ];
   }
-  public function getById(int $id): ?Post
+  public function getByPostId(int $id): ?array
   {
 
-    $postRaw = $this->getRawById($id);
+    $postRaw = $this->getRawByPostId($id);
     if ($postRaw === null) return null;
 
     return $this->rawDataToPost($postRaw);
@@ -117,9 +151,9 @@ class PostDAOImpl implements PostDAO
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $stmt = $db->prepare('DELETE FROM posts WHERE id = ?');
-    $stmt->bind_param('i', $id);
-    $result = $stmt->execute();
+    $query = 'DELETE FROM posts WHERE id = ?';
+
+    $result = $db->prepareAndExecute($query, 'i', [$id]);
 
     if ($result) return true;
     return false;

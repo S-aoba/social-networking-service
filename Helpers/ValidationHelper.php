@@ -48,11 +48,13 @@ class ValidationHelper
         ValueType::PASSWORD =>
         is_string($value) &&
           strlen($value) >= 4, // Minimum 8 characters
-          // preg_match('/[A-Z]/', $value) && // 少なくとも1文字の大文字
-          // preg_match('/[a-z]/', $value) && // 少なくとも1文字の小文字
-          // preg_match('/\d/', $value) && // 少なくとも1桁
-          // preg_match('/[\W_]/', $value) // 少なくとも1つの特殊文字（アルファベット以外の文字）
-          // ? $value : throw new \InvalidArgumentException("The provided value is not a valid password."),
+        // preg_match('/[A-Z]/', $value) && // 少なくとも1文字の大文字
+        // preg_match('/[a-z]/', $value) && // 少なくとも1文字の小文字
+        // preg_match('/\d/', $value) && // 少なくとも1桁
+        // preg_match('/[\W_]/', $value) // 少なくとも1つの特殊文字（アルファベット以外の文字）
+        // ? $value : throw new \InvalidArgumentException("The provided value is not a valid password."),
+        ValueType::CONTENT => is_string($value) && strlen($value) <= 255 ? $value : throw new \InvalidArgumentException("The provided value is not a valid content."),
+
         default => throw new \InvalidArgumentException(sprintf("Invalid type for field: %s, with type %s", $field, $type)),
       };
 
@@ -66,14 +68,12 @@ class ValidationHelper
     return $validatedData;
   }
 
-  public static function checkFileExtension(string $file_type)
+
+  public static function isUserPost(int $login_user_id, int $post_user_id): void
   {
-    $file_type = strtolower($file_type);
-    $allowed_extensions = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
-    if (!in_array($file_type, $allowed_extensions)) {
-      return false;
+
+    if ($login_user_id !== $post_user_id) {
+      throw new \InvalidArgumentException(sprintf("Invalid value for field: User ID does not match post's user ID"));
     }
-    return true;
   }
 }
-//

@@ -10,4 +10,6 @@ enum ValueType: string
   case DATE = 'date'; // YYYY-MM-DD string
   case EMAIL = 'email'; // string
   case PASSWORD = 'password'; // string
+  case CONTENT = 'content'; // Postの内容
+  case FILE = 'file';
 }
