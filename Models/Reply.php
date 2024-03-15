@@ -13,7 +13,6 @@ class Reply implements Model
     private string $content,
     private int $user_id,
     private int $post_id,
-    private int $is_edited,
     private ?int $id = null,
     private ?int $parent_reply_id = null,
     private ?string $status = null,
@@ -57,15 +56,6 @@ class Reply implements Model
     $this->post_id = $post_id;
   }
 
-  public function getIsEdited(): int
-  {
-    return $this->is_edited;
-  }
-
-  public function setIsEdited(int $is_edited): void
-  {
-    $this->is_edited = $is_edited;
-  }
   public function getId(): ?int
   {
     return $this->id;

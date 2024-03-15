@@ -439,7 +439,6 @@ return [
         content: $validationData['reply_content'],
         user_id: $_SESSION['user_id'],
         post_id: $_POST['post_id'],
-        is_edited: 2,
       );
 
       $replyDAO->createReply($reply);
