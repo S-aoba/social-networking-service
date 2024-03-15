@@ -1,3 +1,13 @@
+document.addEventListener('DOMContentLoaded', function () {
+  const posts = document.querySelectorAll('#post');
+  posts.forEach(function (post) {
+    post.addEventListener('click', function () {
+      const postId = this.dataset.postId;
+      window.location.href = '/tweet/' + postId; // 個別投稿ページへのリンク
+    });
+  });
+});
+
 const preview = document.getElementById('preview');
 
 document.getElementById('image').addEventListener('change', function () {

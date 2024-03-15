@@ -91,32 +91,57 @@ class PostDAOImpl implements PostDAO
     return $data_list;
   }
 
-  private function getRawById(int $id): ?array
+  private function getRawByPostId(int $id): ?array
   {
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = $db->prepare('SELECT * FROM posts WHERE id = ?');
-    $result = $db->prepareAndFetchAll($query, 'i', [$id])[0] ?? null;
+    $query =
+      "SELECT posts.*, profiles.*, posts.created_at AS post_created_at, posts.id AS post_id
+      FROM posts
+      JOIN profiles ON posts.user_id = profiles.user_id
+      WHERE posts.id = ?
+    ";
+    $result = $db->prepareAndFetchAll($query, 'i', [$id]) ?? null;
 
     if ($result === null) return null;
 
-    return $result;
+    return $result[0];
   }
 
-  private function rawDataToPost(array $rawData): Post
+  private function rawDataToPost(array $rawData): array
   {
-    return new Post(
-      id: $rawData['id'],
-      content: $rawData['content'],
-      user_id: $rawData['user_id'],
-      timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['created_at'])
-    );
+    $profile_image_path = FileHelper::getProfileImagePath($rawData['profile_image_path']);
+    $post_image_path = is_null($rawData['image_path']) ? null : FileHelper::getProfileImagePath($rawData['image_path']);
+    $post_video_path = is_null($rawData['video_path']) ? null : FileHelper::getProfileImagePath($rawData['video_path']);
+    return [
+      'post' =>
+      new Post(
+        content: $rawData['content'],
+        id: $rawData['id'],
+        user_id: $rawData['user_id'],
+        timeStamp: new DataTimeStamp($rawData['post_created_at'], $rawData['post_created_at']),
+        image_path: $post_image_path,
+        video_path: $post_video_path
+      ),
+      'profile' =>
+      new Profile(
+        user_id: $rawData['user_id'],
+        id: $rawData['id'],
+        username: $rawData['username'],
+        age: $rawData['age'],
+        address: $rawData['address'],
+        hobby: $rawData['hobby'],
+        self_introduction: $rawData['self_introduction'],
+        profile_image_path: $profile_image_path,
+        timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at'])
+      )
+    ];
   }
-  public function getById(int $id): ?Post
+  public function getByPostId(int $id): ?array
   {
 
-    $postRaw = $this->getRawById($id);
+    $postRaw = $this->getRawByPostId($id);
     if ($postRaw === null) return null;
 
     return $this->rawDataToPost($postRaw);
