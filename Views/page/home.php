@@ -19,7 +19,7 @@
 <!-- タイムライン -->
 <div class="flex flex-col space-y-4 m-6">
   <?php foreach ($data_list as $data) : ?>
-    <div class="bg-white p-4 rounded-lg shadow-md hover:cursor-pointer hover:bg-gray-100 transition-colors duration-300" id="post" data-post-id="<?= $data['post']->getId()?>">
+    <div class="bg-white p-4 rounded-lg shadow-md hover:cursor-pointer hover:bg-gray-100 transition-colors duration-300">
       <div class="flex items-center">
         <a href="profile/<?= htmlspecialchars($data["profile"]->getUsername()) ?>">
           <img src="<?= htmlspecialchars($data["profile"]->getProfileImage()) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
