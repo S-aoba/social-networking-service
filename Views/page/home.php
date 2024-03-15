@@ -115,6 +115,10 @@
                 <div class="flex space-x-5 items-center">
                   <img src="<?= htmlspecialchars($data['reply_user_profile']->getProfileImage()) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
                   <span><?= htmlspecialchars($data['reply_user_profile']->getUserName()) ?></span>
+                  <p class="text-xs text-gray-500"><?= htmlspecialchars($data["reply"]->getDataTimeStamp()->getCreatedAt()) ?></p>
+                  <?php if ($data['reply']->getIsEdited() === 1) : ?>
+                    <span class="text-gray-400 text-sm">編集済み</span>
+                  <?php endif; ?>
                 </div>
                 <div class="py-3">
                   <p class="ml-2">
