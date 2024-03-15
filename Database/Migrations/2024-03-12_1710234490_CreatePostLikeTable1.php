@@ -4,7 +4,7 @@ namespace Database\Migrations;
 
 use Database\SchemaMigration;
 
-class AddPostLikeTable1 implements SchemaMigration
+class CreatePostLikeTable1 implements SchemaMigration
 {
     public function up(): array
     {

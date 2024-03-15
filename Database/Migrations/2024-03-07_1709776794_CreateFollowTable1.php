@@ -4,7 +4,7 @@ namespace Database\Migrations;
 
 use Database\SchemaMigration;
 
-class AddFollowTable1 implements SchemaMigration
+class CreateFollowTable1 implements SchemaMigration
 {
     public function up(): array
     {
