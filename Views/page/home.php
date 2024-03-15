@@ -109,18 +109,16 @@
           <!-- 返信リスト -->
           <h3 class="text-lg font-bold text-start text-blue-800">--返信--</h3>
           <div id="reply-List">
-            <?php foreach ($data['reply'] as $reply) : ?>
+            <?php foreach ($data['reply'] as $data) : ?>
               <!-- 個別の返信 -->
               <div class="p-3 border-t border-b border-gray-300 w-full flex flex-col space-y-3">
                 <div class="flex space-x-5 items-center">
-                  <!-- TODO:返信したユーザーのプロフィール画像に変更すること。今はとりあえずUIを確認したいのでログインユーザーの画像を挟んでいる -->
-                  <img src="<?= htmlspecialchars($login_user_profile_image_path) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
-                  <!-- TODO:本当はここは返信ユーザーのユーザーネーム -->
-                  <span><?= $reply->getUserId() ?></span>
+                  <img src="<?= htmlspecialchars($data['reply_user_profile']->getProfileImage()) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-blue-800">
+                  <span><?= htmlspecialchars($data['reply_user_profile']->getUserName()) ?></span>
                 </div>
                 <div class="py-3">
                   <p class="ml-2">
-                    <?= $reply->getContent() ?>
+                    <?= htmlspecialchars($data['reply']->getContent()) ?>
                   </p>
                 </div>
               </div>
