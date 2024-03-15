@@ -54,7 +54,7 @@ class ReplyDAOImpl implements ReplyDAO
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = 'SELECT replies.*, profiles.*, replies.user_id AS reply_user_id, profiles.user_id AS profile_user_id, replies.created_at AS reply_created_at, profiles.created_at AS profile_created_at, replies.updated_at AS reply_updated_at, profiles.updated_at AS profile_updated_at
+    $query = 'SELECT replies.*, profiles.*, replies.user_id AS reply_user_id, profiles.user_id AS profile_user_id, replies.created_at AS reply_created_at, profiles.created_at AS profile_created_at, replies.updated_at AS reply_updated_at, profiles.updated_at AS profile_updated_at, replies.id AS reply_id
     FROM replies
     JOIN profiles ON replies.user_id = profiles.user_id
     WHERE replies.post_id = ?
@@ -88,7 +88,7 @@ class ReplyDAOImpl implements ReplyDAO
         $results['content'],
         $results['user_id'],
         $results['post_id'],
-        $results['id'],
+        $results['reply_id'],
         $results['parent_reply_id'],
         $results['status'],
         $results['deleted_at'],
