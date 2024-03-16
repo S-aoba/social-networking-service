@@ -5,25 +5,18 @@
       <div class="col-span-1 md:col-span-1">
         <div class="bg-white rounded-lg shadow-md overflow-y-auto max-h-screen">
           <ul class="divide-y divide-gray-200">
-            <!-- Conversation Item -->
-            <li class="px-6 py-4 transition duration-300 ease-in-out hover:bg-gray-100 hover:cursor-pointer">
-              <div class="flex items-center">
-                <img class="w-12 h-12 rounded-full mr-4" src="https://randomuser.me/api/portraits/women/47.jpg" alt="Sender">
-                <div>
-                  <h3 class="text-lg font-semibold text-gray-800">Jane Doe</h3>
-                  <p class="text-sm text-gray-600">How are you?</p>
+            <?php foreach ($data_list as $data) : ?>
+              <!-- Conversation Item -->
+              <li class="px-6 py-4 transition duration-300 ease-in-out hover:bg-gray-100 hover:cursor-pointer">
+                <div class="flex items-center">
+                  <img class="w-12 h-12 rounded-full mr-4" src="<?= $data['p1_profile_image_path'] ?>" alt="Sender">
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-800"><?= $data['p1_username'] ?></h3>
+                    <p class="text-sm text-gray-600"><?= $data['conversation']->getParticipate1Id() ?></p>
+                  </div>
                 </div>
-              </div>
-            </li>
-            <li class="px-6 py-4 transition duration-300 ease-in-out hover:bg-gray-100 hover:cursor-pointer">
-              <div class="flex items-center">
-                <img class="w-12 h-12 rounded-full mr-4" src="https://randomuser.me/api/portraits/men/81.jpg" alt="Sender">
-                <div>
-                  <h3 class="text-lg font-semibold text-gray-800">John Doe</h3>
-                  <p class="text-sm text-gray-600">Hey, I'm good!</p>
-                </div>
-              </div>
-            </li>
+              </li>
+            <?php endforeach; ?>
             <!-- Add more conversation items here -->
           </ul>
         </div>

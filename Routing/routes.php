@@ -470,9 +470,11 @@ return [
 
   'message' => Route::create('message', function (): HTTPRenderer {
 
-    
+    $user_id = $_SESSION['user_id'];
+    $conversationDAO = DAOFactory::getConversation();
 
-    return new HTMLRenderer('page/message');
+    $data_list = $conversationDAO->getAllConversations($user_id);
 
+    return new HTMLRenderer('page/message', ['data_list' => $data_list]);
   })->setMiddleware(['auth'])
 ];
