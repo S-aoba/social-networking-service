@@ -9,6 +9,7 @@ use Database\DataAccess\Implementations\ProfileDAOImpl;
 use Database\DataAccess\Implementations\FollowDAOImpl;
 use Database\DataAccess\Implementations\PostLikeDAOImpl;
 use Database\DataAccess\Implementations\ReplyDAOImpl;
+use Database\DataAccess\Implementations\ConversationDAOImpl;
 
 use Helpers\Settings;
 
@@ -74,6 +75,15 @@ class DAOFactory
 
     return match ($driver) {
       default => new ReplyDAOImpl(),
+    };
+  }
+
+  public static function getConversation(): ConversationDAOImpl
+  {
+    $driver = Settings::env('DATABASE_DRIVER');
+
+    return match ($driver) {
+      default => new ConversationDAOImpl(),
     };
   }
 }
