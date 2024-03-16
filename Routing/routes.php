@@ -467,4 +467,12 @@ return [
       error_log($e->getMessage());
     }
   })->setMiddleware(['auth']),
+
+  'message' => Route::create('message', function (): HTTPRenderer {
+
+    
+
+    return new HTMLRenderer('page/message');
+
+  })->setMiddleware(['auth'])
 ];
