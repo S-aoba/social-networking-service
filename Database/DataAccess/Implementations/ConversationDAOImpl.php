@@ -26,15 +26,17 @@ class ConversationDAOImpl implements ConversationDAO
     $db = DatabaseManager::getMysqliConnection();
 
     $query =
-      'SELECT c.*, p1.profile_image_path AS p1_profile_image_path, p1.username AS p1_username, p2.profile_image_path AS p2_profile_image_path, p2.username AS p2_username
-      FROM conversations c
-      INNER JOIN profiles p1 ON c.participant1_id = p1.user_id
-      INNER JOIN profiles p2 ON c.participant2_id = p2.user_id
-      WHERE c.participant1_id = ? OR c.participant2_id = ?
+      'SELECT conversations.*,
+      p1.username AS p1_username, p2.username AS p2_username, p1.user_id AS p1_user_id, p2.user_id AS p2_user_id,
+      p1.profile_image_path AS p1_profile_image_path, p2.profile_image_path AS p2_profile_image_path
+      FROM conversations
+      INNER JOIN profiles p1 ON conversations.participant1_id = p1.user_id
+      INNER JOIN profiles p2 ON conversations.participant2_id = p2.user_id
+      WHERE conversations.participant1_id = ? OR conversations.participant2_id = ?
     ';
 
     $result = $db->prepareAndFetchAll($query, 'ii', [$user_id, $user_id]);
-    
+    error_log(print_r($result, true));
     if ($result === null) return null;
 
     return $this->resultsConversation($result);
@@ -42,20 +44,25 @@ class ConversationDAOImpl implements ConversationDAO
 
   private function resultConversation(array $result): array
   {
-    $p1_profile_image_path = FileHelper::getProfileImagePath($result['p1_profile_image_path']);
-    $p2_profile_image_path = FileHelper::getProfileImagePath($result['p2_profile_image_path']);
+    // メッセージ相手のprofile_image_path, username, IDを取得する
+    $profile_image_path = $result['p1_user_id'] === $_SESSION['user_id'] ? FileHelper::getProfileImagePath($result['p2_profile_image_path']) : FileHelper::getProfileImagePath($result['p1_profile_image_path']);
 
+    $username = $result['p1_user_id'] === $_SESSION['user_id'] ? $result['p2_username'] : $result['p1_username'];
+    $user_id = $result['p1_user_id'] === $_SESSION['user_id'] ? $result['p2_user_id'] : $result['p1_user_id'];
+
+    $created_at = date("Y-m-d", strtotime($result['created_at']));
+    $updated_at = date("Y-m-d", strtotime($result['updated_at']));
+    
     return [
       'conversation' => new Conversation(
         participant1_id: $result['participant1_id'],
         participant2_id: $result['participant2_id'],
         conversation_id: $result['conversation_id'],
-        dataTimeStamp: new DataTimeStamp($result['created_at'], $result['updated_at'])
+        dataTimeStamp: new DataTimeStamp($created_at, $updated_at)
       ),
-      'p1_profile_image_path' => $p1_profile_image_path,
-      'p2_profile_image_path' => $p2_profile_image_path,
-      'p1_username' => $result['p1_username'],
-      'p2_username' => $result['p2_username']
+      'other_user_profile_image_path' => $profile_image_path,
+      'other_user_name' => $username,
+      'other_user_id' => $user_id
     ];
   }
 

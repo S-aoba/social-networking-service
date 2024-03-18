@@ -301,7 +301,7 @@ return [
     }
   })->setMiddleware(['auth']),
 
-  'profile' => Route::create('profile', function (): HTTPRenderer {
+    'profile' => Route::create('profile', function (): HTTPRenderer {
     $url = $_SERVER['PATH_INFO'];
     preg_match('/\/profile\/(.+)/', $url, $matches);
     $username = $matches[1];
@@ -469,11 +469,25 @@ return [
   })->setMiddleware(['auth']),
 
   'message' => Route::create('message', function (): HTTPRenderer {
+    $url = $_SERVER['PATH_INFO'];
+    preg_match('/\/message\/(.+)/', $url, $matches);
+
+    $message_id = count($matches) === 0 ? null : $matches[1];
+
+    if(!is_null($message_id)) return new HTMLRenderer('page/message-detail');
 
     $user_id = $_SESSION['user_id'];
     $conversationDAO = DAOFactory::getConversation();
 
     $data_list = $conversationDAO->getAllConversations($user_id);
+
+    // [
+    //   {
+    //     'conversation' =>"",
+    //     'other_user_profile' =>  "",
+    //     'message' => ''
+    //   }
+    // ]
 
     return new HTMLRenderer('page/message', ['data_list' => $data_list]);
   })->setMiddleware(['auth'])
