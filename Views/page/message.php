@@ -8,22 +8,23 @@
             <?php foreach ($data_list as $data) : ?>
               <!-- Conversation Item -->
               <li class="px-6 py-4 transition duration-300 ease-in-out hover:bg-gray-100 hover:cursor-pointer">
-                <div class="flex items-center">
-                  <!-- 相手のアイコン -->
-                  <img class="w-12 h-12 rounded-full mr-4 border border-gray-400" src="<?= $data['other_user_profile_image_path'] ?>" alt="Sender">
-                  <div class="flex flex-col space-y-3">
-                    <div class="flex space-x-2 items-center">
-                      <h3 class="text-lg font-semibold text-gray-800"><?= $data['other_user_name'] ?></h3>
-                      <span class="text-sm text-gray-400 mr-1">@
-                        <span><?= $data['other_user_id'] ?></span>
-                      </span>
-                      <!-- TODO: 更新されたらupdated_atを表示するようににする -->
-                      <span class="text-sm text-gray-400"><?= $data['conversation']->getDataTimeStamp()->getCreatedAt() ?></span>
+                <a href="/message/<?= $data['conversation']->getConversationId() ?>">
+                  <div class="flex items-center">
+                    <!-- 相手のアイコン -->
+                    <img class="w-12 h-12 rounded-full mr-4 border border-gray-400" src="<?= $data['other_user_profile_image_path'] ?>" alt="Sender">
+                    <div class="flex flex-col space-y-3">
+                      <div class="flex space-x-2 items-center">
+                        <h3 class="text-lg font-semibold text-gray-800"><?= $data['other_user_name'] ?></h3>
+                        <span class="text-sm text-gray-400 mr-1">@<span><?= $data['other_user_id'] ?></span></span>
+                        <!-- TODO: 更新されたらupdated_atを表示するようににする -->
+                        <span class="text-sm text-gray-400"><?= $data['conversation']->getDataTimeStamp()->getCreatedAt() ?></span>
+                      </div>
+                      <p class="text-sm text-gray-600"><?= $data['message']->getMessageBody() ?></p>
                     </div>
-                    <p class="text-sm text-gray-600"><?= $data['message']->getMessageBody()?></p>
                   </div>
-                </div>
+                </a>
               </li>
+
             <?php endforeach; ?>
           </ul>
         </div>
