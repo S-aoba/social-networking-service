@@ -2,6 +2,7 @@
 
 namespace Database\DataAccess\Implementations;
 
+use Database\DataAccess\DAOFactory;
 use Database\DataAccess\Interfaces\ConversationDAO;
 use Database\DatabaseManager;
 use Models\Conversation;
@@ -36,7 +37,7 @@ class ConversationDAOImpl implements ConversationDAO
     ';
 
     $result = $db->prepareAndFetchAll($query, 'ii', [$user_id, $user_id]);
-    error_log(print_r($result, true));
+
     if ($result === null) return null;
 
     return $this->resultsConversation($result);
@@ -52,7 +53,12 @@ class ConversationDAOImpl implements ConversationDAO
 
     $created_at = date("Y-m-d", strtotime($result['created_at']));
     $updated_at = date("Y-m-d", strtotime($result['updated_at']));
-    
+
+    $messageDAO = DAOFactory::getMessage();
+
+    $message = $messageDAO->getMessageFirst($result['conversation_id']);
+
+
     return [
       'conversation' => new Conversation(
         participant1_id: $result['participant1_id'],
@@ -62,7 +68,8 @@ class ConversationDAOImpl implements ConversationDAO
       ),
       'other_user_profile_image_path' => $profile_image_path,
       'other_user_name' => $username,
-      'other_user_id' => $user_id
+      'other_user_id' => $user_id,
+      'message' => $message[0]
     ];
   }
 

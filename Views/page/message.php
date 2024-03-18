@@ -20,7 +20,7 @@
                       <!-- TODO: 更新されたらupdated_atを表示するようににする -->
                       <span class="text-sm text-gray-400"><?= $data['conversation']->getDataTimeStamp()->getCreatedAt() ?></span>
                     </div>
-                    <p class="text-sm text-gray-600">メッセージの一番新しいものが表示される</p>
+                    <p class="text-sm text-gray-600"><?= $data['message']->getMessageBody()?></p>
                   </div>
                 </div>
               </li>
