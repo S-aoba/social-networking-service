@@ -102,7 +102,7 @@ class ConversationDAOImpl implements ConversationDAO
       'other_user_profile_image_path' => $profile_image_path,
       'other_user_name' => $username,
       'other_user_id' => $user_id,
-      'message' => $message[0]
+      'message' => $message
     ];
   }
 

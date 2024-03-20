@@ -19,12 +19,15 @@
                         <!-- TODO: 更新されたらupdated_atを表示するようににする -->
                         <span class="text-sm text-gray-400"><?= $data['conversation']->getDataTimeStamp()->getCreatedAt() ?></span>
                       </div>
-                      <p class="text-sm text-gray-600"><?= $data['message']->getMessageBody() ?></p>
+                      <?php if (count($data['message']) >= 1) : ?>
+                        <p class="text-sm text-gray-600"><?= $data['message'][0]->getMessageBody() ?></p>
+                      <?php else : ?>
+                        <p class="text-sm text-gray-600">まだメッセージはありません。</p>
+                      <?php endif; ?>
                     </div>
                   </div>
                 </a>
               </li>
-
             <?php endforeach; ?>
           </ul>
         </div>

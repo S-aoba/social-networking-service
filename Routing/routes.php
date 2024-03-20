@@ -496,10 +496,11 @@ return [
 
     $data_list = $conversationDAO->getAllConversations($user_id);
 
+
     return new HTMLRenderer('page/message', ['data_list' => $data_list]);
   })->setMiddleware(['auth']),
 
-  'form/message' => Route::create('form/message', function() : HTTPRenderer{
+  'form/message' => Route::create('form/message', function (): HTTPRenderer {
 
     $sender_id = $_POST['sender_id'];
     $receiver_id = $_POST['receiver_id'];
@@ -511,7 +512,7 @@ return [
       sender_id: $sender_id,
       receiver_id: $receiver_id,
       conversation_id: $conversation_id,
-      message_body:  $message_body
+      message_body: $message_body
     );
 
     $messageDAO = DAOFactory::getMessage();
@@ -520,22 +521,5 @@ return [
 
     // TODO:add error catch
     return new JSONRenderer(['status' => 'success']);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   })->setMiddleware(['auth']),
 ];

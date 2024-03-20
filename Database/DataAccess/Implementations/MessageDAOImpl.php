@@ -63,7 +63,7 @@ class MessageDAOImpl implements MessageDAO
     ';
 
     $result = $db->prepareAndFetchAll($query, 'i', [$conversation_id]);
-
+    if(count($result) === 0) return [];
     return $this->resultsMessage($result);
   }
 
