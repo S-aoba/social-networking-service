@@ -15,6 +15,7 @@ use Types\ValueType;
 use Models\Profile;
 use Models\User;
 use Models\Follow;
+use Models\Message;
 use Models\Post;
 use Models\PostLike;
 use Models\Reply;
@@ -486,7 +487,6 @@ return [
 
       $login_user_id = $_SESSION['user_id'];
       $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
-      // $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
 
       return new HTMLRenderer('page/message-detail', ['conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile' => $login_user_profile]);
     }
@@ -497,5 +497,47 @@ return [
     $data_list = $conversationDAO->getAllConversations($user_id);
 
     return new HTMLRenderer('page/message', ['data_list' => $data_list]);
-  })->setMiddleware(['auth'])
+  })->setMiddleware(['auth']),
+
+  'form/message' => Route::create('form/message', function() : HTTPRenderer{
+
+    error_log(print_r($_POST, true));
+
+    $sender_id = $_POST['sender_id'];
+    $receiver_id = $_POST['receiver_id'];
+    $conversation_id = $_POST['conversation_id'];
+    $message_body = $_POST['message_body'];
+
+
+    $message = new Message(
+      sender_id: $sender_id,
+      receiver_id: $receiver_id,
+      conversation_id: $conversation_id,
+      message_body:  $message_body
+    );
+
+    $messageDAO = DAOFactory::getMessage();
+
+    $messageDAO->createMessage($message);
+
+    // TODO:add error catch
+    return new JSONRenderer(['status' => 'success']);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  })->setMiddleware(['auth']),
 ];

@@ -11,7 +11,25 @@ class MessageDAOImpl implements MessageDAO
 {
   public function createMessage(Message $message): bool
   {
-    return true;
+
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query = 'INSERT INTO messages (sender_id, receiver_id, conversation_id, message_body) VALUES (?, ?, ?, ?)';
+
+    $result = $db->prepareAndExecute(
+      $query,
+      'iiis',
+      [
+        $message->getSenderId(),
+        $message->getReceiverId(),
+        $message->getConversationId(),
+        $message->getMessageBody()
+      ]
+    );
+
+    if ($result) return true;
+
+    return false;
   }
 
   public function getAllMessageById(int $conversation_id): array

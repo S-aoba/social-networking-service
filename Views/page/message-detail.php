@@ -14,7 +14,7 @@
                   <div class="flex space-x-2 items-center">
                     <h3 class="text-lg font-semibold text-gray-800"><?= $another_user_profile->getUsername() ?></h3>
                     <span class="text-sm text-gray-400">@
-                      <span><?= $another_user_profile->getId() ?></span>
+                      <span><?= $another_user_profile->getUserId() ?></span>
                     </span>
                   </div>
                 </div>
@@ -35,7 +35,7 @@
           <!-- Messages -->
           <?php foreach ($messages as $message) : ?>
             <div class="px-6 py-4">
-              <?php if ($message->getReceiverId() === $_SESSION['user_id']) : ?>
+              <?php if ($message->getSenderId() === $_SESSION['user_id']) : ?>
                 <!-- Sender Message -->
                 <div class="flex items-start mb-4">
                   <img class="w-8 h-8 rounded-full mr-4" src="<?= $login_user_profile->getProfileImage() ?>" alt="Sender">
@@ -57,12 +57,18 @@
             </div>
           <?php endforeach; ?>
           <!-- Message Input -->
-          <div class="bg-gray-100 px-6 py-4 flex items-center">
-            <input type="text" placeholder="Type a message..." class="w-full bg-gray-200 focus:outline-none border-none rounded-full py-2 px-4">
-            <button class="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-full">Send</button>
-          </div>
+          <form id="messageForm" method="POST" action="#" class="bg-gray-100 px-6 py-4 flex items-center">
+            <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
+            <input type="hidden" name="sender_id" value="<?= $login_user_profile->getUserId() ?>">
+            <input type="hidden" name="receiver_id" value="<?= $another_user_profile->getUserId() ?>">
+            <input type="hidden" name="conversation_id" value="<?= $conversation->getConversationId() ?>">
+            <input type="text" name="message_body" placeholder="Type a message..." class="w-full bg-gray-200 focus:outline-none border-none rounded-full py-2 px-4">
+            <button type="submit" class="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-full">Send</button>
+          </form>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script src="/js/message.js"></script>
