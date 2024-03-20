@@ -16,7 +16,20 @@ class MessageDAOImpl implements MessageDAO
 
   public function getAllMessageById(int $conversation_id): array
   {
-    return [];
+
+    $db = DatabaseManager::getMysqliConnection();
+
+
+    $query =
+      ' SELECT *
+      FROM messages
+      WHERE conversation_id = ?
+    ';
+
+    $result = $db->prepareAndFetchAll($query, 'i', [$conversation_id]);
+
+
+    return $this->resultsMessage($result);
   }
 
   public function getMessageFirst(int $conversation_id): array

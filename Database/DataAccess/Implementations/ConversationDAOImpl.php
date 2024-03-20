@@ -43,6 +43,53 @@ class ConversationDAOImpl implements ConversationDAO
     return $this->resultsConversation($result);
   }
 
+
+  public function getConversationById(int $conversation_id): Conversation
+  {
+    $db = DatabaseManager::getMysqliConnection();
+
+
+    $query =
+      ' SELECT *
+      From conversations
+      WhERE conversation_id = ?
+    ';
+
+    $result = $db->prepareAndFetchAll($query, 'i', [$conversation_id]);
+
+
+    return $this->rawDataToConversation($result[0]);
+  }
+
+  private function rawDataToConversation(array $result): Conversation
+  {
+
+    $created_at = date("Y-m-d", strtotime($result['created_at']));
+    $updated_at = date("Y-m-d", strtotime($result['updated_at']));
+
+    return new Conversation(
+      participant1_id: $result['participant1_id'],
+      participant2_id: $result['participant2_id'],
+      conversation_id: $result['conversation_id'],
+      dataTimeStamp: new DataTimeStamp($created_at, $updated_at)
+    );
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   private function resultConversation(array $result): array
   {
     // メッセージ相手のprofile_image_path, username, IDを取得する

@@ -150,7 +150,7 @@ return [
     }
 
     $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
-    $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
+    $login_user_profile_image_path = $login_user_profile->getProfileImage();
 
     return new HTMLRenderer('page/home', ['data_list' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path]);
   })->setMiddleware(['auth']),
@@ -301,7 +301,7 @@ return [
     }
   })->setMiddleware(['auth']),
 
-    'profile' => Route::create('profile', function (): HTTPRenderer {
+  'profile' => Route::create('profile', function (): HTTPRenderer {
     $url = $_SERVER['PATH_INFO'];
     preg_match('/\/profile\/(.+)/', $url, $matches);
     $username = $matches[1];
@@ -474,20 +474,34 @@ return [
 
     $message_id = count($matches) === 0 ? null : $matches[1];
 
-    if(!is_null($message_id)) return new HTMLRenderer('page/message-detail');
+    if (!is_null($message_id)) {
+
+      $conversationDAO = DAOFactory::getConversation();
+
+      $conversation = $conversationDAO->getConversationById($message_id);
+
+
+      $messageDAO = DAOFactory::getMessage();
+
+      $messages = $messageDAO->getAllMessageById($conversation->getConversationId());
+
+      $profileDAO = DAOFactory::getProfileDAO();
+
+      $another_user_id = $_SESSION['user_id'] === $conversation->getParticipate1Id() ? $conversation->getParticipate2Id() : $conversation->getParticipate1Id();
+
+      $another_user_profile = $profileDAO->getById($another_user_id);
+
+      $login_user_id = $_SESSION['user_id'];
+      $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
+      $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
+
+      return new HTMLRenderer('page/message-detail', ['conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile_image_path' => $login_user_profile_image_path]);
+    }
 
     $user_id = $_SESSION['user_id'];
     $conversationDAO = DAOFactory::getConversation();
 
     $data_list = $conversationDAO->getAllConversations($user_id);
-
-    // [
-    //   {
-    //     'conversation' =>"",
-    //     'other_user_profile' =>  "",
-    //     'message' => ''
-    //   }
-    // ]
 
     return new HTMLRenderer('page/message', ['data_list' => $data_list]);
   })->setMiddleware(['auth'])

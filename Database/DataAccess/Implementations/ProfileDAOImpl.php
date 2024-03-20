@@ -6,7 +6,6 @@ use Database\DataAccess\Interfaces\ProfileDAO;
 use Database\DatabaseManager;
 use Models\DataTimeStamp;
 use Models\Profile;
-use Helpers\FileHelper;
 
 class ProfileDAOImpl implements ProfileDAO
 {
@@ -88,6 +87,7 @@ class ProfileDAOImpl implements ProfileDAO
 
   private function rawDataToProfile(array $rawData): Profile
   {
+
     return new Profile(
       user_id: $rawData['user_id'],
       username: $rawData['username'],
