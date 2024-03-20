@@ -4,11 +4,13 @@ use Exceptions\AuthenticationFailureException;
 use Helpers\ValidationHelper;
 use Helpers\Authenticate;
 use Helpers\FileHelper;
+use Helpers\EncryptionHelper;
 use Response\FlashData;
 use Response\HTTPRenderer;
 use Response\Render\HTMLRenderer;
 use Response\Render\RedirectRenderer;
 use Database\DataAccess\DAOFactory;
+use Helpers\Settings;
 use Response\Render\JSONRenderer;
 use Routing\Route;
 use Types\ValueType;
@@ -502,24 +504,32 @@ return [
 
   'form/message' => Route::create('form/message', function (): HTTPRenderer {
 
+    error_log(print_r($_POST, true));
+
     $sender_id = $_POST['sender_id'];
     $receiver_id = $_POST['receiver_id'];
     $conversation_id = $_POST['conversation_id'];
     $message_body = $_POST['message_body'];
 
+    $encryptionKey = Settings::env('ENCRYPTION_KEY');
+
+    $encryptionHelper = new EncryptionHelper($encryptionKey);
+
+    // メッセージを暗号化
+    $encryptedMessageBody = $encryptionHelper->encrypt($message_body);
 
     $message = new Message(
       sender_id: $sender_id,
       receiver_id: $receiver_id,
       conversation_id: $conversation_id,
-      message_body: $message_body
+      message_body: $encryptedMessageBody  // 暗号化されたメッセージを使用
     );
 
     $messageDAO = DAOFactory::getMessage();
 
     $messageDAO->createMessage($message);
 
-    // TODO:add error catch
+    // TODO:error catch を追加
     return new JSONRenderer(['status' => 'success']);
   })->setMiddleware(['auth']),
 ];
