@@ -245,14 +245,7 @@ return [
 
     $profile = $profileDAO->getById($user_id);
 
-    $profile_image = $profile->getProfileImage();
-    $profile_image_path = null;
-
-    if ($profile_image) {
-      $profile_image_path = FileHelper::getProfileImagePath($profile_image);
-    }
-
-    return new HTMLRenderer('page/editProfile', ['profile' => $profile, "profile_image_path" => $profile_image_path]);
+    return new HTMLRenderer('page/editProfile', ['profile' => $profile]);
   })->setMiddleware(['auth']),
 
   'form/update/profile' => Route::create('form/update/profile', function (): HTTPRenderer {
