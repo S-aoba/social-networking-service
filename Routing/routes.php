@@ -501,8 +501,6 @@ return [
 
   'form/message' => Route::create('form/message', function() : HTTPRenderer{
 
-    error_log(print_r($_POST, true));
-
     $sender_id = $_POST['sender_id'];
     $receiver_id = $_POST['receiver_id'];
     $conversation_id = $_POST['conversation_id'];
