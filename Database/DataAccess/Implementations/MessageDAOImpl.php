@@ -6,6 +6,8 @@ use Database\DataAccess\Interfaces\MessageDAO;
 use Database\DatabaseManager;
 use Models\Message;
 use Models\DataTimeStamp;
+use Helpers\Settings;
+use Helpers\EncryptionHelper;
 
 class MessageDAOImpl implements MessageDAO
 {
@@ -63,7 +65,7 @@ class MessageDAOImpl implements MessageDAO
     ';
 
     $result = $db->prepareAndFetchAll($query, 'i', [$conversation_id]);
-    if(count($result) === 0) return [];
+    if (count($result) === 0) return [];
     return $this->resultsMessage($result);
   }
 
@@ -73,11 +75,17 @@ class MessageDAOImpl implements MessageDAO
     $sent_at = date("Y-m-d", strtotime($result['sent_at']));
     $read_at = date("Y-m-d", strtotime($result['read_at']));
 
+    $encryptionKey = Settings::env('ENCRYPTION_KEY');
+
+    $encryptionHelper = new EncryptionHelper($encryptionKey);
+
+    $encryptedMessageBody = $encryptionHelper->decrypt($result['message_body']);
+
     return new Message(
       sender_id: $result['sender_id'],
       receiver_id: $result['receiver_id'],
       conversation_id: $result['conversation_id'],
-      message_body: $result['message_body'],
+      message_body: $encryptedMessageBody,
       message_id: $result['message_id'],
       dataTimeStamp: new DataTimeStamp($sent_at, $read_at)
     );
