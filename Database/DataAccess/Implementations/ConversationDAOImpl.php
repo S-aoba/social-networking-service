@@ -14,7 +14,22 @@ class ConversationDAOImpl implements ConversationDAO
   public function createConversation(Conversation $conversation): bool
   {
 
-    return true;
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query = 'INSERT INTO conversations (conversation_id, participant1_id, participant2_id) VALUES (?, ?, ?)';
+
+    $result = $db->prepareAndExecute(
+      $query,
+      'iii',
+      [
+        $conversation->getConversationId(),
+        $conversation->getParticipate1Id(),
+        $conversation->getParticipate2Id()
+      ]
+    );
+
+    if ($result) return true;
+    return false;
   }
 
   public function deleteConversation(int $conversation_id): bool
