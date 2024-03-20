@@ -76,20 +76,6 @@ class ConversationDAOImpl implements ConversationDAO
   }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   private function resultConversation(array $result): array
   {
     // メッセージ相手のprofile_image_path, username, IDを取得する
