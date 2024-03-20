@@ -53,7 +53,6 @@ class PostDAOImpl implements PostDAO
 
   private function resultToPost(array $data): array
   {
-    $profile_image_path = FileHelper::getProfileImagePath($data['profile_image_path']);
     $post_image_path = is_null($data['image_path']) ? null : FileHelper::getProfileImagePath($data['image_path']);
     $post_video_path = is_null($data['video_path']) ? null : FileHelper::getProfileImagePath($data['video_path']);
 
@@ -76,7 +75,7 @@ class PostDAOImpl implements PostDAO
         address: $data['address'],
         hobby: $data['hobby'],
         self_introduction: $data['self_introduction'],
-        profile_image_path: $profile_image_path,
+        profile_image_path: $data['profile_image_path'],
         timeStamp: new DataTimeStamp($data['created_at'], $data['updated_at'])
       )
     ];
