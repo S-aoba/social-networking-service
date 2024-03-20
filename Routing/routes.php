@@ -493,9 +493,9 @@ return [
 
       $login_user_id = $_SESSION['user_id'];
       $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
-      $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
+      // $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
 
-      return new HTMLRenderer('page/message-detail', ['conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile_image_path' => $login_user_profile_image_path]);
+      return new HTMLRenderer('page/message-detail', ['conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile' => $login_user_profile]);
     }
 
     $user_id = $_SESSION['user_id'];

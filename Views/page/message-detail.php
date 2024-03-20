@@ -8,8 +8,8 @@
             <!-- Conversation Item -->
             <li class="px-6 py-4 transition duration-300 ease-in-out hover:bg-gray-100 hover:cursor-pointer">
               <div class="flex items-center">
-                <!-- 相手のアイコン -->
-                <img class="w-12 h-12 rounded-full mr-4 border border-gray-400" src="<?= $login_user_profile_image_path ?>" alt="Sender">
+                <!-- 自分のアイコン -->
+                <img class="w-12 h-12 rounded-full mr-4 border border-gray-400" src="<?= $another_user_profile->getProfileImage() ?>" alt="Sender">
                 <div class="flex flex-col space-y-3">
                   <div class="flex space-x-2 items-center">
                     <h3 class="text-lg font-semibold text-gray-800"><?= $another_user_profile->getUsername() ?></h3>
@@ -38,7 +38,8 @@
               <?php if ($message->getReceiverId() === $_SESSION['user_id']) : ?>
                 <!-- Sender Message -->
                 <div class="flex items-start mb-4">
-                  <img class="w-8 h-8 rounded-full mr-4" src="<?= $login_user_profile_image_path ?>" alt="Sender">
+                  <img class="w-8 h-8 rounded-full mr-4" src="<?= $login_user_profile->getProfileImage() ?>" alt="Sender">
+                  <p><?= $login_user_profile->getUserName() ?></p>
                   <div class="bg-blue-100 p-3 rounded-lg">
                     <p class="text-sm text-gray-600"><?= $message->getMessageBody()  ?></p>
                   </div>
@@ -50,6 +51,7 @@
                     <p class="text-sm text-gray-600"><?= $message->getMessageBody()  ?></p>
                   </div>
                   <img class="w-8 h-8 rounded-full ml-4 border border-gray-400" src="<?= $another_user_profile->getProfileImage()  ?>" alt="Receiver">
+                  <p><?= $another_user_profile->getUserName() ?></p>
                 </div>
               <?php endif; ?>
             </div>
