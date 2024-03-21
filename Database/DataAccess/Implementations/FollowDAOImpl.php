@@ -5,6 +5,7 @@ namespace Database\DataAccess\Implementations;
 use Database\DataAccess\Interfaces\FollowDAO;
 use Database\DatabaseManager;
 use Models\Follow;
+use Models\Profile;
 
 
 class FollowDAOImpl implements FollowDAO
@@ -29,7 +30,7 @@ class FollowDAOImpl implements FollowDAO
     return false;
   }
 
-  public static function checkFollow(Follow $follow): bool
+  public function checkFollow(Follow $follow): bool
   {
     $db = DatabaseManager::getMysqliConnection();
 
@@ -69,5 +70,45 @@ class FollowDAOImpl implements FollowDAO
 
     if ($result) return true;
     return false;
+  }
+
+  public function getAllFollowingUser(int $login_user_id): ?array
+  {
+
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query =
+      'SELECT profiles.*
+    FROM follows
+    INNER JOIN profiles ON follows.follower_id = profiles.user_id
+    WHERE followee_id = ?';
+
+    $result = $db->prepareAndFetchAll(
+      $query,
+      'i',
+      [
+        $login_user_id
+      ]
+    );
+    return $result === null ? null : $this->resultsToFollowingUser($result);
+  }
+
+  private function resultToFollowingUser(array $result): Profile
+  {
+    return
+      new Profile(
+        user_id: $result['user_id'],
+        username: $result['username'],
+        profile_image_path: $result['profile_image_path']
+      );
+  }
+
+  private function resultsToFollowingUser(array $results): array
+  {
+    $data_list = [];
+    foreach ($results as $result) {
+      $data_list[] = $this->resultToFollowingUser($result);
+    }
+    return $data_list;
   }
 }

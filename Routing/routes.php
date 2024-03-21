@@ -21,6 +21,7 @@ use Models\Message;
 use Models\Post;
 use Models\PostLike;
 use Models\Reply;
+use Models\Conversation;
 
 return [
 
@@ -497,9 +498,12 @@ return [
     $conversationDAO = DAOFactory::getConversation();
 
     $data_list = $conversationDAO->getAllConversations($user_id);
+    // ログインユーザーのフォローしているユーザーを全件取得する
+    $followDAO = DAOFactory::getFollowDAO();
 
+    $followee_users = $followDAO->getAllFollowingUser($user_id);
 
-    return new HTMLRenderer('page/message', ['data_list' => $data_list]);
+    return new HTMLRenderer('page/message', ['data_list' => $data_list, 'followee_users' => $followee_users]);
   })->setMiddleware(['auth']),
 
   'form/message' => Route::create('form/message', function (): HTTPRenderer {
@@ -531,5 +535,20 @@ return [
 
     // TODO:error catch を追加
     return new JSONRenderer(['status' => 'success']);
+  })->setMiddleware(['auth']),
+
+  'form/conversation' => Route::create('form/conversation', function (): HTTPRenderer {
+
+    $conversationDAO = DAOFactory::getConversation();
+
+    $conversation = new Conversation(
+      participant1_id: $_POST['participant1_id'],
+      participant2_id: $_POST['participant2_id']
+    );
+
+    $conversationDAO->createConversation($conversation);
+
+
+    return new JSONRenderer(['status' => "success", 'conversation_id' => $conversation->getConversationId()]);
   })->setMiddleware(['auth']),
 ];

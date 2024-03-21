@@ -16,17 +16,19 @@ class ConversationDAOImpl implements ConversationDAO
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = 'INSERT INTO conversations (conversation_id, participant1_id, participant2_id) VALUES (?, ?, ?)';
+    $query = 'INSERT INTO conversations (participant1_id, participant2_id) VALUES (?, ?)';
 
     $result = $db->prepareAndExecute(
       $query,
-      'iii',
+      'ii',
       [
-        $conversation->getConversationId(),
         $conversation->getParticipate1Id(),
         $conversation->getParticipate2Id()
       ]
     );
+
+    $conversationId = $db->insert_id;
+    $conversation->setConversationId($conversationId);
 
     if ($result) return true;
     return false;
