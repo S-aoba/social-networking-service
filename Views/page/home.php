@@ -26,7 +26,7 @@
         </a>
         <div class="ml-4 w-full">
           <div class="flex items-center justify-between py-2">
-            <p class="text-lg font-bold"><?= htmlspecialchars($data["profile"]->getUsername()) ?></p>
+            <p class="text-lg font-bold"><?= htmlspecialchars($data["profile"]->getUsername() === null ? "名無しのユーザー" :  $data["profile"]->getUsername()) ?></p>
             <?php if ($data['post']->getUserId() === $_SESSION['user_id']) : ?>
               <form id="deletePostForm" method="post" action="#">
                 <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
