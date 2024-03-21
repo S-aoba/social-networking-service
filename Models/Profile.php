@@ -106,8 +106,7 @@ class Profile implements Model
 
   public function getProfileImage(): ?string
   {
-    $profile_image_path = FileHelper::getProfileImagePath($this->profile_image_path);
-    return $profile_image_path;
+    return $this->profile_image_path === null ? null : FileHelper::getProfileImagePath($this->profile_image_path);
   }
 
   public function setProfileImage(string $profile_image_path): void
