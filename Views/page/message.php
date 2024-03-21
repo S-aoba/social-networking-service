@@ -12,12 +12,19 @@
                   <div class="flex items-center">
                     <!-- 相手のアイコン -->
                     <img class="w-12 h-12 rounded-full mr-4 border border-gray-400" src="<?= $data['other_user_profile_image_path'] ?>" alt="Sender">
-                    <div class="flex flex-col space-y-3">
-                      <div class="flex space-x-2 items-center">
-                        <h3 class="text-lg font-semibold text-gray-800"><?= $data['other_user_name'] ?></h3>
-                        <span class="text-sm text-gray-400 mr-1">@<span><?= $data['other_user_id'] ?></span></span>
-                        <!-- TODO: 更新されたらupdated_atを表示するようににする -->
-                        <span class="text-sm text-gray-400"><?= $data['conversation']->getDataTimeStamp()->getCreatedAt() ?></span>
+                    <div class="w-full flex flex-col space-y-3">
+                      <div class="flex justify-between">
+                        <div class="w-full flex space-x-2 items-center">
+                          <h3 class="text-lg font-semibold text-gray-800"><?= $data['other_user_name'] ?></h3>
+                          <span class="text-sm text-gray-400 mr-1">@<span><?= $data['other_user_id'] ?></span></span>
+                          <!-- TODO: 更新されたらupdated_atを表示するようににする -->
+                          <span class="text-sm text-gray-400"><?= $data['conversation']->getDataTimeStamp()->getCreatedAt() ?></span>
+                        </div>
+                        <form action="#" method="POST" id="deleteConversationForm">
+                          <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
+                          <input type="hidden" name="conversation_id" value="<?= $data['conversation']->getConversationId() ?>">
+                          <button type="submit" class="border border-red-500 px-2 py-1 rounded bg-red-500 text-sm text-white hover:bg-red-600 transition duration-300 ease-in-out">削除</button>
+                        </form>
                       </div>
                       <?php if (count($data['message']) >= 1) : ?>
                         <p class="text-sm text-gray-600"><?= $data['message'][0]->getMessageBody() ?></p>
@@ -55,7 +62,7 @@
     <h2 class="text-2xl font-semibold mb-6">新しいメッセージを送信</h2>
     <div class="w-full h-full">
       <?php foreach ($followee_users as $followee_user) : ?>
-        <form action="/form/conversation" method="POST" class="newConversationForm">
+        <form method="POST" class="newConversationForm">
           <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
           <input type="hidden" name="participant1_id" value="<?= $_SESSION['user_id'] ?>">
           <input type="hidden" name="participant2_id" value="<?= $followee_user->getUserId() ?>">
@@ -96,7 +103,7 @@
 
       const formData = new FormData(newConversationForm);
 
-      fetch(newConversationForm.getAttribute('action'), {
+      fetch('/form/conversation', {
         method: 'POST',
         body: formData
       }).then((res) => {
@@ -104,6 +111,7 @@
           if (data.status === 'success') {
             // TODO: モーダルを閉じる
             modal.classList.add('hidden');
+
             // TODO:受け取ったデータを使って画面を遷移させる
             location.href = '/message/' + data.conversation_id;
           }
@@ -112,5 +120,30 @@
 
     });
 
+  });
+
+
+  const deleteConversationForms = document.querySelectorAll('#deleteConversationForm');
+
+  deleteConversationForms.forEach(deleteConversationForm => {
+
+    deleteConversationForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(deleteConversationForm);
+
+      fetch('/form/conversation/delete', {
+        method: 'POST',
+        body: formData
+      }).then((res) => {
+        res.json().then((data) => {
+          if (data.status === 'success') {
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          }
+        })
+      })
+
+    });
   });
 </script>

@@ -36,6 +36,22 @@ class ConversationDAOImpl implements ConversationDAO
 
   public function deleteConversation(int $conversation_id): bool
   {
+
+    $db = DatabaseManager::getMysqliConnection();
+
+
+    $query = 'DELETE FROM conversations WHERE conversation_id = ?';
+
+
+    $result = $db->prepareAndExecute(
+      $query,
+      'i',
+      [$conversation_id]
+    );
+
+
+    if ($result === false) return false;
+
     return true;
   }
 

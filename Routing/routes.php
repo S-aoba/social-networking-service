@@ -551,4 +551,15 @@ return [
 
     return new JSONRenderer(['status' => "success", 'conversation_id' => $conversation->getConversationId()]);
   })->setMiddleware(['auth']),
+
+  'form/conversation/delete' => Route::create('form/conversation/delete', function (): HTTPRenderer {
+
+    $conversationDAO = DAOFactory::getConversation();
+
+    $conversationDAO->deleteConversation($_POST['conversation_id']);
+
+
+    // TODO:error catch を追加
+    return new JSONRenderer(['status' => "success"]);
+  })->setMiddleware(['auth']),
 ];
