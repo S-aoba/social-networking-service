@@ -11,6 +11,7 @@ use Database\DataAccess\Implementations\PostLikeDAOImpl;
 use Database\DataAccess\Implementations\ReplyDAOImpl;
 use Database\DataAccess\Implementations\ConversationDAOImpl;
 use Database\DataAccess\Implementations\MessageDAOImpl;
+use Database\DataAccess\Implementations\NotificationDAOImpl;
 
 use Helpers\Settings;
 
@@ -94,6 +95,15 @@ class DAOFactory
 
     return match ($driver) {
       default => new MessageDAOImpl(),
+    };
+  }
+
+  public static function getNotification(): NotificationDAOImpl
+  {
+    $driver = Settings::env('DATABASE_DRIVER');
+
+    return match ($driver) {
+      default => new NotificationDAOImpl(),
     };
   }
 }
