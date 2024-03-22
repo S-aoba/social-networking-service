@@ -4,6 +4,7 @@ namespace Response\Render;
 
 use Response\HTTPRenderer;
 use Helpers\Authenticate;
+use Database\DataAccess\DAOFactory;
 
 class HTMLRenderer implements HTTPRenderer
 {
@@ -48,6 +49,13 @@ class HTMLRenderer implements HTTPRenderer
     ob_start();
     // ユーザーへのアクセスを提供します
     $user = Authenticate::getAuthenticatedUser();
+
+    $notifications = null;
+    // 通知を取得
+    if ($user) {
+      $notificationDAO = DAOFactory::getNotification();
+      $notifications = $notificationDAO->getById($_SESSION['user_id']);
+    }
     require $this->getViewPath('layout/header');
     require $this->getViewPath('component/navigator');
     require $this->getViewPath('component/message-boxes');

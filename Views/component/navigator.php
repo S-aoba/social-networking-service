@@ -9,7 +9,9 @@
           <a href="/notification" class="text-gray-600 hover:text-blue-400">
             通知
           </a>
-          <div class="h-4 w-4 bg-blue-400 rounded-full absolute -top-1 left-5" />
+          <?php if (count($notifications) > 0) : ?>
+            <div class="h-4 w-4 bg-blue-400 rounded-full absolute -top-1 left-5" />
+          <?php endif; ?>
         </li>
         <li><a href="/message" class="text-gray-600 hover:text-blue-400">メッセージ</a></li>
         <?php if ($user) : ?>
