@@ -6,6 +6,8 @@ use Database\DataAccess\Interfaces\FollowDAO;
 use Database\DatabaseManager;
 use Models\Follow;
 use Models\Profile;
+use Models\Notification;
+use Database\DataAccess\DAOFactory;
 
 
 class FollowDAOImpl implements FollowDAO
@@ -26,7 +28,21 @@ class FollowDAOImpl implements FollowDAO
       ]
     );
 
-    if ($result) return true;
+    if ($result) {
+      // notificationsテーブルに追加する
+
+      $notificationDAO = DAOFactory::getNotification();
+
+      $notification = new Notification(
+        sender_id: $follow->getFollowId(),
+        receiver_id: $follow->getFolloweeId(),
+        type: 'follow',
+      );
+
+      $notificationDAO->insert($notification);
+
+      return true;
+    }
     return false;
   }
 
