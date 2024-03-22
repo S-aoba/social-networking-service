@@ -562,4 +562,12 @@ return [
     // TODO:error catch を追加
     return new JSONRenderer(['status' => "success"]);
   })->setMiddleware(['auth']),
+
+  'notification' => Route::create('notification', function (): HTTPRenderer {
+
+    $notificationDAO = DAOFactory::getNotification();
+
+    $notifications = $notificationDAO->getById($_SESSION['user_id']);
+    return new HTMLRenderer('page/notification', ['notifications' => $notifications]);
+  })->setMiddleware(['auth']),
 ];
