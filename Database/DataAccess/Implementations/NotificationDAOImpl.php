@@ -49,7 +49,7 @@ class NotificationDAOImpl implements NotificationDAO
     $query =
       "SELECT notifications.*, profiles.username, profiles.profile_image_path, profiles.user_id
     FROM notifications
-    INNER JOIN profiles ON notifications.receiver_id = profiles.user_id
+    INNER JOIN profiles ON notifications.sender_id = profiles.user_id
     WHERE receiver_id = ?
     ";
 
