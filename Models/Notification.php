@@ -96,4 +96,27 @@ class Notification implements Model
   {
     return $this->table;
   }
+
+  public function diff(): string
+  {
+    // 現在の時間を取得します。
+    $current_time = time();
+
+    // 差を計算します。
+    $time_difference = $current_time - strtotime($this->created_at);
+
+    // 分単位の差を計算します。
+    $minutes_difference = round($time_difference / 60);
+
+    // 結果を表示します。
+    if ($minutes_difference < 60) {
+      return $minutes_difference . "分前";
+    } elseif ($minutes_difference < 1440) { // 24時間未満の場合
+      $hours_difference = round($minutes_difference / 60);
+      return $hours_difference . "時間前";
+    } else {
+      $days_difference = round($minutes_difference / 1440);
+      return $days_difference . "日前";
+    }
+  }
 }

@@ -17,7 +17,7 @@
                 <p class="text-gray-600"><?= $data['profile']->getUsername() ?>さんがあなたの投稿にいいねをしました</p>
                 <p class="text-gray-500 text-xs">
                   <!-- 作成日と現在時刻の差を取得 -->
-                  <?= $data['notification']->getCreatedAt() ?>
+                  <?= $data['notification']->diff() ?>
                 </p>
               </div>
             </div>
@@ -31,7 +31,7 @@
                 <p class="text-gray-600"><?= $data['profile']->getUsername() ?>さんがあなたをフォローしました</p>
                 <p class="text-gray-500 text-xs">
                   <!-- 作成日と現在時刻の差を取得 -->
-                  <?= $data['notification']->getCreatedAt() ?>
+                  <?= $data['notification']->diff() ?>
                 </p>
               </div>
             </div>
@@ -45,7 +45,7 @@
                 <p class="text-gray-600"><?= $data['profile']->getUsername() ?>さんがあなたの投稿にコメントしました</p>
                 <p class="text-gray-500 text-xs">
                   <!-- 作成日と現在時刻の差を取得 -->
-                  <?= $data['notification']->getCreatedAt() ?>
+                  <?= $data['notification']->diff() ?>
                 </p>
               </div>
             </div>
