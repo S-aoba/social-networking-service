@@ -5,6 +5,7 @@ namespace Database\DataAccess\Implementations;
 use Database\DataAccess\Interfaces\NotificationDAO;
 use Database\DatabaseManager;
 use Models\Notification;
+use Models\Profile;
 
 
 class NotificationDAOImpl implements NotificationDAO
@@ -45,7 +46,12 @@ class NotificationDAOImpl implements NotificationDAO
   {
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = "SELECT * FROM notifications WHERE receiver_id = ?";
+    $query =
+      "SELECT notifications.*, profiles.username, profiles.profile_image_path, profiles.user_id
+    FROM notifications
+    INNER JOIN profiles ON notifications.receiver_id = profiles.user_id
+    WHERE receiver_id = ?
+    ";
 
     $result = $db->prepareAndFetchAll(
       $query,
@@ -61,14 +67,24 @@ class NotificationDAOImpl implements NotificationDAO
     return [];
   }
 
-  private function resultNotification(array $result): Notification
+  private function resultNotification(array $result): array
   {
-    return new Notification(
-      $result['sender_id'],
-      $result['receiver_id'],
-      $result['type'],
-      $result['content']
-    );
+    return [
+      'notification' =>
+      new Notification(
+        sender_id: $result['sender_id'],
+        receiver_id: $result['receiver_id'],
+        type: $result['type'],
+        content: $result['content'],
+        created_at: $result['created_at']
+      ),
+      'profile' =>
+      new Profile(
+        user_id: $result['user_id'],
+        username: $result['username'],
+        profile_image_path: $result['profile_image_path']
+      )
+    ];
   }
   private function resultsToNotifications(array $results): array
   {

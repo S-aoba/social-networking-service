@@ -568,6 +568,6 @@ return [
     $notificationDAO = DAOFactory::getNotification();
 
     $notifications = $notificationDAO->getById($_SESSION['user_id']);
-    return new HTMLRenderer('page/notification', ['notifications' => $notifications]);
+    return new HTMLRenderer('page/notification', ['data_list' => $notifications]);
   })->setMiddleware(['auth']),
 ];
