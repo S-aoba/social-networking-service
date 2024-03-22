@@ -4,7 +4,6 @@ namespace Models;
 
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
-use Types\NotificationType;
 
 class Notification implements Model
 {
@@ -15,7 +14,7 @@ class Notification implements Model
   public function __construct(
     private int $sender_id,
     private int $receiver_id,
-    private NotificationType $type,
+    private string $type,
     private ?string $content = null,
     private bool $read_status = false,
     private ?int $notification_id = null,
@@ -43,12 +42,12 @@ class Notification implements Model
     $this->receiver_id = $receiver_id;
   }
 
-  public function getType(): NotificationType
+  public function getType(): string
   {
     return $this->type;
   }
 
-  public function setType(NotificationType $type): void
+  public function setType(string $type): void
   {
     $this->type = $type;
   }
