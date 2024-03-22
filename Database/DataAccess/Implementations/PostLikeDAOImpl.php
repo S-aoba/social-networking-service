@@ -5,7 +5,8 @@ namespace Database\DataAccess\Implementations;
 use Database\DataAccess\Interfaces\PostLikeDAO;
 use Database\DatabaseManager;
 use Models\PostLike;
-
+use Models\Notification;
+use Database\DataAccess\DAOFactory;
 
 class PostLikeDAOImpl implements PostLikeDAO
 {
@@ -15,18 +16,31 @@ class PostLikeDAOImpl implements PostLikeDAO
     $db = DatabaseManager::getMysqliConnection();
 
 
-    $query = "INSERT INTO post_likes (user_id, post_id) VALUES (?, ?)";
+    $query = "INSERT INTO post_likes (user_id, post_id, post_user_id) VALUES (?, ?, ?)";
 
     $result = $db->prepareAndExecute(
       $query,
-      'ii',
+      'iii',
       [
         $postLike->getUserId(),
         $postLike->getPostId(),
+        $postLike->getPostUserId(),
       ]
     );
 
-    if ($result) return true;
+    if ($result) {
+      $notificationDAO = DAOFactory::getNotification();
+
+      $notification = new Notification(
+        sender_id: $_SESSION['user_id'],
+        receiver_id: $postLike->getPostUserId(),
+        type: 'like',
+      );
+
+      $notificationDAO->insert($notification);
+
+      return true;
+    }
     return false;
   }
 

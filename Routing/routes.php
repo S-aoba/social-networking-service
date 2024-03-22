@@ -376,6 +376,7 @@ return [
     try {
       $post__id = $_POST['post_id'];
       $login_user_id = $_SESSION['user_id'];
+      $post_user_id = $_POST['post_user_id'];
 
 
       $postLikeDAO = DAOFactory::getPostLikeDAO();
@@ -383,6 +384,7 @@ return [
       $postLike = new PostLike(
         user_id: $login_user_id,
         post_id: $post__id,
+        post_user_id: $post_user_id
       );
 
 
@@ -397,16 +399,18 @@ return [
   })->setMiddleware(['auth']),
 
   'form/like' => Route::create('form/like', function (): HTTPRenderer {
-
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
     try {
       $post__id = $_POST['post_id'];
       $login_user_id = $_SESSION['user_id'];
+      $post_user_id = $_POST['post_user_id'];
 
       $postLikeDAO = DAOFactory::getPostLikeDAO();
 
       $postLike = new PostLike(
         user_id: $login_user_id,
         post_id: $post__id,
+        post_user_id: $post_user_id
       );
 
 
