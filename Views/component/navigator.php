@@ -5,6 +5,7 @@
       <?php if ($user) : ?>
         <li><a href="/home" class="text-gray-600 hover:text-blue-400">ホーム</a></li>
         <li><a href="/edit/profile" class="text-gray-600 hover:text-blue-400">プロフィール</a></li>
+        <li><a href="/notification" class="text-gray-600 hover:text-blue-400">通知</a></li>
         <li><a href="/message" class="text-gray-600 hover:text-blue-400">メッセージ</a></li>
         <?php if ($user) : ?>
           <li><a href="/logout" class="text-gray-600 hover:text-blue-400">ログアウト</a></li>
