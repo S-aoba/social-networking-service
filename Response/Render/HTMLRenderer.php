@@ -55,6 +55,7 @@ class HTMLRenderer implements HTTPRenderer
     if ($user) {
       $notificationDAO = DAOFactory::getNotification();
       $notifications = $notificationDAO->getById($_SESSION['user_id']);
+      $this->data['notifications'] = $notifications;
     }
     require $this->getViewPath('layout/header');
     require $this->getViewPath('component/navigator');
