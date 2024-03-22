@@ -47,7 +47,7 @@ class NotificationDAOImpl implements NotificationDAO
     $db = DatabaseManager::getMysqliConnection();
 
     $query =
-      "SELECT notifications.*, profiles.username, profiles.profile_image_path, profiles.user_id
+      "SELECT notifications.*, profiles.username, profiles.profile_image_path, profiles.user_id, profiles.created_at AS profile_created_at
     FROM notifications
     INNER JOIN profiles ON notifications.sender_id = profiles.user_id
     WHERE receiver_id = ?
@@ -58,7 +58,7 @@ class NotificationDAOImpl implements NotificationDAO
       'i',
       [$id]
     );
-
+    
     return $result === null ? null : $this->resultsToNotifications($result);
   }
 
