@@ -50,12 +50,12 @@ class HTMLRenderer implements HTTPRenderer
     // ユーザーへのアクセスを提供します
     $user = Authenticate::getAuthenticatedUser();
 
-    $notifications = null;
+    $is_notification_exists = 0;
     // 通知を取得
     if ($user) {
       $notificationDAO = DAOFactory::getNotification();
-      $notifications = $notificationDAO->getById($_SESSION['user_id']);
-      $this->data['notifications'] = $notifications;
+      $is_notification_exists = $notificationDAO->checkIsNotificationExists($_SESSION['user_id']);
+      $this->data['is_notification_exists'] = $is_notification_exists;
     }
     require $this->getViewPath('layout/header');
     require $this->getViewPath('component/navigator');

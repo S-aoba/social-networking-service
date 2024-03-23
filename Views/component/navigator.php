@@ -9,7 +9,7 @@
           <a href="/notification" class="text-gray-600 hover:text-blue-400">
             通知
           </a>
-          <?php if (count($notifications) > 0) : ?>
+          <?php if ($is_notification_exists) : ?>
             <div class="h-4 w-4 bg-blue-400 rounded-full absolute -top-1 left-5" />
           <?php endif; ?>
         </li>

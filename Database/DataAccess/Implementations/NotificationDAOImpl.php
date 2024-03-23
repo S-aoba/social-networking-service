@@ -58,7 +58,7 @@ class NotificationDAOImpl implements NotificationDAO
       'i',
       [$id]
     );
-    
+
     return $result === null ? null : $this->resultsToNotifications($result);
   }
 
@@ -93,5 +93,44 @@ class NotificationDAOImpl implements NotificationDAO
       $data_list[] = $this->resultNotification($result);
     }
     return $data_list;
+  }
+
+  public function toggleReadStatus(int $receiver_id): bool
+  {
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query =
+      'UPDATE notifications
+    SET read_status = 1
+    WHERE receiver_id = ? AND read_status = 0
+    ';
+
+    $result = $db->prepareAndExecute(
+      $query,
+      'i',
+      [$receiver_id]
+    );
+
+    if ($result === true) return true;
+
+    return false;
+  }
+
+  public function checkIsNotificationExists(int $receiver_id): bool
+  {
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query =
+      'SELECT count(*) AS notifications_count
+    FROM notifications
+    WHERE receiver_id = ? AND read_status = 0
+    ';
+
+    $result = $db->prepareAndFetchAll(
+      $query,
+      'i',
+      [$receiver_id]
+    );
+    return $result[0]['notifications_count'] > 0;
   }
 }
