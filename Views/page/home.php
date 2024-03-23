@@ -18,6 +18,18 @@
 </div>
 <!-- タイムライン -->
 <div class="flex flex-col space-y-4 m-6">
+  <div class="grid grid-cols-2 border-t border-b border-gray-200 bg-white font-bold">
+    <div class="h-full py-3 span-col-1 text-center hover:bg-gray-300/50 hover:cursor-pointer transition-colors duration-300">
+      <p>
+        タイムライン
+      </p>
+    </div>
+    <div class="h-full py-3 span-col-1 text-center hover:bg-gray-300/50 hover:cursor-pointer transition-colors duration-300">
+      <p>
+        フォロワー
+      </p>
+    </div>
+  </div>
   <?php foreach ($data_list as $data) : ?>
     <div class="bg-white p-4 rounded-lg shadow-md hover:cursor-pointer hover:bg-gray-100 transition-colors duration-300">
       <div class="flex items-center">
