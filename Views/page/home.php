@@ -19,12 +19,12 @@
 <!-- タイムライン -->
 <div class="flex flex-col space-y-4 m-6">
   <div class="grid grid-cols-2 border-t border-b border-gray-200 bg-white font-bold">
-    <div class="h-full py-3 span-col-1 text-center hover:bg-gray-300/50 hover:cursor-pointer transition-colors duration-300">
+    <div id="trend-tab" class="h-full py-3 span-col-1 text-center <?php echo ($_COOKIE['trend'] == 'true') ? 'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer' : 'hover:bg-gray-300/50 hover:cursor-pointer'; ?> transition-colors duration-300">
       <p>
         トレンド
       </p>
     </div>
-    <div class="h-full py-3 span-col-1 text-center hover:bg-gray-300/50 hover:cursor-pointer transition-colors duration-300">
+    <div id="follower-tab" class="h-full py-3 span-col-1 text-center <?php echo ($_COOKIE['trend'] == 'true') ? 'hover:bg-gray-300/50 hover:cursor-pointer' : 'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer'; ?> transition-colors duration-300">
       <p>
         フォロワー
       </p>
@@ -151,3 +151,27 @@
   <?php endforeach; ?>
 </div>
 <script src="js/post.js"></script>
+<script>
+  const trendTab = document.getElementById('trend-tab');
+  const followerTab = document.getElementById('follower-tab');
+
+  trendTab.addEventListener('click', () => {
+    console.log('Trend');
+    // trendをtrueに設定
+    document.cookie = 'trend=true';
+    // followerをfalseに設定
+    document.cookie = 'follower=false';
+
+    location.reload();
+  });
+
+  followerTab.addEventListener('click', () => {
+    console.log('Follower');
+    // followerをtrueに設定
+    document.cookie = 'follower=true';
+    // trendをfalseに設定
+    document.cookie = 'trend=false';
+
+    location.reload();
+  });
+</script>

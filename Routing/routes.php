@@ -131,10 +131,14 @@ return [
   })->setMiddleware(['auth']),
 
   'home' => Route::create('home', function (): HTTPRenderer {
-    // DBから投稿を取得
+
+    $trend = $_COOKIE['trend'];
+
+    $type =  $trend === 'true' ? 'trend' : 'follower';
+
     $postDAO = DAOFactory::getPostDAO();
 
-    $data = $postDAO->getAllPosts(0, 10);
+    $data = $postDAO->getAllPosts(0, 10, $type);
 
     $data_list = [];
     $postLikeDAO = DAOFactory::getPostLikeDAO();
