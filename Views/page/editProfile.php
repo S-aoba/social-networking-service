@@ -6,7 +6,7 @@
       <input type="hidden" name="id" value="<?= $profile->getId() ?>" placeholder="ID"><br>
     <?php endif; ?>
     <div class="flex justify-center mb-4">
-      <img id="preview-image" src="<?= htmlspecialchars($profile_image_path ?? 'https://via.placeholder.com/150') ?>" alt="Profile Image" class="w-32 h-32 rounded-full border-4 border-gray-200">
+      <img id="preview-image" src="<?= htmlspecialchars($profile->getProfileImage()) ?>" alt="Profile Image" class="w-32 h-32 rounded-full border-4 border-gray-200">
     </div>
     <div class="flex flex-col space-y-5 justify-end mb-4">
       <input id="image" name="image" type="file" accept=".png, .jpg, .jpeg, .gif" required>

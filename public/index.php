@@ -17,6 +17,10 @@ if (preg_match('/^\/tweet\/([a-zA-Z0-9_]+)$/', $_SERVER["REQUEST_URI"], $matches
   $_SERVER["REQUEST_URI"] = "/tweet";
 }
 
+if (preg_match('/^\/message\/([a-zA-Z0-9_]+)$/', $_SERVER["REQUEST_URI"], $matches)) {
+  $_SERVER["REQUEST_URI"] = "/message";
+}
+
 // ルートをロードします
 $routes = include('Routing/routes.php');
 

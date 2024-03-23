@@ -10,8 +10,9 @@ class PostLike implements Model
   use GenericModel;
 
   public function __construct(
-    private string $user_id,
-    private string $post_id
+    private int $user_id,
+    private int $post_id,
+    private int $post_user_id
   ) {
   }
 
@@ -33,5 +34,15 @@ class PostLike implements Model
   public function setPostId(int $post_id): void
   {
     $this->post_id = $post_id;
+  }
+
+  public function getPostUserId(): int
+  {
+    return $this->post_user_id;
+  }
+
+  public function setPostUserId(int $post_user_id): void
+  {
+    $this->post_user_id = $post_user_id;
   }
 }

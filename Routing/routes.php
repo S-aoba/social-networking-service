@@ -4,20 +4,24 @@ use Exceptions\AuthenticationFailureException;
 use Helpers\ValidationHelper;
 use Helpers\Authenticate;
 use Helpers\FileHelper;
+use Helpers\EncryptionHelper;
 use Response\FlashData;
 use Response\HTTPRenderer;
 use Response\Render\HTMLRenderer;
 use Response\Render\RedirectRenderer;
 use Database\DataAccess\DAOFactory;
+use Helpers\Settings;
 use Response\Render\JSONRenderer;
 use Routing\Route;
 use Types\ValueType;
 use Models\Profile;
 use Models\User;
 use Models\Follow;
+use Models\Message;
 use Models\Post;
 use Models\PostLike;
 use Models\Reply;
+use Models\Conversation;
 
 return [
 
@@ -150,7 +154,7 @@ return [
     }
 
     $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
-    $login_user_profile_image_path = FileHelper::getProfileImagePath($login_user_profile->getProfileImage());
+    $login_user_profile_image_path = $login_user_profile->getProfileImage();
 
     return new HTMLRenderer('page/home', ['data_list' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path]);
   })->setMiddleware(['auth']),
@@ -245,14 +249,7 @@ return [
 
     $profile = $profileDAO->getById($user_id);
 
-    $profile_image = $profile->getProfileImage();
-    $profile_image_path = null;
-
-    if ($profile_image) {
-      $profile_image_path = FileHelper::getProfileImagePath($profile_image);
-    }
-
-    return new HTMLRenderer('page/editProfile', ['profile' => $profile, "profile_image_path" => $profile_image_path]);
+    return new HTMLRenderer('page/editProfile', ['profile' => $profile]);
   })->setMiddleware(['auth']),
 
   'form/update/profile' => Route::create('form/update/profile', function (): HTTPRenderer {
@@ -379,6 +376,7 @@ return [
     try {
       $post__id = $_POST['post_id'];
       $login_user_id = $_SESSION['user_id'];
+      $post_user_id = $_POST['post_user_id'];
 
 
       $postLikeDAO = DAOFactory::getPostLikeDAO();
@@ -386,6 +384,7 @@ return [
       $postLike = new PostLike(
         user_id: $login_user_id,
         post_id: $post__id,
+        post_user_id: $post_user_id
       );
 
 
@@ -400,20 +399,23 @@ return [
   })->setMiddleware(['auth']),
 
   'form/like' => Route::create('form/like', function (): HTTPRenderer {
-
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
     try {
       $post__id = $_POST['post_id'];
       $login_user_id = $_SESSION['user_id'];
+      $post_user_id = $_POST['post_user_id'];
+      $post_content = $_POST['post_content'];
 
       $postLikeDAO = DAOFactory::getPostLikeDAO();
 
       $postLike = new PostLike(
         user_id: $login_user_id,
         post_id: $post__id,
+        post_user_id: $post_user_id
       );
 
 
-      $postLikeDAO->addPostLike($postLike);
+      $postLikeDAO->addPostLike($postLike, $post_content);
       return new JSONRenderer(['status' => 'success']);
     } catch (\Exception $e) {
 
@@ -466,5 +468,115 @@ return [
     } catch (\Exception $e) {
       error_log($e->getMessage());
     }
+  })->setMiddleware(['auth']),
+
+  'message' => Route::create('message', function (): HTTPRenderer {
+    $url = $_SERVER['PATH_INFO'];
+    preg_match('/\/message\/(.+)/', $url, $matches);
+
+    $message_id = count($matches) === 0 ? null : $matches[1];
+
+    if (!is_null($message_id)) {
+
+      $conversationDAO = DAOFactory::getConversation();
+
+      $conversation = $conversationDAO->getConversationById($message_id);
+
+
+      $messageDAO = DAOFactory::getMessage();
+
+      $messages = $messageDAO->getAllMessageById($conversation->getConversationId());
+
+      $profileDAO = DAOFactory::getProfileDAO();
+
+      $another_user_id = $_SESSION['user_id'] === $conversation->getParticipate1Id() ? $conversation->getParticipate2Id() : $conversation->getParticipate1Id();
+
+      $another_user_profile = $profileDAO->getById($another_user_id);
+
+      $login_user_id = $_SESSION['user_id'];
+      $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
+
+      return new HTMLRenderer('page/message-detail', ['conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile' => $login_user_profile]);
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $conversationDAO = DAOFactory::getConversation();
+
+    $data_list = $conversationDAO->getAllConversations($user_id);
+    // ログインユーザーのフォローしているユーザーを全件取得する
+    $followDAO = DAOFactory::getFollowDAO();
+
+    $followee_users = $followDAO->getAllFollowingUser($user_id);
+
+    return new HTMLRenderer('page/message', ['data_list' => $data_list, 'followee_users' => $followee_users]);
+  })->setMiddleware(['auth']),
+
+  'form/message' => Route::create('form/message', function (): HTTPRenderer {
+
+    error_log(print_r($_POST, true));
+
+    $sender_id = $_POST['sender_id'];
+    $receiver_id = $_POST['receiver_id'];
+    $conversation_id = $_POST['conversation_id'];
+    $message_body = $_POST['message_body'];
+
+    $encryptionKey = Settings::env('ENCRYPTION_KEY');
+
+    $encryptionHelper = new EncryptionHelper($encryptionKey);
+
+    // メッセージを暗号化
+    $encryptedMessageBody = $encryptionHelper->encrypt($message_body);
+
+    $message = new Message(
+      sender_id: $sender_id,
+      receiver_id: $receiver_id,
+      conversation_id: $conversation_id,
+      message_body: $encryptedMessageBody  // 暗号化されたメッセージを使用
+    );
+
+    $messageDAO = DAOFactory::getMessage();
+
+    $messageDAO->createMessage($message);
+
+    // TODO:error catch を追加
+    return new JSONRenderer(['status' => 'success']);
+  })->setMiddleware(['auth']),
+
+  'form/conversation' => Route::create('form/conversation', function (): HTTPRenderer {
+
+    $conversationDAO = DAOFactory::getConversation();
+
+    $conversation = new Conversation(
+      participant1_id: $_POST['participant1_id'],
+      participant2_id: $_POST['participant2_id']
+    );
+
+    $conversationDAO->createConversation($conversation);
+
+
+    return new JSONRenderer(['status' => "success", 'conversation_id' => $conversation->getConversationId()]);
+  })->setMiddleware(['auth']),
+
+  'form/conversation/delete' => Route::create('form/conversation/delete', function (): HTTPRenderer {
+
+    $conversationDAO = DAOFactory::getConversation();
+
+    $conversationDAO->deleteConversation($_POST['conversation_id']);
+
+
+    // TODO:error catch を追加
+    return new JSONRenderer(['status' => "success"]);
+  })->setMiddleware(['auth']),
+
+  'notification' => Route::create('notification', function (): HTTPRenderer {
+
+    $notificationDAO = DAOFactory::getNotification();
+
+    $notifications = $notificationDAO->getById($_SESSION['user_id']);
+
+
+    $notificationDAO->toggleReadStatus($_SESSION['user_id']);
+
+    return new HTMLRenderer('page/notification', ['data_list' => $notifications]);
   })->setMiddleware(['auth']),
 ];

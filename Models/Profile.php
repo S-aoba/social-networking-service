@@ -5,6 +5,8 @@ namespace Models;
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
 
+use Helpers\FileHelper;
+
 class Profile implements Model
 {
   use GenericModel;
@@ -104,7 +106,7 @@ class Profile implements Model
 
   public function getProfileImage(): ?string
   {
-    return $this->profile_image_path;
+    return $this->profile_image_path === null ? null : FileHelper::getProfileImagePath($this->profile_image_path);
   }
 
   public function setProfileImage(string $profile_image_path): void

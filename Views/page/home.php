@@ -26,7 +26,7 @@
         </a>
         <div class="ml-4 w-full">
           <div class="flex items-center justify-between py-2">
-            <p class="text-lg font-bold"><?= htmlspecialchars($data["profile"]->getUsername()) ?></p>
+            <p class="text-lg font-bold"><?= htmlspecialchars($data["profile"]->getUsername() === null ? "名無しのユーザー" :  $data["profile"]->getUsername()) ?></p>
             <?php if ($data['post']->getUserId() === $_SESSION['user_id']) : ?>
               <form id="deletePostForm" method="post" action="#">
                 <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
@@ -58,6 +58,7 @@
           <form action="#" method="POST" id="unlikeForm">
             <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
             <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+            <input type="hidden" name="post_user_id" value="<?= $data['post']->getUserId() ?>">
             <button class="group inline-block text-lg text-pink-500">
               <span class="inline-flex items-center justify-center h-10 w-10 rounded-full">
                 <span class="transition-colors duration-300 group-hover:border-pink-500 group-hover:bg-pink-100 group-hover:text-pink-500 rounded-full px-2 py-1">
@@ -75,6 +76,8 @@
           <form action="#" method="POST" id="likeForm">
             <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
             <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+            <input type="hidden" name="post_user_id" value="<?= $data['post']->getUserId() ?>">
+            <input type="hidden" name="post_content" value="<?= $data['post']->getContent() ?>">
             <button id="likeBtn" type="submit" class="group inline-block text-lg">
               <span class="inline-flex items-center justify-center h-10 w-10 rounded-full">
                 <span class="transition-colors duration-300 group-hover:border-pink-500 group-hover:bg-pink-100 group-hover:text-pink-500 rounded-full px-2 py-1">
