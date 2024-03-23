@@ -4,6 +4,7 @@ namespace Models;
 
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
+use Exception;
 
 class Notification implements Model
 {
@@ -99,24 +100,33 @@ class Notification implements Model
 
   public function diff(): string
   {
-    // 現在の時間を取得します。
-    $current_time = time();
+    date_default_timezone_set('Asia/Tokyo');
+    try {
+      if ($this->created_at === null) {
+        throw new Exception('日付がnullになっています。');
+      }
 
-    // 差を計算します。
-    $time_difference = $current_time - strtotime($this->created_at);
+      $created_at = strtotime($this->created_at);
+      $current_time = time();
 
-    // 分単位の差を計算します。
-    $minutes_difference = round($time_difference / 60);
+      $time_diff = abs($current_time - $created_at); // 絶対値を取ることで常に正の値になる
 
-    // 結果を表示します。
-    if ($minutes_difference < 60) {
-      return $minutes_difference . "分前";
-    } elseif ($minutes_difference < 1440) { // 24時間未満の場合
-      $hours_difference = round($minutes_difference / 60);
-      return $hours_difference . "時間前";
-    } else {
-      $days_difference = round($minutes_difference / 1440);
-      return $days_difference . "日前";
+      $days_diff = floor($time_diff / (60 * 60 * 24)); // 日数の差を計算
+      $hours_diff = floor(($time_diff % (60 * 60 * 24)) / (60 * 60)); // 残りの時間から時間の差を計算
+      $minutes_diff = floor(($time_diff % (60 * 60)) / 60); // 残りの分から分の差を計算
+
+      if ($days_diff > 0) {
+        return $days_diff . '日前';
+      } elseif ($hours_diff > 0) {
+        return $hours_diff . '時間前';
+      } elseif ($minutes_diff > 0) {
+        return $minutes_diff . '分前';
+      } else {
+        return 'たった今';
+      }
+    } catch (Exception $e) {
+      error_log($e->getMessage());
+      return "エラーが発生しました";
     }
   }
 }
