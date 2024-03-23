@@ -10,7 +10,7 @@ use Database\DataAccess\DAOFactory;
 
 class PostLikeDAOImpl implements PostLikeDAO
 {
-  public function addPostLike(PostLike $postLike): bool
+  public function addPostLike(PostLike $postLike, string $content): bool
   {
 
     $db = DatabaseManager::getMysqliConnection();
@@ -35,6 +35,7 @@ class PostLikeDAOImpl implements PostLikeDAO
         sender_id: $_SESSION['user_id'],
         receiver_id: $postLike->getPostUserId(),
         type: 'like',
+        content: $content
       );
 
       $notificationDAO->insert($notification);

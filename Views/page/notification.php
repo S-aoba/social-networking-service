@@ -15,6 +15,9 @@
               <div class="flex-grow">
                 <h2 class="text-lg font-semibold text-gray-800"><?= $data['profile']->getUsername() ?></h2>
                 <p class="text-gray-600"><?= $data['profile']->getUsername() ?>さんがあなたの投稿にいいねをしました</p>
+                <?php if (!is_null($data['notification']->getContent())) : ?>
+                  <p class="text-sm text-gray-400"><?= $data['notification']->getContent() ?></p>
+                <?php endif; ?>
                 <p class="text-gray-500 text-xs">
                   <!-- 作成日と現在時刻の差を取得 -->
                   <?= $data['notification']->diff() ?>

@@ -77,6 +77,7 @@
             <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
             <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
             <input type="hidden" name="post_user_id" value="<?= $data['post']->getUserId() ?>">
+            <input type="hidden" name="post_content" value="<?= $data['post']->getContent() ?>">
             <button id="likeBtn" type="submit" class="group inline-block text-lg">
               <span class="inline-flex items-center justify-center h-10 w-10 rounded-full">
                 <span class="transition-colors duration-300 group-hover:border-pink-500 group-hover:bg-pink-100 group-hover:text-pink-500 rounded-full px-2 py-1">

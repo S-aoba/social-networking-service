@@ -404,6 +404,7 @@ return [
       $post__id = $_POST['post_id'];
       $login_user_id = $_SESSION['user_id'];
       $post_user_id = $_POST['post_user_id'];
+      $post_content = $_POST['post_content'];
 
       $postLikeDAO = DAOFactory::getPostLikeDAO();
 
@@ -414,7 +415,7 @@ return [
       );
 
 
-      $postLikeDAO->addPostLike($postLike);
+      $postLikeDAO->addPostLike($postLike, $post_content);
       return new JSONRenderer(['status' => 'success']);
     } catch (\Exception $e) {
 
