@@ -5,7 +5,7 @@ spl_autoload_register();
 
 $DEBUG = true;
 
-if (preg_match('/\.(?:png|jpg|jpeg|gif|js|css|html|mp4)$/', $_SERVER["REQUEST_URI"])) {
+if (preg_match('/\.(?:png|jpg|jpeg|gif|js|css|html|mp4|svg)$/', $_SERVER["REQUEST_URI"])) {
   return false;
 }
 
