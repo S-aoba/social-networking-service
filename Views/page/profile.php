@@ -19,7 +19,7 @@
 
       <?php endif; ?>
     </div>
-    <img src="<?= htmlspecialchars($profile_image_path) ?>" alt="profile image" class="mt-4 rounded-lg">
+    <img src="<?= htmlspecialchars($profile->getProfileImage()) ?>" alt="profile image" class="mt-4 rounded-lg">
     <div class="mt-4">
       <p class="text-sm text-gray-600">Age: <?= htmlspecialchars($profile->getAge()) ?></p>
       <p class="text-sm text-gray-600">Address: <?= htmlspecialchars($profile->getAddress()) ?></p>

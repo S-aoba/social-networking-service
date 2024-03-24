@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center">
       <h1 class="text-3xl font-bold text-gray-800"><?= htmlspecialchars($profile->getUsername()) ?></h1>
     </div>
-    <img src="<?= htmlspecialchars($profile_image_path) ?>" alt="profile image" class="mt-4 rounded-lg">
+    <img src="<?= htmlspecialchars($profile->getProfileImage()) ?>" alt="profile image" class="mt-4 rounded-lg">
     <div class="mt-4">
       <p class="text-sm text-gray-600">Age: <?= htmlspecialchars($profile->getAge()) ?></p>
       <p class="text-sm text-gray-600">Address: <?= htmlspecialchars($profile->getAddress()) ?></p>

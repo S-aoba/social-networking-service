@@ -314,10 +314,8 @@ return [
       throw new AuthenticationFailureException();
     }
 
-    $profile_image_path = FileHelper::getProfileImagePath($profile->getProfileImage());
-
     if ($profile->getUserId() === $_SESSION['user_id']) {
-      return new HTMLRenderer('page/selfProfile', ['profile' => $profile, "profile_image_path" => $profile_image_path]);
+      return new HTMLRenderer('page/selfProfile', ['profile' => $profile]);
     }
 
     $followDAO = DAOFactory::getFollowDAO();
@@ -329,7 +327,7 @@ return [
 
     $is_follow = $followDAO->checkFollow($follow);
 
-    return new HTMLRenderer('page/profile', ['profile' => $profile, "profile_image_path" => $profile_image_path, "is_follow" => $is_follow]);
+    return new HTMLRenderer('page/profile', ['profile' => $profile, "is_follow" => $is_follow]);
   })->setMiddleware(['auth']),
 
   'form/follow' => Route::create('form/follow', function (): HTTPRenderer {
