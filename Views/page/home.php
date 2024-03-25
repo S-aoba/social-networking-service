@@ -77,8 +77,10 @@
         <!-- TODO:コメントのアイコンが上のコンテントやユーザーネームの左端と微妙に合わないので、後で修正 -->
         <div class="flex items-center space-x-3">
           <!-- Comment Icon -->
-          <div class="h-8 w-8 flex items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full">
+          <!-- コメント数を表示する -->
+          <div class="h-8 w-8 flex items-center justify-center space-x-1 cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full">
             <img class="h-4 w-4" src="/images/comment-icon.svg" alt="コメント数">
+            <p>1</p>
           </div>
           <!-- PostLike Icon -->
           <!-- TODO:アイコンをホバーした時にbgをアイコン側だけにして、数字には左端に少しかかるくらいにする -->
