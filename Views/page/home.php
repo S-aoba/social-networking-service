@@ -62,6 +62,16 @@
         <!-- Post Content -->
         <div class="text-sm">
           <?= htmlspecialchars($data['post']->getContent()) ?>
+          <?php if (!is_null($data["post"]->getImagePath())) : ?>
+            <div class="flex justify-center">
+              <img src="<?= htmlspecialchars($data["post"]->getImagePath()) ?>" class="w-96 h-96">
+            </div>
+          <?php endif; ?>
+          <?php if (!is_null($data["post"]->getVideoPath())) : ?>
+            <div class="flex justify-center">
+              <video src="<?= htmlspecialchars($data["post"]->getVideoPath()) ?>" class="w-96 h-96" controls>
+            </div>
+          <?php endif; ?>
         </div>
         <!-- Post Information -->
         <!-- TODO:コメントのアイコンが上のコンテントやユーザーネームの左端と微妙に合わないので、後で修正 -->
