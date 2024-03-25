@@ -8,8 +8,12 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <title>Social Networking Service</title>
+
+  <style>
+    
+  </style>
 </head>
 
-<body class="bg-gray-100 flex flex-col h-screen">
-  <div id="wrapper" class="flex-grow flex justify-center items-start mt-10">
-    <main class="max-w-screen-lg mx-auto w-full">
+<body class="w-full h-screen">
+  <div class="container h-full mx-auto xl:px-30 max-w-6xl">
+    <div class="grid grid-cols-5 h-full">
