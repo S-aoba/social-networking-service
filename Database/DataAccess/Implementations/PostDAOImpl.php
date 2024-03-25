@@ -95,7 +95,6 @@ class PostDAOImpl implements PostDAO
       return [];
     }
 
-    error_log(print_r($results, true));
     return $results === null ? [] : $this->resultsPosts($results);
   }
 
