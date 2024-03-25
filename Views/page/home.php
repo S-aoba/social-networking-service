@@ -42,13 +42,13 @@
   <?php foreach ($data_list as $data) : ?>
     <div class="flex border-b border-slate-300 h-fit w-full p-4 space-x-3">
       <!-- User Information -->
-      <div class="flex items-start"> <!-- items-start を追加 -->
+      <div class="flex items-start">
         <div class="h-10 w-10 border border-slate-300 rounded-full">
           <img src="<?= $data['profile']->getProfileImage() === null ? '/images/default-icon.svg' : htmlspecialchars($data['profile']->getProfileImage()) ?>" alt="post-user-icon" class="object-cover rounded-full">
         </div>
       </div>
-      <div class="flex flex-col flex-grow space-y-4"> <!-- flex-grow を追加 -->
-        <div class="flex justify-between items-center"> <!-- items-center を追加 -->
+      <div class="flex flex-col flex-grow space-y-4">
+        <div class="flex justify-between items-center">
           <div class="flex space-x-3 items-center">
             <p class="font-semibold"><?= htmlspecialchars($data['profile']->getUsername()) ?></p>
             <span class="text-sm text-slate-400"><?= htmlspecialchars($data['profile']->getId()) ?></span>
