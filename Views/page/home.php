@@ -50,14 +50,41 @@
       <div class="flex flex-col flex-grow space-y-4">
         <div class="flex justify-between items-center">
           <div class="flex space-x-3 items-center">
-            <p class="font-semibold"><?= htmlspecialchars($data['profile']->getUsername()) ?></p>
+            <p class="font-semibold"><?= is_null($data['profile']->getUsername()) ? '名無しユーザー' : htmlspecialchars($data['profile']->getUsername()) ?></p>
             <span class="text-sm text-slate-400"><?= htmlspecialchars($data['profile']->getId()) ?></span>
             <!-- diffメソッドを使う -->
             <span class="text-sm text-slate-400"><?= htmlspecialchars($data['post']->getTimeStamp()->getCreatedAt()) ?></span>
           </div>
-          <div class="h-8 w-8 flex items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full">
-            <img class="h-4 w-4" src="/images/menu-icon.svg" alt="編集">
-          </div>
+          <!-- TODO: 現状は削除以外のアクションがないので自身の投稿のみに表示する。 -->
+          <!-- 　　　　削除以外のアクションが増えたら、削除のボタンのみを非表示にするように変更する -->
+          <?php if ($data['post']->getUserId() === $_SESSION['user_id']) : ?>
+            <div id="post-menu" class="relative h-8 w-8 flex items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full">
+              <img class="h-4 w-4" src="/images/menu-icon.svg" alt="編集">
+              <div id="menu" class="h-fit bg-white flex flex-col space-y-4 absolute top-5 -left-20 shadow-md border border-slate-300 rounded-md hidden">
+                <button id="deleteBtn" type="button" class="w-full p-3 flex items-center text-red-400 hover:bg-slate-100 cursor-pointer transition-colors duration-300">
+                  <img class="h-6 w-6" src="/images/delete-icon.svg" alt="投稿を削除する">
+                  <span class="ml-2">削除</span>
+                </button>
+              </div>
+            </div>
+            <!-- PostDeleteModal -->
+            <div id="postDeleteModal" class="hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex justify-center items-center">
+              <div class="bg-white p-8 rounded-lg">
+                <h2 class="text-2xl font-semibold mb-6">削除してもよろしですか？この操作を取り消すことはできません</h2>
+                <div class="w-full h-full flex space-x-3 items-center justify-center rounded-md">
+                  <form id="deletePostForm" method="POST" action="#">
+                    <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
+                    <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+                    <input type="hidden" name="post_user_id" value="<?= $data['post']->getUserId() ?>">
+                    <button type="submit" class="bg-red-500 text-white hover:bg-red-700 py-2 px-3 rounded-md transition-colors duration-300">削除</button>
+                  </form>
+                  <div>
+                    <button id="postDeleteCancelBtn" type="button" class="border border-slate-300 py-2 px-3 hover:bg-slate-200 rounded-md transition-colors duration-300">キャンセル</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <?php endif; ?>
         </div>
         <!-- Post Content -->
         <div class="text-sm">
@@ -114,30 +141,7 @@
       </div>
     </div>
   <?php endforeach; ?>
-
 </div>
+
+<!-- scriptを用途ごとに分ける -->
 <script src="js/post.js"></script>
-<script>
-  const trendTab = document.getElementById('trend-tab');
-  const followerTab = document.getElementById('follower-tab');
-
-  trendTab.addEventListener('click', () => {
-    console.log('Trend');
-    // trendをtrueに設定
-    document.cookie = 'trend=true';
-    // followerをfalseに設定
-    document.cookie = 'follower=false';
-
-    location.reload();
-  });
-
-  followerTab.addEventListener('click', () => {
-    console.log('Follower');
-    // followerをtrueに設定
-    document.cookie = 'follower=true';
-    // trendをfalseに設定
-    document.cookie = 'trend=false';
-
-    location.reload();
-  });
-</script>
