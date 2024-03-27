@@ -1,4 +1,4 @@
-<div class="col-span-4 lg:col-span-2 flex flex-col">
+<div class="col-span-4 lg:col-span-2 flex flex-col lg:border-r lg:border-slate-100">
   <!-- top -->
   <div class="flex items-center justify-between p-4">
     <p class="text-lg font-bold">メッセージ</p>
