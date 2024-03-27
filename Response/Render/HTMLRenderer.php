@@ -67,7 +67,6 @@ class HTMLRenderer implements HTTPRenderer
   private function getFooter(): string
   {
     ob_start();
-    require $this->getViewPath('component/information');
     require $this->getViewPath('layout/footer');
     return ob_get_clean();
   }
