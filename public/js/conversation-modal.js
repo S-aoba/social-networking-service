@@ -1,7 +1,7 @@
 const conversationModal = document.getElementById('conversationModal');
-const newConversationButton = document.getElementById('newConversationButton1');
+const createConversationBtn = document.getElementById('createConversationBtn');
 
-newConversationButton.onclick = function () {
+createConversationBtn.onclick = function () {
   conversationModal.classList.remove('hidden');
 };
 
