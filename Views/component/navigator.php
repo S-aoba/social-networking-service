@@ -16,7 +16,7 @@
         items-center
         justify-center
         p-4
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         lg:hidden
         transition-colors
@@ -33,7 +33,7 @@
         rounded-full
         items-center
         w-full
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         transition-colors
         duration-300
@@ -55,7 +55,7 @@
         items-center
         justify-center
         p-4
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         lg:hidden
         transition-colors
@@ -72,7 +72,7 @@
         rounded-full
         items-center
         w-full
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         transition-colors
         duration-300
@@ -97,7 +97,7 @@
         items-center
         justify-center
         p-4
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         lg:hidden
         transition-colors
@@ -114,7 +114,7 @@
         rounded-full
         items-center
         w-full
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         transition-colors
         duration-300
@@ -135,7 +135,7 @@
         items-center
         justify-center
         p-4
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         lg:hidden
         transition-colors
@@ -152,7 +152,7 @@
         rounded-full
         items-center
         w-full
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         transition-colors
         duration-300
@@ -173,7 +173,7 @@
         items-center
         justify-center
         p-4
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         lg:hidden
         transition-colors
@@ -190,7 +190,7 @@
         rounded-full
         items-center
         w-full
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         transition-colors
         duration-300
@@ -212,7 +212,7 @@
         items-center
         justify-center
         p-4
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         lg:hidden
         transition-colors
@@ -229,7 +229,7 @@
         rounded-full
         items-center
         w-full
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         transition-colors
         duration-300
@@ -250,7 +250,7 @@
         items-center
         justify-center
         p-4
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         lg:hidden
         transition-colors
@@ -267,7 +267,7 @@
         rounded-full
         items-center
         w-full
-        hover:bg-slate-200
+        hover:bg-slate-100
         cursor-pointer
         transition-colors
         duration-300
