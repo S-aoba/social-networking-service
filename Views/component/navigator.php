@@ -87,7 +87,7 @@
             </p>
           </div>
         </div>
-        <div class="flex flex-row items-center justify-start">
+        <a href="/message" class="flex flex-row items-center justify-start">
           <div class="
         relative
         rounded-full
@@ -124,7 +124,7 @@
               Message
             </p>
           </div>
-        </div>
+        </a>
         <div class="flex flex-row items-center justify-start ">
           <div class="
         relative
