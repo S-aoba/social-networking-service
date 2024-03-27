@@ -288,7 +288,7 @@
   <!-- Modal Content -->
   <div class="bg-white p-8 rounded-lg w-full max-w-md">
     <h2 class="text-2xl font-semibold mb-6">Login</h2>
-    <form id="loginForm" action="#" method="POST">
+    <form action="form/login" method="POST">
       <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
       <div class="mb-4">
         <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
@@ -310,7 +310,7 @@
   <!-- Modal Content -->
   <div class="bg-white p-8 rounded-lg w-full max-w-md">
     <h2 class="text-2xl font-semibold mb-6">Register</h2>
-    <form id="registerForm" action="#" method="POST">
+    <form action="form/register" method="POST">
       <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
       <!-- <div class="mb-4">
         <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
@@ -361,35 +361,4 @@
       registerModal.classList.add('hidden');
     }
   };
-
-
-  const registerForm = document.getElementById('registerForm')
-
-  registerForm.addEventListener('submit', ((e) => {
-    e.preventDefault();
-
-    const registerFormData = new FormData(registerForm);
-
-    fetch('form/register', {
-      method: "POST",
-      body: registerFormData
-    }).then(() => {
-      registerModal.classList.add('hidden');
-    })
-  }))
-
-  const LoginForm = document.getElementById('loginForm')
-
-  LoginForm.addEventListener('submit', ((e) => {
-    e.preventDefault();
-
-    const LoginFormData = new FormData(LoginForm);
-
-    fetch('form/login', {
-      method: "POST",
-      body: LoginFormData
-    }).then(() => {
-      loginModal.classList.add('hidden');
-    })
-  }))
 </script>
