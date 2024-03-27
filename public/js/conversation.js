@@ -12,9 +12,6 @@ newConversationForms.forEach((newConversationForm) => {
     }).then((res) => {
       res.json().then((data) => {
         if (data.status === 'success') {
-          // TODO: モーダルを閉じる
-          modal.classList.add('hidden');
-
           // TODO:受け取ったデータを使って画面を遷移させる
           location.href = '/message/' + data.conversation_id;
         }
