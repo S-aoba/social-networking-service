@@ -2,9 +2,15 @@
   <!-- top -->
   <div class="flex items-center justify-between p-4">
     <p class="text-lg font-bold">メッセージ</p>
-    <div>
+    <div class="flex space-x-3 items-center">
       <!-- Messageの設定アイコン　/message/settingsが未実装のためアイコンのみ設置 -->
-      <img class="h-6 w-6 cursor-pointer" src="/images/gear.svg" alt="設定">
+      <div class="h-8 w-8 cursor-pointer hover:bg-slate-200 rounded-full flex items-center justify-center trasition-colors duration-300">
+        <img class="h-6 w-6 cursor-pointer" src="/images/gear.svg" alt="設定">
+      </div>
+      <button id="createConversationIconBtn" type="button" class="h-8 w-8 cursor-pointer hover:bg-slate-200 rounded-full flex items-center justify-center trasition-colors duration-300">
+        <img class="h-6 w-6 cursor-pointer" src="/images/message-plus.svg" alt="設定">
+      </button>
+
     </div>
   </div>
   <!-- search bar -->

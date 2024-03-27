@@ -1,9 +1,15 @@
 const conversationModal = document.getElementById('conversationModal');
 const createConversationBtn = document.getElementById('createConversationBtn');
+const createConversationIconBtn = document.getElementById('createConversationIconBtn');
 
-createConversationBtn.onclick = function () {
-  conversationModal.classList.remove('hidden');
+const openConversationModal = (btn) => {
+  btn.addEventListener('click', () => {
+    conversationModal.classList.remove('hidden');
+  });
 };
+
+openConversationModal(createConversationBtn);
+openConversationModal(createConversationIconBtn);
 
 window.onclick = function (event) {
   if (event.target == conversationModal) {
