@@ -1,4 +1,4 @@
-<div class="col-span-4 lg:col-span-3 flex flex-col">
+<div class="col-span-4 lg:col-span-2 flex flex-col">
   <!-- top -->
   <div class="flex items-center justify-between p-4">
     <p class="text-lg font-bold">メッセージ</p>
@@ -64,7 +64,7 @@
 <div id="conversationModal" class="hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex justify-center items-center">
   <!-- Modal Content -->
   <div class="bg-white p-8 rounded-lg">
-    <h2 class="text-2xl font-semibold mb-6">新しいメッセージを送信</h2>
+    <h2 class="text-2xl font-semibold mb-6">新しいメッセージ</h2>
     <div class="w-full h-full">
       <?php if (count($data_list) < 1) : ?>
         <p>現在あなたをフォローしているユーザーはいません</p>
@@ -74,11 +74,11 @@
             <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
             <input type="hidden" name="participant1_id" value="<?= $_SESSION['user_id'] ?>">
             <input type="hidden" name="participant2_id" value="<?= $followee_user->getUserId() ?>">
-            <button type="submit" class="w-full flex items-center z-10 hover:cursor-pointer hover:bg-gray-200 p-2">
-              <img class="w-12 h-12 rounded-full mr-4 border border-gray-400" src="<?= $followee_user->getProfileImage() ?>" alt="フォロワー">
-              <div>
-                <p class="text-base text-gray-500"><?= $followee_user->getUsername() ?></p>
-                <p class="text-base text-gray-500"><?= $followee_user->getUserId() ?></p>
+            <button type="submit" class="w-full flex items-center z-10 cursor-pointer hover:bg-slate-100 p-2">
+              <img class="w-12 h-12 rounded-full mr-4 border border-slate-300" src="<?= $followee_user->getProfileImage() ?>" alt="フォロワー">
+              <div class="flex space-x-3 items-center">
+                <h3 class="max-w-60 truncate text-sm font-semibold text-gray-800"><?= $followee_user->getUsername() === null ? '名無しユーザー' : $data['other_user_name'] ?></h3>
+                <span class="max-w-44 truncate text-sm text-gray-400 mr-1">@<span><?= $followee_user->getUserId() ?></span></span>
               </div>
             </button>
             <hr class="border-gray-300 mb-6 mt-3">
@@ -88,6 +88,15 @@
     </div>
   </div>
 </div>
+
+<div class="lg:col-span-2 hidden lg:block lg:flex lg:flex-col lg:items-center lg:justify-center">
+  <div>
+    <h2 class="text-2xl font-bold mb-2">メッセージを選択</h2>
+    <p class="text-sm text-slate-400 mb-4">既存の会話から選択したり、新しい会話を開始したりできます。</p>
+    <button id="createConversationBtn" class="px-2 py-2 bg-slate-500 text-white rounded-lg text-sm hover:bg-slate-700">新しいメッセージ</button>
+  </div>
+</div>
+
 
 <script src="js/conversation.js"></script>
 <script src="js/conversation-modal.js"></script>
