@@ -143,5 +143,8 @@
   <?php endforeach; ?>
 </div>
 
-<!-- scriptを用途ごとに分ける -->
 <script src="js/post.js"></script>
+<script src="js/preview.js"></script>
+<script src="js/post-like.js"></script>
+<script src="js/reply.js"></script>
+<script src="js/trend-or-follower.js"></script>
