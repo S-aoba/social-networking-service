@@ -6,7 +6,7 @@
         <img src="/images/logo.svg" alt="logo" width="35" height="35">
       </div>
       <!-- navigation item -->
-      <div class="flex flex-row items-center justify-start">
+      <a href="/home" class="flex flex-row items-center justify-start">
         <div class="
         relative
         rounded-full
@@ -43,7 +43,7 @@
             Home
           </p>
         </div>
-      </div>
+      </a>
       <?php if ($user) : ?>
         <div class="flex flex-row items-center justify-start">
           <div class="
@@ -163,7 +163,8 @@
             </p>
           </div>
         </div>
-        <div class="flex flex-row items-center justify-start ">
+        <form action="logout" method="POST" class="flex flex-row items-center justify-start">
+          <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
           <div class="
         relative
         rounded-full
@@ -200,7 +201,7 @@
               Logout
             </p>
           </div>
-        </div>
+        </form>
       <?php else : ?>
         <div id="loginBtn" class="flex flex-row items-center justify-start">
           <div class="
