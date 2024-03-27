@@ -163,8 +163,7 @@
             </p>
           </div>
         </div>
-        <form action="logout" method="POST" class="flex flex-row items-center justify-start">
-          <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
+        <a href="/logout" class="flex flex-row items-center justify-start">
           <div class="
         relative
         rounded-full
@@ -201,7 +200,7 @@
               Logout
             </p>
           </div>
-        </form>
+        </a>
       <?php else : ?>
         <div id="loginBtn" class="flex flex-row items-center justify-start">
           <div class="
