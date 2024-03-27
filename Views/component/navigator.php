@@ -78,9 +78,9 @@
         duration-300
         ">
             <!-- Notificationが存在していれば、bg-slate-300の丸い印をつける -->
-            <!-- <?php if ($is_notification_exists) : ?>
-              <div class="h-4 w-4 bg-blue-400 rounded-full absolute -top-1 left-5" />
-            <?php endif; ?> -->
+            <?php if ($is_notification_exists) : ?>
+              <div class="h-4 w-4 bg-blue-400 rounded-full absolute top-3 left-4"></div>
+            <?php endif; ?>
             <img src="/images/notification.svg" alt="notification" width="24" height="24">
             <p class="hidden lg:block text-lg">
               Notification
