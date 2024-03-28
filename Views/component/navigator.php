@@ -125,7 +125,7 @@
             </p>
           </div>
         </a>
-        <a href="profile/<?= $_SESSION['user_id'] ?>" class="flex flex-row items-center justify-start ">
+        <a href="/profile/<?= $_SESSION['user_id'] ?>" class="flex flex-row items-center justify-start ">
           <div class="
         relative
         rounded-full
