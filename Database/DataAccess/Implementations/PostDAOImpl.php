@@ -205,4 +205,41 @@ class PostDAOImpl implements PostDAO
     if ($result) return true;
     return false;
   }
+
+  public function getAllPostByUserId(int $user_id): ?array
+  {
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query =
+      "SELECT
+      posts.*,
+      profiles.*,
+      profiles.user_id AS profile_user_id,
+      posts.created_at AS post_created_at,
+      posts.id AS post_id,
+      COUNT(post_likes.post_id) AS like_count
+      FROM
+          posts
+      JOIN
+          profiles ON posts.user_id = profiles.user_id
+      LEFT JOIN
+          post_likes ON posts.id = post_likes.post_id
+      WHERE
+          posts.user_id = ?
+      GROUP BY
+          posts.id,
+          profiles.id
+      ORDER BY
+          posts.created_at DESC;
+      ";
+
+    $result = $db->prepareAndFetchAll(
+      $query,
+      'i',
+      [$user_id]
+    );
+
+
+    return $result === null ? null : $this->resultsPosts($result);
+  }
 }

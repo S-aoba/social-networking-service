@@ -323,7 +323,28 @@ return [
 
     $is_self_profile = $user_id === $_SESSION['user_id'] ? true : false;
 
-    return new HTMLRenderer('page/profile', ['profile' => $profile, "is_follow" => $is_follow, 'is_self_profile' => $is_self_profile]);
+    $postDAO = DAOFactory::getPostDAO();
+
+    $posts = $postDAO->getAllPostByUserId($user_id);
+
+    $data_list = [];
+    $postLikeDAO = DAOFactory::getPostLikeDAO();
+
+    $replyDAO = DAOFactory::getReplyDAO();
+
+    $login_user_id = $_SESSION['user_id'];
+
+    foreach ($posts as $data) {
+      $data_list[] = [
+        'post' => $data['post'],
+        "profile" => $data["profile"],
+        'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
+        'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
+        'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
+      ];
+    }
+
+    return new HTMLRenderer('page/profile', ['profile' => $profile, "is_follow" => $is_follow, 'is_self_profile' => $is_self_profile, 'data_list' => $data_list]);
   })->setMiddleware(['auth']),
 
   'form/follow' => Route::create('form/follow', function (): HTTPRenderer {
