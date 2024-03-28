@@ -303,20 +303,14 @@ return [
   })->setMiddleware(['auth']),
 
   'profile' => Route::create('profile', function (): HTTPRenderer {
+
     $url = $_SERVER['PATH_INFO'];
     preg_match('/\/profile\/(.+)/', $url, $matches);
-    $username = $matches[1];
+    $user_id = intval($matches[1]);
 
     $profileDAO = DAOFactory::getProfileDAO();
-    $profile = $profileDAO->getByUsername($username);
+    $profile = $profileDAO->getByUsername($user_id);
 
-    if (!$profile) {
-      throw new AuthenticationFailureException();
-    }
-
-    if ($profile->getUserId() === $_SESSION['user_id']) {
-      return new HTMLRenderer('page/selfProfile', ['profile' => $profile]);
-    }
 
     $followDAO = DAOFactory::getFollowDAO();
 
@@ -327,7 +321,9 @@ return [
 
     $is_follow = $followDAO->checkFollow($follow);
 
-    return new HTMLRenderer('page/profile', ['profile' => $profile, "is_follow" => $is_follow]);
+    $is_self_profile = $user_id === $_SESSION['user_id'] ? true : false;
+
+    return new HTMLRenderer('page/profile', ['profile' => $profile, "is_follow" => $is_follow, 'is_self_profile' => $is_self_profile]);
   })->setMiddleware(['auth']),
 
   'form/follow' => Route::create('form/follow', function (): HTTPRenderer {
