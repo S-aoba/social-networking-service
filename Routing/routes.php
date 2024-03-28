@@ -478,6 +478,12 @@ return [
 
     $message_id = count($matches) === 0 ? null : $matches[1];
 
+    $user_id = $_SESSION['user_id'];
+    $conversationDAO = DAOFactory::getConversation();
+
+    $data_list = $conversationDAO->getAllConversations($user_id);
+
+
     if (!is_null($message_id)) {
 
       $conversationDAO = DAOFactory::getConversation();
@@ -498,7 +504,7 @@ return [
       $login_user_id = $_SESSION['user_id'];
       $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
 
-      return new HTMLRenderer('page/message-detail', ['conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile' => $login_user_profile]);
+      return new HTMLRenderer('page/message-detail', ['data_list' => $data_list, 'conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile' => $login_user_profile]);
     }
 
     $user_id = $_SESSION['user_id'];

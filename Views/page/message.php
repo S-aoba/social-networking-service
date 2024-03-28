@@ -57,7 +57,7 @@
           </div>
         </div>
         <?php if (count($data['message']) >= 1) : ?>
-          <p class="w-96 truncate text-sm text-slate-400 truncate"><?= $data['message'][0]->getMessageBody() ?></p>
+          <p class="w-80 truncate text-sm text-slate-400 truncate"><?= $data['message'][0]->getMessageBody() ?></p>
         <?php else : ?>
           <p class="text-sm text-slate-400">まだメッセージはありません。</p>
         <?php endif; ?>
