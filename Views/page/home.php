@@ -44,7 +44,9 @@
       <!-- User Information -->
       <div class="flex items-start">
         <div class="h-10 w-10 border border-slate-300 rounded-full">
-          <img src="<?= $data['profile']->getProfileImage() === null ? '/images/default-icon.svg' : htmlspecialchars($data['profile']->getProfileImage()) ?>" alt="post-user-icon" class="object-cover rounded-full">
+          <a href="profile/<?= $data['profile']->getUserId() ?>">
+            <img src="<?= $data['profile']->getProfileImage() === null ? '/images/default-icon.svg' : htmlspecialchars($data['profile']->getProfileImage()) ?>" alt="post-user-icon" class="object-cover rounded-full">
+          </a>
         </div>
       </div>
       <div class="flex flex-col flex-grow space-y-4">
@@ -141,6 +143,9 @@
       </div>
     </div>
   <?php endforeach; ?>
+</div>
+<div class="lg:col-span-1 hidden lg:block h-full pr-4 md:pr-6 bg-orange-400">
+  Home Information
 </div>
 
 <script src="js/post.js"></script>

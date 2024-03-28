@@ -125,7 +125,7 @@
             </p>
           </div>
         </a>
-        <div class="flex flex-row items-center justify-start ">
+        <a href="profile/<?= $_SESSION['user_id'] ?>" class="flex flex-row items-center justify-start ">
           <div class="
         relative
         rounded-full
@@ -162,7 +162,7 @@
               Profile
             </p>
           </div>
-        </div>
+        </a>
         <a href="/logout" class="flex flex-row items-center justify-start">
           <div class="
         relative
