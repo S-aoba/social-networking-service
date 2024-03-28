@@ -1,34 +1,111 @@
-<div class="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden">
-  <div class="px-4 py-6">
-    <div class="flex justify-between items-center">
-      <h1 class="text-3xl font-bold text-gray-800"><?= htmlspecialchars($profile->getUsername()) ?></h1>
+<div class="col-span-4 lg:col-span-3 flex flex-col w-full h-full">
+  <div class="flex items-center p-3 border-b">
+    <div class="size-10 cursor-pointer hover:bg-slate-100 flex items-center justify-center rounded-full">
+      <img src="/images/undo.svg" alt="戻る" class="size-8">
+    </div>
+    <div class="ml-5 flex flex-col items-start justify-center space-y-1">
+      <h1 class="text-2xl font-bold">
+        <?= is_null($profile->getUsername()) ? '名無しユーザー' : htmlspecialchars($profile->getUsername()) ?>
+      </h1>
+      <span class="text-slate-500 text-sm">
+        451. <span class="text-slate-500 text-sm">万件のポスト</span>
+      </span>
+
+    </div>
+  </div>
+  <!-- Header -->
+  <!-- でもまだ実装していないので、とりあえず固定の画像をおく -->
+  <div class="h-46 relative">
+    <img class="bg-cover w-full bg-blue-400" src="/images/test.jpeg" alt="バナー画像">
+    <img src="<?= htmlspecialchars($profile->getProfileImage()) ?>" alt="プロフィール画像" class="size-40 absolute -bottom-20 left-5 border-8 border-white rounded-full bg-white">
+  </div>
+  <div class="w-full p-5 flex justify-end">
+    <?php if ($is_self_profile) : ?>
+      <button id="follow" type="submit" class="py-2 px-3 border border-slate-300 rounded-full font-semibold text-sm text-center cursor-pointer hover:bg-slate-100 transition-colors duration-300">プロフィールを編集</button>
+    <?php else : ?>
       <?php if ($is_follow === false) : ?>
-        <form id="follow-form" action="#" method="post" class="flex items-center">
+        <form id="follow-form" method="post">
           <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
           <input type="hidden" name="profileId" value="<?= $profile->getUserId() ?>">
           <input type="hidden" name="userId" value="<?= $_SESSION['user_id'] ?>">
-          <button id="follow" type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">フォロー</button>
+          <button id="follow" type="submit" class="py-2 px-3 border border-slate-300 rounded-full font-semibold text-sm text-center cursor-pointer hover:bg-slate-100 transition-colors duration-300">フォロー</button>
         </form>
       <?php else : ?>
-        <form id="unfollow-form" action="#" method="post" class="flex items-center">
+        <form id="unfollow-form" method="post">
           <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
           <input type="hidden" name="profileId" value="<?= $profile->getUserId() ?>">
           <input type="hidden" name="userId" value="<?= $_SESSION['user_id'] ?>">
-          <button id="unfollow" type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">フォロー解除</button>
+          <button id="unfollow" type="submit" class="py-2 px-3 border border-slate-300 rounded-full font-semibold text-sm text-center cursor-pointer hover:bg-rose-100 hover:text-rose-800 hover:border-rose-100 transition-colors duration-300">フォロー中/button>
         </form>
-
       <?php endif; ?>
-    </div>
-    <img src="<?= htmlspecialchars($profile->getProfileImage()) ?>" alt="profile image" class="mt-4 rounded-lg">
-    <div class="mt-4">
-      <p class="text-sm text-gray-600">Age: <?= htmlspecialchars($profile->getAge()) ?></p>
-      <p class="text-sm text-gray-600">Address: <?= htmlspecialchars($profile->getAddress()) ?></p>
-      <p class="text-sm text-gray-600">Hobby: <?= htmlspecialchars($profile->getHobby()) ?></p>
-      <p class="text-sm text-gray-600">Self Introduction: <?= htmlspecialchars($profile->getSelfIntroduction()) ?></p>
-    </div>
-    <?php if ($user->getId() === $profile->getUserId()) : ?>
-      <a href="/edit/profile" class="block w-full mt-6 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Edit</a>
     <?php endif; ?>
   </div>
+  <div class="p-3 flex flex-col space-y-1">
+    <p class="text-2xl font-bold">
+      <?= is_null($profile->getUsername()) ? '名無しユーザー' : htmlspecialchars($profile->getUsername()) ?>
+    </p>
+    <span class="text-sm text-slate-400">
+      @
+      <?= htmlspecialchars($profile->getUserId()) ?>
+    </span>
+    <?php if (!is_null($profile->getSelfIntroduction())) : ?>
+      <p>
+        <?= htmlspecialchars($profile->getSelfIntroduction()) ?>
+      </p>
+    <?php endif; ?>
+    <!-- フォロー数とフォロワー数: 未実装のためハードコーディング -->
+    <div class="flex space-x-2 items-center text-sm">
+      <span class="font-bold">
+        30
+        <span class="text-slate-400 font-normal">
+          フォロー中
+        </span>
+      </span>
+      <span class="font-bold">
+        30
+        <span class="text-slate-400 font-normal">
+          フォロワー
+        </span>
+      </span>
+    </div>
+  </div>
+  <!-- tab: ロジックは未実装 -->
+  <div class="grid grid-cols-6 border-b border-slate-100">
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+      <span class="font-bold border-b-4 border-slate-700 pb-3">
+        ポスト
+      </span>
+    </div>
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+      <span class="pb-3">
+        返信
+      </span>
+    </div>
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+      <span class="pb-3">
+        ハイライト
+      </span>
+    </div>
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+      <span class="pb-3">
+        記事
+      </span>
+    </div>
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+      <span class="pb-3">
+        メディア
+      </span>
+    </div>
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+      <span class="pb-3">
+        いいね
+      </span>
+    </div>
+  </div>
 </div>
-<script src="/js/follow.js"></script>
+<!-- userの投稿の一覧 -->
+<div class="lg:col-span-1 hidden lg:block h-full pr-4 md:pr-6 bg-orange-400">
+  Profile Information
+</div>
+<!-- user_idのUserのProfile情報, ログインユーザーがそのuser_idのユーザーをフォローしているかどうかの情報 -->
+<!-- user_idのユーザーの投稿一覧情報 -->
