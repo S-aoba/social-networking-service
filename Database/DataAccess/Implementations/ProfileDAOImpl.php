@@ -109,13 +109,13 @@ class ProfileDAOImpl implements ProfileDAO
     return $this->rawDataToProfile($userRaw);
   }
 
-  public function getByUsername(string $username): ?Profile
+  public function getByUsername(int $user_id): ?Profile
   {
     $mysqli = DatabaseManager::getMysqliConnection();
 
-    $query = "SELECT * FROM profiles WHERE username = ?";
+    $query = "SELECT * FROM profiles WHERE user_id = ?";
 
-    $result = $mysqli->prepareAndFetchAll($query, 's', [$username])[0] ?? null;
+    $result = $mysqli->prepareAndFetchAll($query, 'i', [$user_id])[0] ?? null;
 
     if ($result === null) return null;
 
