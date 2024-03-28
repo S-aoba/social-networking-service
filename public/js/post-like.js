@@ -6,7 +6,7 @@ unLikeForms.forEach((unLikeForm) => {
 
     const unLikeFormData = new FormData(unLikeForm);
 
-    fetch('form/unlike', {
+    fetch('/form/unlike', {
       method: 'POST',
       body: unLikeFormData,
     }).then((res) => {
@@ -33,7 +33,7 @@ LikeForms.forEach((LikeForm) => {
 
     const LikeFormData = new FormData(LikeForm);
 
-    fetch('form/like', {
+    fetch('/form/like', {
       method: 'POST',
       body: LikeFormData,
     }).then((res) => {

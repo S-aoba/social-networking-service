@@ -5,7 +5,7 @@ postForm.addEventListener('submit', function (event) {
 
   const formData = new FormData(postForm);
 
-  fetch('form/post', {
+  fetch('/form/post', {
     method: 'POST',
     body: formData,
   }).then((response) => {
@@ -35,7 +35,7 @@ deletePostForms.forEach((deletePostForm) => {
 
     const deletePostFormData = new FormData(deletePostForm);
 
-    fetch('form/post/delete', {
+    fetch('/form/post/delete', {
       method: 'POST',
       body: deletePostFormData,
     }).then((res) => {
