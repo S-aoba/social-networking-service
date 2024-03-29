@@ -28,7 +28,7 @@
             <h3 class="max-w-60 truncate text-lg font-semibold text-gray-800"><?= $data['other_user_name'] === null ? '名無しユーザー' : $data['other_user_name'] ?></h3>
             <span class="max-w-44 truncate text-sm text-gray-400 mr-1">@<span><?= $data['other_user_id'] ?></span></span>
             <!-- TODO: 更新されたらupdated_atを表示するようににする -->
-            <span class="text-sm text-gray-400"><?= $data['conversation']->getDataTimeStamp()->getCreatedAt() ?></span>
+            <span class="text-sm text-gray-400"><?= $data['conversation']->getDataTimeStamp()->CalculatePostAge() ?></span>
           </div>
           <div id="conversation-menu-icon" class="relative h-8 w-8 flex items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full">
             <img class="h-4 w-4" src="/images/menu-icon.svg" alt="メッセージを削除する">

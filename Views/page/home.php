@@ -55,7 +55,7 @@
             <p class="font-semibold"><?= is_null($data['profile']->getUsername()) ? '名無しユーザー' : htmlspecialchars($data['profile']->getUsername()) ?></p>
             <span class="text-sm text-slate-400"><?= htmlspecialchars($data['profile']->getId()) ?></span>
             <!-- diffメソッドを使う -->
-            <span class="text-sm text-slate-400"><?= htmlspecialchars($data['post']->getTimeStamp()->getCreatedAt()) ?></span>
+            <span class="text-sm text-slate-400"><?= htmlspecialchars($data['post']->getTimeStamp()->CalculatePostAge()) ?></span>
           </div>
           <!-- TODO: 現状は削除以外のアクションがないので自身の投稿のみに表示する。 -->
           <!-- 　　　　削除以外のアクションが増えたら、削除のボタンのみを非表示にするように変更する -->
