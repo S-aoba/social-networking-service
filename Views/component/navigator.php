@@ -45,7 +45,7 @@
         </div>
       </a>
       <?php if ($user) : ?>
-        <div class="flex flex-row items-center justify-start">
+        <a href="/notification" class="flex flex-row items-center justify-start">
           <div class="
         relative
         rounded-full
@@ -86,7 +86,7 @@
               Notification
             </p>
           </div>
-        </div>
+        </a>
         <a href="/message" class="flex flex-row items-center justify-start">
           <div class="
         relative
