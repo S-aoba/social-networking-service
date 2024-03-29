@@ -38,7 +38,7 @@
       </form>
     </div>
   <?php endif; ?>
-  <?php require 'Views/component/article.php' ?>
+  <?php require 'Views/component/post-article.php' ?>
 </div>
 <div class="lg:col-span-1 hidden lg:block h-full pr-4 md:pr-6 bg-orange-400">
   Home Information
