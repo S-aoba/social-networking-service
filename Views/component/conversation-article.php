@@ -1,6 +1,6 @@
 <?php foreach ($data_list as $data) : ?>
   <!-- Conversations -->
-  <a href="/message/<?= $data['conversation']->getConversationId() ?>" class="w-full p-4 flex mr-2 hover:bg-slate-100 cursor-pointer transition-colors duration-300">
+  <div class="w-full p-4 flex mr-2 hover:bg-slate-100 cursor-pointer transition-colors duration-300 relative">
     <img class="w-12 h-12 rounded-full mr-4 border border-slate-300" src="<?= $data['other_user_profile_image_path'] === null ? '/images/default.svg' : $data['other_user_profile_image_path'] ?>" alt="Sender">
     <div class="w-full flex flex-col">
       <div class="w-full flex items-center justify-between mb-3">
@@ -10,7 +10,7 @@
           <!-- TODO: 更新されたらupdated_atを表示するようににする -->
           <span class="text-sm text-gray-400"><?= $data['conversation']->getDataTimeStamp()->CalculatePostAge() ?></span>
         </div>
-        <div id="conversation-menu-icon" class="relative h-8 w-8 flex items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full">
+        <div id="conversation-menu-icon" class="relative h-8 w-8 flex items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full hover:z-40">
           <img class="h-4 w-4" src="/images/menu-icon.svg" alt="メッセージを削除する">
           <div id="conversation-menu" class="h-fit bg-white flex flex-col space-y-4 absolute top-5 -left-20 shadow-md border border-slate-300 rounded-md hidden z-40">
             <button id="deleteBtn" type="button" class="w-full p-3 flex items-center text-red-400 hover:bg-slate-100 cursor-pointer transition-colors duration-300">
@@ -42,5 +42,5 @@
         <p class="text-sm text-slate-400">まだメッセージはありません。</p>
       <?php endif; ?>
     </div>
-  </a>
+  </div>
 <?php endforeach; ?>
