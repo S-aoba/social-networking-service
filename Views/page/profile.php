@@ -35,7 +35,7 @@
           <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
           <input type="hidden" name="profileId" value="<?= $profile->getUserId() ?>">
           <input type="hidden" name="userId" value="<?= $_SESSION['user_id'] ?>">
-          <button id="unfollow" type="submit" class="py-2 px-3 border border-slate-300 rounded-full font-semibold text-sm text-center cursor-pointer hover:bg-rose-100 hover:text-rose-800 hover:border-rose-100 transition-colors duration-300">フォロー中/button>
+          <button id="unfollow" type="submit" class="py-2 px-3 border border-slate-300 rounded-full font-semibold text-sm text-center cursor-pointer hover:bg-rose-100 hover:text-rose-800 hover:border-rose-100 transition-colors duration-300">フォロー中</button>
         </form>
       <?php endif; ?>
     <?php endif; ?>
@@ -215,3 +215,4 @@
 <script src="/js/post-like.js"></script>
 <script src="/js/reply.js"></script>
 <script src="/js/profile-post-delete.js"></script>
+<script src="/js/follow.js"></script>
