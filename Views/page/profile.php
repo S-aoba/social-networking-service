@@ -71,32 +71,32 @@
   </div>
   <!-- tab: ロジックは未実装 -->
   <div class="grid grid-cols-6 border-b border-slate-100">
-    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center pb-3 transition-colors duration-300">
       <span class="font-bold border-b-4 border-slate-700 pb-3">
         ポスト
       </span>
     </div>
-    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center pb-3 transition-colors duration-300">
       <span class="pb-3">
         返信
       </span>
     </div>
-    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center pb-3 transition-colors duration-300">
       <span class="pb-3">
         ハイライト
       </span>
     </div>
-    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center pb-3 transition-colors duration-300">
       <span class="pb-3">
         記事
       </span>
     </div>
-    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center pb-3 transition-colors duration-300">
       <span class="pb-3">
         メディア
       </span>
     </div>
-    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center p-3 transition-colors duration-300">
+    <div class="col-span-1 cursor-pointer hover:bg-slate-100 text-center pb-3 transition-colors duration-300">
       <span class="pb-3">
         いいね
       </span>
