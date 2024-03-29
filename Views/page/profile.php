@@ -14,9 +14,8 @@
     </div>
   </div>
   <!-- Header -->
-  <!-- でもまだ実装していないので、とりあえず固定の画像をおく -->
-  <div class="h-46 relative">
-    <img class="bg-cover w-full bg-blue-400" src="/images/test.jpeg" alt="バナー画像">
+  <div class="relative">
+    <img class="object-cover h-48 w-full bg-blue-400" src="<?= is_null($profile->getHeaderPath()) ? '/images/test.jpeg' : $profile->getHeaderPath() ?>" alt="バナー画像">
     <img src="<?= htmlspecialchars($profile->getProfileImage()) ?>" alt="プロフィール画像" class="size-40 absolute -bottom-20 left-5 border-8 border-white rounded-full bg-white">
   </div>
   <div class="w-full p-5 flex justify-end">
