@@ -12,7 +12,7 @@ class GuestMiddleware implements Middleware
   {
     error_log('Running authentication check...');
     if (Authenticate::isLoggedIn()) {
-      return new RedirectRenderer('login');
+      return new RedirectRenderer('home');
     }
 
     return $next();

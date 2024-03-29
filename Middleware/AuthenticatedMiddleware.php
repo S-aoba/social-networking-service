@@ -14,7 +14,7 @@ class AuthenticatedMiddleware implements Middleware
     error_log('Running authentication check...');
     if (!Authenticate::isLoggedIn()) {
       FlashData::setFlashData('error', 'Must login to view this page.');
-      return new RedirectRenderer('login');
+      return new RedirectRenderer('home');
     }
 
     return $next();
