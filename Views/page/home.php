@@ -1,6 +1,5 @@
 <div class="col-span-4 lg:col-span-3">
   <!-- トレンド and フォロワー タブ -->
-  <!-- TODO:cookieでタブの背景を変える処理を追加するのを忘れないこと -->
   <div class="grid grid-cols-2 border-t border-b border-slate-200 bg-white font-bold">
     <div id="trend-tab" class="h-full py-3 span-col-1 text-center transition-colors duration-300 cursor-pointer hover:bg-slate-100 <?php echo ($_COOKIE['trend'] == 'true') ? 'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer' : 'hover:bg-gray-300/50 hover:cursor-pointer'; ?>">
       <p>
@@ -54,11 +53,8 @@
           <div class="flex space-x-3 items-center">
             <p class="font-semibold"><?= is_null($data['profile']->getUsername()) ? '名無しユーザー' : htmlspecialchars($data['profile']->getUsername()) ?></p>
             <span class="text-sm text-slate-400"><?= htmlspecialchars($data['profile']->getId()) ?></span>
-            <!-- diffメソッドを使う -->
             <span class="text-sm text-slate-400"><?= htmlspecialchars($data['post']->getTimeStamp()->CalculatePostAge()) ?></span>
           </div>
-          <!-- TODO: 現状は削除以外のアクションがないので自身の投稿のみに表示する。 -->
-          <!-- 　　　　削除以外のアクションが増えたら、削除のボタンのみを非表示にするように変更する -->
           <?php if ($data['post']->getUserId() === $_SESSION['user_id']) : ?>
             <div id="post-menu" class="relative h-8 w-8 flex items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full">
               <img class="h-4 w-4" src="/images/menu-icon.svg" alt="編集">
@@ -103,7 +99,6 @@
           <?php endif; ?>
         </div>
         <!-- Post Information -->
-        <!-- TODO:コメントのアイコンが上のコンテントやユーザーネームの左端と微妙に合わないので、後で修正 -->
         <div class="flex items-center space-x-3">
           <!-- Comment Icon -->
           <!-- コメント数を表示する -->
