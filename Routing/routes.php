@@ -24,11 +24,148 @@ use Models\Reply;
 use Models\Conversation;
 
 return [
+  // Page
+  'home' => Route::create('home', function (): HTTPRenderer {
+    try {
+      $trend = $_COOKIE['trend'];
 
-  'login' => Route::create('login', function (): HTTPRenderer {
-    return new HTMLRenderer('page/login');
-  })->setMiddleware(['guest']),
+      $type =  $trend === 'true' ? 'trend' : 'follower';
 
+      $postDAO = DAOFactory::getPostDAO();
+
+      $data = $postDAO->getAllPosts(0, 10, $type);
+
+      $data_list = [];
+      $postLikeDAO = DAOFactory::getPostLikeDAO();
+
+      $replyDAO = DAOFactory::getReplyDAO();
+
+      $login_user_id = $_SESSION['user_id'];
+
+      foreach ($data as $data) {
+        $data_list[] = [
+          'post' => $data['post'],
+          "profile" => $data["profile"],
+          'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
+          'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
+          'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
+        ];
+      }
+
+      $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
+      $login_user_profile_image_path = $login_user_profile->getProfileImage();
+
+      return new HTMLRenderer('page/home', ['data_list' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path]);
+    } catch (\Throwable $th) {
+      //throw $th;
+    }
+  })->setMiddleware(['auth']),
+
+  'profile' => Route::create('profile', function (): HTTPRenderer {
+
+    $url = $_SERVER['PATH_INFO'];
+    preg_match('/\/profile\/(.+)/', $url, $matches);
+    $user_id = intval($matches[1]);
+
+    $profileDAO = DAOFactory::getProfileDAO();
+    $profile = $profileDAO->getByUsername($user_id);
+
+
+    $followDAO = DAOFactory::getFollowDAO();
+
+    $follow = new Follow(
+      follow_id: $_SESSION['user_id'],
+      followee_id: $profile->getUserId(),
+    );
+
+    $is_follow = $followDAO->checkFollow($follow);
+
+    $is_self_profile = $user_id === $_SESSION['user_id'] ? true : false;
+
+    $postDAO = DAOFactory::getPostDAO();
+
+    $posts = $postDAO->getAllPostByUserId($user_id);
+
+    $data_list = [];
+    $postLikeDAO = DAOFactory::getPostLikeDAO();
+
+    $replyDAO = DAOFactory::getReplyDAO();
+
+    $login_user_id = $_SESSION['user_id'];
+
+    foreach ($posts as $data) {
+      $data_list[] = [
+        'post' => $data['post'],
+        "profile" => $data["profile"],
+        'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
+        'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
+        'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
+      ];
+    }
+
+    return new HTMLRenderer('page/profile', ['profile' => $profile, "is_follow" => $is_follow, 'is_self_profile' => $is_self_profile, 'data_list' => $data_list]);
+  })->setMiddleware(['auth']),
+
+  'message' => Route::create('message', function (): HTTPRenderer {
+    $url = $_SERVER['PATH_INFO'];
+    preg_match('/\/message\/(.+)/', $url, $matches);
+
+    $message_id = count($matches) === 0 ? null : $matches[1];
+
+    $user_id = $_SESSION['user_id'];
+    $conversationDAO = DAOFactory::getConversation();
+
+    $data_list = $conversationDAO->getAllConversations($user_id);
+
+
+    if (!is_null($message_id)) {
+
+      $conversationDAO = DAOFactory::getConversation();
+
+      $conversation = $conversationDAO->getConversationById($message_id);
+
+
+      $messageDAO = DAOFactory::getMessage();
+
+      $messages = $messageDAO->getAllMessageById($conversation->getConversationId());
+
+      $profileDAO = DAOFactory::getProfileDAO();
+
+      $another_user_id = $_SESSION['user_id'] === $conversation->getParticipate1Id() ? $conversation->getParticipate2Id() : $conversation->getParticipate1Id();
+
+      $another_user_profile = $profileDAO->getById($another_user_id);
+
+      $login_user_id = $_SESSION['user_id'];
+      $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
+
+      return new HTMLRenderer('page/message-detail', ['data_list' => $data_list, 'conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile' => $login_user_profile]);
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $conversationDAO = DAOFactory::getConversation();
+
+    $data_list = $conversationDAO->getAllConversations($user_id);
+    // ログインユーザーのフォローしているユーザーを全件取得する
+    $followDAO = DAOFactory::getFollowDAO();
+
+    $followee_users = $followDAO->getAllFollowingUser($user_id);
+
+    return new HTMLRenderer('page/message', ['data_list' => $data_list, 'followee_users' => $followee_users]);
+  })->setMiddleware(['auth']),
+
+  'notification' => Route::create('notification', function (): HTTPRenderer {
+
+    $notificationDAO = DAOFactory::getNotification();
+
+    $notifications = $notificationDAO->getById($_SESSION['user_id']);
+
+
+    $notificationDAO->toggleReadStatus($_SESSION['user_id']);
+
+    return new HTMLRenderer('page/notification', ['data_list' => $notifications]);
+  })->setMiddleware(['auth']),
+
+  // Forms
   'form/login' => Route::create('form/login', function (): HTTPRenderer {
     try {
       if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -60,10 +197,6 @@ return [
       FlashData::setFlashData('error', 'An error occurred.');
       return new RedirectRenderer('login');
     }
-  })->setMiddleware(['guest']),
-
-  'register' => Route::create('register', function (): HTTPRenderer {
-    return new HTMLRenderer('page/register');
   })->setMiddleware(['guest']),
 
   'form/register' => Route::create('form/register', function (): HTTPRenderer {
@@ -120,48 +253,6 @@ return [
       return new RedirectRenderer('register');
     }
   })->setMiddleware(['guest']),
-
-  'logout' => Route::create('logout', function (): HTTPRenderer {
-
-    Authenticate::logoutUser();
-
-    FlashData::setFlashData('success', 'Logged out.');
-
-    return new RedirectRenderer('login');
-  })->setMiddleware(['auth']),
-
-  'home' => Route::create('home', function (): HTTPRenderer {
-
-    $trend = $_COOKIE['trend'];
-
-    $type =  $trend === 'true' ? 'trend' : 'follower';
-
-    $postDAO = DAOFactory::getPostDAO();
-
-    $data = $postDAO->getAllPosts(0, 10, $type);
-
-    $data_list = [];
-    $postLikeDAO = DAOFactory::getPostLikeDAO();
-
-    $replyDAO = DAOFactory::getReplyDAO();
-
-    $login_user_id = $_SESSION['user_id'];
-
-    foreach ($data as $data) {
-      $data_list[] = [
-        'post' => $data['post'],
-        "profile" => $data["profile"],
-        'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
-        'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
-        'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
-      ];
-    }
-
-    $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
-    $login_user_profile_image_path = $login_user_profile->getProfileImage();
-
-    return new HTMLRenderer('page/home', ['data_list' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path]);
-  })->setMiddleware(['auth']),
 
   'form/post' => Route::create(
     'form/post',
@@ -245,17 +336,6 @@ return [
     }
   })->setMiddleware(['auth']),
 
-  'edit/profile' => Route::create('profile', function (): HTTPRenderer {
-
-    $user_id = $_SESSION['user_id'];
-
-    $profileDAO = DAOFactory::getProfileDAO();
-
-    $profile = $profileDAO->getById($user_id);
-
-    return new HTMLRenderer('page/editProfile', ['profile' => $profile]);
-  })->setMiddleware(['auth']),
-
   'form/update/profile' => Route::create('form/update/profile', function (): HTTPRenderer {
     try {
       $data = $_POST;
@@ -301,52 +381,6 @@ return [
       return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しくください。"]);
     }
   })->setMiddleware(['auth']),
-
-  'profile' => Route::create('profile', function (): HTTPRenderer {
-
-    $url = $_SERVER['PATH_INFO'];
-    preg_match('/\/profile\/(.+)/', $url, $matches);
-    $user_id = intval($matches[1]);
-
-    $profileDAO = DAOFactory::getProfileDAO();
-    $profile = $profileDAO->getByUsername($user_id);
-
-
-    $followDAO = DAOFactory::getFollowDAO();
-
-    $follow = new Follow(
-      follow_id: $_SESSION['user_id'],
-      followee_id: $profile->getUserId(),
-    );
-
-    $is_follow = $followDAO->checkFollow($follow);
-
-    $is_self_profile = $user_id === $_SESSION['user_id'] ? true : false;
-
-    $postDAO = DAOFactory::getPostDAO();
-
-    $posts = $postDAO->getAllPostByUserId($user_id);
-
-    $data_list = [];
-    $postLikeDAO = DAOFactory::getPostLikeDAO();
-
-    $replyDAO = DAOFactory::getReplyDAO();
-
-    $login_user_id = $_SESSION['user_id'];
-
-    foreach ($posts as $data) {
-      $data_list[] = [
-        'post' => $data['post'],
-        "profile" => $data["profile"],
-        'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
-        'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
-        'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
-      ];
-    }
-
-    return new HTMLRenderer('page/profile', ['profile' => $profile, "is_follow" => $is_follow, 'is_self_profile' => $is_self_profile, 'data_list' => $data_list]);
-  })->setMiddleware(['auth']),
-
   'form/follow' => Route::create('form/follow', function (): HTTPRenderer {
     try {
       $data = $_POST;
@@ -489,53 +523,6 @@ return [
     }
   })->setMiddleware(['auth']),
 
-  'message' => Route::create('message', function (): HTTPRenderer {
-    $url = $_SERVER['PATH_INFO'];
-    preg_match('/\/message\/(.+)/', $url, $matches);
-
-    $message_id = count($matches) === 0 ? null : $matches[1];
-
-    $user_id = $_SESSION['user_id'];
-    $conversationDAO = DAOFactory::getConversation();
-
-    $data_list = $conversationDAO->getAllConversations($user_id);
-
-
-    if (!is_null($message_id)) {
-
-      $conversationDAO = DAOFactory::getConversation();
-
-      $conversation = $conversationDAO->getConversationById($message_id);
-
-
-      $messageDAO = DAOFactory::getMessage();
-
-      $messages = $messageDAO->getAllMessageById($conversation->getConversationId());
-
-      $profileDAO = DAOFactory::getProfileDAO();
-
-      $another_user_id = $_SESSION['user_id'] === $conversation->getParticipate1Id() ? $conversation->getParticipate2Id() : $conversation->getParticipate1Id();
-
-      $another_user_profile = $profileDAO->getById($another_user_id);
-
-      $login_user_id = $_SESSION['user_id'];
-      $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
-
-      return new HTMLRenderer('page/message-detail', ['data_list' => $data_list, 'conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile' => $login_user_profile]);
-    }
-
-    $user_id = $_SESSION['user_id'];
-    $conversationDAO = DAOFactory::getConversation();
-
-    $data_list = $conversationDAO->getAllConversations($user_id);
-    // ログインユーザーのフォローしているユーザーを全件取得する
-    $followDAO = DAOFactory::getFollowDAO();
-
-    $followee_users = $followDAO->getAllFollowingUser($user_id);
-
-    return new HTMLRenderer('page/message', ['data_list' => $data_list, 'followee_users' => $followee_users]);
-  })->setMiddleware(['auth']),
-
   'form/message' => Route::create('form/message', function (): HTTPRenderer {
 
     error_log(print_r($_POST, true));
@@ -593,15 +580,12 @@ return [
     return new JSONRenderer(['status' => "success"]);
   })->setMiddleware(['auth']),
 
-  'notification' => Route::create('notification', function (): HTTPRenderer {
+  'logout' => Route::create('logout', function (): HTTPRenderer {
 
-    $notificationDAO = DAOFactory::getNotification();
+    Authenticate::logoutUser();
 
-    $notifications = $notificationDAO->getById($_SESSION['user_id']);
+    FlashData::setFlashData('success', 'Logged out.');
 
-
-    $notificationDAO->toggleReadStatus($_SESSION['user_id']);
-
-    return new HTMLRenderer('page/notification', ['data_list' => $notifications]);
+    return new RedirectRenderer('login');
   })->setMiddleware(['auth']),
 ];
