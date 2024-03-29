@@ -117,7 +117,12 @@
         <div class="flex justify-between items-center">
           <div class="flex space-x-3 items-center">
             <p class="font-semibold"><?= is_null($data['profile']->getUsername()) ? '名無しユーザー' : htmlspecialchars($data['profile']->getUsername()) ?></p>
-            <span class="text-sm text-slate-400"><?= htmlspecialchars($data['profile']->getId()) ?></span>
+            <span class="text-sm text-slate-400">
+              <span>
+                @
+              </span>
+              <?= htmlspecialchars($data['profile']->getId()) ?>
+            </span>
             <!-- diffメソッドを使う -->
             <span class="text-sm text-slate-400"><?= htmlspecialchars($data['post']->getTimeStamp()->CalculatePostAge()) ?></span>
           </div>
