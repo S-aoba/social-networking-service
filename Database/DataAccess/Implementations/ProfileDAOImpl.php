@@ -97,7 +97,8 @@ class ProfileDAOImpl implements ProfileDAO
       address: $rawData['address'],
       hobby: $rawData['hobby'],
       self_introduction: $rawData['self_introduction'],
-      profile_image_path: $rawData['profile_image_path']
+      profile_image_path: $rawData['profile_image_path'],
+      header_path: $rawData['header_path']
     );
   }
 

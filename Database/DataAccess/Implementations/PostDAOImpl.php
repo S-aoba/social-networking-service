@@ -124,6 +124,7 @@ class PostDAOImpl implements PostDAO
         hobby: $data['hobby'],
         self_introduction: $data['self_introduction'],
         profile_image_path: $data['profile_image_path'],
+        header_path: $data['header_path'],
         timeStamp: new DataTimeStamp($data['created_at'], $data['updated_at'])
       )
     ];
@@ -181,6 +182,7 @@ class PostDAOImpl implements PostDAO
         hobby: $rawData['hobby'],
         self_introduction: $rawData['self_introduction'],
         profile_image_path: $profile_image_path,
+        header_path: $rawData['header_path'],
         timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at'])
       )
     ];

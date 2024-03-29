@@ -20,6 +20,7 @@ class Profile implements Model
     private ?string $hobby = null,
     private ?string $self_introduction = null,
     private ?string $profile_image_path = null,
+    private ?string $header_path = null,
     private ?DataTimeStamp $timeStamp = null,
   ) {
   }
@@ -114,6 +115,15 @@ class Profile implements Model
     $this->profile_image_path = $profile_image_path;
   }
 
+  public function getHeaderPath(): ?string
+  {
+    return $this->header_path === null ? null : FileHelper::getProfileImagePath($this->header_path);
+  }
+
+  public function setHeaderPath(string $header_path): void
+  {
+    $this->header_path = $header_path;
+  }
   public function toArray(): array
   {
     return [
