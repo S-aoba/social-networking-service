@@ -4,7 +4,6 @@ namespace Models;
 
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
-use Exception;
 
 class Notification implements Model
 {
@@ -19,7 +18,7 @@ class Notification implements Model
     private ?string $content = null,
     private bool $read_status = false,
     private ?int $notification_id = null,
-    private ?string $created_at = null
+    private ?DataTimeStamp $timeStamp = null,
   ) {
   }
 
@@ -83,50 +82,18 @@ class Notification implements Model
     $this->notification_id = $notification_id;
   }
 
-  public function getCreatedAt(): ?string
+  public function getTimeStamp(): ?DataTimeStamp
   {
-    return $this->created_at;
+    return $this->timeStamp;
   }
 
-  public function setCreatedAt(?string $created_at): void
+  public function setTimeStamp(DataTimeStamp $timeStamp): void
   {
-    $this->created_at = $created_at;
+    $this->timeStamp = $timeStamp;
   }
 
   public function getTable(): string
   {
     return $this->table;
-  }
-
-  public function diff(): string
-  {
-    date_default_timezone_set('Asia/Tokyo');
-    try {
-      if ($this->created_at === null) {
-        throw new Exception('日付がnullになっています。');
-      }
-
-      $created_at = strtotime($this->created_at);
-      $current_time = time();
-
-      $time_diff = abs($current_time - $created_at); // 絶対値を取ることで常に正の値になる
-
-      $days_diff = floor($time_diff / (60 * 60 * 24)); // 日数の差を計算
-      $hours_diff = floor(($time_diff % (60 * 60 * 24)) / (60 * 60)); // 残りの時間から時間の差を計算
-      $minutes_diff = floor(($time_diff % (60 * 60)) / 60); // 残りの分から分の差を計算
-
-      if ($days_diff > 0) {
-        return $days_diff . '日前';
-      } elseif ($hours_diff > 0) {
-        return $hours_diff . '時間前';
-      } elseif ($minutes_diff > 0) {
-        return $minutes_diff . '分前';
-      } else {
-        return 'たった今';
-      }
-    } catch (Exception $e) {
-      error_log($e->getMessage());
-      return "エラーが発生しました";
-    }
   }
 }

@@ -32,7 +32,7 @@
             <?php endif; ?>
             <p class="text-slate-400 text-xs">
               <!-- 作成日と現在時刻の差を取得 -->
-              <?= $data['notification']->diff() ?>
+              <?= $data['notification']->getTimeStamp()->CalculatePostAge() ?>
             </p>
           </div>
         </div>
@@ -51,7 +51,7 @@
             </p>
             <p class="text-slate-400 text-xs">
               <!-- 作成日と現在時刻の差を取得 -->
-              <?= $data['notification']->diff() ?>
+              <?= $data['notification']->getTimeStamp()->CalculatePostAge() ?>
             </p>
           </div>
         </div>
@@ -65,7 +65,7 @@
             <p class="text-slate-400"><?= is_null($data['profile']->getUsername()) ? '名無しユーザー' : $data['profile']->getUsername() ?>さんがあなたの投稿にコメントしました</p>
             <p class="text-slate-400 text-xs">
               <!-- 作成日と現在時刻の差を取得 -->
-              <?= $data['notification']->diff() ?>
+              <?= $data['notification']->getTimeStamp()->CalculatePostAge() ?>
             </p>
           </div>
         </div>

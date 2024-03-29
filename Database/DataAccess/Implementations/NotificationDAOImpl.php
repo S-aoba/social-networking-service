@@ -4,6 +4,7 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DataAccess\Interfaces\NotificationDAO;
 use Database\DatabaseManager;
+use Models\DataTimeStamp;
 use Models\Notification;
 use Models\Profile;
 
@@ -76,7 +77,7 @@ class NotificationDAOImpl implements NotificationDAO
         receiver_id: $result['receiver_id'],
         type: $result['type'],
         content: $result['content'],
-        created_at: $result['created_at']
+        timeStamp: new DataTimeStamp($result['created_at'], $result['created_at'])
       ),
       'profile' =>
       new Profile(
