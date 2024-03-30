@@ -38,8 +38,9 @@ return [
       $presentationTab = isset($_COOKIE['presentation-tab']) ? $_COOKIE['presentation-tab'] : 'trend';
       if (isset($_SESSION['user_id'])) {
 
+        if ($presentationTab === 'trend') $data = $postDAO->getTrendingPosts(0, 10);
 
-        $data = $postDAO->getAllPosts(0, 10, $presentationTab);
+        if ($presentationTab === 'follower') $data = $postDAO->getFollowerPost(0, 10);
 
         $login_user_id = $_SESSION['user_id'];
 

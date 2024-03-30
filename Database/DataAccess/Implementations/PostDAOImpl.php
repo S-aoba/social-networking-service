@@ -34,70 +34,72 @@ class PostDAOImpl implements PostDAO
     return false;
   }
 
-  public function getAllPosts(int $offset, int $limit, string $type): array
+  public function getTrendingPosts(int $offset, int $limit): array
   {
     $mysqli = DatabaseManager::getMysqliConnection();
 
-    if ($type === 'trend') {
-      $query =
-        "SELECT
-                  posts.*,
-                  profiles.*,
-                  profiles.user_id AS profile_user_id,
-                  posts.created_at AS post_created_at,
-                  posts.id AS post_id,
-                  COUNT(post_likes.post_id) AS like_count
-              FROM
-                  posts
-              JOIN
-                  profiles ON posts.user_id = profiles.user_id
-              LEFT JOIN
-                  post_likes ON posts.id = post_likes.post_id
-              GROUP BY
-                  posts.id,
-                  profiles.id
-              ORDER BY
-                  like_count DESC,
-                  posts.created_at DESC
-              LIMIT ?, ?;
-          ";
-      $results = $mysqli->prepareAndFetchAll($query, 'ii', [$offset, $limit]);
-    } elseif ($type === 'follower') {
-      $userId = $_SESSION['user_id'];
-      $query =
-        "SELECT
-                  posts.*,
-                  profiles.*,
-                  profiles.user_id AS profile_user_id,
-                  posts.created_at AS post_created_at,
-                  posts.id AS post_id
-              FROM
-                  posts
-              JOIN
-                  profiles ON posts.user_id = profiles.user_id
-              JOIN
-                  follows ON profiles.user_id = follows.follower_id
-              LEFT JOIN
-                  post_likes ON posts.id = post_likes.post_id
-              WHERE
-                  follows.followee_id = ?
-              GROUP BY
-                  posts.id,
-                  profiles.id
-              ORDER BY
-                  posts.created_at DESC
-              LIMIT ?, ?;
-          ";
-
-      $results = $mysqli->prepareAndFetchAll($query, 'iii', [$userId, $offset, $limit]);
-    } else {
-      // Handle unsupported type
-      return [];
-    }
+    $query =
+      "SELECT
+          posts.*,
+          profiles.*,
+          profiles.user_id AS profile_user_id,
+          posts.created_at AS post_created_at,
+          posts.id AS post_id,
+          COUNT(post_likes.post_id) AS like_count
+      FROM
+          posts
+      JOIN
+          profiles ON posts.user_id = profiles.user_id
+      LEFT JOIN
+          post_likes ON posts.id = post_likes.post_id
+      GROUP BY
+          posts.id,
+          profiles.id
+      ORDER BY
+          like_count DESC,
+          posts.created_at DESC
+      LIMIT ?, ?;
+  ";
+    $results = $mysqli->prepareAndFetchAll($query, 'ii', [$offset, $limit]);
 
     return $results === null ? [] : $this->resultsPosts($results);
   }
 
+  public function getFollowerPost(int $offset, int $limit): array
+  {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $userId = $_SESSION['user_id'];
+
+    $query =
+      "SELECT
+          posts.*,
+          profiles.*,
+          profiles.user_id AS profile_user_id,
+          posts.created_at AS post_created_at,
+          posts.id AS post_id
+      FROM
+          posts
+      JOIN
+          profiles ON posts.user_id = profiles.user_id
+      JOIN
+          follows ON profiles.user_id = follows.follower_id
+      LEFT JOIN
+          post_likes ON posts.id = post_likes.post_id
+      WHERE
+          follows.followee_id = ?
+      GROUP BY
+          posts.id,
+          profiles.id
+      ORDER BY
+          posts.created_at DESC
+      LIMIT ?, ?;
+  ";
+
+    $results = $mysqli->prepareAndFetchAll($query, 'iii', [$userId, $offset, $limit]);
+
+    return $results === null ? [] : $this->resultsPosts($results);
+  }
 
   private function resultToPost(array $data): array
   {
