@@ -1,18 +1,18 @@
 <div class="col-span-4 lg:col-span-3">
   <!-- トレンド and フォロワー タブ -->
-  <div class="grid grid-cols-2 border-t border-b border-slate-200 bg-white font-bold">
-    <div id="trend-tab" class="h-full py-3 span-col-1 text-center transition-colors duration-300 cursor-pointer hover:bg-slate-100 <?php echo ($_COOKIE['trend'] == 'true') ? 'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer' : 'hover:bg-gray-300/50 hover:cursor-pointer'; ?>">
-      <p>
-        トレンド
-      </p>
-    </div>
-    <div id="follower-tab" class="h-full py-3 span-col-1 text-center transition-colors duration-300 cursor-pointer hover:bg-slate-100  <?php echo ($_COOKIE['trend'] == 'true') ? 'hover:bg-gray-300/50 hover:cursor-pointer' : 'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer'; ?>">
-      <p>
-        フォロワー
-      </p>
-    </div>
-  </div>
   <?php if ($user) : ?>
+    <div class="grid grid-cols-2 border-t border-b border-slate-200 bg-white font-bold">
+      <div id="trend-tab" class="h-full py-3 span-col-1 text-center transition-colors duration-300 cursor-pointer hover:bg-slate-100 <?php echo ($_COOKIE['trend'] == 'true') ? 'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer' : 'hover:bg-gray-300/50 hover:cursor-pointer'; ?>">
+        <p>
+          トレンド
+        </p>
+      </div>
+      <div id="follower-tab" class="h-full py-3 span-col-1 text-center transition-colors duration-300 cursor-pointer hover:bg-slate-100  <?php echo ($_COOKIE['trend'] == 'true') ? 'hover:bg-gray-300/50 hover:cursor-pointer' : 'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer'; ?>">
+        <p>
+          フォロワー
+        </p>
+      </div>
+    </div>
     <!-- 投稿フォーム -->
     <div class="h-fit p-6 border-b border-slate-200">
       <form action="#" method="POST" id="postForm" enctype="multipart/form-data">

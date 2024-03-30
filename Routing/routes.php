@@ -27,39 +27,53 @@ return [
   // Page
   'home' => Route::create('home', function (): HTTPRenderer {
     try {
-      $trend = $_COOKIE['trend'];
+      $data_list = [];
 
-      $type =  $trend === 'true' ? 'trend' : 'follower';
+      $trend = '';
 
       $postDAO = DAOFactory::getPostDAO();
 
-      $data = $postDAO->getAllPosts(0, 10, $type);
-
-      $data_list = [];
       $postLikeDAO = DAOFactory::getPostLikeDAO();
 
       $replyDAO = DAOFactory::getReplyDAO();
 
-      $login_user_id = $_SESSION['user_id'];
 
-      foreach ($data as $data) {
-        $data_list[] = [
-          'post' => $data['post'],
-          "profile" => $data["profile"],
-          'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
-          'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
-          'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
-        ];
+      if (isset($_SESSION['user_id'])) {
+        $trend = $_COOKIE['trend'];
+        $type =  $trend === 'true' ? 'trend' : 'follower';
+        $data = $postDAO->getAllPosts(0, 10, $type);
+        $login_user_id = $_SESSION['user_id'];
+        foreach ($data as $data) {
+          $data_list[] = [
+            'post' => $data['post'],
+            "profile" => $data["profile"],
+            'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
+            'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
+            'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
+          ];
+        }
+        $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
+        $login_user_profile_image_path = $login_user_profile->getProfileImage();
+      } else {
+        $type = 'trend';
+        $data = $postDAO->getAllPosts(0, 10, $type);
+        foreach ($data as $data) {
+          $data_list[] = [
+            'post' => $data['post'],
+            "profile" => $data["profile"],
+            'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
+            'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
+            'isLike' => null,
+          ];
+        }
+        $login_user_profile_image_path = null;
       }
-
-      $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
-      $login_user_profile_image_path = $login_user_profile->getProfileImage();
 
       return new HTMLRenderer('page/home', ['data_list' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path]);
     } catch (\Throwable $th) {
       //throw $th;
     }
-  })->setMiddleware(['auth']),
+  }),
 
   'profile' => Route::create('profile', function (): HTTPRenderer {
 
@@ -217,13 +231,13 @@ return [
 
       if ($validatedData['confirm_password'] !== $validatedData['password']) {
         FlashData::setFlashData('error', 'Invalid Password!');
-        return new RedirectRenderer('register');
+        return new RedirectRenderer('home');
       }
 
       // Eメールは一意でなければならないので、Eメールがすでに使用されていないか確認します
       if ($userDao->getByEmail($validatedData['email'])) {
         FlashData::setFlashData('error', 'Email is already in use!');
-        return new RedirectRenderer('register');
+        return new RedirectRenderer('home');
       }
 
       // 新しいUserオブジェクトを作成します
@@ -245,12 +259,12 @@ return [
       error_log($e->getMessage());
 
       FlashData::setFlashData('error', 'Invalid Data.');
-      return new RedirectRenderer('register');
+      return new RedirectRenderer('home');
     } catch (Exception $e) {
       error_log($e->getMessage());
 
       FlashData::setFlashData('error', 'An error occurred.');
-      return new RedirectRenderer('register');
+      return new RedirectRenderer('home');
     }
   })->setMiddleware(['guest']),
 
@@ -586,6 +600,6 @@ return [
 
     FlashData::setFlashData('success', 'Logged out.');
 
-    return new RedirectRenderer('login');
+    return new RedirectRenderer('home');
   })->setMiddleware(['auth']),
 ];

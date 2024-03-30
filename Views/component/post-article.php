@@ -20,7 +20,7 @@
           </span>
           <span class="text-sm text-slate-400"><?= htmlspecialchars($data['post']->getTimeStamp()->CalculatePostAge()) ?></span>
         </div>
-        <?php if ($data['post']->getUserId() === $_SESSION['user_id']) : ?>
+        <?php if ($user && $data['post']->getUserId() === $_SESSION['user_id']) : ?>
           <div id="post-menu" class="relative h-8 w-8 flex items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full">
             <img class="h-4 w-4" src="/images/menu-icon.svg" alt="編集">
             <div id="menu" class="h-fit bg-white flex flex-col space-y-4 absolute top-5 -left-20 shadow-md border border-slate-300 rounded-md hidden">
