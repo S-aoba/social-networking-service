@@ -13,6 +13,7 @@ interface PostDAO
   public function getTrendingPosts(int $offset, int $limit): array;
   public function getFollowerPost(int $offset, int $limit): array;
 
-  public function getAllPostByUserId(int $user_id): ?array;
+  public function getPublicPosts(int $offset, int $limit): ?array;
 
+  public function getAllPostByUserId(int $user_id): ?array;
 }

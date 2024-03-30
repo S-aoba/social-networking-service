@@ -101,6 +101,33 @@ class PostDAOImpl implements PostDAO
     return $results === null ? [] : $this->resultsPosts($results);
   }
 
+  public function getPublicPosts(int $offset, int $limit): array
+  {
+
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+
+    $query =
+      "SELECT
+        posts.*,
+        profiles.*,
+        profiles.user_id AS profile_user_id,
+        posts.created_at AS post_created_at,
+        posts.id AS post_id
+      FROM
+          posts
+      JOIN
+          profiles ON posts.user_id = profiles.user_id
+      ORDER BY
+          posts.created_at DESC
+      LIMIT ?, ?;
+      ";
+
+    $results = $mysqli->prepareAndFetchAll($query, 'ii', [$offset, $limit]);
+    return $results === null ? [] : $this->resultsPosts($results);
+  }
+
+
   private function resultToPost(array $data): array
   {
     $post_image_path = is_null($data['image_path']) ? null : FileHelper::getProfileImagePath($data['image_path']);

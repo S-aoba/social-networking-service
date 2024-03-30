@@ -57,8 +57,7 @@ return [
         $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
         $login_user_profile_image_path = $login_user_profile->getProfileImage();
       } else {
-        $type = 'trend';
-        $data = $postDAO->getAllPosts(0, 10, $type);
+        $data = $postDAO->getPublicPosts(0, 10);
         foreach ($data as $data) {
           $data_list[] = [
             'post' => $data['post'],
