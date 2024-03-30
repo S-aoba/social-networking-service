@@ -15,7 +15,11 @@
   </div>
   <!-- Header -->
   <div class="relative">
-    <img class="object-cover h-48 w-full bg-blue-400" src="<?= is_null($profile->getHeaderPath()) ? '/images/test.jpeg' : $profile->getHeaderPath() ?>" alt="バナー画像">
+    <?php if (is_null($profile->getHeaderPath())) : ?>
+      <div class="h-48 w-full"></div>
+    <?php else : ?>
+      <img class="object-cover h-48 w-full" src="$profile->getHeaderPath()" alt="バナー画像">
+    <?php endif; ?>
     <img src="<?= htmlspecialchars($profile->getProfileImage()) ?>" alt="プロフィール画像" class="size-40 absolute -bottom-20 left-5 border-8 border-white rounded-full bg-white">
   </div>
   <div class="w-full p-5 flex justify-end">
