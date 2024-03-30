@@ -35,9 +35,9 @@ return [
 
       $replyDAO = DAOFactory::getReplyDAO();
 
+      $presentationTab = isset($_COOKIE['presentation-tab']) ? $_COOKIE['presentation-tab'] : 'trend';
       if (isset($_SESSION['user_id'])) {
 
-        $presentationTab = $_COOKIE['presentation-tab'];
 
         $data = $postDAO->getAllPosts(0, 10, $presentationTab);
 
@@ -70,7 +70,7 @@ return [
         $login_user_profile_image_path = null;
       }
 
-      return new HTMLRenderer('page/home', ['data_list' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path]);
+      return new HTMLRenderer('page/home', ['data_list' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path, 'presentationTab' => $presentationTab]);
     } catch (\Throwable $th) {
       //throw $th;
     }

@@ -2,12 +2,12 @@
   <!-- トレンド and フォロワー タブ -->
   <?php if ($user) : ?>
     <div class="grid grid-cols-2 border-t border-b border-slate-200 bg-white font-bold">
-      <div id="trend-tab" class="h-full py-3 span-col-1 text-center transition-colors duration-300 cursor-pointer hover:bg-slate-100 <?php echo ($_COOKIE['trend'] == 'true') ? 'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer' : 'hover:bg-gray-300/50 hover:cursor-pointer'; ?>">
+      <div id="trend-tab" class="h-full py-3 span-col-1 text-center transition-colors duration-300 cursor-pointer hover:bg-slate-100 <?php echo ($presentationTab === 'trend') ? 'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer' : 'hover:bg-gray-300/50 hover:cursor-pointer'; ?>">
         <p>
           トレンド
         </p>
       </div>
-      <div id="follower-tab" class="h-full py-3 span-col-1 text-center transition-colors duration-300 cursor-pointer hover:bg-slate-100  <?php echo ($_COOKIE['trend'] == 'true') ? 'hover:bg-gray-300/50 hover:cursor-pointer' : 'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer'; ?>">
+      <div id="follower-tab" class="h-full py-3 span-col-1 text-center transition-colors duration-300 cursor-pointer hover:bg-slate-100  <?php echo ($presentationTab === 'follower') ?  'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer' : 'hover:bg-gray-300/50 hover:cursor-pointer'; ?>">
         <p>
           フォロワー
         </p>
