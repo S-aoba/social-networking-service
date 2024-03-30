@@ -2,21 +2,13 @@ const trendTab = document.getElementById('trend-tab');
 const followerTab = document.getElementById('follower-tab');
 
 trendTab.addEventListener('click', () => {
-  console.log('Trend');
-  // trendをtrueに設定
-  document.cookie = 'trend=true';
-  // followerをfalseに設定
-  document.cookie = 'follower=false';
+  document.cookie = 'presentation-tab=trend';
 
   location.reload();
 });
 
 followerTab.addEventListener('click', () => {
-  console.log('Follower');
-  // followerをtrueに設定
-  document.cookie = 'follower=true';
-  // trendをfalseに設定
-  document.cookie = 'trend=false';
+  document.cookie = 'presentation-tab=follower';
 
   location.reload();
 });
