@@ -29,20 +29,20 @@ return [
     try {
       $data_list = [];
 
-      $trend = '';
-
       $postDAO = DAOFactory::getPostDAO();
 
       $postLikeDAO = DAOFactory::getPostLikeDAO();
 
       $replyDAO = DAOFactory::getReplyDAO();
 
-
       if (isset($_SESSION['user_id'])) {
-        $trend = $_COOKIE['trend'];
-        $type =  $trend === 'true' ? 'trend' : 'follower';
-        $data = $postDAO->getAllPosts(0, 10, $type);
+
+        $presentationTab = $_COOKIE['presentation-tab'];
+
+        $data = $postDAO->getAllPosts(0, 10, $presentationTab);
+
         $login_user_id = $_SESSION['user_id'];
+
         foreach ($data as $data) {
           $data_list[] = [
             'post' => $data['post'],
@@ -52,6 +52,7 @@ return [
             'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
           ];
         }
+
         $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
         $login_user_profile_image_path = $login_user_profile->getProfileImage();
       } else {
