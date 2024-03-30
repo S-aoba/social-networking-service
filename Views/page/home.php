@@ -48,4 +48,4 @@
 <script src="js/preview.js"></script>
 <script src="js/post-like.js"></script>
 <script src="js/reply.js"></script>
-<script src="js/trend-or-follower.js"></script>
+<script src="js/presentation-tab.js"></script>
