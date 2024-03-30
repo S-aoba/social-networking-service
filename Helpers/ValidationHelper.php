@@ -68,6 +68,33 @@ class ValidationHelper
     return $validatedData;
   }
 
+  // Postの画像と動画、プロフィールの画像、メッセージの画像と動画を想定
+  public static function validateFiles(array $file): ?array
+  {
+
+    if (!isset($file['name']) || $file['name'] === '' || $file['error'] !== UPLOAD_ERR_OK) {
+      return null;
+    }
+
+
+    $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    $mimeType = mime_content_type($file['tmp_name']);
+
+    return match (true) {
+      // 画像ファイルの場合
+      in_array($extension, ['jpg', 'jpeg', 'png', 'gif']) => ['type' => 'image', 'file' => $file],
+
+      // 動画ファイルの場合
+      in_array($extension, ['mp4', 'mov', 'avi']) => ['type' => 'video', 'file' => $file],
+
+      // MIMEタイプから判定
+      in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif']) => ['type' => 'image', 'file' => $file],
+      in_array($mimeType, ['video/mp4', 'video/quicktime', 'video/x-msvideo']) => ['type' => 'video', 'file' => $file],
+
+      default => throw new \InvalidArgumentException("Unsupported file type."),
+    };
+  }
+
 
   public static function isUserPost(int $login_user_id, int $post_user_id): void
   {
