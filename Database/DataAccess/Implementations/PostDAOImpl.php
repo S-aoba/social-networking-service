@@ -17,7 +17,7 @@ class PostDAOImpl implements PostDAO
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = 'INSERT INTO posts (content, user_id, image_path, video_path) VALUES (?, ?, ?, ?)';
+    $query = 'INSERT INTO posts (content, user_id, file_path, file_type) VALUES (?, ?, ?, ?)';
 
     $result = $db->prepareAndExecute(
       $query,
@@ -25,8 +25,8 @@ class PostDAOImpl implements PostDAO
       [
         $post->getContent(),
         $post->getUserId(),
-        $post->getImagePath(),
-        $post->getVideoPath(),
+        $post->getFilePath(),
+        $post->getFileType(),
       ]
     );
 
@@ -130,8 +130,7 @@ class PostDAOImpl implements PostDAO
 
   private function resultToPost(array $data): array
   {
-    $post_image_path = is_null($data['image_path']) ? null : FileHelper::getProfileImagePath($data['image_path']);
-    $post_video_path = is_null($data['video_path']) ? null : FileHelper::getProfileImagePath($data['video_path']);
+    $upload_file_path = is_null($data['file_path']) ? null : FileHelper::getUploadFilePath($data['file_path'], $data['file_type']);
 
     return [
       "post" =>
@@ -140,8 +139,8 @@ class PostDAOImpl implements PostDAO
         id: $data['post_id'],
         timeStamp: new DataTimeStamp($data['post_created_at'], $data['post_created_at']),
         user_id: $data['user_id'],
-        image_path: $post_image_path,
-        video_path: $post_video_path,
+        file_path: $upload_file_path,
+        file_type: $data['file_type'],
       ),
       'profile' =>
       new Profile(
@@ -188,9 +187,7 @@ class PostDAOImpl implements PostDAO
 
   private function rawDataToPost(array $rawData): array
   {
-    $profile_image_path = FileHelper::getProfileImagePath($rawData['profile_image_path']);
-    $post_image_path = is_null($rawData['image_path']) ? null : FileHelper::getProfileImagePath($rawData['image_path']);
-    $post_video_path = is_null($rawData['video_path']) ? null : FileHelper::getProfileImagePath($rawData['video_path']);
+    $uploads_file_path = is_null($rawData['file_path']) ? null : FileHelper::getUploadFilePath($rawData['file_path'], $rawData['file_type']);
     return [
       'post' =>
       new Post(
@@ -198,8 +195,8 @@ class PostDAOImpl implements PostDAO
         id: $rawData['id'],
         user_id: $rawData['user_id'],
         timeStamp: new DataTimeStamp($rawData['post_created_at'], $rawData['post_created_at']),
-        image_path: $post_image_path,
-        video_path: $post_video_path
+        file_path: $uploads_file_path,
+        file_type: $rawData['file_type']
       ),
       'profile' =>
       new Profile(
@@ -210,7 +207,7 @@ class PostDAOImpl implements PostDAO
         address: $rawData['address'],
         hobby: $rawData['hobby'],
         self_introduction: $rawData['self_introduction'],
-        profile_image_path: $profile_image_path,
+        profile_image_path: $rawData['profile_image_path'],
         header_path: $rawData['header_path'],
         timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at'])
       )
