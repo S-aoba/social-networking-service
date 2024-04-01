@@ -14,8 +14,8 @@ class Post implements Model
     private ?int $id = null,
     private ?DataTimeStamp $timeStamp = null,
     private ?int $user_id = null,
-    private ?string $image_path = null,
-    private ?string $video_path = null
+    private ?string $file_path = null,
+    private ?string $file_type = null
 
   ) {
   }
@@ -60,23 +60,23 @@ class Post implements Model
     $this->user_id = $user_id;
   }
 
-  public function getImagePath(): ?string
+  public function getFilePath(): ?string
   {
-    return $this->image_path;
+    return $this->file_path;
   }
 
-  public function setImagePath(string $image_path): void
+  public function setFilePath(string $file_path): void
   {
-    $this->image_path = $image_path;
+    $this->file_path = $file_path;
   }
 
-  public function getVideoPath(): ?string
+  public function getFileType(): ?string
   {
-    return $this->video_path;
+    return $this->file_type;
   }
 
-  public function setVideoPath(string $video_path): void
+  public function setFileType(string $file_type): void
   {
-    $this->video_path = $video_path;
+    $this->file_type = $file_type;
   }
 }
