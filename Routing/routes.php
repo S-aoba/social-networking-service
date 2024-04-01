@@ -278,32 +278,32 @@ return [
           'content' => ValueType::CONTENT,
         ];
 
-        $validatedData = ValidationHelper::validateFields($request_fields, $_POST);
+        $validated_data = ValidationHelper::validateFields($request_fields, $_POST);
+
+        $validated_files = ValidationHelper::validateFiles($_FILES);
 
         $postDAO = DAOFactory::getPostDAO();
 
-        $post_file_path = null;
+        // Postをインスタンスかするためにfile_pathが存在していれば、ハッシュ化したfile_pathを生成する
+        $hashed_file_path = is_null($validated_files) ? null : FileHelper::getHashedFilePath($validated_files['file']);
 
-        if (FileHelper::isExitUserUploadFile($_FILES)) {
-          // 存在していればハッシュ化されたimage_pathを取得
-          $post_file_path = FileHelper::getFilePath($_FILES);
-        }
-        $file_type = $_FILES['image']['type'];
-        error_log($file_type);
-
+        // Postクラスをインスタンス化
         $post = new Post(
-          content: $validatedData['content'],
+          content: $validated_data['content'],
           user_id: $_SESSION['user_id'],
-          image_path: $file_type === "video/mp4" ? null : $post_file_path,
-          video_path: $file_type === "video/mp4" ? $post_file_path : null,
+          file_path: $hashed_file_path,
+          file_type: $validated_files['type']
         );
 
-        //TODO: 画像を保存するロジックの追加をする
+        // PostをDBへ作成する
         $postDAO->create($post);
 
-        if (!is_null($post_file_path)) FileHelper::saveImageFile($post_file_path);
-
-        FlashData::setFlashData('success', '投稿が完了しました!');
+        // Fileが投稿されているかつまだprivate/uploads配下に保存されていない場合のみ
+        // すでに保存されていれば、以下のコードはスキップしたほうが効率がいい
+        if (!is_null($validated_files) && FileHelper::isExitUploadFilePath($hashed_file_path, $validated_files['type'])) {
+          // Fileをpublic/private/uploads/配下に配置する
+          FileHelper::saveFilePathInUploadsDir($hashed_file_path, $validated_files['type']);
+        }
 
         return new JSONRenderer(['status' => 'success']);
       } catch (Exception $e) {
