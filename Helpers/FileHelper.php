@@ -9,20 +9,17 @@ class FileHelper
 {
   public static function isExitUserUploadFile(array $file): bool
   {
-    return !empty($file['image']['tmp_name']);
+    return !empty($file['tmp_name']);
   }
 
   public static function getHashedFilePath(array $file): string
   {
-    $file_size = $file['image']['size'];
-    $file_type = $file['image']['type'];
-    $file_name = $file['image']['name'];
-
-    self::checkFileExtension($file_type);
+    $file_size = $file['size'];
+    $file_name = $file['name'];
 
     self::checkUploadFileSize($file_size, $file_name);
 
-    $file_name = $file['image']['name'];
+    $file_name = $file['name'];
 
     return self::generateHashedFileName($file_name);
   }
