@@ -88,7 +88,7 @@ class FileHelper
 
     $dir = self::getUploadDir($hashed_file_path, $file_type);
     // 保存するFileのpathを取得
-    return $dir . '/' . $hashed_file_path;
+    return '/' . $dir . '/' . $hashed_file_path;
   }
 
   private static function getFIleType(string $file_type): string
