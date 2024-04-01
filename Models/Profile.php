@@ -107,7 +107,7 @@ class Profile implements Model
 
   public function getProfileImage(): ?string
   {
-    return $this->profile_image_path === null ? null : FileHelper::getProfileImagePath($this->profile_image_path);
+    return $this->profile_image_path === null ? null : FileHelper::getUploadFilePath($this->profile_image_path, 'image');
   }
 
   public function setProfileImage(string $profile_image_path): void
@@ -117,7 +117,7 @@ class Profile implements Model
 
   public function getHeaderPath(): ?string
   {
-    return $this->header_path === null ? null : FileHelper::getProfileImagePath($this->header_path);
+    return $this->header_path === null ? null : FileHelper::getUploadFilePath($this->header_path, 'imageo');
   }
 
   public function setHeaderPath(string $header_path): void
