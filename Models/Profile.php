@@ -117,7 +117,7 @@ class Profile implements Model
 
   public function getHeaderPath(): ?string
   {
-    return $this->header_path === null ? null : FileHelper::getUploadFilePath($this->header_path, 'imageo');
+    return $this->header_path === null ? null : FileHelper::getUploadFilePath($this->header_path, 'image');
   }
 
   public function setHeaderPath(string $header_path): void
