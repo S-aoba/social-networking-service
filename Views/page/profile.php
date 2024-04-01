@@ -8,7 +8,8 @@
         <?= is_null($profile->getUsername()) ? '名無しユーザー' : htmlspecialchars($profile->getUsername()) ?>
       </h1>
       <span class="text-slate-500 text-sm">
-        451. <span class="text-slate-500 text-sm">万件のポスト</span>
+      <?= $post_count ?>
+      <span class="text-slate-500 text-sm">件のポスト</span>
       </span>
 
     </div>

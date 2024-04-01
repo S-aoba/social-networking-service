@@ -270,4 +270,36 @@ class PostDAOImpl implements PostDAO
 
     return $result === null ? null : $this->resultsPosts($result);
   }
+
+  public function getPostCountByUserId(int $user_id): string
+  {
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query =
+      'SELECT count(posts.id) AS post_count
+    FROM posts
+    WHERE user_id = ?
+    ';
+
+    $result = $db->prepareAndFetchAll(
+      $query,
+      'i',
+      [$user_id]
+    );
+
+    return self::convertPostCountToReadableFormat($result);
+  }
+
+  private function convertPostCountToReadableFormat(array $res): string
+  {
+    $post_count = $res[0]['post_count'];
+
+    return match (true) {
+      $post_count < 10000 => strval($post_count),
+      $post_count < 100000 => number_format($post_count),
+      $post_count < 1000000 => floor($post_count / 10000) . '万',
+      $post_count < 100000000 => floor($post_count / 1000000) . '百万',
+      default => floor($post_count / 100000000) . '億'
+    };
+  }
 }

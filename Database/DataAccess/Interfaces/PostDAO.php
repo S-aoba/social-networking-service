@@ -16,4 +16,5 @@ interface PostDAO
   public function getPublicPosts(int $offset, int $limit): ?array;
 
   public function getAllPostByUserId(int $user_id): ?array;
+  public function getPostCountByUserId(int $user_id): string;
 }

@@ -121,10 +121,12 @@ return [
 
     $is_self_profile = $user_id === $_SESSION['user_id'] ? true : false;
 
+    // 表示対象ユーザーのポスト数
+    $post_count = $postDAO->getPostCountByUserId($user_id);
 
     return new HTMLRenderer('page/profile', [
       'profile' => $profile, "is_follow" => $is_follow, 'is_self_profile' => $is_self_profile, 'data_list' => $data_list, 'follow_count' => $follow_count[0],
-      'follower_count' => $follower_count[0]
+      'follower_count' => $follower_count[0], 'post_count' => $post_count
     ]);
   })->setMiddleware(['auth']),
 
