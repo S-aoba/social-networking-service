@@ -279,8 +279,7 @@ return [
         ];
 
         $validated_data = ValidationHelper::validateFields($request_fields, $_POST);
-
-        $validated_files = ValidationHelper::validateFiles($_FILES);
+        $validated_files = ValidationHelper::validateFiles($_FILES['image']);
 
         $postDAO = DAOFactory::getPostDAO();
 
