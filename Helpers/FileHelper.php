@@ -56,7 +56,9 @@ class FileHelper
 
   public static function saveFilePathInUploadsDir(string $hashed_file_path, string $file_type): void
   {
-    $uploads_file_path = self::getUploadFilePath($hashed_file_path, $file_type);
+    $dir = self::getUploadDir($hashed_file_path, $file_type);
+
+    $uploads_file_path = $dir . '/' . $hashed_file_path;
 
     // 保存
     move_uploaded_file($_FILES["image"]["tmp_name"], $uploads_file_path);
