@@ -299,7 +299,7 @@ return [
 
         // Fileが投稿されているかつまだprivate/uploads配下に保存されていない場合のみ
         // すでに保存されていれば、以下のコードはスキップしたほうが効率がいい
-        if (!is_null($validated_files) && FileHelper::isExitUploadFilePath($hashed_file_path, $validated_files['type'])) {
+        if (!is_null($validated_files) && !FileHelper::isExitUploadFilePath($hashed_file_path, $validated_files['type'])) {
           // Fileをpublic/private/uploads/配下に配置する
           FileHelper::saveFilePathInUploadsDir($hashed_file_path, $validated_files['type']);
         }
