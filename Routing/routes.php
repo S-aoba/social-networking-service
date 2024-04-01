@@ -78,6 +78,7 @@ return [
 
   'profile' => Route::create('profile', function (): HTTPRenderer {
 
+    // 表示対象のユーザー情報
     $url = $_SERVER['PATH_INFO'];
     preg_match('/\/profile\/(.+)/', $url, $matches);
     $user_id = intval($matches[1]);
@@ -85,7 +86,7 @@ return [
     $profileDAO = DAOFactory::getProfileDAO();
     $profile = $profileDAO->getByUsername($user_id);
 
-
+    // フォロー数とフォロワー数
     $followDAO = DAOFactory::getFollowDAO();
 
     $follow = new Follow(
@@ -95,8 +96,10 @@ return [
 
     $is_follow = $followDAO->checkFollow($follow);
 
-    $is_self_profile = $user_id === $_SESSION['user_id'] ? true : false;
+    $follow_count = $followDAO->getFollowUserCount($follow);
+    $follower_count = $followDAO->getFollowerUserCount($follow);
 
+    // 表示対象のユーザーの投稿一覧
     $postDAO = DAOFactory::getPostDAO();
 
     $posts = $postDAO->getAllPostByUserId($user_id);
@@ -106,19 +109,23 @@ return [
 
     $replyDAO = DAOFactory::getReplyDAO();
 
-    $login_user_id = $_SESSION['user_id'];
-
     foreach ($posts as $data) {
       $data_list[] = [
         'post' => $data['post'],
         "profile" => $data["profile"],
         'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
         'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
-        'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
+        'isLike' => $postLikeDAO->getLikeByUserId($_SESSION['user_id'], $data['post']->getId()),
       ];
     }
 
-    return new HTMLRenderer('page/profile', ['profile' => $profile, "is_follow" => $is_follow, 'is_self_profile' => $is_self_profile, 'data_list' => $data_list]);
+    $is_self_profile = $user_id === $_SESSION['user_id'] ? true : false;
+
+
+    return new HTMLRenderer('page/profile', [
+      'profile' => $profile, "is_follow" => $is_follow, 'is_self_profile' => $is_self_profile, 'data_list' => $data_list, 'follow_count' => $follow_count[0],
+      'follower_count' => $follower_count[0]
+    ]);
   })->setMiddleware(['auth']),
 
   'message' => Route::create('message', function (): HTTPRenderer {

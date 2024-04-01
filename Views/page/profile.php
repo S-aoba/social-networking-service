@@ -59,13 +59,13 @@
     <!-- フォロー数とフォロワー数: 未実装のためハードコーディング -->
     <div class="flex space-x-2 items-center text-sm">
       <span class="font-bold">
-        30
+        <?= $follow_count['follow_count'] ?>
         <span class="text-slate-400 font-normal">
           フォロー中
         </span>
       </span>
       <span class="font-bold">
-        30
+        <?= $follower_count['follower_count'] ?>
         <span class="text-slate-400 font-normal">
           フォロワー
         </span>

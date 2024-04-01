@@ -127,4 +127,42 @@ class FollowDAOImpl implements FollowDAO
     }
     return $data_list;
   }
+
+  public function getFollowUserCount(Follow $follow): ?array
+  {
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query =
+    'SELECT count(follows.follower_id) AS follow_count
+    FROM follows
+    WHERE follower_id = ?
+    ';
+
+    $result = $db->prepareAndFetchAll(
+      $query,
+      'i',
+      [$follow->getFollowId()]
+    );
+
+    return $result;
+  }
+
+  public function getFollowerUserCount(Follow $follow): ?array
+  {
+    $db = DatabaseManager::getMysqliConnection();
+
+    $query =
+    'SELECT count(follows.followee_id) AS follower_count
+    FROM follows
+    WHERE followee_id = ?
+    ';
+
+    $result = $db->prepareAndFetchAll(
+      $query,
+      'i',
+      [$follow->getFolloweeId()]
+    );
+
+    return $result;
+  }
 }
