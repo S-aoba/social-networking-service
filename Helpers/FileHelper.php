@@ -99,4 +99,12 @@ class FileHelper
     $parent_dir = substr($path, 0, 2);
     return $parent_dir;
   }
+
+  public static function isExitUploadFilePath(string $hashed_file_path, string $file_type)
+  {
+    // 保存するFileのpathを取得
+    $target_file = self::getUploadFilePath($hashed_file_path, $file_type);
+
+    return file_exists($target_file);
+  }
 }
