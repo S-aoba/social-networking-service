@@ -57,7 +57,7 @@ class FileHelper
     return $hashedFileName;
   }
 
-  public static function saveImageFile(string $image_path): void
+  public static function saveFilePathInUploadsDir(string $image_path): void
   {
     $file_type = self::getFIleType($image_path);
 
