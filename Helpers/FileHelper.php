@@ -57,19 +57,27 @@ class FileHelper
     return $hashedFileName;
   }
 
-  public static function saveFilePathInUploadsDir(string $image_path): void
+  public static function saveFilePathInUploadsDir(string $hashed_file_path, string $file_type): void
   {
-    $file_type = self::getFIleType($image_path);
+    // root_dirを取得
+    $root_dir = match ($file_type) {
+      'image' => 'private/uploads/images/',
+      'video' => 'private/uploads/video/'
+    };
 
-    $root_dir = $file_type === 'mp4' ? "private/uploads/video/" : "private/uploads/images/";
-    $parent_dir = substr($image_path, 0, 2);
+    // $hashed_file_pathの頭文字2個を使って親ディレクトリ名を取得
+    $parent_dir = substr($hashed_file_path, 0, 2);
 
-    // $parent_dirが存在しているかどうか
+    // $parent_dirが存在していなければ作成
+    // 違うファイルであっても、ハッシュ化されたファイル名の頭文字2個が同じ場合がある
     if (!is_dir($root_dir . $parent_dir)) {
       mkdir($root_dir . $parent_dir, 0777, true);
     }
-    $target_file = $root_dir . $parent_dir . '/' . $image_path;
 
+    // 保存するFileのpathを取得
+    $target_file = $root_dir . $parent_dir . '/' . $hashed_file_path;
+
+    // 保存
     move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
   }
 
