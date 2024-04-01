@@ -11,9 +11,9 @@ class Post implements Model
 
   public function __construct(
     private string $content,
+    private int $user_id,
     private ?int $id = null,
     private ?DataTimeStamp $timeStamp = null,
-    private ?int $user_id = null,
     private ?string $file_path = null,
     private ?string $file_type = null
 
@@ -40,6 +40,16 @@ class Post implements Model
     $this->content = $content;
   }
 
+  public function getUserId(): int
+  {
+    return $this->user_id;
+  }
+
+  public function setUserId(int $user_id): void
+  {
+    $this->user_id = $user_id;
+  }
+
   public function getTimeStamp(): ?DataTimeStamp
   {
     return $this->timeStamp;
@@ -48,16 +58,6 @@ class Post implements Model
   public function setTimeStamp(DataTimeStamp $timeStamp): void
   {
     $this->timeStamp = $timeStamp;
-  }
-
-  public function getUserId(): ?int
-  {
-    return $this->user_id;
-  }
-
-  public function setUserId(int $user_id): void
-  {
-    $this->user_id = $user_id;
   }
 
   public function getFilePath(): ?string
