@@ -55,7 +55,7 @@ return [
         }
 
         $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
-        $login_user_profile_image_path = $login_user_profile->getProfileImage();
+        $login_user_profile_image_path = $login_user_profile->getUploadFullPathOfProfileImage();
       } else {
         $data = $postDAO->getPublicPosts(0, 10);
         foreach ($data as $data) {
