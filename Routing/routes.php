@@ -383,7 +383,7 @@ return [
         username: $validated_data['username'],
         self_introduction: $_POST['self-introduction'],
         profile_image_path: $hashed_profile_image_path,
-        header_path:$hashed_header_image_path
+        header_path: $hashed_header_image_path
       );
 
       $profileDAO->updateProfile($profile);

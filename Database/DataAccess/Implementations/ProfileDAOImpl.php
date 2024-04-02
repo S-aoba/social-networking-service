@@ -36,25 +36,99 @@ class ProfileDAOImpl implements ProfileDAO
   {
     $mysqli = DatabaseManager::getMysqliConnection();
 
-    $query = "UPDATE profiles SET username = ?, age = ?, address = ?, hobby = ?, self_introduction = ?, profile_image_path = ?, header_path = ? WHERE user_id = ?";
+    $types = '';
+    $params = [];
+
+    if (is_null($profile->getProfileImage()) && is_null($profile->getHeaderPath())) {
+      $query =
+        "UPDATE profiles
+            SET
+            username = ?,
+            age = ?,
+            address = ?,
+            hobby = ?,
+            self_introduction = ?
+            WHERE user_id = ?";
+
+      $types .= 'sssssi';
+      $params[] = $profile->getUsername();
+      $params[] = $profile->getAge();
+      $params[] = $profile->getAddress();
+      $params[] = $profile->getHobby();
+      $params[] = $profile->getSelfIntroduction();
+      $params[] = $profile->getUserId();
+    } elseif (is_null($profile->getProfileImage())) {
+      $query =
+        "UPDATE profiles
+            SET
+            username = ?,
+            age = ?,
+            address = ?,
+            hobby = ?,
+            self_introduction = ?,
+            header_path = ?
+            WHERE user_id = ?";
+
+      $types .= 'ssssssi';
+      $params[] = $profile->getUsername();
+      $params[] = $profile->getAge();
+      $params[] = $profile->getAddress();
+      $params[] = $profile->getHobby();
+      $params[] = $profile->getSelfIntroduction();
+      $params[] = $profile->getHeaderPath();
+      $params[] = $profile->getUserId();
+    } elseif (is_null($profile->getHeaderPath())) {
+      $query =
+        "UPDATE profiles
+            SET
+            username = ?,
+            age = ?,
+            address = ?,
+            hobby = ?,
+            self_introduction = ?,
+            profile_image_path = ?
+            WHERE user_id = ?";
+
+      $types .= 'ssssssi';
+      $params[] = $profile->getUsername();
+      $params[] = $profile->getAge();
+      $params[] = $profile->getAddress();
+      $params[] = $profile->getHobby();
+      $params[] = $profile->getSelfIntroduction();
+      $params[] = $profile->getProfileImage();
+      $params[] = $profile->getUserId();
+    } else {
+      $query =
+        "UPDATE profiles
+            SET
+            username = ?,
+            age = ?,
+            address = ?,
+            hobby = ?,
+            self_introduction = ?,
+            profile_image_path = ?,
+            header_path = ?
+            WHERE user_id = ?";
+
+      $types .= 'sssssssi';
+      $params[] = $profile->getUsername();
+      $params[] = $profile->getAge();
+      $params[] = $profile->getAddress();
+      $params[] = $profile->getHobby();
+      $params[] = $profile->getSelfIntroduction();
+      $params[] = $profile->getProfileImage();
+      $params[] = $profile->getHeaderPath();
+      $params[] = $profile->getUserId();
+    }
 
     $result = $mysqli->prepareAndExecute(
       $query,
-      'sssssssi',
-      [
-        $profile->getUsername(),
-        $profile->getAge(),
-        $profile->getAddress(),
-        $profile->getHobby(),
-        $profile->getSelfIntroduction(),
-        $profile->getProfileImage(),
-        $profile->getHeaderPath(),
-        $profile->getUserId()
-      ]
+      $types,
+      $params
     );
-
     return $result;
   }
+
 
   public static function updateProfileImage(string $profile_image_path): bool
   {
