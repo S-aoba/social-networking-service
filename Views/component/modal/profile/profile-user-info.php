@@ -5,7 +5,7 @@
   </div>
   <div>
     <label for="self-introduction">自己紹介</label>
-    <textarea name="self-introduction" id="self-introduction" class="w-full mt-3 p-3 border border-slate-300 rounded-md resize-none" value="<?= $profile->getSelfIntroduction() ?>"></textarea>
+    <textarea name="self-introduction" id="self-introduction" class="w-full mt-3 p-3 border border-slate-300 rounded-md resize-none"><?= $profile->getSelfIntroduction() ?></textarea>
   </div>
 </div>
 <div class="flex items-center justify-end pr-5">

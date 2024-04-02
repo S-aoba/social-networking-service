@@ -3,8 +3,8 @@
     <!-- User Information -->
     <div class="flex items-start">
       <div class="h-10 w-10 border border-slate-300 rounded-full">
-        <a href="profile/<?= $data['profile']->getUserId() ?>">
-          <img src="<?= $data['profile']->getProfileImage() === null ? '/images/default-icon.svg' : htmlspecialchars($data['profile']->getProfileImage()) ?>" alt="post-user-icon" class="object-cover rounded-full">
+        <a href="/profile/<?= $data['profile']->getUserId() ?>">
+          <img src="<?= $data['profile']->getUploadFullPathOfProfileImage() === null ? '/images/default-icon.svg' : htmlspecialchars($data['profile']->getUploadFullPathOfProfileImage()) ?>" alt="post-user-icon" class="h-10 w-10 object-cover rounded-full">
         </a>
       </div>
     </div>

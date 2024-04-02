@@ -16,12 +16,12 @@
   </div>
   <!-- Header -->
   <div class="relative">
-    <?php if (is_null($profile->getHeaderPath())) : ?>
+    <?php if (is_null($profile->getUploadFullPathOfHeader())) : ?>
       <div class="h-48 w-full"></div>
     <?php else : ?>
-      <img class="object-cover h-48 w-full" src="<?= $profile->getHeaderPath() ?>" alt="ヘッダー画像">
+      <img class="object-cover h-48 w-full" src="<?= $profile->getUploadFullPathOfHeader() ?>" alt="ヘッダー画像">
     <?php endif; ?>
-    <img src="<?= htmlspecialchars($profile->getProfileImage()) ?>" alt="プロフィール画像" class="size-40 absolute -bottom-20 left-5 border-8 border-white rounded-full bg-white">
+    <img src="<?= htmlspecialchars(is_null($profile->getUploadFullPathOfProfileImage()) ? '/images/default-icon.svg' : $profile->getUploadFullPathOfProfileImage()) ?>" alt="プロフィール画像" class="size-40 absolute -bottom-20 left-5 border-8 border-white rounded-full bg-white">
   </div>
   <div class="w-full p-5 flex justify-end">
     <?php if ($is_self_profile) : ?>

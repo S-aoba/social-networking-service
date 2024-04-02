@@ -1,6 +1,6 @@
 <!-- PostDeleteModal -->
 <div id="profile-edit-modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex justify-center items-center">
-  <form id="update-profile-form" method="POST" class="py-3 bg-white w-2/5 h-fit flex flex-col rounded-md overflow-auto">
+  <form id="update-profile-form" method="POST" class="py-3 bg-white w-11/12 lg:w-[600px] h-fit flex flex-col rounded-md overflow-auto">
     <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
     <div class="flex items-center justify-between px-5 pb-3">
       <div class="flex items-center space-x-3">
@@ -45,6 +45,9 @@
       const file = this.files[0];
       if (file) {
         const reader = new FileReader();
+        if (previewId === 'blank-preview-header-image') {
+          document.getElementById(previewId).classList.remove('hidden');
+        }
         reader.onload = function(e) {
           document.getElementById(previewId).setAttribute('src', e.target.result);
         };
@@ -54,7 +57,9 @@
   }
 
   changePreviewImage('header-image', 'preview-header-image')
+  changePreviewImage('header-image', 'blank-preview-header-image')
   changePreviewImage('profile-image', 'preview-profile-image')
+
 
   // User情報の更新
   const updateProfileForm = document.getElementById('update-profile-form');

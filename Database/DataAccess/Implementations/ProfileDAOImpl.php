@@ -32,7 +32,7 @@ class ProfileDAOImpl implements ProfileDAO
     return true;
   }
 
-  public static function updateProfile(Profile $profile, ?string $profile_image_path, ?string $header_image_path): bool
+  public static function updateProfile(Profile $profile): bool
   {
     $mysqli = DatabaseManager::getMysqliConnection();
 
@@ -47,8 +47,8 @@ class ProfileDAOImpl implements ProfileDAO
         $profile->getAddress(),
         $profile->getHobby(),
         $profile->getSelfIntroduction(),
-        $profile_image_path,
-        $header_image_path,
+        $profile->getProfileImage(),
+        $profile->getHeaderPath(),
         $profile->getUserId()
       ]
     );
