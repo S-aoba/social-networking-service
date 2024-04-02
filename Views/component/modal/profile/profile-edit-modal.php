@@ -54,7 +54,7 @@
   }
 
   changePreviewImage('header-image', 'preview-header-image')
-  changePreviewImage('user-image', 'preview-user-image')
+  changePreviewImage('profile-image', 'preview-profile-image')
 
   // User情報の更新
   const updateProfileForm = document.getElementById('update-profile-form');

@@ -361,53 +361,40 @@ return [
 
   'form/update/profile' => Route::create('form/update/profile', function (): HTTPRenderer {
     try {
-      error_log(print_r($_FILES, true));
-      error_log(print_r($_POST, true));
-      // $data = $_POST;
 
-      // $profileDAO = DAOFactory::getProfileDAO();
+      $request_fields = [
+        // TODO:ValidationHelper::validateFieldsに新たにusername,selfIntroduction用の値を作成する
+        'username' => ValueType::STRING,
+        // 'self-introduction' => ValueType::STRING
+      ];
 
-      // $profile = new Profile(
-      //   user_id: $_SESSION['user_id'],
-      //   username: $data['username'],
-      //   age: intval($data['age']),
-      //   address: $data['address'],
-      //   hobby: $data['hobby'],
-      //   self_introduction: $data['self_introduction'],
-      //   // profile_image_path: $hashed_file_name
-      // );
+      $validated_data = ValidationHelper::validateFields($request_fields, $_POST);
+      $validated_header_image = ValidationHelper::validateFiles($_FILES['header-image']);
+      $validated_profile_image = ValidationHelper::validateFiles($_FILES['profile-image']);
 
-      // $profileDAO->updateProfile($profile);
+      $hashed_profile_image_path = is_null($validated_profile_image) ? null : FileHelper::getHashedFilePath($validated_profile_image['file']);
+      $hashed_header_image_path = is_null($validated_header_image) ? null : FileHelper::getHashedFilePath($validated_header_image['file']);
+
+
+      $profileDAO = DAOFactory::getProfileDAO();
+
+      $profile = new Profile(
+        user_id: $_SESSION['user_id'],
+        username: $validated_data['username'],
+        self_introduction: $_POST['self-introduction'],
+      );
+
+      $profileDAO->updateProfile($profile, $hashed_profile_image_path, $hashed_header_image_path);
 
       return new JSONRenderer(["status" => "success"]);
     } catch (Exception $e) {
-      return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しください。"]);
+      return new JSONRenderer(["status" => 'error', 'message' => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しください。"]);
+    } catch (\InvalidArgumentException $e) {
+      error_log($e->getMessage());
+      return new JSONRenderer(["status" => 'error', 'message' => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しください。"]);
     }
   })->setMiddleware(['auth']),
 
-  'form/update/profile-image' => Route::create('form/update/profile-image', function (): HTTPRenderer {
-
-    try {
-
-
-      // $profile_image_path = null;
-
-      // if (FileHelper::isExitUserUploadFile($_FILES)) {
-      //   $profile_image_path = FileHelper::getFilePath($_FILES);
-      // }
-      // $profileDAO = DAOFactory::getProfileDAO();
-
-      // $profileDAO->updateProfileImage($profile_image_path);
-
-
-      // // private/uploads/images/に保存
-      // // $hashed_file_name = FileHelper::saveImageFile($file_name);
-
-      return new JSONRenderer(["status" => "success"]);
-    } catch (\Throwable $th) {
-      return new JSONRenderer(["status" => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しくください。"]);
-    }
-  })->setMiddleware(['auth']),
   'form/follow' => Route::create('form/follow', function (): HTTPRenderer {
     try {
       $data = $_POST;
