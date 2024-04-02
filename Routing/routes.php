@@ -361,21 +361,23 @@ return [
 
   'form/update/profile' => Route::create('form/update/profile', function (): HTTPRenderer {
     try {
-      $data = $_POST;
+      error_log(print_r($_FILES, true));
+      error_log(print_r($_POST, true));
+      // $data = $_POST;
 
-      $profileDAO = DAOFactory::getProfileDAO();
+      // $profileDAO = DAOFactory::getProfileDAO();
 
-      $profile = new Profile(
-        user_id: $_SESSION['user_id'],
-        username: $data['username'],
-        age: intval($data['age']),
-        address: $data['address'],
-        hobby: $data['hobby'],
-        self_introduction: $data['self_introduction'],
-        // profile_image_path: $hashed_file_name
-      );
+      // $profile = new Profile(
+      //   user_id: $_SESSION['user_id'],
+      //   username: $data['username'],
+      //   age: intval($data['age']),
+      //   address: $data['address'],
+      //   hobby: $data['hobby'],
+      //   self_introduction: $data['self_introduction'],
+      //   // profile_image_path: $hashed_file_name
+      // );
 
-      $profileDAO->updateProfile($profile);
+      // $profileDAO->updateProfile($profile);
 
       return new JSONRenderer(["status" => "success"]);
     } catch (Exception $e) {
@@ -386,18 +388,20 @@ return [
   'form/update/profile-image' => Route::create('form/update/profile-image', function (): HTTPRenderer {
 
     try {
-      $profile_image_path = null;
-
-      if (FileHelper::isExitUserUploadFile($_FILES)) {
-        $profile_image_path = FileHelper::getFilePath($_FILES);
-      }
-      $profileDAO = DAOFactory::getProfileDAO();
-
-      $profileDAO->updateProfileImage($profile_image_path);
 
 
-      // private/uploads/images/に保存
-      // $hashed_file_name = FileHelper::saveImageFile($file_name);
+      // $profile_image_path = null;
+
+      // if (FileHelper::isExitUserUploadFile($_FILES)) {
+      //   $profile_image_path = FileHelper::getFilePath($_FILES);
+      // }
+      // $profileDAO = DAOFactory::getProfileDAO();
+
+      // $profileDAO->updateProfileImage($profile_image_path);
+
+
+      // // private/uploads/images/に保存
+      // // $hashed_file_name = FileHelper::saveImageFile($file_name);
 
       return new JSONRenderer(["status" => "success"]);
     } catch (\Throwable $th) {

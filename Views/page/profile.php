@@ -8,8 +8,8 @@
         <?= is_null($profile->getUsername()) ? '名無しユーザー' : htmlspecialchars($profile->getUsername()) ?>
       </h1>
       <span class="text-slate-500 text-sm">
-      <?= $post_count ?>
-      <span class="text-slate-500 text-sm">件のポスト</span>
+        <?= $post_count ?>
+        <span class="text-slate-500 text-sm">件のポスト</span>
       </span>
 
     </div>
@@ -19,13 +19,14 @@
     <?php if (is_null($profile->getHeaderPath())) : ?>
       <div class="h-48 w-full"></div>
     <?php else : ?>
-      <img class="object-cover h-48 w-full" src="$profile->getHeaderPath()" alt="バナー画像">
+      <img class="object-cover h-48 w-full" src="<?= $profile->getHeaderPath() ?>" alt="ヘッダー画像">
     <?php endif; ?>
     <img src="<?= htmlspecialchars($profile->getProfileImage()) ?>" alt="プロフィール画像" class="size-40 absolute -bottom-20 left-5 border-8 border-white rounded-full bg-white">
   </div>
   <div class="w-full p-5 flex justify-end">
     <?php if ($is_self_profile) : ?>
-      <button id="follow" type="submit" class="py-2 px-3 border border-slate-300 rounded-full font-semibold text-sm text-center cursor-pointer hover:bg-slate-100 transition-colors duration-300">プロフィールを編集</button>
+      <button id="profileEditBtn" type="submit" class="py-2 px-3 border border-slate-300 rounded-full font-semibold text-sm text-center cursor-pointer hover:bg-slate-100 transition-colors duration-300">プロフィールを編集</button>
+      <?php require 'Views/component/modal/profile/profile-edit-modal.php' ?>
     <?php else : ?>
       <?php if ($is_follow === false) : ?>
         <form id="follow-form" method="post">
@@ -112,8 +113,7 @@
 <div class="lg:col-span-1 hidden lg:block h-full pr-4 md:pr-6 bg-orange-400">
   Profile Information
 </div>
-<!-- user_idのUserのProfile情報, ログインユーザーがそのuser_idのユーザーをフォローしているかどうかの情報 -->
-<!-- user_idのユーザーの投稿一覧情報 -->
+
 <script src="/js/post-like.js"></script>
 <script src="/js/reply.js"></script>
 <script src="/js/profile-post-delete.js"></script>
