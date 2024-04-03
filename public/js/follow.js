@@ -18,6 +18,9 @@ if (followForm) {
           console.error(data.message);
           alert('Follow failed: ' + data.message);
         }
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       });
     });
   });
@@ -41,6 +44,9 @@ if (followForm) {
           console.error(data.message);
           alert('Unfollow failed: ' + data.message);
         }
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       });
     });
   });
