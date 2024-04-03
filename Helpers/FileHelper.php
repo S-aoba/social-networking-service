@@ -54,14 +54,14 @@ class FileHelper
     return $hashedFileName;
   }
 
-  public static function saveFilePathInUploadsDir(string $hashed_file_path, string $file_type): void
+  public static function saveFilePathInUploadsDir(string $tmp_name, string $hashed_file_path, string $file_type): void
   {
     $dir = self::getUploadDir($hashed_file_path, $file_type);
 
     $uploads_file_path = $dir . '/' . $hashed_file_path;
 
     // 保存
-    move_uploaded_file($_FILES["image"]["tmp_name"], $uploads_file_path);
+    move_uploaded_file($tmp_name, $uploads_file_path);
   }
 
   public static function getUploadDir(string $hashed_file_path, string $file_type)
