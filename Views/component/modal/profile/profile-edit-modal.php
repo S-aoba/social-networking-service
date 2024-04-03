@@ -74,7 +74,13 @@
       method: 'POST',
       body: updateProfileFormData
     }).then((res) => {
-      console.log(res.status);
+      res.json().then((data) => {
+        if (data.status === 'success') {
+          setTimeout(() => {
+            window.location.reload()
+          }, 1000);
+        }
+      })
     })
   });
 </script>
