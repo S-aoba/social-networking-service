@@ -1,6 +1,7 @@
 <?php foreach ($data_list as $data) : ?>
   <!-- Conversations -->
-  <a href="/message/16" class="w-full p-4 flex mr-2 hover:bg-slate-100 cursor-pointer transition-colors duration-300 relative">
+  <div class="w-full p-4 flex mr-2 hover:bg-slate-100 cursor-pointer transition-colors duration-300 relative">
+    <a a href="/message/<?= $data['conversation']->getConversationId() ?>" class="absolute top-0 left-0  w-full h-full"></a>
     <img class="w-12 h-12 rounded-full mr-4 border border-slate-300" src="<?= $data['other_user_profile_image_path'] === null ? '/images/default-icon.svg' : $data['other_user_profile_image_path'] ?>" alt="Sender">
     <div class="w-full flex flex-col">
       <div class="w-full flex items-center justify-between mb-3">
@@ -42,5 +43,5 @@
         <p class="text-sm text-slate-400">まだメッセージはありません。</p>
       <?php endif; ?>
     </div>
-  </a>
+  </div>
 <?php endforeach; ?>
