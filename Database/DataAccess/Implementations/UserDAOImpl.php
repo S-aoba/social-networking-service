@@ -9,7 +9,7 @@ use Models\User;
 
 class UserDAOImpl implements UserDAO
 {
-  public function create(User $user, string $password): bool
+  public function create(User $user, string $password, string $username): bool
   {
     if ($user->getId() !== null) throw new \Exception('Cannot create a user with an existing ID. id: ' . $user->getId());
 
@@ -34,12 +34,13 @@ class UserDAOImpl implements UserDAO
 
 
     // プロフィールテーブルにプロフィールを挿入
-    $queryProfile = "INSERT INTO profiles (user_id) VALUES (?)";
+    $queryProfile = "INSERT INTO profiles (username, user_id) VALUES (?, ?)";
     $resultProfile = $mysqli->prepareAndExecute(
       $queryProfile,
-      'i',
+      'si',
       [
-        $userId,
+        $username,
+        $userId
       ]
     );
 

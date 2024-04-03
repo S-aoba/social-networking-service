@@ -224,6 +224,7 @@ return [
       if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
       $required_fields = [
+        'username' => ValueType::STRING,
         'email' => ValueType::EMAIL,
         'password' => ValueType::PASSWORD,
         'confirm_password' => ValueType::PASSWORD,
@@ -250,8 +251,10 @@ return [
         email: $validatedData['email'],
       );
 
+      $username = $_POST['username'];
+
       // データベースにユーザーを作成しようとします
-      $success = $userDao->create($user, $validatedData['password']);
+      $success = $userDao->create($user, $validatedData['password'], $username);
 
       if (!$success) throw new Exception('Failed to create new user!');
 
