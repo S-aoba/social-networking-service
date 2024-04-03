@@ -292,14 +292,14 @@
       <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
       <div class="mb-4">
         <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
-        <input type="email" id="email" name="email" autocomplete="email" class="mt-1 p-2 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <input type="email" id="email" name="email" autocomplete="email" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
       </div>
       <div class="mb-4">
         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" id="password" name="password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <input type="password" id="password" name="password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
       </div>
       <div class="flex justify-end">
-        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Login</button>
+        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-600 hover:bg-slate-700">Login</button>
       </div>
     </form>
   </div>
@@ -312,24 +312,24 @@
     <h2 class="text-2xl font-semibold mb-6">Register</h2>
     <form action="form/register" method="POST">
       <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
-      <!-- <div class="mb-4">
+      <div class="mb-4">
         <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-        <input type="text" id="username" name="username" class="mt-1 p-2 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-      </div> -->
+        <input type="text" id="username" name="username" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
+      </div>
       <div class="mb-4">
         <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
-        <input type="email" id="email" name="email" autocomplete="email" class="mt-1 p-2 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <input type="email" id="email" name="email" autocomplete="email" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
       </div>
       <div class="mb-4">
         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" id="password" name="password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <input type="password" id="password" name="password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
       </div>
       <div class="mb-4">
         <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-        <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
       </div>
       <div class="flex justify-end">
-        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Register</button>
+        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-600 hover:bg-slate-700 ">Register</button>
       </div>
     </form>
   </div>
