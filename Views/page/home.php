@@ -18,9 +18,9 @@
       <form action="#" method="POST" id="postForm" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
         <div class="flex h-full">
-          <div class="h-full px-3">
+          <div class="h-10 w-10">
             <!-- TODO: プロフィール画像の取得方法を変えたらnullの場合の処理を追加する -->
-            <img src="<?= htmlspecialchars($login_user_profile_image_path) ?>" alt="プロフィール画像" class="w-10 h-10 rounded-full border border-slate-300">
+            <img src="<?= htmlspecialchars(is_null($login_user_profile_image_path) ? '/images/default-icon.svg' : $login_user_profile_image_path) ?>" alt="プロフィール画像" class="w-8 h-8 rounded-full border border-slate-300">
           </div>
           <div class="w-full flex flex-col ml-4">
             <textarea id="content" name="content" class="p-3 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full" rows="3" placeholder="いまどうしてる?" maxlength="255" required></textarea>
