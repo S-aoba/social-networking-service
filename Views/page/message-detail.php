@@ -22,7 +22,7 @@
 <!-- Messages -->
 <div class="lg:col-span-2 col-span-4 flex flex-col">
   <div class="flex space-x-3 items-center justify-start p-4">
-    <img class="w-8 h-8 rounded-full border border-slate-300" src="<?= $another_user_profile->getProfileImage() ?>" alt="Sender">
+    <img class="w-8 h-8 rounded-full border border-slate-300" src="<?= is_null($another_user_profile->getUploadFullPathOfProfileImage()) ? '/images/default-icon.svg' : $another_user_profile->getUploadFullPathOfProfileImage() ?>" alt="Sender">
     <p class="text-sm font-bold"><?= $another_user_profile->getUserName() === null ? '名無しユーザー' : $another_user_profile->getUserName() ?></p>
   </div>
   <?php if (count($messages) > 0) : ?>
@@ -30,7 +30,7 @@
     <div class="flex flex-col p-4 space-y-3 border-b border-slate-100">
       <p class="text-sm font-bold"><?= $another_user_profile->getUserName() ?></p>
       <div class="w-full py-3 flex flex-col items-center justify-center space-y-1">
-        <img class="w-8 h-8 rounded-full border border-slate-100" src="<?= $another_user_profile->getProfileImage() ?>" alt="Sender">
+        <img class="w-8 h-8 rounded-full border border-slate-100" src="<?= is_null($another_user_profile->getUploadFullPathOfProfileImage()) ? '/images/default-icon.svg' : $another_user_profile->getUploadFullPathOfProfileImage() ?>" alt="Sender">
         <p class="text-sm font-bold"><?= $another_user_profile->getUserName() === null ? '名無しユーザー' : $another_user_profile->getUserName() ?></p>
         <p class="text-sm text-slate-400"><?= $another_user_profile->getUserId() ?></p>
       </div>

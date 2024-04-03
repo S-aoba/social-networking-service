@@ -112,7 +112,7 @@ class ConversationDAOImpl implements ConversationDAO
   private function resultConversation(array $result): array
   {
     // メッセージ相手のprofile_image_path, username, IDを取得する
-    $profile_image_path = $result['p1_user_id'] === $_SESSION['user_id'] ? FileHelper::getProfileImagePath($result['p2_profile_image_path']) : FileHelper::getProfileImagePath($result['p1_profile_image_path']);
+    $profile_image_path = $result['p1_user_id'] === $_SESSION['user_id'] ? FileHelper::getUploadFilePath($result['p2_profile_image_path'], 'image') : FileHelper::getUploadFilePath($result['p1_profile_image_path'], 'image');
 
     $username = $result['p1_user_id'] === $_SESSION['user_id'] ? $result['p2_username'] : $result['p1_username'];
     $user_id = $result['p1_user_id'] === $_SESSION['user_id'] ? $result['p2_user_id'] : $result['p1_user_id'];

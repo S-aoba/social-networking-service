@@ -158,7 +158,7 @@ return [
       $another_user_id = $_SESSION['user_id'] === $conversation->getParticipate1Id() ? $conversation->getParticipate2Id() : $conversation->getParticipate1Id();
 
       $another_user_profile = $profileDAO->getById($another_user_id);
-
+       error_log(print_r($another_user_profile, true));
       $login_user_id = $_SESSION['user_id'];
       $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
 
