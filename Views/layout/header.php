@@ -10,10 +10,10 @@
   <title>Social Networking Service</title>
 
   <style>
-    
+
   </style>
 </head>
 
-<body class="w-full h-screen">
+<body class="max-w-full w-full max-h-screen h-screen">
   <div class="container h-full mx-auto xl:px-30 max-w-6xl">
     <div class="grid grid-cols-5 h-full">
