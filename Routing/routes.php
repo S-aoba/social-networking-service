@@ -292,13 +292,14 @@ return [
 
         // Postをインスタンスかするためにfile_pathが存在していれば、ハッシュ化したfile_pathを生成する
         $hashed_file_path = is_null($validated_files) ? null : FileHelper::getHashedFilePath($validated_files['file']);
+        $file_type = is_null($validated_files) ? null : $validated_files['type'];
 
         // Postクラスをインスタンス化
         $post = new Post(
           content: $validated_data['content'],
           user_id: $_SESSION['user_id'],
           file_path: $hashed_file_path,
-          file_type: $validated_files['type']
+          file_type: $file_type
         );
 
         // PostをDBへ作成する
