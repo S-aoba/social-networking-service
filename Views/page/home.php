@@ -14,7 +14,7 @@
       </div>
     </div>
     <!-- 投稿フォーム -->
-    <div class="h-fit p-6 border-b border-slate-200">
+    <div class="h-fit p-3 border-b border-slate-200">
       <form action="#" method="POST" id="postForm" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
         <div class="flex h-full">
@@ -23,14 +23,14 @@
             <img src="<?= htmlspecialchars(is_null($login_user_profile_image_path) ? '/images/default-icon.svg' : $login_user_profile_image_path) ?>" alt="プロフィール画像" class="w-8 h-8 rounded-full border border-slate-300">
           </div>
           <div class="w-full flex flex-col ml-4">
-            <textarea id="content" name="content" class="p-3 resize-none border rounded-md focus:border-blue-500 focus:outline-none focus:ring focus:ring-blue-200 w-full" rows="3" placeholder="いまどうしてる?" maxlength="255" required></textarea>
-            <label for="image" class="mt-5 inline-block text-white border border-slate-300 rounded-md cursor-pointer hover:bg-slate-200 h-10 w-10 p-2 transition-colors duration-300">
+            <textarea id="content" name="content" class="p-3 resize-none border rounded-md w-full h-16" placeholder="いまどうしてる?" maxlength="255" required></textarea>
+            <label for="image" class="mt-3 inline-block text-white border border-slate-300 rounded-md cursor-pointer hover:bg-slate-200 h-8 w-8 p-1 transition-colors duration-300">
               <img src="/images/upload-icon.svg" alt="upload-icon" class="object-fit w-full h-full">
             </label>
             <input id="image" name="image" type="file" accept=".png, .jpg, .jpeg, .gif, .mp4" class="hidden">
             <div id="preview" class="mt-3 max-h-96 w-full flex justify-center">
             </div>
-            <div class="mt-4 flex justify-end">
+            <div class="flex justify-end">
               <button id="post" type="submit" class="px-4 py-2 border border-slate-300 rounded-md hover:bg-slate-200 transition-colors duration-300">投稿する</button>
             </div>
           </div>
@@ -49,3 +49,18 @@
 <script src="js/post-like.js"></script>
 <script src="js/reply.js"></script>
 <script src="js/presentation-tab.js"></script>
+<script>
+  //textareaの要素を取得
+  let textarea = document.getElementById('content');
+  //textareaのデフォルトの要素の高さを取得
+  let clientHeight = textarea.clientHeight;
+  //textareaのinputイベント
+  textarea.addEventListener('input', () => {
+    //textareaの要素の高さを設定（rows属性で行を指定するなら「px」ではなく「auto」で良いかも！）
+    textarea.style.height = clientHeight + 'px';
+    //textareaの入力内容の高さを取得
+    let scrollHeight = textarea.scrollHeight;
+    //textareaの高さに入力内容の高さを設定
+    textarea.style.height = scrollHeight + 'px';
+  });
+</script>
