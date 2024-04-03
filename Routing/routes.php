@@ -141,10 +141,7 @@ return [
 
     $data_list = $conversationDAO->getAllConversations($user_id);
 
-
     if (!is_null($message_id)) {
-
-      $conversationDAO = DAOFactory::getConversation();
 
       $conversation = $conversationDAO->getConversationById($message_id);
 
@@ -165,10 +162,8 @@ return [
       return new HTMLRenderer('page/message-detail', ['data_list' => $data_list, 'conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile' => $login_user_profile]);
     }
 
-    $user_id = $_SESSION['user_id'];
     $conversationDAO = DAOFactory::getConversation();
 
-    $data_list = $conversationDAO->getAllConversations($user_id);
     // ログインユーザーのフォローしているユーザーを全件取得する
     $followDAO = DAOFactory::getFollowDAO();
 

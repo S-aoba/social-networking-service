@@ -8,6 +8,7 @@ use Database\DatabaseManager;
 use Models\Conversation;
 use Models\DataTimeStamp;
 use Helpers\FileHelper;
+use Models\Profile;
 
 class ConversationDAOImpl implements ConversationDAO
 {
@@ -111,18 +112,23 @@ class ConversationDAOImpl implements ConversationDAO
 
   private function resultConversation(array $result): array
   {
-    // メッセージ相手のprofile_image_path, username, IDを取得する
-    $profile_image_path = $result['p1_user_id'] === $_SESSION['user_id'] ? FileHelper::getUploadFilePath($result['p2_profile_image_path'], 'image') : FileHelper::getUploadFilePath($result['p1_profile_image_path'], 'image');
+    $receiver_profile_image_path = match (true) {
+      is_null($result['p1_profile_image_path']) && is_null($result['p2_profile_image_path']) => null,
+      $result['p1_user_id'] === $_SESSION['user_id'] && is_null($result['p2_profile_image_path']) => null,
+      $result['p2_user_id'] === $_SESSION['user_id'] && is_null($result['p1_profile_image_path']) => null,
+      $result['p1_user_id'] === $_SESSION['user_id'] => $result['p2_profile_image_path'],
+      $result['p2_user_id'] === $_SESSION['user_id'] => $result['p1_profile_image_path']
+    };
 
-    $username = $result['p1_user_id'] === $_SESSION['user_id'] ? $result['p2_username'] : $result['p1_username'];
-    $user_id = $result['p1_user_id'] === $_SESSION['user_id'] ? $result['p2_user_id'] : $result['p1_user_id'];
+    $receiver_username = $result['p1_user_id'] === $_SESSION['user_id'] ? $result['p2_username'] : $result['p1_username'];
+    $receiver_user_id = $result['p1_user_id'] === $_SESSION['user_id'] ? $result['p2_user_id'] : $result['p1_user_id'];
 
     $created_at = date("Y-m-d", strtotime($result['created_at']));
     $updated_at = date("Y-m-d", strtotime($result['updated_at']));
 
     $messageDAO = DAOFactory::getMessage();
 
-    $message = $messageDAO->getMessageFirst($result['conversation_id']);
+    $latest_message = $messageDAO->getMessageFirst($result['conversation_id']);
 
 
     return [
@@ -132,10 +138,12 @@ class ConversationDAOImpl implements ConversationDAO
         conversation_id: $result['conversation_id'],
         dataTimeStamp: new DataTimeStamp($created_at, $updated_at)
       ),
-      'other_user_profile_image_path' => $profile_image_path,
-      'other_user_name' => $username,
-      'other_user_id' => $user_id,
-      'message' => $message
+      'receiver' => new Profile(
+        user_id: $receiver_user_id,
+        username: $receiver_username,
+        profile_image_path: $receiver_profile_image_path
+      ),
+      'latest_message' => $latest_message
     ];
   }
 

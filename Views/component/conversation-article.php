@@ -2,12 +2,12 @@
   <!-- Conversations -->
   <div class="w-full p-4 flex mr-2 hover:bg-slate-100 cursor-pointer transition-colors duration-300 relative">
     <a a href="/message/<?= $data['conversation']->getConversationId() ?>" class="absolute top-0 left-0  w-full h-full"></a>
-    <img class="w-12 h-12 rounded-full mr-4 border border-slate-300" src="<?= $data['other_user_profile_image_path'] === null ? '/images/default-icon.svg' : $data['other_user_profile_image_path'] ?>" alt="Sender">
+    <img class="w-12 h-12 rounded-full mr-4 border border-slate-300" src="<?= is_null($data['receiver']->getUploadFullPathOfProfileImage()) ? '/images/default-icon.svg' : $data['receiver']->getUploadFullPathOfProfileImage() ?>" alt="receiver_profile_image">
     <div class="w-full flex flex-col">
       <div class="w-full flex items-center justify-between mb-3">
         <div class="flex space-x-3 items-center">
-          <h3 class="max-w-60 truncate text-lg font-semibold text-gray-800"><?= $data['other_user_name'] === null ? '名無しユーザー' : $data['other_user_name'] ?></h3>
-          <span class="max-w-44 truncate text-sm text-gray-400 mr-1">@<span><?= $data['other_user_id'] ?></span></span>
+          <h3 class="max-w-60 truncate text-lg font-semibold text-gray-800"><?= is_null($data['receiver']->getUsername()) ? '名無しユーザー' : $data['receiver']->getUsername() ?></h3>
+          <span class="max-w-44 truncate text-sm text-gray-400 mr-1">@<span><?= $data['receiver']->getUserId() ?></span></span>
           <!-- TODO: 更新されたらupdated_atを表示するようににする -->
           <span class="text-sm text-gray-400"><?= $data['conversation']->getDataTimeStamp()->CalculatePostAge() ?></span>
         </div>
@@ -37,8 +37,8 @@
           </div>
         </div>
       </div>
-      <?php if (count($data['message']) >= 1) : ?>
-        <p class="w-80 truncate text-sm text-slate-400 truncate"><?= $data['message'][0]->getMessageBody() ?></p>
+      <?php if (count($data['latest_message']) >= 1) : ?>
+        <p class="w-80 truncate text-sm text-slate-400 truncate"><?= $data['latest_message'][0]->getMessageBody() ?></p>
       <?php else : ?>
         <p class="text-sm text-slate-400">まだメッセージはありません。</p>
       <?php endif; ?>
