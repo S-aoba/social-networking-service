@@ -387,6 +387,12 @@ return [
 
       $profileDAO->updateProfile($profile);
 
+      if (!is_null($validated_header_image) && !FileHelper::isExitUploadFilePath($hashed_header_image_path, $validated_header_image['type'])) {
+        FileHelper::saveFilePathInUploadsDir($validated_header_image['file']['tmp_name'],$hashed_header_image_path, $validated_header_image['type']);
+      } elseif (!is_null($validated_profile_image) && !FileHelper::isExitUploadFilePath($hashed_profile_image_path, $validated_profile_image['type'])) {
+        FileHelper::saveFilePathInUploadsDir($validated_profile_image['file']['tmp_name'], $hashed_profile_image_path, $validated_profile_image['type']);
+      }
+
       return new JSONRenderer(["status" => "success"]);
     } catch (Exception $e) {
       return new JSONRenderer(["status" => 'error', 'message' => "画像の保存中に問題が発生しました。申し訳ありませんが、後でもう一度お試しください。"]);
