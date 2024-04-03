@@ -309,7 +309,7 @@ return [
         // すでに保存されていれば、以下のコードはスキップしたほうが効率がいい
         if (!is_null($validated_files) && !FileHelper::isExitUploadFilePath($hashed_file_path, $validated_files['type'])) {
           // Fileをpublic/private/uploads/配下に配置する
-          FileHelper::saveFilePathInUploadsDir($hashed_file_path, $validated_files['type']);
+          FileHelper::saveFilePathInUploadsDir($validated_files['file']['tmp_name'], $hashed_file_path, $validated_files['type']);
         }
 
         return new JSONRenderer(['status' => 'success']);
