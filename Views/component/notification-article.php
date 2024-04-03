@@ -4,7 +4,7 @@
     <div class="p-4 flex items-start space-x-4">
       <div class="flex-shrink-0 flex space-x-3 items-center">
         <img class="size-6" src="/images/post-liked-icon.svg" alt="いいね">
-        <img class="size-10 rounded-full border border-gray-400" src="<?= $data['profile']->getProfileImage() ?>" alt="Profile Picture">
+        <img class="size-10 rounded-full border border-gray-400" src="<?= is_null($data['profile']->getUploadFullPathOfProfileImage()) ? '/images/default-icon.svg' : $data['profile']->getUploadFullPathOfProfileImage() ?>" alt="Profile Picture">
       </div>
       <div class="flex-grow">
         <p class="text-slate-400"><?= $data['profile']->getUsername() ?>さんがあなたの投稿にいいねをしました</p>
@@ -21,7 +21,7 @@
     <div class="p-4 flex items-start space-x-4">
       <div class="flex-shrink-0 flex space-x-3 items-center">
         <img class="size-8" src="/images/follow.svg" alt="フォロー">
-        <img class="size-10 rounded-full border border-gray-400" src="<?= $data['profile']->getProfileImage() ?>" alt="Profile Picture">
+        <img class="size-10 rounded-full border border-gray-400" src="<?= is_null($data['profile']->getUploadFullPathOfProfileImage()) ? '/images/default-icon.svg' : $data['profile']->getUploadFullPathOfProfileImage() ?>" alt="Profile Picture">
       </div>
       <div class="flex-grow">
         <p class="text-sm">
@@ -39,7 +39,7 @@
   <?php elseif ($data['notification']->getType() == 'comment') : ?>
     <div class="p-4 flex items-start space-x-4">
       <div class="flex-shrink-0">
-        <img class="h-10 w-10 rounded-full border border-gray-400" src="<?= $data['profile']->getProfileImage() ?>" alt="Profile Picture">
+        <img class="h-10 w-10 rounded-full border border-gray-400" src="<?= is_null($data['profile']->getUploadFullPathOfProfileImage()) ? '/images/default-icon.svg' : $data['profile']->getUploadFullPathOfProfileImage() ?>" alt="Profile Picture">
       </div>
       <div class="flex-grow">
         <h2 class="text-lg font-semibold"><?= is_null($data['profile']->getUsername()) ? '名無しユーザー' : $data['profile']->getUsername() ?></h2>
