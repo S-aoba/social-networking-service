@@ -34,17 +34,17 @@
         <?php endif; ?>
       </div>
       <!-- Post Content -->
-      <div class="text-sm">
-        <?= htmlspecialchars($data['post']->getContent()) ?>
-        <!-- Postのfile_typeによってimage or videoで切り替える -->
+      <div>
+        <p class="text-sm pb-5">
+          <?= htmlspecialchars($data['post']->getContent()) ?>
+        </p>
         <?php if ($data['post']->getFileType() === 'image' && !is_null($data["post"]->getFilePath())) : ?>
-          <div class="flex justify-center">
+          <div>
             <img src="<?= htmlspecialchars($data["post"]->getFilePath()) ?>" class="w-96 h-96">
           </div>
         <?php endif; ?>
-        <!-- Video -->
         <?php if ($data['post']->getFileType() === 'video' && !is_null($data["post"]->getFilePath())) : ?>
-          <div class="flex justify-center">
+          <div>
             <video src="<?= htmlspecialchars($data["post"]->getVideoPath()) ?>" class="w-96 h-96" controls>
           </div>
         <?php endif; ?>
