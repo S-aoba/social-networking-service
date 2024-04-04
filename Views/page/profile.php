@@ -108,7 +108,9 @@
     </div>
   </div>
   <!-- userの投稿の一覧 -->
-  <?php require 'Views/component/post-article.php' ?>
+  <?php foreach ($data_list as $data) : ?>
+    <?php require 'Views/component/post-article.php' ?>
+  <?php endforeach; ?>
 </div>
 <div class="lg:col-span-1 hidden lg:block h-full pr-4 md:pr-6 bg-orange-400">
   Profile Information

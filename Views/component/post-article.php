@@ -1,4 +1,3 @@
-<?php foreach ($data_list as $data) : ?>
   <div class="flex border-b border-slate-300 h-fit w-full p-4 space-x-3">
     <!-- User Information -->
     <div class="flex items-start">
@@ -62,4 +61,3 @@
       </div>
     </div>
   </div>
-<?php endforeach; ?>
