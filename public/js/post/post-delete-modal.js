@@ -9,10 +9,10 @@ deleteBtns.forEach((deleteBtn) => {
 });
 
 // postDeleteModalのキャンセルボタンをクリックしたらmodalを閉じる
-const cancelBtns = document.querySelectorAll('#postDeleteCancelBtn');
+const postDeleteCancelBtns = document.querySelectorAll('#postDeleteCancelBtn');
 
-cancelBtns.forEach((btn) => {
-  btn.addEventListener('click', () => {
+postDeleteCancelBtns.forEach((postDeleteCancelBtn) => {
+  postDeleteCancelBtn.addEventListener('click', () => {
     postDeleteModal.classList.add('hidden');
   });
 });
