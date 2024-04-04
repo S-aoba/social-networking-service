@@ -180,8 +180,7 @@ class PostDAOImpl implements PostDAO
     ";
     $result = $db->prepareAndFetchAll($query, 'i', [$id]) ?? null;
 
-    if ($result === null) return null;
-
+    if (count($result) <= 0) return null;
     return $result[0];
   }
 
