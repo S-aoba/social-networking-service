@@ -1,6 +1,6 @@
 <!-- 投稿フォーム -->
 <div class="h-fit p-3 border-b border-slate-200">
-  <form action="#" method="POST" id="postForm" enctype="multipart/form-data">
+  <form id="createPostForm" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
     <div class="flex h-full">
       <div class="h-10 w-10">
@@ -23,3 +23,4 @@
   </form>
 </div>
 <script src="/js/textarea/post-form.js"></script>
+<script src="/js/post/create-post.js"></script>
