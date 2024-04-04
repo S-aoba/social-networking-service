@@ -184,6 +184,40 @@ return [
     return new HTMLRenderer('page/notification', ['data_list' => $notifications]);
   })->setMiddleware(['auth']),
 
+  'status' => Route::create('status', function (): HTTPRenderer {
+
+    // URL: {domain}/{userId}/status/{postId}
+    try {
+      $url = $_SERVER['PATH_INFO'];
+      preg_match('#^/([a-zA-Z0-9_]+)/status/([a-zA-Z0-9_]+)$#', $url, $matches);
+
+      $post_id = intval($matches[2]);
+
+      // TODO:　$post_idを使って投稿内容を取得する
+      $postDAO = DAOFactory::getPostDAO();
+      $data = $postDAO->getByPostId($post_id);
+
+      if (is_null($data)) return new HTMLRenderer('page/post-detail', ['data' => []]);
+
+      $postLikeDAO = DAOFactory::getPostLikeDAO();
+
+      $replyDAO = DAOFactory::getReplyDAO();
+
+      $data_list[] = [
+        'post' => $data['post'],
+        "profile" => $data["profile"],
+        'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
+        'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
+        'isLike' => $postLikeDAO->getLikeByUserId($_SESSION['user_id'], $data['post']->getId()),
+      ];
+
+      return new HTMLRenderer('page/post-detail', ['data' => $data_list[0]]);
+    } catch (\Exception $e) {
+      error_log($e->getMessage());
+      return new HTMLRenderer('page/home', ['status' => 'error']);
+    }
+  }),
+
   // Forms
   'form/login' => Route::create('form/login', function (): HTTPRenderer {
     try {
@@ -388,7 +422,7 @@ return [
       $profileDAO->updateProfile($profile);
 
       if (!is_null($validated_header_image) && !FileHelper::isExitUploadFilePath($hashed_header_image_path, $validated_header_image['type'])) {
-        FileHelper::saveFilePathInUploadsDir($validated_header_image['file']['tmp_name'],$hashed_header_image_path, $validated_header_image['type']);
+        FileHelper::saveFilePathInUploadsDir($validated_header_image['file']['tmp_name'], $hashed_header_image_path, $validated_header_image['type']);
       } elseif (!is_null($validated_profile_image) && !FileHelper::isExitUploadFilePath($hashed_profile_image_path, $validated_profile_image['type'])) {
         FileHelper::saveFilePathInUploadsDir($validated_profile_image['file']['tmp_name'], $hashed_profile_image_path, $validated_profile_image['type']);
       }
