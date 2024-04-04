@@ -21,6 +21,9 @@ if (preg_match('/^\/message\/([a-zA-Z0-9_]+)$/', $_SERVER["REQUEST_URI"], $match
   $_SERVER["REQUEST_URI"] = "/message";
 }
 
+if (preg_match('#^/([a-zA-Z0-9_]+)/status/([a-zA-Z0-9_]+)$#', $_SERVER["REQUEST_URI"], $matches)) {
+  $_SERVER["REQUEST_URI"] = "/status";
+}
 // ルートをロードします
 $routes = include('Routing/routes.php');
 
