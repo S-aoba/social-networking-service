@@ -191,7 +191,7 @@ class PostDAOImpl implements PostDAO
       'post' =>
       new Post(
         content: $rawData['content'],
-        id: $rawData['id'],
+        id: $rawData['post_id'],
         user_id: $rawData['user_id'],
         timeStamp: new DataTimeStamp($rawData['post_created_at'], $rawData['post_created_at']),
         file_path: $uploads_file_path,
