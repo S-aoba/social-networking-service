@@ -23,9 +23,3 @@
 <div class="lg:col-span-1 hidden lg:block h-full pr-4 md:pr-6 bg-orange-400">
   Home Information
 </div>
-
-<script src="js/post.js"></script>
-<script src="js/preview.js"></script>
-<script src="js/post-like.js"></script>
-<script src="js/reply.js"></script>
-<script src="js/presentation-tab.js"></script>

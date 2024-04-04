@@ -115,8 +115,3 @@
 <div class="lg:col-span-1 hidden lg:block h-full pr-4 md:pr-6 bg-orange-400">
   Profile Information
 </div>
-
-<script src="/js/post-like.js"></script>
-<script src="/js/reply.js"></script>
-<script src="/js/profile-post-delete.js"></script>
-<script src="/js/follow.js"></script>
