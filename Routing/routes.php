@@ -368,7 +368,8 @@ return [
       // 削除対象がログインしているユーザーのものかを検証
       $login_user_id = $_SESSION['user_id'];
       $post_user_id = intval($data['post_user_id']);
-
+      error_log($login_user_id);
+      error_log($post_user_id);
       ValidationHelper::isUserPost($login_user_id, $post_user_id);
 
       $postDAO = DAOFactory::getPostDAO();

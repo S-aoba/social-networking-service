@@ -117,3 +117,4 @@
 </div>
 <script src="/js/post/post-edit-menu.js"></script>
 <script src="/js/post/post-delete-modal.js"></script>
+<script src="/js/post/delete-post.js"></script>

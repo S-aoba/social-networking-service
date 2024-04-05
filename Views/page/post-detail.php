@@ -12,3 +12,4 @@
 </div>
 <script src="/js/post/post-edit-menu.js"></script>
 <script src="/js/post/post-delete-modal.js"></script>
+<script src="/js/post/single-delete-post.js"></script>
