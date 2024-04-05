@@ -24,7 +24,7 @@
           <div id="post-menu" class="relative h-8 w-8 flex items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full">
             <img class="h-4 w-4" src="/images/menu-icon.svg" alt="編集">
             <div id="menu" class="h-fit bg-white flex flex-col space-y-4 absolute top-5 -left-20 shadow-md border border-slate-300 rounded-md hidden">
-              <button id="deleteBtn" type="button" class="w-full p-3 flex items-center text-red-400 hover:bg-slate-100 cursor-pointer transition-colors duration-300">
+              <button id="deleteBtn" data-post-id="<?= $data['post']->getId() ?>" type="button" class="w-full p-3 flex items-center text-red-400 hover:bg-slate-100 cursor-pointer transition-colors duration-300">
                 <img class="h-6 w-6" src="/images/delete-icon.svg" alt="投稿を削除する">
                 <span class="ml-2">削除</span>
               </button>
