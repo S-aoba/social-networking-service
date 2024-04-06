@@ -6,7 +6,7 @@ deleteReplyForms.forEach((deleteReplyForm) => {
 
     const deleteReplyFormData = new FormData(deleteReplyForm);
 
-    fetch('form/reply/delete', {
+    fetch('/form/reply/delete', {
       method: 'POST',
       body: deleteReplyFormData,
     }).then((res) => {
