@@ -28,3 +28,4 @@
 <script src="/js/post/delete-post.js"></script>
 <script src="/js/presentation-tab.js"></script>
 <script src="/js/preview.js"></script>
+<script src="/js/textarea/post.js"></script>
