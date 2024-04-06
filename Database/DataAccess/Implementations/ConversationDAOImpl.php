@@ -78,7 +78,7 @@ class ConversationDAOImpl implements ConversationDAO
   }
 
 
-  public function getConversationById(int $conversation_id): Conversation
+  public function getConversationById(int $conversation_id): ?Conversation
   {
     $db = DatabaseManager::getMysqliConnection();
 
@@ -91,7 +91,7 @@ class ConversationDAOImpl implements ConversationDAO
 
     $result = $db->prepareAndFetchAll($query, 'i', [$conversation_id]);
 
-
+    if(count($result) === 0) return null;
     return $this->rawDataToConversation($result[0]);
   }
 
