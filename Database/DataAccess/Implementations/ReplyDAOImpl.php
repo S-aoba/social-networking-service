@@ -62,7 +62,7 @@ class ReplyDAOImpl implements ReplyDAO
 
     $result = $db->prepareAndFetchAll($query, 'i', [$postId]) ?? null;
 
-    if ($result === null) return null;
+    if(count($result) === 0) return null;
     return $this->resultsToReply($result);
   }
 
@@ -80,8 +80,6 @@ class ReplyDAOImpl implements ReplyDAO
 
   private function resultToReply(array $results): array
   {
-    $reply_user_profile_image_path = FileHelper::getProfileImagePath($results['profile_image_path']);
-
     return [
       'reply' =>
       new Reply(
@@ -103,7 +101,7 @@ class ReplyDAOImpl implements ReplyDAO
         address: $results['address'],
         hobby: $results['hobby'],
         self_introduction: $results['self_introduction'],
-        profile_image_path: $reply_user_profile_image_path,
+        profile_image_path: $results['profile_image_path'],
         timeStamp: new DataTimeStamp($results['profile_created_at'], $results['profile_updated_at'])
       )
 
