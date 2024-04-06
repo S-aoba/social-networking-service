@@ -11,9 +11,7 @@ deleteConversationForms.forEach((deleteConversationForm) => {
     }).then((res) => {
       res.json().then((data) => {
         if (data.status === 'success') {
-          setTimeout(() => {
-            location.reload();
-          }, 1000);
+          location.href = '/message';
         }
       });
     });
