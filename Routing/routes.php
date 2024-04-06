@@ -207,12 +207,13 @@ return [
       $data_list[] = [
         'post' => $data['post'],
         "profile" => $data["profile"],
-        'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
         'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
         'isLike' => $postLikeDAO->getLikeByUserId($_SESSION['user_id'], $data['post']->getId()),
       ];
 
-      return new HTMLRenderer('page/post-detail', ['data' => $data_list[0]]);
+      $replies = $replyDAO->getReplyByPostId($data['post']->getId());
+
+      return new HTMLRenderer('page/post-detail', ['data' => $data_list[0], 'replies' => $replies]);
     } catch (\Exception $e) {
       error_log($e->getMessage());
       return new HTMLRenderer('page/home', ['status' => 'error']);
