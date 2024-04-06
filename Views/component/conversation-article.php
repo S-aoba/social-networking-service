@@ -14,7 +14,7 @@
         <div id="conversation-menu-icon" class="relative h-8 w-8 flex items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full hover:z-40">
           <img class="h-4 w-4" src="/images/menu-icon.svg" alt="メッセージを削除する">
           <div id="conversation-menu" class="h-fit bg-white flex flex-col space-y-4 absolute top-5 -left-20 shadow-md border border-slate-300 rounded-md hidden z-40">
-            <button id="deleteBtn" type="button" class="w-full p-3 flex items-center text-red-400 hover:bg-slate-100 cursor-pointer transition-colors duration-300">
+            <button id="deleteBtn" data-conversation-id="<?= $data['conversation']->getConversationId() ?>" type="button" class="w-full p-3 flex items-center text-red-400 hover:bg-slate-100 cursor-pointer transition-colors duration-300 z-20">
               <img class="h-6 w-6" src="/images/delete-icon.svg" alt="投稿を削除する">
               <span class="ml-2">削除</span>
             </button>
