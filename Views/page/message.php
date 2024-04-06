@@ -33,5 +33,7 @@
 
 <script src="/js/create-conversation.js"></script>
 <script src="/js/delete-conversation.js"></script>
+<script src="/js/conversation-create-menu.js"></script>
+
 <script src="js/conversation.js"></script>
 <script src="js/conversation-modal.js"></script>
