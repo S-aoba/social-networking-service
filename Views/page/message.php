@@ -31,8 +31,8 @@
   </div>
 </div>
 
-<script src="/js/create-conversation.js"></script>
-<script src="/js/delete-conversation.js"></script>
-<script src="/js/conversation-create-menu.js"></script>
-<script src="/js/conversation-create-modal.js"></script>
-<script src="/js/conversation-delete-modal.js"></script>
+<script src="/js/conversation/create-conversation.js"></script>
+<script src="/js/conversation/delete-conversation.js"></script>
+<script src="/js/conversation/conversation-create-menu.js"></script>
+<script src="/js/conversation/conversation-create-modal.js"></script>
+<script src="/js/conversation/conversation-delete-modal.js"></script>
