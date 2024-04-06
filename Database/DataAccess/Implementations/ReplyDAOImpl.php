@@ -62,7 +62,7 @@ class ReplyDAOImpl implements ReplyDAO
 
     $result = $db->prepareAndFetchAll($query, 'i', [$postId]) ?? null;
 
-    if(count($result) === 0) return null;
+    if (count($result) === 0) return null;
     return $this->resultsToReply($result);
   }
 
@@ -83,16 +83,16 @@ class ReplyDAOImpl implements ReplyDAO
     return [
       'reply' =>
       new Reply(
-        $results['content'],
-        $results['user_id'],
-        $results['post_id'],
-        $results['reply_id'],
-        $results['parent_reply_id'],
-        $results['status'],
-        $results['deleted_at'],
-        new DataTimeStamp($results['reply_created_at'], $results['reply_updated_at'])
+        content: $results['content'],
+        user_id: $results['user_id'],
+        post_id: $results['post_id'],
+        id: $results['reply_id'],
+        parent_reply_id: $results['parent_reply_id'],
+        status: $results['status'],
+        deleted_at: $results['deleted_at'],
+        dataTimeStamp: new DataTimeStamp($results['reply_created_at'], $results['reply_updated_at'])
       ),
-      'reply_user_profile' =>
+      'profile' =>
       new Profile(
         user_id: $results['profile_user_id'],
         id: $results['id'],
