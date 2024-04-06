@@ -20,7 +20,7 @@
             </button>
           </div>
         </div>
-        <?php require "Views/component/modal/conversation-delete-modal.php" ?>
+        <?php require "Views/component/modal/conversation/conversation-delete-modal.php" ?>
       </div>
       <?php if (count($data['latest_message']) >= 1) : ?>
         <p class="w-80 truncate text-sm text-slate-400 truncate"><?= $data['latest_message'][0]->getMessageBody() ?></p>

@@ -21,7 +21,7 @@
   <?php require "Views/component/conversation-article.php" ?>
 </div>
 
-<?php require "Views/component/conversation-modal.php" ?>
+<?php require "Views/component/modal/conversation/conversation-create-modal.php" ?>
 
 <div class="lg:col-span-2 hidden lg:block lg:flex lg:flex-col lg:items-center lg:justify-center">
   <div>
