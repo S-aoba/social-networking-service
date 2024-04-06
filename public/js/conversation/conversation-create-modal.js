@@ -8,7 +8,10 @@ const openConversationModal = (btn) => {
   });
 };
 
-openConversationModal(createConversationBtn);
+if (createConversationBtn) {
+  openConversationModal(createConversationBtn);
+
+}
 openConversationModal(createConversationIconBtn);
 
 window.onclick = function (event) {

@@ -139,6 +139,11 @@ return [
     $user_id = $_SESSION['user_id'];
     $conversationDAO = DAOFactory::getConversation();
 
+    // ログインユーザーのフォローしているユーザーを全件取得する
+    $followDAO = DAOFactory::getFollowDAO();
+
+    $followee_users = $followDAO->getAllFollowingUser($user_id);
+
     $data_list = $conversationDAO->getAllConversations($user_id);
 
     if (!is_null($message_id)) {
@@ -159,15 +164,8 @@ return [
       $login_user_id = $_SESSION['user_id'];
       $login_user_profile = DAOFactory::getProfileDAO()->getById($login_user_id);
 
-      return new HTMLRenderer('page/message-detail', ['data_list' => $data_list, 'conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile' => $login_user_profile]);
+      return new HTMLRenderer('page/message-detail', ['data_list' => $data_list, 'conversation' => $conversation, 'messages' => $messages, 'another_user_profile' => $another_user_profile, 'login_user_profile' => $login_user_profile, 'followee_users' => $followee_users]);
     }
-
-    $conversationDAO = DAOFactory::getConversation();
-
-    // ログインユーザーのフォローしているユーザーを全件取得する
-    $followDAO = DAOFactory::getFollowDAO();
-
-    $followee_users = $followDAO->getAllFollowingUser($user_id);
 
     return new HTMLRenderer('page/message', ['data_list' => $data_list, 'followee_users' => $followee_users]);
   })->setMiddleware(['auth']),

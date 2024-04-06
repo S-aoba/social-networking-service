@@ -19,6 +19,8 @@
   </div>
   <?php require "Views/component/conversation-article.php" ?>
 </div>
+<?php require "Views/component/modal/conversation/conversation-create-modal.php" ?>
+
 <!-- Messages -->
 <div class="lg:col-span-2 col-span-4 flex flex-col">
   <div class="flex space-x-3 items-center justify-start p-4">
