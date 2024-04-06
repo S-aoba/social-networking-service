@@ -31,6 +31,6 @@
   </div>
 </div>
 
-
+<script src="/js/create-conversation.js"></script>
 <script src="js/conversation.js"></script>
 <script src="js/conversation-modal.js"></script>
