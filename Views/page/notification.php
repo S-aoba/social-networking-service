@@ -1,4 +1,4 @@
-<div class="col-span-4 lg:col-span-3 flex flex-col">
+<div class="col-span-4 lg:col-span-3 min-h-screen h-screen w-full flex flex-col">
   <div class="p-3 flex justify-between items-center">
     <p class="text-xl font-bold">通知</p>
     <div class="size-6">
@@ -16,7 +16,7 @@
       <span class="p-3 text-slate-400">＠ツイート</span>
     </div>
   </div>
-  <div class="divide-y divide-slate-100">
+  <div class="divide-y divide-slate-100 w-full flex-grow overflow-auto">
     <?php require "Views/component/notification-article.php" ?>
   </div>
 </div>
