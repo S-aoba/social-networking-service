@@ -17,7 +17,9 @@ class Reply implements Model
     private ?int $parent_reply_id = null,
     private ?string $status = null,
     private ?string $deleted_at = null,
-    private ?DataTimeStamp $dataTimeStamp = null
+    private ?DataTimeStamp $dataTimeStamp = null,
+    private ?string $file_path = null,
+    private ?string $file_type = null
   ) {
   }
 
@@ -99,5 +101,25 @@ class Reply implements Model
   public function setDataTimeStamp(?DataTimeStamp $dataTimeStamp): void
   {
     $this->dataTimeStamp = $dataTimeStamp;
+  }
+
+  public function getFilePath(): ?string
+  {
+    return $this->file_path;
+  }
+
+  public function setFilePath(string $file_path): void
+  {
+    $this->file_path = $file_path;
+  }
+
+  public function getFileType(): ?string
+  {
+    return $this->file_type;
+  }
+
+  public function setFileType(string $file_type): void
+  {
+    $this->file_type = $file_type;
   }
 }
