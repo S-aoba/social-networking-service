@@ -1,6 +1,5 @@
-<?php foreach ($data_list as $data) : ?>
   <!-- Conversations -->
-  <div class="w-full p-4 flex mr-2 hover:bg-slate-100 cursor-pointer transition-colors duration-300 relative">
+  <div class="w-full p-4 flex hover:bg-slate-100 cursor-pointer transition-colors duration-300 relative">
     <a a href="/message/<?= $data['conversation']->getConversationId() ?>" class="absolute top-0 left-0  w-full h-full"></a>
     <img class="w-12 h-12 rounded-full mr-4 border border-slate-300" src="<?= is_null($data['receiver']->getUploadFullPathOfProfileImage()) ? '/images/default-icon.svg' : $data['receiver']->getUploadFullPathOfProfileImage() ?>" alt="receiver_profile_image">
     <div class="w-full flex flex-col">
@@ -29,4 +28,3 @@
       <?php endif; ?>
     </div>
   </div>
-<?php endforeach; ?>

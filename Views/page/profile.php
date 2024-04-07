@@ -1,4 +1,4 @@
-<div class="col-span-4 lg:col-span-3 flex flex-col w-full h-full">
+<div class="col-span-4 lg:col-span-3 min-h-screen h-screen w-full flex flex-col">
   <div class="flex items-center p-3 border-b">
     <div class="size-10 cursor-pointer hover:bg-slate-100 flex items-center justify-center rounded-full">
       <img src="/images/undo.svg" alt="戻る" class="size-8">
@@ -108,9 +108,11 @@
     </div>
   </div>
   <!-- userの投稿の一覧 -->
-  <?php foreach ($data_list as $data) : ?>
-    <?php require 'Views/component/post-article.php' ?>
-  <?php endforeach; ?>
+  <div class="w-full flex-grow overflow-auto">
+    <?php foreach ($data_list as $data) : ?>
+      <?php require 'Views/component/post-article.php' ?>
+    <?php endforeach; ?>
+  </div>
 </div>
 <div class="lg:col-span-1 hidden lg:block h-full pr-4 md:pr-6 bg-orange-400">
   Profile Information

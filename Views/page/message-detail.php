@@ -1,4 +1,4 @@
-<div class="hidden lg:col-span-2 lg:block lg:border-r lg:border-slate-100">
+<div class="hidden lg:col-span-2 lg:flex lg:flex-col lg:border-r lg:border-slate-100 min-h-screen h-screen w-full">
   <div class="flex items-center justify-between p-4">
     <p class="text-lg font-bold">メッセージ</p>
     <div class="flex space-x-3 items-center">
@@ -9,7 +9,6 @@
       <button id="createConversationIconBtn" type="button" class="h-8 w-8 cursor-pointer hover:bg-slate-200 rounded-full flex items-center justify-center transition-colors duration-300">
         <img class="h-6 w-6 cursor-pointer" src="/images/message-plus.svg" alt="設定">
       </button>
-
     </div>
   </div>
   <!-- search bar -->
@@ -17,7 +16,11 @@
     <input class="w-full pl-10 pr-3 py-3 rounded-full border border-slate-300 placeholder-slate-400" type="search" placeholder="ダイレクトメッセージを検索">
     <img class="absolute h-5 w-5 inset-y-0 left-8 top-1/2 transform -translate-y-1/2" src="/images/search-icon.svg" alt="検索アイコン">
   </div>
-  <?php require "Views/component/conversation-article.php" ?>
+  <div class="w-full flex-grow overflow-auto">
+    <?php foreach ($data_list as $data) : ?>
+      <?php require "Views/component/conversation-article.php" ?>
+    <?php endforeach; ?>
+  </div>
 </div>
 <?php require "Views/component/modal/conversation/conversation-create-modal.php" ?>
 
