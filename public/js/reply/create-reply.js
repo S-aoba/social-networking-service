@@ -14,10 +14,11 @@ replyForm.addEventListener('submit', (e) => {
         setTimeout(() => {
           location.reload();
         }, 1000);
-      } else if (data.success === 'error') {
+      } else if (data.status === 'error') {
         setTimeout(() => {
           location.reload();
         }, 1000);
+        alert('返信に失敗しました')
       }
     });
   });

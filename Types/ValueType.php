@@ -12,4 +12,5 @@ enum ValueType: string
   case PASSWORD = 'password'; // string
   case CONTENT = 'content'; // Postの内容
   case FILE = 'file';
+  case ReplyContent = 'reply_content';
 }

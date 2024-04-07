@@ -54,6 +54,7 @@ class ValidationHelper
         // preg_match('/[\W_]/', $value) // 少なくとも1つの特殊文字（アルファベット以外の文字）
         // ? $value : throw new \InvalidArgumentException("The provided value is not a valid password."),
         ValueType::CONTENT => is_string($value) && strlen($value) <= 255 ? $value : throw new \InvalidArgumentException("The provided value is not a valid content."),
+        ValueType::ReplyContent => is_string($value) && strlen($value) <= 255 ? $value : throw new \InvalidArgumentException("The provided value is not a valid content."),
         // TODO: Username, selfIntroduction用も作る
 
         default => throw new \InvalidArgumentException(sprintf("Invalid type for field: %s, with type %s", $field, $type)),

@@ -541,7 +541,7 @@ return [
 
     try {
       $request_field = [
-        "reply_content" => ValueType::STRING,
+        "reply_content" => ValueType::ReplyContent,
       ];
 
       $validationData = ValidationHelper::validateFields($request_field, $_POST);
@@ -555,15 +555,16 @@ return [
       );
 
       $replyDAO->createReply($reply);
+      // replyのreplyの場合の処理
 
       return new JSONRenderer(['status' => 'success']);
     } catch (\InvalidArgumentException $e) {
       error_log($e->getMessage());
+
+      return new JSONRenderer(['status' => 'error']);
     } catch (\Exception $e) {
       error_log($e->getMessage());
     }
-
-    // TODO: Validation
   })->setMiddleware(['auth']),
 
   'form/reply/delete' => Route::create('form/reply/delete', function (): HTTPRenderer {
