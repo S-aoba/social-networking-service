@@ -22,5 +22,5 @@
     </div>
   </form>
 </div>
-<script src="/js/textarea/post-form.js"></script>
+<script src="/js/textarea/post.js"></script>
 <script src="/js/post/create-post.js"></script>
