@@ -1,5 +1,4 @@
 <div class="flex border-b border-slate-300 h-fit w-full p-4 space-x-3 relative">
-  <a href="/<?= $reply['reply']->getUserId() ?>/status/<?= $reply['reply']->getId() ?>" class="absolute top-0 left-0 w-full h-full cursor-pointer"></a>
   <!-- User Information -->
   <div class="flex items-start">
     <div class="h-10 w-10 border border-slate-300 rounded-full">
