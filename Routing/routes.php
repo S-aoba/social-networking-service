@@ -549,6 +549,10 @@ return [
       ];
 
       $validationData = ValidationHelper::validateFields($request_field, $_POST);
+      $validated_files = ValidationHelper::validateFiles($_FILES['image']);
+
+      $hashed_file_path = is_null($validated_files) ? null : FileHelper::getHashedFilePath($validated_files['file']);
+      $file_type = is_null($validated_files) ? null : $validated_files['type'];
 
       $replyDAO = DAOFactory::getReplyDAO();
 
@@ -556,6 +560,8 @@ return [
         content: $validationData['reply_content'],
         user_id: $_SESSION['user_id'],
         post_id: $_POST['post_id'],
+        file_path: $hashed_file_path,
+        file_type: $file_type
       );
 
       $replyDAO->createReply($reply);

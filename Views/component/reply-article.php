@@ -38,7 +38,16 @@
       <p class="text-sm pb-5">
         <?= htmlspecialchars($reply['reply']->getContent()) ?>
       </p>
-      <!-- TODO: Replyにfile_path,file_typeを追加したらpost-articleと同じように付け足す -->
+      <?php if ($reply['reply']->getFileType() === 'image' && !is_null($reply["reply"]->getFilePath())) : ?>
+        <div>
+          <img src="<?= htmlspecialchars($reply["reply"]->getFilePath()) ?>" class="w-96 h-96">
+        </div>
+      <?php endif; ?>
+      <?php if ($reply['reply']->getFileType() === 'video' && !is_null($reply["reply"]->getFilePath())) : ?>
+        <div>
+          <video src="<?= htmlspecialchars($reply["reply"]->getVideoPath()) ?>" class="w-96 h-96" controls>
+        </div>
+      <?php endif; ?>
     </div>
     <!-- Post Information -->
     <div class="flex items-center space-x-3">

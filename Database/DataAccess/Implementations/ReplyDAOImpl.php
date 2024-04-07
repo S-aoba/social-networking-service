@@ -4,10 +4,10 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DataAccess\Interfaces\ReplyDAO;
 use Database\DatabaseManager;
+use Helpers\FileHelper;
 use Models\DataTimeStamp;
 use Models\Reply;
 use Models\Profile;
-use Helpers\FileHelper;
 
 
 class ReplyDAOImpl implements ReplyDAO
@@ -16,15 +16,17 @@ class ReplyDAOImpl implements ReplyDAO
   {
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = 'INSERT INTO replies (content, user_id, post_id) VALUES (?, ?, ?)';
+    $query = 'INSERT INTO replies (content, user_id, post_id, file_path, file_type) VALUES (?, ?, ?, ?, ?)';
 
     $result = $db->prepareAndExecute(
       $query,
-      'sii',
+      'siiss',
       [
         $reply->getContent(),
         $reply->getUserId(),
         $reply->getPostId(),
+        $reply->getFilePath(),
+        $reply->getFileType()
       ]
     );
 
@@ -78,31 +80,35 @@ class ReplyDAOImpl implements ReplyDAO
   }
 
 
-  private function resultToReply(array $results): array
+  private function resultToReply(array $data): array
   {
+    $upload_file_path = is_null($data['file_path']) ? null : FileHelper::getUploadFilePath($data['file_path'], $data['file_type']);
+
     return [
       'reply' =>
       new Reply(
-        content: $results['content'],
-        user_id: $results['user_id'],
-        post_id: $results['post_id'],
-        id: $results['reply_id'],
-        parent_reply_id: $results['parent_reply_id'],
-        status: $results['status'],
-        deleted_at: $results['deleted_at'],
-        dataTimeStamp: new DataTimeStamp($results['reply_created_at'], $results['reply_updated_at'])
+        content: $data['content'],
+        user_id: $data['user_id'],
+        post_id: $data['post_id'],
+        id: $data['reply_id'],
+        parent_reply_id: $data['parent_reply_id'],
+        status: $data['status'],
+        deleted_at: $data['deleted_at'],
+        dataTimeStamp: new DataTimeStamp($data['reply_created_at'], $data['reply_updated_at']),
+        file_path: $upload_file_path,
+        file_type: $data['file_type']
       ),
       'profile' =>
       new Profile(
-        user_id: $results['profile_user_id'],
-        id: $results['id'],
-        username: $results['username'],
-        age: $results['age'],
-        address: $results['address'],
-        hobby: $results['hobby'],
-        self_introduction: $results['self_introduction'],
-        profile_image_path: $results['profile_image_path'],
-        timeStamp: new DataTimeStamp($results['profile_created_at'], $results['profile_updated_at'])
+        user_id: $data['profile_user_id'],
+        id: $data['id'],
+        username: $data['username'],
+        age: $data['age'],
+        address: $data['address'],
+        hobby: $data['hobby'],
+        self_introduction: $data['self_introduction'],
+        profile_image_path: $data['profile_image_path'],
+        timeStamp: new DataTimeStamp($data['profile_created_at'], $data['profile_updated_at'])
       )
 
     ];
