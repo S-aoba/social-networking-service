@@ -56,7 +56,7 @@
         <!-- コメント数を表示する -->
         <div class="h-8 w-8 flex items-center justify-center space-x-1 cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full">
           <img class="h-4 w-4" src="/images/comment-icon.svg" alt="コメント数">
-          <p>1</p>
+          <span><?= $data['replyCount'] ?></span>
         </div>
         <?php require 'Views/component/post-like.php' ?>
       </div>

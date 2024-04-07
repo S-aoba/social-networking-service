@@ -47,10 +47,11 @@ return [
         foreach ($data as $data) {
           $data_list[] = [
             'post' => $data['post'],
-            "profile" => $data["profile"],
+            'profile' => $data['profile'],
             'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
             'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
             'isLike' => $postLikeDAO->getLikeByUserId($login_user_id, $data['post']->getId()),
+            'replyCount' => $replyDAO->getReplyCountForPost($data['post']->getId())
           ];
         }
 
@@ -65,6 +66,7 @@ return [
             'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
             'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
             'isLike' => null,
+            'replyCount' => $replyDAO->getReplyCountForPost($data['post']->getId())
           ];
         }
         $login_user_profile_image_path = null;
@@ -116,6 +118,7 @@ return [
         'reply' => $replyDAO->getReplyByPostId($data['post']->getId()),
         'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
         'isLike' => $postLikeDAO->getLikeByUserId($_SESSION['user_id'], $data['post']->getId()),
+        'replyCount' => $replyDAO->getReplyCountForPost($data['post']->getId())
       ];
     }
 
@@ -209,6 +212,7 @@ return [
         "profile" => $data["profile"],
         'postLikeCount' => $postLikeDAO->getLikeCountByPostId($data['post']->getId()),
         'isLike' => $postLikeDAO->getLikeByUserId($_SESSION['user_id'], $data['post']->getId()),
+        'replyCount' => $replyDAO->getReplyCountForPost($data['post']->getId())
       ];
 
       $replies = $replyDAO->getReplyByPostId($data['post']->getId());
