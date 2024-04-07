@@ -1,25 +1,25 @@
-<div class="col-span-4 lg:col-span-3 min-h-screen h-screen w-full flex flex-col"">
+<div class="col-span-4 lg:col-span-3 min-h-screen h-screen w-full flex flex-col">
   <!-- トレンド and フォロワー タブ -->
   <?php if ($user) : ?>
-    <div class=" grid grid-cols-2 border-t border-b border-slate-200 bg-white font-bold">
-  <div id="trend-tab" class="h-full py-3 span-col-1 text-center transition-colors duration-300 cursor-pointer hover:bg-slate-100 <?php echo ($presentationTab === 'trend') ? 'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer' : 'hover:bg-gray-300/50 hover:cursor-pointer'; ?>">
-    <p>
-      トレンド
-    </p>
+    <div class="grid grid-cols-2 min-h-14 h-14 w-full border-b border-slate-200 font-bold font-sans text-sm">
+      <div id="trend-tab" class="col-span-1 h-full flex items-center justify-center transition-colors duration-300 cursor-pointer hover:bg-slate-100">
+        <span class="h-full flex items-center px-3 <?= $presentationTab === 'trend' ? 'border-b-4 border-slate-600 relative top-0.5' : 'text-slate-400' ?>">
+          トレンド
+        </span>
+      </div>
+      <div id="follower-tab" class="col-span-1 h-full flex items-center justify-center transition-colors duration-300 cursor-pointer hover:bg-slate-100">
+        <span class="h-full flex items-center px-3 <?= $presentationTab === 'follower' ? 'border-b-4 border-slate-600 relative top-0.5' : 'text-slate-400' ?>">
+          フォロワー
+        </span>
+      </div>
+    </div>
+    <?php require 'Views/component/form/create-post-form.php' ?>
+  <?php endif; ?>
+  <div class="w-full flex-grow overflow-auto">
+    <?php foreach ($data_list as $data) : ?>
+      <?php require 'Views/component/post-article.php' ?>
+    <?php endforeach; ?>
   </div>
-  <div id="follower-tab" class="h-full py-3 span-col-1 text-center transition-colors duration-300 cursor-pointer hover:bg-slate-100  <?php echo ($presentationTab === 'follower') ?  'bg-gray-300/50 hover:bg-gray-300/50 cursor-pointer' : 'hover:bg-gray-300/50 hover:cursor-pointer'; ?>">
-    <p>
-      フォロワー
-    </p>
-  </div>
-</div>
-<?php require 'Views/component/form/create-post-form.php' ?>
-<?php endif; ?>
-<div class="w-full flex-grow overflow-auto">
-  <?php foreach ($data_list as $data) : ?>
-    <?php require 'Views/component/post-article.php' ?>
-  <?php endforeach; ?>
-</div>
 
 </div>
 <div class="lg:col-span-1 hidden lg:block h-full pr-4 md:pr-6 bg-orange-400">
