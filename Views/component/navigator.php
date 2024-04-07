@@ -292,11 +292,11 @@
       <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
       <div class="mb-4">
         <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
-        <input type="email" id="email" name="email" autocomplete="email" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
+        <input type="email" id="email" name="email" autocomplete="email" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm focus:outline-none">
       </div>
       <div class="mb-4">
         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" id="password" name="password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
+        <input type="password" id="password" name="password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm focus:outline-none">
       </div>
       <div class="flex justify-end">
         <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-600 hover:bg-slate-700">Login</button>
@@ -314,19 +314,19 @@
       <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
       <div class="mb-4">
         <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-        <input type="text" id="username" name="username" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
+        <input type="text" id="username" name="username" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm focus:outline-none">
       </div>
       <div class="mb-4">
         <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
-        <input type="email" id="email" name="email" autocomplete="email" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
+        <input type="email" id="email" name="email" autocomplete="email" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm focus:outline-none">
       </div>
       <div class="mb-4">
         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" id="password" name="password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
+        <input type="password" id="password" name="password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm focus:outline-none">
       </div>
       <div class="mb-4">
         <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-        <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm">
+        <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" class="mt-1 p-2 block w-full border border-slate-400 rounded-md shadow-sm focus:outline-none">
       </div>
       <div class="flex justify-end">
         <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-600 hover:bg-slate-700 ">Register</button>

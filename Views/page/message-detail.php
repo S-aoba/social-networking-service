@@ -48,7 +48,7 @@
       <input type="hidden" name="sender_id" value="<?= $login_user_profile->getUserId() ?>">
       <input type="hidden" name="receiver_id" value="<?= $another_user_profile->getUserId() ?>">
       <input type="hidden" name="conversation_id" value="<?= $conversation->getConversationId() ?>">
-      <textarea id="message" class="w-full h-auto py-3 px-5 bg-slate-200 rounded-md text-sm resize-none" name="message_body" placeholder="新しいメッセージを作成"></textarea>
+      <textarea id="message" name="message_body" class="p-3 resize-none w-full min-h-14 focus:outline-none bg-slate-200 rounded-md" placeholder="新しいメッセージを作成" maxlength="255" required></textarea>
       <button type="submit" class="absolute bottom-6 right-5">
         <img class="size-6" src="/images/message-send.svg" alt="メッセージを送信する">
       </button>

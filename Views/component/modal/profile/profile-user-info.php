@@ -1,11 +1,11 @@
 <div class="flex flex-col p-5 mt-20 space-y-5">
   <div>
     <label for="username">名前</label>
-    <input id="username" name="username" type="text" class="w-full mt-3 p-2 border border-slate-300 rounded-md" value="<?= $profile->getUsername() ?>">
+    <input id="username" name="username" type="text" class="w-full mt-3 p-2 border border-slate-300 rounded-md focus:outline-none" value="<?= $profile->getUsername() ?>">
   </div>
   <div>
     <label for="self-introduction">自己紹介</label>
-    <textarea name="self-introduction" id="self-introduction" class="w-full mt-3 p-3 border border-slate-300 rounded-md resize-none"><?= $profile->getSelfIntroduction() ?></textarea>
+    <textarea name="self-introduction" id="self-introduction" class="w-full mt-3 p-3 border border-slate-300 rounded-md resize-none focus:outline-none"><?= $profile->getSelfIntroduction() ?></textarea>
   </div>
 </div>
 <div class="flex items-center justify-end pr-5">

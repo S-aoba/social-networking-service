@@ -9,7 +9,7 @@
         <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
         <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
         <div class="w-full flex items-center px-2">
-          <textarea name="reply_content" id="reply_content" placeholder="返信をポスト" class="w-full p-3 resize-none"></textarea>
+          <textarea name="reply_content" id="reply_content" placeholder="返信をポスト" class="p-3 resize-none w-full min-h-14 focus:outline-none" maxlength="255" required></textarea>
         </div>
         <div class="w-full flex flex-col space-y-3 mt-2">
           <label for="image" class="inline-block rounded-full cursor-pointer hover:bg-slate-100 h-9 w-9 p-2 transition-colors duration-300">
