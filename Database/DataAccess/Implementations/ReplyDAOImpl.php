@@ -60,6 +60,7 @@ class ReplyDAOImpl implements ReplyDAO
     FROM replies
     JOIN profiles ON replies.user_id = profiles.user_id
     WHERE replies.post_id = ?
+    ORDER BY reply_created_at DESC
     ';
 
     $result = $db->prepareAndFetchAll($query, 'i', [$postId]) ?? null;
