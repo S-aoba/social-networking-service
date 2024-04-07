@@ -564,6 +564,8 @@ return [
       return new JSONRenderer(['status' => 'error']);
     } catch (\Exception $e) {
       error_log($e->getMessage());
+
+      return new JSONRenderer(['status' => 'error']);
     }
   })->setMiddleware(['auth']),
 
