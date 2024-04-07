@@ -7,9 +7,11 @@
     <?php require 'Views/component/post-article.php' ?>
     <?php require 'Views/component/form/create-reply-form.php' ?>
     <div class="w-full py-4 flex-grow flex flex-col">
-      <?php foreach ($replies as $reply) : ?>
-        <?php require 'Views/component/reply-article.php' ?>
-      <?php endforeach; ?>
+      <?php if (!is_null($replies)) : ?>
+        <?php foreach ($replies as $reply) : ?>
+          <?php require 'Views/component/reply-article.php' ?>
+        <?php endforeach; ?>
+      <?php endif; ?>
     <?php endif; ?>
     </div>
 </div>
