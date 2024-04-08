@@ -197,7 +197,6 @@ return [
 
       $post_id = intval($matches[2]);
 
-      // TODO:　$post_idを使って投稿内容を取得する
       $postDAO = DAOFactory::getPostDAO();
       $data = $postDAO->getByPostId($post_id);
 
