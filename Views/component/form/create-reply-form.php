@@ -1,14 +1,19 @@
+<?php
+$login_user_profile_image_path = is_null($login_user_profile->getUploadFullPathOfProfileImage()) ? '/images/default-icon.svg' : $login_user_profile->getUploadFullPathOfProfileImage();
+
+?>
+
 <div class="flex flex-col pt-3 pb-5 border-b border-slate-300">
   <div class="w-full flex item-center px-3">
     <div class="w-14 h-full">
       <!-- ログインユーザーのプロフィールを持ってくる -->
-      <img src="/images/default-icon.svg" alt="返信ユーザーアイコン" class="h-10 w-10 border border-slate-300 rounded-full">
+      <img src="<?= $login_user_profile_image_path ?>" alt="返信ユーザーアイコン" class="h-10 w-10 border border-slate-300 rounded-full">
     </div>
     <div class="w-full flex flex-col">
       <form id="createReplyForm" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>">
-        <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
         <div class="w-full flex items-center px-2">
+          <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
           <textarea name="reply_content" id="reply_content" placeholder="返信をポスト" class="p-3 resize-none w-full min-h-14 focus:outline-none" maxlength="255" required></textarea>
         </div>
         <div class="w-full flex flex-col space-y-3 mt-2">

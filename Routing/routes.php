@@ -216,7 +216,10 @@ return [
 
       $replies = $replyDAO->getReplyByPostId($data['post']->getId());
 
-      return new HTMLRenderer('page/post-detail', ['data' => $data_list[0], 'replies' => $replies]);
+      $profileDAO = DAOFactory::getProfileDAO();
+      $login_user_profile = $profileDAO->getById($_SESSION['user_id']);
+
+      return new HTMLRenderer('page/post-detail', ['data' => $data_list[0], 'replies' => $replies, 'login_user_profile' => $login_user_profile]);
     } catch (\Exception $e) {
       error_log($e->getMessage());
       return new HTMLRenderer('page/home', ['status' => 'error']);
