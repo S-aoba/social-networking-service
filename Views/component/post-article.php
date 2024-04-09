@@ -28,7 +28,8 @@ $file_path = match ($file_type) {
 
 <div class="relative min-h-fit h-fit w-full flex border-b border-slate-200">
   <a href="<?= $post_detail_link_path ?>" class="absolute top-0 lef-0 w-full h-full"></a>
-  <div class="h-full min-w-18 w-20 flex justify-end py-5">
+  <div class="relative h-full min-w-18 w-20 flex justify-end py-5">
+    <a href="<?= $image_link_path ?>" class="absolute w-12 h-12 rounded-full hover:bg-slate-600/10 hover:transition-colors hover:duration-300"></a>
     <img src="<?= htmlspecialchars($posted_user_profile_path) ?>" alt="投稿者のプロフィール画像" class="w-12 h-12 rounded-full border border-slate-200">
   </div>
   <div class="h-full w-full p-5 flex flex-col space-y-3">
