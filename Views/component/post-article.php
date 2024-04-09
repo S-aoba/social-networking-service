@@ -15,31 +15,34 @@ $is_user_post = $user && $data['post']->getUserId() === $_SESSION['user_id'] ? t
 
 $data_post_id = $data['post']->getId();
 
-$content = $data['post']->getContent()
+$content = $data['post']->getContent();
+
+$file_type = $data['post']->getFileType();
+
+$file_path = match ($file_type) {
+  'image' => $data["post"]->getFilePath(),
+  'video' => $data["post"]->getVideoPath(),
+  default => ''
+}
 ?>
 
-<div class="flex border-b border-slate-300 h-fit w-full p-4 space-x-3 relative">
-  <a href="<?= $post_detail_link_path ?>" class="absolute top-0 left-0 w-full h-full cursor-pointer"></a>
-  <!-- User Information -->
-  <div class="flex items-start">
-    <div class="h-10 w-10 border border-slate-300 rounded-full">
-      <a href="<?= $image_link_path ?>" class="z-50">
-        <img src="<?= htmlspecialchars($posted_user_profile_path) ?>" alt="post-user-icon" class="h-10 w-10 object-cover rounded-full">
-      </a>
-    </div>
+<div class="relative min-h-fit h-fit w-full flex border-b border-slate-200">
+  <a href="<?= $post_detail_link_path ?>" class="absolute top-0 lef-0 w-full h-full"></a>
+  <div class="h-full min-w-18 w-20 flex justify-end py-5">
+    <img src="<?= htmlspecialchars($posted_user_profile_path) ?>" alt="投稿者のプロフィール画像" class="w-12 h-12 rounded-full border border-slate-200">
   </div>
-  <div class="flex flex-col flex-grow space-y-4">
-    <div class="flex justify-between items-center">
-      <div class="flex space-x-3 items-center">
+  <div class="h-full w-full p-5 flex flex-col space-y-3">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center justify-end space-x-3">
         <p class="font-semibold"><?= htmlspecialchars($login_username) ?></p>
-        <span class="text-sm text-slate-400">
+        <div class="text-sm text-slate-400">
           <span>
             @
           </span>
           <span>
             <?= htmlspecialchars($login_user_id) ?>
           </span>
-        </span>
+        </div>
         <span class="text-sm text-slate-400"><?= htmlspecialchars($diff_time) ?></span>
       </div>
       <?php if ($is_user_post) : ?>
@@ -55,30 +58,24 @@ $content = $data['post']->getContent()
         <?php require 'Views/component/post-delete-modal.php' ?>
       <?php endif; ?>
     </div>
-    <!-- Post Content -->
-    <div>
-      <p class="text-sm pb-5">
-        <?= htmlspecialchars($content) ?>
-      </p>
-      <?php if ($data['post']->getFileType() === 'image' && !is_null($data["post"]->getFilePath())) : ?>
-        <div>
-          <img src="<?= htmlspecialchars($data["post"]->getFilePath()) ?>" class="w-96 h-96">
-        </div>
-      <?php endif; ?>
-      <?php if ($data['post']->getFileType() === 'video' && !is_null($data["post"]->getFilePath())) : ?>
-        <div>
-          <video src="<?= htmlspecialchars($data["post"]->getVideoPath()) ?>" class="w-96 h-96" controls>
-        </div>
-      <?php endif; ?>
-
-    </div>
-    <!-- Post Information -->
-    <div class="flex items-center space-x-3">
-      <!-- Comment Icon -->
-      <!-- コメント数を表示する -->
-      <div class="h-8 w-8 flex items-center justify-center space-x-1 cursor-pointer hover:bg-slate-200 transition-colors duration-300 rounded-full">
-        <img class="h-4 w-4" src="/images/comment-icon.svg" alt="コメント数">
-        <span><?= $data['replyCount'] ?></span>
+    <p class="text-sm">
+      <?= htmlspecialchars($content) ?>
+    </p>
+    <?php if ($file_type === 'image') : ?>
+      <img src="<?= htmlspecialchars($file_path) ?>" class="object-contain h-full w-full border border-slate-300 rounded-xl">
+    <?php endif; ?>
+    <?php if ($file_type === 'video') : ?>
+      <video src="<?= htmlspecialchars($file_path) ?>" class="object-contain h-full w-full border border-slate-300 rounded-xl" controls>
+      </video>
+    <?php endif; ?>
+    <div class="w-full grid grid-cols-5">
+      <div class="col-span-1 flex items-center">
+        <button id="replyBtn" type="button" class="group flex items-center cursor-pointer">
+          <div class="h-full flex items-center p-2 group-hover:bg-blue-400/30 rounded-full transition-color duration-300 z-40">
+            <img class="h-4 w-4" src="/images/comment-icon.svg" alt="コメント数">
+          </div>
+          <span class="-ml-1"><?= $data['replyCount'] ?></span>
+        </button>
       </div>
       <?php require 'Views/component/post-like.php' ?>
     </div>
