@@ -53,7 +53,7 @@ class PostDAOImpl implements PostDAO
           post_likes ON posts.post_id = post_likes.post_id
       GROUP BY
           posts.post_id,
-          profiles.id
+          profiles.profile_id
       ORDER BY
           like_count DESC,
           posts.created_at DESC
@@ -88,7 +88,7 @@ class PostDAOImpl implements PostDAO
           follows.followee_id = ?
       GROUP BY
           posts.post_id,
-          profiles.id
+          profiles.profile_id
       ORDER BY
           posts.created_at DESC
       LIMIT ?, ?;
@@ -142,7 +142,7 @@ class PostDAOImpl implements PostDAO
       'profile' =>
       new Profile(
         user_id: $data['profile_user_id'],
-        id: $data['id'],
+        id: $data['profile_id'],
         username: $data['username'],
         age: $data['age'],
         address: $data['address'],
@@ -197,7 +197,7 @@ class PostDAOImpl implements PostDAO
       'profile' =>
       new Profile(
         user_id: $rawData['user_id'],
-        id: $rawData['id'],
+        id: $rawData['profile_id'],
         username: $rawData['username'],
         age: $rawData['age'],
         address: $rawData['address'],
@@ -251,7 +251,7 @@ class PostDAOImpl implements PostDAO
           posts.user_id = ?
       GROUP BY
           posts.post_id,
-          profiles.id
+          profiles.profile_id
       ORDER BY
           posts.created_at DESC;
       ";

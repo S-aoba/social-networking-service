@@ -167,7 +167,7 @@ class ProfileDAOImpl implements ProfileDAO
     return new Profile(
       user_id: $rawData['user_id'],
       username: $rawData['username'],
-      id: $rawData['id'],
+      id: $rawData['profile_id'],
       timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at']),
       age: $rawData['age'],
       address: $rawData['address'],
