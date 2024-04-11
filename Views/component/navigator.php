@@ -341,16 +341,20 @@
   const loginModal = document.getElementById('loginModal');
   const loginBtn = document.getElementById('loginBtn');
 
-  loginBtn.onclick = function() {
-    loginModal.classList.remove('hidden');
-  };
+  if(loginBtn) {
+    loginBtn.onclick = function() {
+      loginModal.classList.remove('hidden');
+    };
+  }
 
   const registerModal = document.getElementById('registerModal');
   const registerBtn = document.getElementById('registerBtn');
 
-  registerBtn.onclick = function() {
-    registerModal.classList.remove('hidden');
-  };
+  if(registerBtn){
+    registerBtn.onclick = function() {
+      registerModal.classList.remove('hidden');
+    };
+  }
 
   // Close modals when clicking outside of them
   window.onclick = function(event) {
