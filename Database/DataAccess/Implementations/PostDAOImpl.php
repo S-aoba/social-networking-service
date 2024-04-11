@@ -44,16 +44,15 @@ class PostDAOImpl implements PostDAO
           profiles.*,
           profiles.user_id AS profile_user_id,
           posts.created_at AS post_created_at,
-          posts.id AS post_id,
           COUNT(post_likes.post_id) AS like_count
       FROM
           posts
       JOIN
           profiles ON posts.user_id = profiles.user_id
       LEFT JOIN
-          post_likes ON posts.id = post_likes.post_id
+          post_likes ON posts.post_id = post_likes.post_id
       GROUP BY
-          posts.id,
+          posts.post_id,
           profiles.id
       ORDER BY
           like_count DESC,
@@ -76,8 +75,7 @@ class PostDAOImpl implements PostDAO
           posts.*,
           profiles.*,
           profiles.user_id AS profile_user_id,
-          posts.created_at AS post_created_at,
-          posts.id AS post_id
+          posts.created_at AS post_created_at
       FROM
           posts
       JOIN
@@ -85,11 +83,11 @@ class PostDAOImpl implements PostDAO
       JOIN
           follows ON profiles.user_id = follows.follower_id
       LEFT JOIN
-          post_likes ON posts.id = post_likes.post_id
+          post_likes ON posts.post_id = post_likes.post_id
       WHERE
           follows.followee_id = ?
       GROUP BY
-          posts.id,
+          posts.post_id,
           profiles.id
       ORDER BY
           posts.created_at DESC
@@ -113,7 +111,6 @@ class PostDAOImpl implements PostDAO
         profiles.*,
         profiles.user_id AS profile_user_id,
         posts.created_at AS post_created_at,
-        posts.id AS post_id
       FROM
           posts
       JOIN
@@ -173,10 +170,10 @@ class PostDAOImpl implements PostDAO
     $db = DatabaseManager::getMysqliConnection();
 
     $query =
-      "SELECT posts.*, profiles.*, posts.created_at AS post_created_at, posts.id AS post_id
+      "SELECT posts.*, profiles.*, posts.created_at AS post_created_at
       FROM posts
       JOIN profiles ON posts.user_id = profiles.user_id
-      WHERE posts.id = ?
+      WHERE posts.post_id = ?
     ";
     $result = $db->prepareAndFetchAll($query, 'i', [$id]) ?? null;
 
@@ -225,7 +222,7 @@ class PostDAOImpl implements PostDAO
 
     $db = DatabaseManager::getMysqliConnection();
 
-    $query = 'DELETE FROM posts WHERE id = ?';
+    $query = 'DELETE FROM posts WHERE post_id = ?';
 
     $result = $db->prepareAndExecute($query, 'i', [$id]);
 
@@ -243,18 +240,17 @@ class PostDAOImpl implements PostDAO
       profiles.*,
       profiles.user_id AS profile_user_id,
       posts.created_at AS post_created_at,
-      posts.id AS post_id,
       COUNT(post_likes.post_id) AS like_count
       FROM
           posts
       JOIN
           profiles ON posts.user_id = profiles.user_id
       LEFT JOIN
-          post_likes ON posts.id = post_likes.post_id
+          post_likes ON posts.post_id = post_likes.post_id
       WHERE
           posts.user_id = ?
       GROUP BY
-          posts.id,
+          posts.post_id,
           profiles.id
       ORDER BY
           posts.created_at DESC;
@@ -275,7 +271,7 @@ class PostDAOImpl implements PostDAO
     $db = DatabaseManager::getMysqliConnection();
 
     $query =
-      'SELECT count(posts.id) AS post_count
+      'SELECT count(post_id) AS post_count
     FROM posts
     WHERE user_id = ?
     ';

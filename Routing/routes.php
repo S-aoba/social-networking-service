@@ -71,10 +71,10 @@ return [
         }
         $login_user_profile_image_path = null;
       }
-
       return new HTMLRenderer('page/home', ['data_list' => $data_list, 'login_user_profile_image_path' => $login_user_profile_image_path, 'presentationTab' => $presentationTab]);
-    } catch (\Throwable $th) {
-      //throw $th;
+    } catch (\Exception $e) {
+      error_log($e->getMessage());
+      return new JSONRenderer([]);
     }
   }),
 
