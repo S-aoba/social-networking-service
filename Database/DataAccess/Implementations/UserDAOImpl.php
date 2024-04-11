@@ -56,7 +56,7 @@ class UserDAOImpl implements UserDAO
   {
     $mysqli = DatabaseManager::getMysqliConnection();
 
-    $query = "SELECT * FROM users WHERE id = ?";
+    $query = "SELECT * FROM users WHERE user_id = ?";
 
     $result = $mysqli->prepareAndFetchAll($query, 'i', [$id])[0] ?? null;
 
@@ -81,7 +81,7 @@ class UserDAOImpl implements UserDAO
   {
     return new User(
       email: $rawData['email'],
-      id: $rawData['id'],
+      id: $rawData['user_id'],
       timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at']),
     );
   }
