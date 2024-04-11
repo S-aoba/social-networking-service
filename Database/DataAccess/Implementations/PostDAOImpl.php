@@ -110,7 +110,7 @@ class PostDAOImpl implements PostDAO
         posts.*,
         profiles.*,
         profiles.user_id AS profile_user_id,
-        posts.created_at AS post_created_at,
+        posts.created_at AS post_created_at
       FROM
           posts
       JOIN
