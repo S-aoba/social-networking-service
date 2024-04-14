@@ -1,10 +1,10 @@
-# App Name: SNS Application
-## Overview
+# SNS Application
+## 概要
 本アプリは、[Recursion](https://recursionist.io/,"Recursion")のBackend ProjectsのServers with Databaseの中の課題となります。
 X(旧 Twitter)のような見た目や機能の実装を行うことによって、フロントエンド、バックエンドの技術等についての知識を深めることを目的として作成しています。
 使用している技術については、**Tech Stack**をご覧ください。
 
-## Main Function
+## 主な機能
 ### アカウント
 - アカウントの作成
 - Eメール認証
@@ -30,12 +30,12 @@ X(旧 Twitter)のような見た目や機能の実装を行うことによって
 - 投稿へのいいね
 - フォロー
 
-## Tech Stack
+## 使用技術
 ### フロントエンド
 | 項目   | 内容                  |
 |--------|-----------------------|
 | 使用言語 | HTML, CSS, JavaScript |
-| CSS| tailwind|
+| CSSフレームワーク | tailwind|
 
 ### バックエンド
 | 項目  | 内容                   |
