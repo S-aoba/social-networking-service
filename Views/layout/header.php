@@ -10,5 +10,5 @@
 
         <title>Social Networking Service</title>
     </head>
-    <body>
-        <main class="">
+    <body class="h-screen w-full bg-white flex flex-col items-center">
+        <main class="h-full w-full">
