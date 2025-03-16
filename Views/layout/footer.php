@@ -1,10 +1,11 @@
-</main> <!-- end of content -->
-
-<footer class="py-5">
-    <div>
-        © 2025:
-        <a class="" href="/">SocialNetworkingService.com</a>
-    </div>
-</footer>
-</body>
+                </main> <!-- end of content -->
+            </div>
+        </div>
+        <footer class="text-center py-4 bg-gray-200 w-full">
+            <div>
+                © 2025:
+                <a href="/">SocialNetworkingService.com</a>
+            </div>
+        </footer>
+    </body>
 </html>
