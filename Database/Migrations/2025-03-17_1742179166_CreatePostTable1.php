@@ -14,7 +14,8 @@ class CreatePostTable1 implements SchemaMigration
                 content TEXT NOT NULL,
                 user_id BIGINT NOT NULL,
                 parent_post_id INT,
-                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             )"
         ];
     }
