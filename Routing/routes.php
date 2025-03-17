@@ -21,15 +21,17 @@ return [
             $content = $_POST['content'];
             $userId = $_POST['user_id'];
             $parentPostId = $_POST['parent_post_id'] ?? null;
+
+            $request = [
+                'content' => $content,
+                'userId' => $userId,
+                'parentPostId' => $parentPostId
+            ];
             
             // TODO: do validatoin
 
-            $post = new Post(
-                $content,
-                $userId,
-                $parentPostId,
-            );
-            
+            $post = new Post(...$request);
+
             $postDAO = DAOFactory::getPostDAO();
 
             $success = $postDAO->create($post);
