@@ -156,14 +156,14 @@ return [
 
             if($success === false) throw new Exception('Failed Create Post');
 
-            return new JSONRenderer(['status' => 'success']);
+            return new RedirectRenderer('');
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
             FlashData::setFlashData('error', 'An error occurred.');
 
             // TODO: Change redirect route to error page or login page.
-            return new RedirectRenderer('home');
+            return new RedirectRenderer('login');
         }
     }),
 ];
