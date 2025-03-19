@@ -138,7 +138,7 @@ return [
 
             $content = $_POST['content'];
             $userId = $_POST['user_id'];
-            $parentPostId = $_POST['parent_post_id'] ?? null;
+            $parentPostId = $_POST['parent_post_id'] === '' ? null : $_POST['parent_post_id'];
 
             $request = [
                 'content' => $content,
