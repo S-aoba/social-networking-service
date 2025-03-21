@@ -9,7 +9,6 @@ class User implements Model {
     use GenericModel;
 
     public function __construct(
-        private string $username,
         private string $email,
         private ?int $id = null,
         private ?string $company = null,
@@ -22,14 +21,6 @@ class User implements Model {
 
     public function setId(int $id): void {
         $this->id = $id;
-    }
-
-    public function getUsername(): string {
-        return $this->username;
-    }
-
-    public function setUsername(string $username): void {
-        $this->username = $username;
     }
 
     public function getEmail(): string {
