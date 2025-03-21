@@ -72,7 +72,6 @@ class UserDAOImpl implements UserDAO
 
     private function rawDataToUser(array $rawData): User{
         return new User(
-            username: $rawData['username'],
             email: $rawData['email'],
             id: $rawData['id'],
             company: $rawData['company'] ?? null,

@@ -62,7 +62,6 @@ return [
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
             $required_fields = [
-                'username' => ValueType::STRING,
                 'email' => ValueType::EMAIL,
                 'password' => ValueType::PASSWORD,
                 'confirm_password' => ValueType::PASSWORD,
@@ -86,7 +85,6 @@ return [
 
             // 新しいUserオブジェクトを作成します
             $user = new User(
-                username: $validatedData['username'],
                 email: $validatedData['email'],
             );
 
