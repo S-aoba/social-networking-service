@@ -6,6 +6,10 @@
         <form action="form/register" method="post" class="flex flex-col space-y-4">
             <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
             <div class="w-full flex flex-col space-y-2">
+                <label for="username"">Username</label>
+                <input class="text-sm p-2 border border-slate-200 rounded-md focus:outline-none" type="text" id="username" name="username" required>
+            </div>
+            <div class="w-full flex flex-col space-y-2">
                 <label for="email"">Email</label>
                 <input class="text-sm p-2 border border-slate-200 rounded-md focus:outline-none" type="email" id="email" name="email" required>
             </div>
