@@ -38,9 +38,24 @@ class ProfileDAOImpl implements ProfileDAO
       return true;
   }
 
+  private function getRowByUserId(int $userId): ?array{
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT * FROM profiles WHERE user_id = ?";
+
+    $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId])[0] ?? null;
+
+    if ($result === null) return null;
+
+    return $result;
+  }
+
   public function getByUserId(int $userId): ?Profile
   {
-    return null;
+    $profileRow = $this->getRowByUserId($userId);
+    if($profileRow === null) return null;
+
+    return $this->rowDataToProfile($profileRow);
   }
 
   public function updateProfile(int $userId): ?Profile
@@ -52,4 +67,18 @@ class ProfileDAOImpl implements ProfileDAO
   {
     return false;
   }
+
+  private function rowDataToProfile(array $rowData): Profile{
+    return new Profile(
+      username: $rowData['username'],
+      userId: $rowData['user_id'],
+      id: $rowData['id'],
+      imagePath: $rowData['image_path'],
+      address: $rowData['address'],
+      age: $rowData['age'],
+      hobby: $rowData['hobby'],
+      selfIntroduction: $rowData['self_introduction']
+    );
+  }
+
 }
