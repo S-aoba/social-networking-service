@@ -4,6 +4,7 @@ use Database\DataAccess\DAOFactory;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
 use Models\Post;
+use Models\Profile;
 use Models\User;
 use Response\FlashData;
 use Response\HTTPRenderer;
@@ -19,7 +20,10 @@ return [
 
         if($user === null) return new RedirectRenderer('login');
 
-        return new HTMLRenderer('page/home');
+        $profileDAO = DAOFactory::getProfileDAO();
+        $profile = $profileDAO->getByUserId($user->getId());
+
+        return new HTMLRenderer('page/home', ['username' => $profile->getUsername(), 'imagePath' => $profile->getImagePath()]);
     })->setMiddleware(['auth']),
 
     'login' => Route::create('login', function (): HTTPRenderer {
@@ -66,6 +70,7 @@ return [
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
             $required_fields = [
+                'username' => ValueType::STRING,
                 'email' => ValueType::EMAIL,
                 'password' => ValueType::PASSWORD,
                 'confirm_password' => ValueType::PASSWORD,
@@ -96,6 +101,17 @@ return [
             $success = $userDao->create($user, $validatedData['password']);
             
             if (!$success) throw new Exception('Failed to create new user!');
+
+            // User作成成功後、Profileを作成する
+            $profileDAO = DAOFactory::getProfileDAO();
+            $profile = new Profile(
+                username: $validatedData['username'],
+                userId: $user->getId()
+            );
+
+            $success = $profileDAO->create($profile);
+            // もし失敗した場合、User情報のみがDB上に残るのでロールバック機能を付けることが必要
+            if(!$success) throw new Exception('Failed to create new profile');
             
             // 検証メール処理
             // $userからid, emailを取得
