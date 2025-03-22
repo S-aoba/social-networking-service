@@ -20,7 +20,10 @@ return [
 
         if($user === null) return new RedirectRenderer('login');
 
-        return new HTMLRenderer('page/home');
+        $profileDAO = DAOFactory::getProfileDAO();
+        $profile = $profileDAO->getByUserId($user->getId());
+
+        return new HTMLRenderer('page/home', ['username' => $profile->getUsername(), 'imagePath' => $profile->getImagePath()]);
     })->setMiddleware(['auth']),
 
     'login' => Route::create('login', function (): HTTPRenderer {
