@@ -15,6 +15,10 @@ use Types\ValueType;
 
 return [
     '' => Route::create('', function(): HTTPRenderer {
+        $user = Authenticate::getAuthenticatedUser();
+
+        if($user === null) return new RedirectRenderer('login');
+
         return new HTMLRenderer('page/home');
     })->setMiddleware(['auth']),
 
