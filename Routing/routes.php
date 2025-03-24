@@ -197,7 +197,30 @@ return [
             $followDAO = DAOFactory::getFollowDAO();
             $success = $followDAO->follow($request['follower_id'], $request['following_id']);
 
-            if(!$success) throw new Exception('Failed following');
+            if(!$success) throw new Exception('Failed follow');
+
+            return new JSONRenderer(['status' => 'success']);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            FlashData::setFlashData('error', 'An error occurred.');
+
+            return new JSONRenderer(['status' => 'error']);
+        }    
+    }),
+    'form/unfollow' => Route::create('form/unfollow', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $request = [
+                'follower_id' => $_POST['follower_id'], // 自身のID
+                'following_id' => $_POST['following_id'], // フォロー対象のID
+            ];
+
+            // TODO: do validation
+            $followDAO = DAOFactory::getFollowDAO();
+            $success = $followDAO->unfollow($request['follower_id'], $request['following_id']);
+
+            if(!$success) throw new Exception('Failed unfollow');
 
             return new JSONRenderer(['status' => 'success']);
         } catch (\Exception $e) {
