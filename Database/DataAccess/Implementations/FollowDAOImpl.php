@@ -17,13 +17,21 @@ class FollowDAOImpl implements FollowDAO
     $result = $mysqli->prepareAndExecute($query, 'ii', [$userId, $followUserId]);
 
     if(!$result) return false;
-    
+
     return true;
   }
 
-  public function unFollow(int $userId, int $followUserId): bool
+  public function unfollow(int $userId, int $followUserId): bool
   {
-    return false;
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "DELETE FROM follows WHERE follower_id = ? AND following_id = ?";
+
+    $result = $mysqli->prepareAndExecute($query, 'ii', [$userId, $followUserId]);
+
+    if(!$result) return false;
+    
+    return true;
   }
 
   public function getFollowList($userId): ?Follow
