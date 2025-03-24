@@ -10,11 +10,11 @@ class CreateFollowTable implements SchemaMigration
         // マイグレーションロジックをここに追加してください
         return [
             "CREATE TABLE follows (
-                following_user_id BIGINT NOT NULL,
-                followed_user_id BIGINT NOT NULL,
+                follower_id BIGINT NOT NULL,
+                following_id BIGINT NOT NULL,
                 created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (following_user_id) REFERENCES users(id) ON DELETE CASCADE,
-                FOREIGN KEY (followed_user_id) REFERENCES users(id) ON DELETE CASCADE
+                FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE CASCADE
             )
             "
         ];
