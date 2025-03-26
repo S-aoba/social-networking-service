@@ -16,6 +16,8 @@ use Types\ValueType;
 
 return [
     '' => Route::create('', function(): HTTPRenderer {
+        // TODO: Add try-catch
+
         $user = Authenticate::getAuthenticatedUser();
 
         if($user === null) return new RedirectRenderer('login');
@@ -23,7 +25,16 @@ return [
         $profileDAO = DAOFactory::getProfileDAO();
         $profile = $profileDAO->getByUserId($user->getId());
 
-        return new HTMLRenderer('page/home', ['username' => $profile->getUsername(), 'imagePath' => $profile->getImagePath()]);
+        $followDAO = DAOFactory::getFollowDAO();
+        $followerCount = $followDAO->getFollowerCount($user->getId());
+        $followingCount = $followDAO->getFollowingCount($user->getId());
+
+        return new HTMLRenderer('page/home', [
+            'username' => $profile->getUsername(), 
+            'imagePath' => $profile->getImagePath(), 
+            'followerCount' => $followerCount, 
+            'followingCount' => $followingCount
+        ]);
     })->setMiddleware(['auth']),
 
     'login' => Route::create('login', function (): HTTPRenderer {
