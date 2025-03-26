@@ -34,25 +34,41 @@ class FollowDAOImpl implements FollowDAO
     return true;
   }
 
-  public function getFollowList($userId): ?Follow
+  public function getFollowerCount($userId): int
   {
-    return null;
+    $followerRow = $this->getRowFollowerCount($userId);
+
+    return $followerRow;
   }
 
-  public function getFollowerList($userId): ?Follow
+  public function getFollowingCount($userId): int
   {
-    return null;
+    $followingRow = $this->getRowFollowingCount($userId);
+
+    return $followingRow;
   }
 
-  private function getRowFollowList(int $userId): ?array {
-    return null;
+  private function getRowFollowerCount(int $userId): int {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT COUNT(*) FROM follows where follower_id = ?";
+
+    $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
+
+    return $this->converToCount($result);
   }
 
-  private function getRowFollowerList(int $userId): ?array {
-    return null;
+  private function getRowFollowingCount(int $userId): int {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT COUNT(*) FROM follows where following_id = ?";
+    
+    $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
+    
+    return $this->converToCount($result);
   }
 
-  private function rowDataToFollow(array $rowData): ?Follow {
-    return null;
+  private function converToCount(array $rowData): int {
+    return intval($rowData[0]['COUNT(*)']);
   }
 }
