@@ -4,6 +4,7 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DataAccess\Interfaces\FollowDAO;
 use Database\DatabaseManager;
+use Helpers\DatabaseHelper;
 use Models\Follow;
 
 class FollowDAOImpl implements FollowDAO
@@ -46,6 +47,25 @@ class FollowDAOImpl implements FollowDAO
     $followingRow = $this->getRowFollowingCount($userId);
 
     return $followingRow;
+  }
+
+  public function getFollowingIds(int $userId): ?array
+  {
+    $followingRow = $this->getRowFollowingIds($userId);
+
+    return $followingRow;
+  }
+
+  private function getRowFollowingIds(int $userId) : ?array {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT following_id FROM follows WHERE follower_id = ?";
+
+    $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]) ?? null;
+
+    if($result === null) return null;
+
+    return $result;
   }
 
   private function getRowFollowerCount(int $userId): int {
