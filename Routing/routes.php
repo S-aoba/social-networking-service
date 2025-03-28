@@ -16,6 +16,8 @@ use Types\ValueType;
 
 return [
     '' => Route::create('', function(): HTTPRenderer {
+        // TODO: Add try-catch
+
         $user = Authenticate::getAuthenticatedUser();
 
         if($user === null) return new RedirectRenderer('login');
@@ -23,7 +25,16 @@ return [
         $profileDAO = DAOFactory::getProfileDAO();
         $profile = $profileDAO->getByUserId($user->getId());
 
-        return new HTMLRenderer('page/home', ['username' => $profile->getUsername(), 'imagePath' => $profile->getImagePath()]);
+        $followDAO = DAOFactory::getFollowDAO();
+        $followerCount = $followDAO->getFollowerCount($user->getId());
+        $followingCount = $followDAO->getFollowingCount($user->getId());
+
+        return new HTMLRenderer('page/home', [
+            'username' => $profile->getUsername(), 
+            'imagePath' => $profile->getImagePath(), 
+            'followerCount' => $followerCount, 
+            'followingCount' => $followingCount
+        ]);
     })->setMiddleware(['auth']),
 
     'login' => Route::create('login', function (): HTTPRenderer {
@@ -183,6 +194,53 @@ return [
             // TODO: Change redirect route to error page or login page.
             return new RedirectRenderer('login');
         }
+    }),
+    'form/follow' => Route::create('form/follow', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $request = [
+                'follower_id' => $_POST['follower_id'], // 自身のID
+                'following_id' => $_POST['following_id'], // フォロー対象のID
+            ];
+
+            // TODO: do validation
+            $followDAO = DAOFactory::getFollowDAO();
+            $success = $followDAO->follow($request['follower_id'], $request['following_id']);
+
+            if(!$success) throw new Exception('Failed follow');
+
+            return new JSONRenderer(['status' => 'success']);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            FlashData::setFlashData('error', 'An error occurred.');
+
+            return new JSONRenderer(['status' => 'error']);
+        }    
+    }),
+    'form/unfollow' => Route::create('form/unfollow', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $request = [
+                'follower_id' => $_POST['follower_id'], // 自身のID
+                'following_id' => $_POST['following_id'], // フォロー対象のID
+            ];
+
+            // TODO: do validation
+            $followDAO = DAOFactory::getFollowDAO();
+            $success = $followDAO->unfollow($request['follower_id'], $request['following_id']);
+
+            if(!$success) throw new Exception('Failed unfollow');
+
+            return new JSONRenderer(['status' => 'success']);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            FlashData::setFlashData('error', 'An error occurred.');
+
+            return new JSONRenderer(['status' => 'error']);
+        }
+        
     }),
 ];
 
