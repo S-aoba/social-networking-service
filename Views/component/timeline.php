@@ -13,6 +13,8 @@
   <!-- Post Form -->
    <?php include "Views/component/post-form.php"  ?>
   <!-- Article -->
-   <?php include "Views/component/article.php"  ?>
+   <?php foreach ($followerPosts as $data): ?>
+    <?php include "Views/component/article.php"  ?>
+   <?php endforeach ;?>
 
 </div>

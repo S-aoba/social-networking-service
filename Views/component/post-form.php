@@ -1,6 +1,12 @@
+<?php
+    $imagePath = $imagePath === null ? 'https://picsum.photos/200/300' : $imagePath;
+?>
+
 <div class="flex">
   <div class="p-5">
-    <div class="size-10 rounded-full bg-sky-500/70"></div>
+    <div class="size-10 rounded-full overflow-hidden">
+      <img src="<?php echo $imagePath ?>" alt="user-icon" class="w-full h-full object-cover">
+    </div>
   </div>
   <form action="form/post" method="post" class="w-full flex flex-col space-y-4">
     <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
