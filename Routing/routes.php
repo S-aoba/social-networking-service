@@ -29,12 +29,8 @@ return [
         $followerCount = $followDAO->getFollowerCount($user->getId());
         $followingCount = $followDAO->getFollowingCount($user->getId());
 
-        // TODO: Delete
-        // $followingIds = $followDAO->getFollowingIds($user->getId());
         $postDAO = DAOFactory::getPostDAO();
         $followerPosts = $postDAO->getFollowingPosts($user->getId());
-        
-        
 
         return new HTMLRenderer('page/home', [
             'username' => $profile->getUsername(), 
