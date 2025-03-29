@@ -169,8 +169,11 @@ return [
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
+            $user = Authenticate::getAuthenticatedUser();
+            if($user === null) return new RedirectRenderer('login');
+
+            $userId = $user->getId();
             $content = $_POST['content'];
-            $userId = $_POST['user_id'];
             $parentPostId = $_POST['parent_post_id'] === '' ? null : $_POST['parent_post_id'];
 
             $request = [
