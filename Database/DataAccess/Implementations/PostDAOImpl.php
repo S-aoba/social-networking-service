@@ -5,6 +5,7 @@ namespace Database\DataAccess\Implementations;
 use Database\DataAccess\Interfaces\PostDAO;
 use Database\DatabaseManager;
 use Models\Post;
+use Models\Profile;
 
 class PostDAOImpl implements PostDAO
 {
@@ -42,9 +43,10 @@ class PostDAOImpl implements PostDAO
     private function getRowFollowingPosts(int $userId): ?array {
       $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT posts.content
+      $query = "SELECT posts.id, posts.content, posts.user_id, profiles.username, profiles.    image_path, profiles.user_id
                 FROM posts
                 JOIN follows ON posts.user_id = follows.following_id
+                JOIN profiles ON posts.user_id = profiles.user_id
                 WHERE follows.follower_id = ?
                 ORDER BY posts.created_at DESC
                 ";
@@ -52,7 +54,33 @@ class PostDAOImpl implements PostDAO
 
       if($result === null) return null;
 
-      return $result;
+      return $this->rowDataToPost($result);
+    }
+
+    private function rowDataToPost(?array $rowData): ?array {
+      $output = [];
+
+      foreach ($rowData as $data) {
+        $post = new Post(
+         content: $data['content'],
+         userId: $data['user_id'],
+         id: $data['id']
+        );
+        $postedUser = new Profile(
+          username: $data['username'],
+          userId: $data['user_id'],
+          imagePath: $data['image_path']
+        );
+
+        $arr = [
+          'post' => $post,
+          'postedUser' => $postedUser
+        ];
+
+        $output[] = $arr;
+      }
+
+      return $output;
     }
 
     public function getByUserId(int $userId): ?Post
