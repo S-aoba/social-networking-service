@@ -43,14 +43,15 @@ class PostDAOImpl implements PostDAO
     private function getRowFollowingPosts(int $userId): ?array {
       $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT posts.id, posts.content, posts.user_id, profiles.username, profiles.    image_path, profiles.user_id
+      $query = "SELECT posts.id, posts.content, posts.user_id, profiles.username, profiles.image_path, profiles.user_id
                 FROM posts
-                JOIN follows ON posts.user_id = follows.following_id
                 JOIN profiles ON posts.user_id = profiles.user_id
-                WHERE follows.follower_id = ?
+                WHERE posts.user_id = ? 
+                  OR posts.user_id IN (SELECT following_id FROM follows WHERE follower_id = ?)
                 ORDER BY posts.created_at DESC
+                LIMIT 10;
                 ";
-      $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]) ?? null;
+      $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $userId]) ?? null;
 
       if($result === null) return null;
 
