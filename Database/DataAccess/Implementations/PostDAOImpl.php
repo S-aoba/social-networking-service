@@ -49,6 +49,7 @@ class PostDAOImpl implements PostDAO
                 JOIN profiles ON posts.user_id = profiles.user_id
                 WHERE follows.follower_id = ?
                 ORDER BY posts.created_at DESC
+                LIMIT 10
                 ";
       $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]) ?? null;
 
