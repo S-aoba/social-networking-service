@@ -40,6 +40,19 @@ class PostDAOImpl implements PostDAO
       return $followerPostsRow;
     }
 
+    public function deletePost(int $postId): bool
+    {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "DELETE FROM posts WHERE id = ?";
+
+      $result = $mysqli->prepareAndExecute($query, 'i', [$postId]);
+
+      if($result === false) return false;
+
+      return true;
+    }
+
     private function getRowFollowingPosts(int $userId): ?array {
       $mysqli = DatabaseManager::getMysqliConnection();
 
