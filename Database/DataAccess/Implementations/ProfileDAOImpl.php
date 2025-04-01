@@ -58,9 +58,35 @@ class ProfileDAOImpl implements ProfileDAO
     return $this->rowDataToProfile($profileRow);
   }
 
-  public function updateProfile(int $userId): ?Profile
+  public function updateProfile(?Profile $profile): bool
   {
-    return null;
+    if ($profile === null) return false;
+
+    $mysqli = DatabaseManager::getMysqliConnection();
+    $query = "UPDATE profiles 
+              SET username = ?, 
+                  image_path = ?, 
+                  address = ?, 
+                  age = ?, 
+                  hobby = ?, 
+                  self_introduction = ? 
+              WHERE user_id = ?";
+    $result = $mysqli->prepareAndExecute(
+      $query,
+      'ssssssi',
+      [
+        $profile->getUsername(),
+        $profile->getImagePath(),
+        $profile->getAddress(),
+        $profile->getAge(),
+        $profile->getHobby(),
+        $profile->getSelfIntroduction(),
+        $profile->getUserId()
+      ]
+    );
+    if (!$result) return false;
+
+    return true;
   }
 
   public function deleteProfile(int $userId): bool
