@@ -26,7 +26,7 @@ class LikeDAOImpl implements LikeDAO {
     return true;
   }
 
-  public function deleteLike(int $id): bool
+  public function unlike(Like $like): bool
   {
     return true;
   }
