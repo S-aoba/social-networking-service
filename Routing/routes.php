@@ -271,5 +271,43 @@ return [
             return new RedirectRenderer('login');
         }
     }),
+    'form/update/profile' => Route::create('form/update/profile', function(): HTTPRenderer {
+        try {
+            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $username = $_POST['username'];
+            $imagePath = $_POST['image_path'];
+            $age = $_POST['age'];
+            $address = $_POST['address'];
+            $hobby = $_POST['hobby'];
+            $selfIntroduction = $_POST['self_introduction'];
+
+            $userId = $_POST['user_id'];
+
+            // TODO: do validation
+            $user = Authenticate::getAuthenticatedUser();
+            if(intval($userId) !== $user->getId()) throw new Exception('Invalid user!');
+
+            $profileDAO = DAOFactory::getProfileDAO();
+            $profile = new Profile(
+                username: $username,
+                // TODO: Make the userId propaty also nullable and remove the following userId
+                userId: $userId,
+                imagePath: $imagePath,
+                address: $address,
+                age: $age,
+                hobby: $hobby,
+                selfIntroduction: $selfIntroduction,
+            );
+            $success = $profileDAO->updateProfile($profile);
+            if($success === false) throw new Exception('Failed to update profile!');
+
+            return new JSONRenderer(['status' => 'success']);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
+        }
+    })
 ];
 
