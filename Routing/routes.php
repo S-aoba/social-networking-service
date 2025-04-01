@@ -249,5 +249,27 @@ return [
         }
         
     }),
+    'form/delete/post' => Route::create('form/delete/post', function(): HTTPRenderer {
+        try {
+            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+            $userId = $_POST['user_id'];
+            $postId = $_POST['post_id'];
+
+            // TODO: do validation
+
+            $user = Authenticate::getAuthenticatedUser();
+            
+            if(intval($userId) !== $user->getId()) throw new Exception('Invalid user!');
+            $postDAO = DAOFactory::getPostDAO();
+            $success = $postDAO->deletePost($postId);
+            if($success === false) throw new Exception('Failed to delete post!');
+
+            return new RedirectRenderer('');
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    }),
 ];
 
