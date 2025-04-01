@@ -3,6 +3,7 @@
 use Database\DataAccess\DAOFactory;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
+use Models\Like;
 use Models\Post;
 use Models\Profile;
 use Models\User;
@@ -332,6 +333,35 @@ return [
             
             $success = $postDAO->create($post);
             if($success === false) throw new Exception('Failed to create reply!');
+
+            return new JSONRenderer(['status' => 'success']);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
+        }
+    }),
+    'form/like' => Route::create('form/like', function(): HTTPRenderer {
+        try {
+            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $postId = $_POST['post_id'];
+
+            // TODO: do validation
+
+            $user = Authenticate::getAuthenticatedUser();
+            if($user === null) return new RedirectRenderer('login');
+
+            $userId = $user->getId();
+
+            $likeDAO = DAOFactory::getLikeDAO();
+            $like = new Like(
+                userId: $userId,
+                postId: $postId
+            );
+            $success = $likeDAO->createLike($like);
+
+            if($success === false) throw new Exception('Failed to like post!');
 
             return new JSONRenderer(['status' => 'success']);
         } catch (Exception $e) {
