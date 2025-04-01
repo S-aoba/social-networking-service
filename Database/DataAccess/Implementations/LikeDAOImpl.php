@@ -2,8 +2,9 @@
 
 namespace Database\DataAccess\Implementations;
 
-use Database\DataAccess\Interfaces\Like;
+
 use Database\DataAccess\Interfaces\LikeDAO;
+use Models\Like;
 
 class LikeDAOImpl implements LikeDAO {
   public function createLike(Like $like): bool
