@@ -28,6 +28,19 @@ class LikeDAOImpl implements LikeDAO {
 
   public function unlike(Like $like): bool
   {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "DELETE FROM likes WHERE user_id = ? AND post_id = ?";
+    
+    $result = $mysqli->prepareAndExecute($query, 'ii', [
+      $like->getUserId(),
+      $like->getPostId()
+    ]);
+
+    if (!$result) {
+      return false;
+    }
+
     return true;
   }
 
