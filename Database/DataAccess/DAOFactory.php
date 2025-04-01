@@ -5,11 +5,13 @@ namespace Database\DataAccess;
 use Database\DataAccess\Implementations\ComputerPartDAOImpl;
 use Database\DataAccess\Implementations\ComputerPartDAOMemcachedImpl;
 use Database\DataAccess\Implementations\FollowDAOImpl;
+use Database\DataAccess\Implementations\LikeDAOImpl;
 use Database\DataAccess\Implementations\PostDAOImpl;
 use Database\DataAccess\Implementations\ProfileDAOImpl;
 use Database\DataAccess\Implementations\UserDAOImpl;
 use Database\DataAccess\Interfaces\ComputerPartDAO;
 use Database\DataAccess\Interfaces\FollowDAO;
+use Database\DataAccess\Interfaces\LikeDAO;
 use Database\DataAccess\Interfaces\PostDAO;
 use Database\DataAccess\Interfaces\ProfileDAO;
 use Database\DataAccess\Interfaces\UserDAO;
@@ -60,6 +62,15 @@ class DAOFactory
         return match ($driver) {
             'memcached' => new FollowDAOImpl(),
             default => new FollowDAOImpl(),
+        };
+    }
+
+    public static function getLikeDAO(): LikeDAO {
+        $driver = Settings::env('DATABASE_DRIVER');
+
+        return match ($driver) {
+            'memcached' => new LikeDAOImpl(),
+            default => new LikeDAOImpl(),
         };
     }
 }
