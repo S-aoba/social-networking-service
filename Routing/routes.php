@@ -307,6 +307,38 @@ return [
 
             return new JSONRenderer(['status' => 'error']);
         }
-    })
+    }),
+    'form/reply' => Route::create('form/reply', function(): HTTPRenderer {
+        try {
+            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $content = $_POST['content'];
+            $parentPostId = intval($_POST['parent_post_id']);
+            
+            // TODO: do validation
+
+            $user = Authenticate::getAuthenticatedUser();
+            
+            if($user === null) return new RedirectRenderer('login');
+            $userId = $user->getId();
+            
+            $postDAO = DAOFactory::getPostDAO();
+
+            $post = new Post(
+                content: $content,
+                userId: $userId,
+                parentPostId: $parentPostId
+            );
+            
+            $success = $postDAO->create($post);
+            if($success === false) throw new Exception('Failed to create reply!');
+
+            return new JSONRenderer(['status' => 'success']);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
+        }
+    }),
 ];
 
