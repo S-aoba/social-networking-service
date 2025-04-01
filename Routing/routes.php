@@ -291,7 +291,6 @@ return [
             $profileDAO = DAOFactory::getProfileDAO();
             $profile = new Profile(
                 username: $username,
-                // TODO: Make the userId propaty also nullable and remove the following userId
                 userId: $userId,
                 imagePath: $imagePath,
                 address: $address,
