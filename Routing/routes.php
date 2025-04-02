@@ -26,18 +26,12 @@ return [
         $profileDAO = DAOFactory::getProfileDAO();
         $profile = $profileDAO->getByUserId($user->getId());
 
-        $followDAO = DAOFactory::getFollowDAO();
-        $followerCount = $followDAO->getFollowerCount($user->getId());
-        $followingCount = $followDAO->getFollowingCount($user->getId());
-
         $postDAO = DAOFactory::getPostDAO();
         $followerPosts = $postDAO->getFollowingPosts($user->getId());
 
         return new HTMLRenderer('page/home', [
             'username' => $profile->getUsername(), 
             'imagePath' => $profile->getImagePath(), 
-            'followerCount' => $followerCount, 
-            'followingCount' => $followingCount,
             'followerPosts' => $followerPosts,
         ]);
     })->setMiddleware(['auth']),
