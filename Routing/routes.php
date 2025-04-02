@@ -277,7 +277,7 @@ return [
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
             $username = $_POST['username'];
-            $imagePath = $_POST['image_path'];
+            $imagePath = $_POST['image_path'] === '' ? null : $_POST['image_path'];
             $age = $_POST['age'];
             $address = $_POST['address'];
             $hobby = $_POST['hobby'];
