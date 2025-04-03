@@ -18,22 +18,27 @@ use Types\ValueType;
 return [
     '' => Route::create('', function(): HTTPRenderer {
         // TODO: Add try-catch
+        try {
+            $user = Authenticate::getAuthenticatedUser();
+    
+            if($user === null) return new RedirectRenderer('login');
+    
+            $profileDAO = DAOFactory::getProfileDAO();
+            $profile = $profileDAO->getByUserId($user->getId());
+    
+            $postDAO = DAOFactory::getPostDAO();
+            $followerPosts = $postDAO->getFollowingPosts($user->getId());
+    
+            return new HTMLRenderer('page/home', [
+                'username' => $profile->getUsername(), 
+                'imagePath' => $profile->getImagePath(), 
+                'followerPosts' => $followerPosts,
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
 
-        $user = Authenticate::getAuthenticatedUser();
-
-        if($user === null) return new RedirectRenderer('login');
-
-        $profileDAO = DAOFactory::getProfileDAO();
-        $profile = $profileDAO->getByUserId($user->getId());
-
-        $postDAO = DAOFactory::getPostDAO();
-        $followerPosts = $postDAO->getFollowingPosts($user->getId());
-
-        return new HTMLRenderer('page/home', [
-            'username' => $profile->getUsername(), 
-            'imagePath' => $profile->getImagePath(), 
-            'followerPosts' => $followerPosts,
-        ]);
+            return new RedirectRenderer('login');
+        }
     })->setMiddleware(['auth']),
 
     'login' => Route::create('login', function (): HTTPRenderer {
