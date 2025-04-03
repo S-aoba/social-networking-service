@@ -1,20 +1,12 @@
 <?php
-    $imagePath = $imagePath === null ? 'https://picsum.photos/200/300' : $imagePath;
+    $imagePath = $imagePath === null ? '/images/default-icon.png' : $imagePath;
 ?>
 
-<div class="p-4">
-    <div class="w-full flex">
-        <div class="size-10 rounded-full overflow-hidden">
-            <img src="<?php echo $imagePath ?>" alt="user-icon" class="w-full h-full object-cover">
-        </div>
-        <div class="pl-4 flex flex-col items-start justify-center">
-            <div>
-                <p class="text-base font-semibold"><?php echo $username ?></p>
-            </div>
-            <div class="text-sm">
-                <span><?php echo $followerCount ?> フォロー</span>
-                <span><?php echo $followingCount ?> フォロワー</span>
-            </div>
-        </div>
+<div class="max-h-24 h-full flex">
+    <div class="flex items-center justify-center">
+        <img src="<?php echo $imagePath ?>" alt="user-icon" class="size-10">
+    </div>
+    <div class="w-fit h-full flex items-center justify-start pl-2">
+        <p class="font-semibold"><?php echo $username ?></p>
     </div>
 </div>
