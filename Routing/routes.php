@@ -17,7 +17,6 @@ use Types\ValueType;
 
 return [
     '' => Route::create('', function(): HTTPRenderer {
-        // TODO: Add try-catch
         try {
             $user = Authenticate::getAuthenticatedUser();
     
