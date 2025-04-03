@@ -39,10 +39,18 @@ return [
             return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
-
     'login' => Route::create('login', function (): HTTPRenderer {
         return new HTMLRenderer('page/login');
     })->setMiddleware(['guest']),
+    'register' => Route::create('register', function (): HTTPRenderer {
+        return new HTMLRenderer('page/register');
+    })->setMiddleware(['guest']),
+    'logout' => Route::create('logout', function (): HTTPRenderer {
+        Authenticate::logoutUser();
+        FlashData::setFlashData('success', 'Logged out.');
+        return new RedirectRenderer('login');
+    })->setMiddleware(['auth']),
+
     'form/login' => Route::create('form/login', function (): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -74,9 +82,6 @@ return [
             FlashData::setFlashData('error', 'An error occurred.');
             return new RedirectRenderer('login');
         }
-    })->setMiddleware(['guest']),
-    'register' => Route::create('register', function (): HTTPRenderer {
-        return new HTMLRenderer('page/register');
     })->setMiddleware(['guest']),
     'form/register' => Route::create('form/register', function (): HTTPRenderer {
         try {
@@ -159,11 +164,6 @@ return [
             return new RedirectRenderer('register');
         }
     })->setMiddleware(['guest']),
-    'logout' => Route::create('logout', function (): HTTPRenderer {
-        Authenticate::logoutUser();
-        FlashData::setFlashData('success', 'Logged out.');
-        return new RedirectRenderer('login');
-    })->setMiddleware(['auth']),
     'form/post' => Route::create('form/post', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
