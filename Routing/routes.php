@@ -200,7 +200,7 @@ return [
             // TODO: Change redirect route to error page or login page.
             return new RedirectRenderer('login');
         }
-    }),
+    })->setMiddleware(['auth']),
     'form/follow' => Route::create('form/follow', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -223,7 +223,7 @@ return [
 
             return new JSONRenderer(['status' => 'error']);
         }    
-    }),
+    })->setMiddleware(['auth']),
     'form/unfollow' => Route::create('form/unfollow', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -247,7 +247,7 @@ return [
             return new JSONRenderer(['status' => 'error']);
         }
         
-    }),
+    })->setMiddleware(['auth']),
     'form/delete/post' => Route::create('form/delete/post', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -269,7 +269,7 @@ return [
 
             return new RedirectRenderer('login');
         }
-    }),
+    })->setMiddleware(['auth']),
     'form/update/profile' => Route::create('form/update/profile', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -306,7 +306,7 @@ return [
 
             return new JSONRenderer(['status' => 'error']);
         }
-    }),
+    })->setMiddleware(['auth']),
     'form/reply' => Route::create('form/reply', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -338,7 +338,7 @@ return [
 
             return new JSONRenderer(['status' => 'error']);
         }
-    }),
+    })->setMiddleware(['auth']),
     'form/like' => Route::create('form/like', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -367,7 +367,7 @@ return [
 
             return new JSONRenderer(['status' => 'error']);
         }
-    }),
+    })->setMiddleware(['auth']),
     'form/unlike' => Route::create('form/unlike', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -396,6 +396,6 @@ return [
 
             return new JSONRenderer(['status' => 'error']);
         }
-    }),
+    })->setMiddleware(['auth']),
 ];
 
