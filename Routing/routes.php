@@ -29,6 +29,7 @@ return [
             $followerPosts = $postDAO->getFollowingPosts($user->getId());
     
             return new HTMLRenderer('page/home', [
+                'userId'  => $profile->getUserId(),
                 'username' => $profile->getUsername(), 
                 'imagePath' => $profile->getImagePath(), 
                 'followerPosts' => $followerPosts,
@@ -49,6 +50,41 @@ return [
         Authenticate::logoutUser();
         FlashData::setFlashData('success', 'Logged out.');
         return new RedirectRenderer('login');
+    })->setMiddleware(['auth']),
+    'profile' => Route::create('profile', function(): HTTPRenderer {
+        try {
+            $userId = $_GET['user'];
+            
+            // TODO: do validation
+
+            $profileDAO = DAOFactory::getProfileDAO();
+            $profile = $profileDAO->getByUserId(intval($userId));
+
+            $postDAO = DAOFactory::getPostDAO();
+            $posts = $postDAO->getByUserId($profile->getUserId());
+
+            $followDAO = DAOFactory::getFollowDAO();
+            $followerCount = $followDAO->getFollowerCount($userId);
+            $followingCount = $followDAO->getFollowingCount($userId);
+            
+            return new HTMLRenderer('page/profile', [
+                'userId' => $profile->getUserId(),
+                'username' => $profile->getUsername(),
+                'imagePath' => $profile->getImagePath(),
+                'age' => $profile->getAge(),
+                'address' => $profile->getAddress(),
+                'hobby' => $profile->getHobby(),
+                'selfIntroduction' => $profile->getSelfIntroduction(),
+                'posts' => $posts,
+                'followerCount' => $followerCount,
+                'followingCount' => $followingCount
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
+        }
+
     })->setMiddleware(['auth']),
 
     'form/login' => Route::create('form/login', function (): HTTPRenderer {
