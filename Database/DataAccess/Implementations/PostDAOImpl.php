@@ -97,8 +97,40 @@ class PostDAOImpl implements PostDAO
       return $output;
     }
 
-    public function getByUserId(int $userId): ?Post
+    public function getByUserId(int $userId): ?array
     {
-      return null;
+      $postRow = $this->getRowByUserId($userId);
+
+      if($postRow === null) return null;
+
+      return $postRow;
+    }
+
+    private function getRowByUserId(int $userId): ?array {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "SELECT * FROM posts WHERE user_id = ? LIMIT 10";
+
+      $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
+      if(count($result) === 0) return null;
+
+      return $this->rowDataToOwnPost($result);
+    }
+
+    private function rowDataToOwnPost(array $rowData): array {
+      $output = [];
+
+      foreach($rowData as $data) {
+        $post = new Post(
+          content: $data['content'],
+          userId: $data['user_id'],
+          id: $data['id'],
+          parentPostId: $data['parent_post_id'],
+        );
+
+        $output[] = $post;
+      }
+
+      return $output;
     }
 }
