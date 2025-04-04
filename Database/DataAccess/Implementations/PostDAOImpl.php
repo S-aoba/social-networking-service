@@ -109,7 +109,7 @@ class PostDAOImpl implements PostDAO
     private function getRowByUserId(int $userId): ?array {
       $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT * FROM posts WHERE user_id = ? LIMIT 10";
+      $query = "SELECT * FROM posts WHERE user_id = ? ORDER BY posts.created_at DESC LIMIT 10";
 
       $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
       if(count($result) === 0) return null;
