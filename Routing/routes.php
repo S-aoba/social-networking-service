@@ -29,6 +29,7 @@ return [
             $followerPosts = $postDAO->getFollowingPosts($user->getId());
     
             return new HTMLRenderer('page/home', [
+                'userId'  => $profile->getUserId(),
                 'username' => $profile->getUsername(), 
                 'imagePath' => $profile->getImagePath(), 
                 'followerPosts' => $followerPosts,
@@ -67,6 +68,7 @@ return [
             $followingCount = $followDAO->getFollowingCount($userId);
             
             return new HTMLRenderer('page/profile', [
+                'userId' => $profile->getUserId(),
                 'username' => $profile->getUsername(),
                 'imagePath' => $profile->getImagePath(),
                 'age' => $profile->getAge(),
