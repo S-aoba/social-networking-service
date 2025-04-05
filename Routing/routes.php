@@ -53,19 +53,18 @@ return [
     })->setMiddleware(['auth']),
     'profile' => Route::create('profile', function(): HTTPRenderer {
         try {
-            $userId = $_GET['user'];
-            
+            $username = $_GET['user'];
             // TODO: do validation
-
+            
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId(intval($userId));
+            $profile = $profileDAO->getByUsername($username);
 
             $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getByUserId($profile->getUserId());
 
             $followDAO = DAOFactory::getFollowDAO();
-            $followerCount = $followDAO->getFollowerCount($userId);
-            $followingCount = $followDAO->getFollowingCount($userId);
+            $followerCount = $followDAO->getFollowerCount($profile->getUserId());
+            $followingCount = $followDAO->getFollowingCount($profile->getUserId());
             
             return new HTMLRenderer('page/profile', [
                 'userId' => $profile->getUserId(),
