@@ -56,7 +56,7 @@ class PostDAOImpl implements PostDAO
     private function getRowFollowingPosts(int $userId): ?array {
       $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT posts.id, posts.content, posts.user_id, profiles.username, profiles.image_path, profiles.user_id
+      $query = "SELECT posts.*, profiles.username, profiles.image_path, profiles.user_id
                 FROM posts
                 JOIN profiles ON posts.user_id = profiles.user_id
                 WHERE posts.user_id = ? 
@@ -78,7 +78,9 @@ class PostDAOImpl implements PostDAO
         $post = new Post(
          content: $data['content'],
          userId: $data['user_id'],
-         id: $data['id']
+         id: $data['id'],
+         createdAt: $data['created_at'],
+         parentPostId: $data['parent_post_id'],
         );
         $postedUser = new Profile(
           username: $data['username'],
@@ -125,6 +127,7 @@ class PostDAOImpl implements PostDAO
           content: $data['content'],
           userId: $data['user_id'],
           id: $data['id'],
+          createdAt: $data['created_at'],
           parentPostId: $data['parent_post_id'],
         );
 

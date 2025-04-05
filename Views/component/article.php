@@ -12,7 +12,9 @@
     <div class="p-2">
       <div class="flex space-x-4">
         <p class="text-sm font-semibold"><?php echo $data['postedUser']->getUsername()  ?></p>
-        <!-- <p class="text-sm text-slate-400/60">@aoba</p> -->
+        <div class="text-gray-400 text-xs flex items-center">
+          <?php echo $data['post']->getFormattedCreatedAt(); ?>
+        </div>
       </div>
       <div class="mt-2">
         <p class="text-sm"><?php echo $data['post']->getContent() ?></p>
