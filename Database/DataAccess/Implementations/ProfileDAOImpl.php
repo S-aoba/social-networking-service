@@ -38,6 +38,19 @@ class ProfileDAOImpl implements ProfileDAO
       return true;
   }
 
+  public function getByUsername(string $username): ?Profile
+  {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT * FROM profiles WHERE username = ?";
+
+    $result = $mysqli->prepareAndFetchAll($query, 's', [$username])[0] ?? null;
+
+    if ($result === null) return null;
+
+    return $this->rowDataToProfile($result);
+  }
+
   private function getRowByUserId(int $userId): ?array{
     $mysqli = DatabaseManager::getMysqliConnection();
 
