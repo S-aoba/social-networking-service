@@ -13,7 +13,7 @@
       <div class="flex space-x-4">
         <p class="text-sm font-semibold"><?php echo $username  ?></p>
         <div class="text-gray-400 text-xs flex items-center">
-          <?php echo $data->getCreatedAt(); ?>
+          <?php echo $data->getFormattedCreatedAt(); ?>
         </div>
       </div>
       <div class="mt-2">
