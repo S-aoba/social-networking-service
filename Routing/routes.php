@@ -99,13 +99,17 @@ return [
 
             $postDAO = DAOFactory::getPostDAO();
             $post = $postDAO->getById(intval($postId));
+
             if($post === null) throw new Exception('Post not found!');
+
+            $replies = $postDAO->getReplies($postId);
 
             return new HTMLRenderer('page/post', [
                 'userId'  => $profile->getUserId(),
                 'username' => $profile->getUsername(), 
                 'imagePath' => $profile->getImagePath(), 
                 'data' => $post,
+                'replies' => $replies,
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
