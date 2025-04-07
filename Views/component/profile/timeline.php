@@ -9,7 +9,7 @@ $postCount = count($posts);
     <div class="w-full h-fit p-2">
       <div class="flex space-x-2">
         <div><img src="/images/undo-icon.svg" alt="undo"></div>
-        <div>aoba</div>
+        <div><?= $username ?></div>
       </div>
       <div><?php echo $postCount ?> 件のポスト</div>
       <div class="flex items-center justify-between">
