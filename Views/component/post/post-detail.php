@@ -30,5 +30,16 @@
       </button>
       </div>
     </form>
-  </div>
+    <div>
+      </div>
+    </div>
+    <div class="w-full h-fit border-t border-slate-200">
+      <?php
+        if($replies !== null) {
+          foreach ($replies as $data) {
+            include "Views/component/article.php";
+          }
+        }
+      ?>
+    </div>
 </div>
