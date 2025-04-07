@@ -27,7 +27,7 @@ $postCount = count($posts);
             <span class="font-semibold">
               年齢: 
             </span>
-            33
+            <?php echo $age ?>
           </div>
         <?php endif; ?>
         <?php if($address !== null): ?>
@@ -35,7 +35,7 @@ $postCount = count($posts);
           <span class="font-semibold">
             住所: 
           </span>
-          Osaka
+          <?php echo $address ?>
         </div>
         <?php endif; ?>
         <?php if($hobby !== null): ?>
@@ -43,7 +43,7 @@ $postCount = count($posts);
           <span class="font-semibold">
             趣味: 
           </span>
-          クレーンゲーム
+          <?php echo $hobby ?>
         </div>
         <?php endif; ?>
         <?php if($selfIntroduction !== null): ?>
@@ -51,10 +51,7 @@ $postCount = count($posts);
           <p class="font-semibold">
             自己紹介: 
           </p>
-        はじめまして! aoba です。  
-        フロントエンド・バックエンドの開発をしています。最近はPHPとReactにハマっています。  
-        趣味は映画鑑賞とランニング。好きな映画は「インターステラー」です！  
-        いろんな人と交流できたら嬉しいです。よろしくお願いします！
+          <?php echo $selfIntroduction ?>
         </div>
         <?php endif; ?>
       </div>
