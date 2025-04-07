@@ -90,12 +90,21 @@ return [
             $postId = $_GET['id'];
 
             // TODO: do validation
+            $user = Authenticate::getAuthenticatedUser();
+    
+            if($user === null) return new RedirectRenderer('login');
+    
+            $profileDAO = DAOFactory::getProfileDAO();
+            $profile = $profileDAO->getByUserId($user->getId());
 
             $postDAO = DAOFactory::getPostDAO();
             $post = $postDAO->getById(intval($postId));
             if($post === null) throw new Exception('Post not found!');
 
             return new HTMLRenderer('page/post', [
+                'userId'  => $profile->getUserId(),
+                'username' => $profile->getUsername(), 
+                'imagePath' => $profile->getImagePath(), 
                 'data' => $post,
             ]);
         } catch (\Exception $e) {
