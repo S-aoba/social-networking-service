@@ -108,6 +108,32 @@ class PostDAOImpl implements PostDAO
       return $postRow[0];
     }
 
+    public function getReplies(int $parentPostId): ?array
+    {
+      $repliesRow = $this->getRowByParentPostId($parentPostId);
+
+      if($repliesRow === null) return null;
+
+      return $repliesRow;
+    }
+    
+    private function getRowByParentPostId(int $parentPostId): ?array {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "SELECT posts.*, profiles.username, profiles.image_path, profiles.user_id
+                FROM posts
+                JOIN profiles ON posts.user_id = profiles.user_id
+                WHERE posts.parent_post_id = ?
+                ORDER BY posts.created_at DESC
+              ";
+
+      $result = $mysqli->prepareAndFetchAll($query, 'i', [$parentPostId]);
+
+      if(count($result) === 0) return null;
+
+      return $this->rowDataToPost($result);
+    }
+
     private function getRowById(int $postId): ?array {
       $mysqli = DatabaseManager::getMysqliConnection();
 
