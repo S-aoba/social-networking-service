@@ -2,7 +2,7 @@
     $imagePath = $data['postedUser']->getImagePath() === null ? '/images/default-icon.png' : $imagePath;
 ?>
 
-<div class="relative border-t border-slate-200 divide-y divide-slate-200">
+<div class="relative divide-y divide-slate-200">
   <a href="/post?id=<?= $data['post']->getId() ?>" class="absolute w-full h-full z-10 hover:bg-gray-200/40 transition duration-300"></a>
   <div class="flex">
     <div class="p-5">
