@@ -85,6 +85,26 @@ return [
         }
 
     })->setMiddleware(['auth']),
+    'post' => Route::create('post', function(): HTTPRenderer {
+        try {
+            $postId = $_GET['id'];
+
+            // TODO: do validation
+
+            $postDAO = DAOFactory::getPostDAO();
+            $post = $postDAO->getById(intval($postId));
+            if($post === null) throw new Exception('Post not found!');
+
+            return new HTMLRenderer('page/post', [
+                'data' => $post,
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+
+    })->setMiddleware(['auth']),
 
     'form/login' => Route::create('form/login', function (): HTTPRenderer {
         try {
