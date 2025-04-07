@@ -335,11 +335,11 @@ return [
             $success = $profileDAO->updateProfile($profile);
             if($success === false) throw new Exception('Failed to update profile!');
 
-            return new JSONRenderer(['status' => 'success']);
+            return new RedirectRenderer('profile?user=' . $username);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
     'form/reply' => Route::create('form/reply', function(): HTTPRenderer {

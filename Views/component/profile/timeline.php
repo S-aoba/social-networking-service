@@ -4,16 +4,17 @@ $postCount = count($posts);
 ?>
 
 <div class="col-span-8 w-full h-full flex flex-col">
+  <?php include "Views/component/profile/edit-profile-modal.php" ?>
   <div class="w-full flex-1">
     <div class="w-full h-fit p-2">
       <div class="flex space-x-2">
         <div><img src="/images/undo-icon.svg" alt="undo"></div>
-        <div>aoba</div>
+        <div><?= $username ?></div>
       </div>
       <div><?php echo $postCount ?> 件のポスト</div>
       <div class="flex items-center justify-between">
         <img src="<?php echo $imagepath ?>" alt="user-icon" class="size-32">
-        <button class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">プロフィールを編集</button>
+        <button id="edit-profile-button" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">プロフィールを編集</button>
       </div>
       <div class="flex flex-col space-y-2">
         <div>
@@ -75,3 +76,20 @@ $postCount = count($posts);
     <?php endforeach; ?>
    </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('modal');
+    const editProfileButton = document.getElementById('edit-profile-button');
+    const usernameInput = document.getElementById('username');
+      
+    editProfileButton.addEventListener('click', () => {
+      if(modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        usernameInput.focus();
+      } else {
+        modal.classList.add('hidden');
+      }
+    });  
+  });
+</script>
