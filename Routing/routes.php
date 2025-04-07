@@ -396,11 +396,11 @@ return [
             $success = $postDAO->create($post);
             if($success === false) throw new Exception('Failed to create reply!');
 
-            return new JSONRenderer(['status' => 'success']);
+            return new RedirectRenderer('post?id=' . $parentPostId);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
     'form/like' => Route::create('form/like', function(): HTTPRenderer {
