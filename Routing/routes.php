@@ -65,7 +65,7 @@ return [
             $followDAO = DAOFactory::getFollowDAO();
             $followerCount = $followDAO->getFollowerCount($profile->getUserId());
             $followingCount = $followDAO->getFollowingCount($profile->getUserId());
-            
+            error_log(var_export($posts, true));
             return new HTMLRenderer('page/profile', [
                 'userId' => $profile->getUserId(),
                 'username' => $profile->getUsername(),
@@ -76,7 +76,7 @@ return [
                 'selfIntroduction' => $profile->getSelfIntroduction(),
                 'posts' => $posts,
                 'followerCount' => $followerCount,
-                'followingCount' => $followingCount
+                'followingCount' => $followingCount,
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -99,13 +99,17 @@ return [
 
             $postDAO = DAOFactory::getPostDAO();
             $post = $postDAO->getById(intval($postId));
+
             if($post === null) throw new Exception('Post not found!');
+
+            $replies = $postDAO->getReplies($postId);
 
             return new HTMLRenderer('page/post', [
                 'userId'  => $profile->getUserId(),
                 'username' => $profile->getUsername(), 
                 'imagePath' => $profile->getImagePath(), 
                 'data' => $post,
+                'replies' => $replies,
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -396,11 +400,11 @@ return [
             $success = $postDAO->create($post);
             if($success === false) throw new Exception('Failed to create reply!');
 
-            return new JSONRenderer(['status' => 'success']);
+            return new RedirectRenderer('post?id=' . $parentPostId);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
     'form/like' => Route::create('form/like', function(): HTTPRenderer {

@@ -56,7 +56,16 @@ class PostDAOImpl implements PostDAO
     private function getRowFollowingPosts(int $userId): ?array {
       $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT posts.*, profiles.username, profiles.image_path, profiles.user_id
+      $query = "SELECT 
+                  posts.*, 
+                  profiles.username, 
+                  profiles.image_path, 
+                  profiles.user_id,
+                  (
+                        SELECT COUNT(*) 
+                        FROM posts AS child 
+                        WHERE child.parent_post_id = posts.id
+                    ) AS reply_count
                 FROM posts
                 JOIN profiles ON posts.user_id = profiles.user_id
                 WHERE posts.user_id = ? 
@@ -90,7 +99,8 @@ class PostDAOImpl implements PostDAO
 
         $arr = [
           'post' => $post,
-          'postedUser' => $postedUser
+          'postedUser' => $postedUser,
+          'replyCount' => $data['reply_count'],
         ];
 
         $output[] = $arr;
@@ -108,10 +118,54 @@ class PostDAOImpl implements PostDAO
       return $postRow[0];
     }
 
+    public function getReplies(int $parentPostId): ?array
+    {
+      $repliesRow = $this->getRowByParentPostId($parentPostId);
+
+      if($repliesRow === null) return null;
+
+      return $repliesRow;
+    }
+    
+    private function getRowByParentPostId(int $parentPostId): ?array {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "SELECT 
+                    posts.*, 
+                    profiles.username, 
+                    profiles.image_path, 
+                    profiles.user_id,
+                    (
+                        SELECT COUNT(*) 
+                        FROM posts AS child 
+                        WHERE child.parent_post_id = posts.id
+                    ) AS reply_count
+                FROM posts
+                JOIN profiles ON posts.user_id = profiles.user_id
+                WHERE posts.parent_post_id = ?
+                ORDER BY posts.created_at DESC;
+              ";
+
+      $result = $mysqli->prepareAndFetchAll($query, 'i', [$parentPostId]);
+
+      if(count($result) === 0) return null;
+
+      return $this->rowDataToPost($result);
+    }
+
     private function getRowById(int $postId): ?array {
       $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT posts.*, profiles.username, profiles.image_path, profiles.user_id
+      $query = "SELECT 
+                  posts.*, 
+                  profiles.username, 
+                  profiles.image_path, 
+                  profiles.user_id,
+                  (
+                        SELECT COUNT(*) 
+                        FROM posts AS child 
+                        WHERE child.parent_post_id = posts.id
+                    ) AS reply_count
                 FROM posts 
                 JOIN profiles ON posts.user_id = profiles.user_id
                 WHERE posts.id = ?
@@ -136,7 +190,16 @@ class PostDAOImpl implements PostDAO
     private function getRowByUserId(int $userId): ?array {
       $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT * FROM posts WHERE user_id = ? ORDER BY posts.created_at DESC LIMIT 10";
+      $query = "SELECT * ,
+                (
+                    SELECT COUNT(*) 
+                    FROM posts AS child 
+                    WHERE child.parent_post_id = posts.id
+                ) AS reply_count
+                FROM posts 
+                WHERE user_id = ? 
+                ORDER BY posts.created_at DESC 
+                LIMIT 10";
 
       $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
       if(count($result) === 0) return null;
@@ -156,7 +219,11 @@ class PostDAOImpl implements PostDAO
           parentPostId: $data['parent_post_id'],
         );
 
-        $output[] = $post;
+        $arr = [
+          'post' => $post,
+          'replyCount' => $data['reply_count'],
+        ]; 
+        $output[] = $arr;
       }
 
       return $output;
