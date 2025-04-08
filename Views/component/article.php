@@ -10,7 +10,7 @@
         <img src="<?php echo $imagePath ?>" alt="posted-user-icon" class="w-full h-full object-cover">
           </div>
       </div>
-    <div class="p-2">
+    <div class="w-full">
       <div class="flex space-x-4">
         <p class="text-sm font-semibold"><?php echo $data['postedUser']->getUsername()  ?></p>
         <div class="text-gray-400 text-xs flex items-center">
@@ -19,6 +19,12 @@
       </div>
       <div class="mt-2">
         <p class="text-sm"><?php echo $data['post']->getContent() ?></p>
+      </div>
+      <div class="w-full mt-2 flex items-center space-x-2 border-t border-slate-200 py-2">
+        <img src="/images/comment-icon.svg" alt="comment-icon" class="size-4 inline-block mr-1">
+        <?php if($data['replyCount']): ?>
+          <p class="text-sm text-gray-400"><?php echo $data['replyCount'] ?></p>
+        <?php endif; ?>
       </div>
     </div>
   </div>
