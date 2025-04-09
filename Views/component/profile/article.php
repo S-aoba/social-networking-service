@@ -10,7 +10,7 @@
         <img src="<?php echo $imagePath ?>" alt="posted-user-icon" class="w-full h-full object-cover">
           </div>
       </div>
-    <div class="p-2 w-full">
+    <div class="w-full">
       <div class="flex space-x-4">
         <p class="text-sm font-semibold"><?php echo $username  ?></p>
         <div class="text-gray-400 text-xs flex items-center">
@@ -20,11 +20,35 @@
       <div class="mt-2">
         <p class="text-sm"><?php echo $data['post']->getContent() ?></p>
       </div>
-      <div class="w-full mt-2 flex items-center space-x-2 border-t border-slate-200 py-2">
-        <img src="/images/comment-icon.svg" alt="comment-icon" class="size-4 inline-block mr-1">
-        <?php if($data['replyCount']): ?>
-          <p class="text-sm text-gray-400"><?php echo $data['replyCount'] ?></p>
-        <?php endif; ?>
+      <div class="w-full h-fit flex items-center justify-start">
+        <div class="w-20 h-full flex items-center justify-start space-x-2">
+          <img src="/images/comment-icon.svg" alt="comment-icon" class="size-4">
+          <?php if($data['replyCount']): ?>
+            <p class="text-sm text-gray-400"><?php echo $data['replyCount'] ?></p>
+          <?php endif; ?>
+        </div>
+        <div class="w-full h-full flex items-center justify-start space-x-2 py-5">
+          <?php if($data['like']): ?>
+            <div class="flex items-center justify-start space-x-1">
+              <form action="form/unlike" method="POST" class="w-full h-full flex items-center">
+                <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
+                <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+                <button type="submit" name="unlike" class= "z-20 hover:bg-red-100 rounded-full p-2 hover:cursor-pointer transition duration-300">
+                  <img src="/images/like-icon.svg" alt="unlike-icon" class="size-4">
+                </button>
+              </form>
+              <div class="text-sm text-gray-400"><?= $data['likeCount'] ?></div>
+            </div>
+          <?php else: ?>
+            <form action="form/like" method="POST" class="w-full h-full flex items-center">
+              <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
+              <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+              <button type="submit" name="unlike" class= "z-20 hover:bg-red-100 rounded-full p-2 hover:cursor-pointer transition duration-300">
+                <img src="/images/unlike-icon.svg" alt="unlike-icon" class="size-4">
+              </button>
+            </form>
+          <?php endif; ?>
+        </div>
       </div>
     </div>
   </div>

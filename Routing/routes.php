@@ -102,7 +102,7 @@ return [
 
             if($post === null) throw new Exception('Post not found!');
 
-            $replies = $postDAO->getReplies($postId);
+            $replies = $postDAO->getReplies($postId, $user->getId());
 
             return new HTMLRenderer('page/post', [
                 'userId'  => $profile->getUserId(),
