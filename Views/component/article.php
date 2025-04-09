@@ -21,18 +21,30 @@
         <p class="text-sm"><?php echo $data['post']->getContent() ?></p>
       </div>
       
-      <div class="w-full py-4 flex items-center justify-start">
+      <div class="w-full h-fit flex items-center justify-start">
         <div class="w-20 h-full flex items-center justify-start space-x-2">
           <img src="/images/comment-icon.svg" alt="comment-icon" class="size-4">
           <?php if($data['replyCount']): ?>
             <p class="text-sm text-gray-400"><?php echo $data['replyCount'] ?></p>
           <?php endif; ?>
         </div>
-        <div class="w-20 h-full flex items-center justify-start space-x-2">
+        <div class="w-full h-full flex items-center justify-start space-x-2 py-5">
           <?php if($data['like']): ?>
-            <img src="/images/like-icon.svg" alt="unlike-icon" class="size-4 inline-block">
+            <form action="form/unlike" method="POST" class="w-full h-full flex items-center">
+              <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
+              <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+              <button type="submit" name="unlike" class= "z-20 hover:bg-red-100 rounded-full p-2 hover:cursor-pointer transition duration-300">
+                <img src="/images/like-icon.svg" alt="unlike-icon" class="size-4">
+              </button>
+            </form>
           <?php else: ?>
-            <img src="/images/unlike-icon.svg" alt="unlike-icon" class="size-4">
+            <form action="form/like" method="POST" class="w-full h-full flex items-center">
+              <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
+              <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+              <button type="submit" name="unlike" class= "z-20 hover:bg-red-100 rounded-full p-2 hover:cursor-pointer transition duration-300">
+                <img src="/images/unlike-icon.svg" alt="unlike-icon" class="size-4">
+              </button>
+            </form>
           <?php endif; ?>
         </div>
       </div>
