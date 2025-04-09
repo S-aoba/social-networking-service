@@ -10,4 +10,5 @@ interface FollowDAO
   public function unfollow(int $userId, int $followUserId): bool;
   public function getFollowerCount($userId): int;
   public function getFollowingCount($userId): int;
+  public function getFollowing(int $userId): ?array;
 }
