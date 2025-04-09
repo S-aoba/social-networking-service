@@ -118,6 +118,54 @@ return [
         }
 
     })->setMiddleware(['auth']),
+    'following' => Route::create('following', function(): HTTPRenderer {
+        try {
+            $user = Authenticate::getAuthenticatedUser();
+    
+            if($user === null) return new RedirectRenderer('login');
+    
+            $profileDAO = DAOFactory::getProfileDAO();
+            $profile = $profileDAO->getByUserId($user->getId());
+
+            $followDAO = DAOFactory::getFollowDAO();
+            $following = $followDAO->getFollowing($profile->getUserId());
+            if($following === null) throw new Exception('Following not found!');
+
+            return new HTMLRenderer('page/following', [
+                'userId'  => $profile->getUserId(),
+                'username' => $profile->getUsername(), 
+                'imagePath' => $profile->getImagePath(),
+                'data' => $following,
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            return new RedirectRenderer('login');
+        }
+    }),
+    'follower' => Route::create('follower', function(): HTTPRenderer {
+        try {
+            $user = Authenticate::getAuthenticatedUser();
+    
+            if($user === null) return new RedirectRenderer('login');
+    
+            $profileDAO = DAOFactory::getProfileDAO();
+            $profile = $profileDAO->getByUserId($user->getId());
+
+            $followDAO = DAOFactory::getFollowDAO();
+            $follower = $followDAO->getFollower($profile->getUserId());
+            if($follower === null) throw new Exception('Follower not found!');
+
+            return new HTMLRenderer('page/follower', [
+                'userId'  => $profile->getUserId(),
+                'username' => $profile->getUsername(), 
+                'imagePath' => $profile->getImagePath(),
+                'data' => $follower,
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            return new RedirectRenderer('login');
+        }
+    }),
 
     'form/login' => Route::create('form/login', function (): HTTPRenderer {
         try {
