@@ -98,11 +98,11 @@ return [
             $profile = $profileDAO->getByUserId($user->getId());
 
             $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById(intval($postId));
+            $post = $postDAO->getById(intval($postId), intval($user->getId()));
 
             if($post === null) throw new Exception('Post not found!');
 
-            $replies = $postDAO->getReplies($postId);
+            $replies = $postDAO->getReplies($postId, intval($user->getId()));
 
             return new HTMLRenderer('page/post', [
                 'userId'  => $profile->getUserId(),
@@ -429,11 +429,11 @@ return [
 
             if($success === false) throw new Exception('Failed to like post!');
 
-            return new JSONRenderer(['status' => 'success']);
+            return new RedirectRenderer('post?id=' . $postId);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
     'form/unlike' => Route::create('form/unlike', function(): HTTPRenderer {
@@ -458,11 +458,11 @@ return [
 
             if($success === false) throw new Exception('Failed to like post!');
 
-            return new JSONRenderer(['status' => 'success']);
+            return new RedirectRenderer('post?id=' . $postId);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
 ];
