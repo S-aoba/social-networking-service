@@ -4,6 +4,7 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DataAccess\Interfaces\FollowDAO;
 use Database\DatabaseManager;
+use Models\Profile;
 
 class FollowDAOImpl implements FollowDAO
 {
@@ -45,6 +46,48 @@ class FollowDAOImpl implements FollowDAO
     $followingRow = $this->getRowFollowingCount($userId);
 
     return $followingRow;
+  }
+
+  public function getFollowing(int $userId): ?array
+  {
+    $followingRow = $this->getRowFollowing($userId);
+
+    if($followingRow === null) return null;
+
+    return $followingRow;
+  }
+
+  private function getRowFollowing(int $userId): ?array {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT profiles.*
+              FROM follows 
+              JOIN profiles
+              ON follows.following_id = profiles.user_id
+              WHERE follower_id = ?";
+
+    $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
+
+    if(!$result === null) return null;
+
+    return $this->rowDataToProfile($result);
+  }
+
+  private function rowDataToProfile(array $rowData): array {
+    $profiles = [];
+
+    foreach($rowData as $row) {
+      $profile = new Profile(
+        username: $row['username'],
+        userId: $row['user_id'],
+        selfIntroduction: $row['self_introduction'],
+        imagePath: $row['image_path'],
+      );
+
+      $profiles[] = $profile;
+    }
+
+    return $profiles;
   }
 
   private function getRowFollowerCount(int $userId): int {
