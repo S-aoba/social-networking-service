@@ -65,7 +65,7 @@ return [
             $followDAO = DAOFactory::getFollowDAO();
             $followerCount = $followDAO->getFollowerCount($profile->getUserId());
             $followingCount = $followDAO->getFollowingCount($profile->getUserId());
-            error_log(var_export($posts, true));
+
             return new HTMLRenderer('page/profile', [
                 'userId' => $profile->getUserId(),
                 'username' => $profile->getUsername(),
