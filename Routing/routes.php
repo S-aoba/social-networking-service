@@ -98,11 +98,11 @@ return [
             $profile = $profileDAO->getByUserId($user->getId());
 
             $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById(intval($postId));
+            $post = $postDAO->getById(intval($postId), intval($user->getId()));
 
             if($post === null) throw new Exception('Post not found!');
 
-            $replies = $postDAO->getReplies($postId, $user->getId());
+            $replies = $postDAO->getReplies($postId, intval($user->getId()));
 
             return new HTMLRenderer('page/post', [
                 'userId'  => $profile->getUserId(),
