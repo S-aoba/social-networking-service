@@ -73,6 +73,31 @@ class FollowDAOImpl implements FollowDAO
     return $this->rowDataToProfile($result);
   }
 
+  public function getFollower(int $userId): ?array
+  {
+    $followingRow = $this->getRowFollower($userId);
+
+    if($followingRow === null) return null;
+
+    return $followingRow;
+  }
+
+  private function getRowFollower(int $userId): ?array {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT profiles.*
+              FROM follows 
+              JOIN profiles
+              ON follows.follower_id = profiles.user_id
+              WHERE following_id = ?";
+
+    $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
+
+    if(!$result === null) return null;
+
+    return $this->rowDataToProfile($result);
+  }
+
   private function rowDataToProfile(array $rowData): array {
     $profiles = [];
 

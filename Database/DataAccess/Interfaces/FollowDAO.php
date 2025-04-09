@@ -11,4 +11,5 @@ interface FollowDAO
   public function getFollowerCount($userId): int;
   public function getFollowingCount($userId): int;
   public function getFollowing(int $userId): ?array;
+  public function getFollower(int $userId): ?array;
 }
