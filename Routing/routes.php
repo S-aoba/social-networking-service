@@ -429,11 +429,11 @@ return [
 
             if($success === false) throw new Exception('Failed to like post!');
 
-            return new JSONRenderer(['status' => 'success']);
+            return new RedirectRenderer('post?id=' . $postId);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
     'form/unlike' => Route::create('form/unlike', function(): HTTPRenderer {
@@ -458,11 +458,11 @@ return [
 
             if($success === false) throw new Exception('Failed to like post!');
 
-            return new JSONRenderer(['status' => 'success']);
+            return new RedirectRenderer('post?id=' . $postId);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
 ];
