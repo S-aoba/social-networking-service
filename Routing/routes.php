@@ -118,6 +118,31 @@ return [
         }
 
     })->setMiddleware(['auth']),
+    'following' => Route::create('following', function(): HTTPRenderer {
+        try {
+            $user = Authenticate::getAuthenticatedUser();
+    
+            if($user === null) return new RedirectRenderer('login');
+    
+            $profileDAO = DAOFactory::getProfileDAO();
+            $profile = $profileDAO->getByUserId($user->getId());
+
+            $followDAO = DAOFactory::getFollowDAO();
+            $following = $followDAO->getFollowing($profile->getUserId());
+            if($following === null) throw new Exception('Following not found!');
+            error_log(var_export($following, true));
+
+            return new HTMLRenderer('page/following', [
+                'userId'  => $profile->getUserId(),
+                'username' => $profile->getUsername(), 
+                'imagePath' => $profile->getImagePath(),
+                'data' => $following,
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            return new RedirectRenderer('login');
+        }
+    }),
 
     'form/login' => Route::create('form/login', function (): HTTPRenderer {
         try {
