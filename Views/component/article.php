@@ -11,20 +11,30 @@
           </div>
       </div>
     <div class="w-full">
-      <div class="flex space-x-4">
+      <div class="flex space-x-4 py-2">
         <p class="text-sm font-semibold"><?php echo $data['postedUser']->getUsername()  ?></p>
         <div class="text-gray-400 text-xs flex items-center">
           <?php echo $data['post']->getFormattedCreatedAt(); ?>
         </div>
       </div>
-      <div class="mt-2">
+      <div class="py-4">
         <p class="text-sm"><?php echo $data['post']->getContent() ?></p>
       </div>
-      <div class="w-full mt-2 flex items-center space-x-2 border-t border-slate-200 py-2">
-        <img src="/images/comment-icon.svg" alt="comment-icon" class="size-4 inline-block mr-1">
-        <?php if($data['replyCount']): ?>
-          <p class="text-sm text-gray-400"><?php echo $data['replyCount'] ?></p>
-        <?php endif; ?>
+      
+      <div class="w-full py-4 flex items-center justify-start">
+        <div class="w-20 h-full flex items-center justify-start space-x-2">
+          <img src="/images/comment-icon.svg" alt="comment-icon" class="size-4">
+          <?php if($data['replyCount']): ?>
+            <p class="text-sm text-gray-400"><?php echo $data['replyCount'] ?></p>
+          <?php endif; ?>
+        </div>
+        <div class="w-20 h-full flex items-center justify-start space-x-2">
+          <?php if($data['like']): ?>
+            <img src="/images/like-icon.svg" alt="unlike-icon" class="size-4 inline-block">
+          <?php else: ?>
+            <img src="/images/unlike-icon.svg" alt="unlike-icon" class="size-4">
+          <?php endif; ?>
+        </div>
       </div>
     </div>
   </div>
