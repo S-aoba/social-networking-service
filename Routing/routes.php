@@ -141,7 +141,7 @@ return [
             error_log($e->getMessage());
             return new RedirectRenderer('login');
         }
-    }),
+    })->setMiddleware(['auth']),
     'follower' => Route::create('follower', function(): HTTPRenderer {
         try {
             $user = Authenticate::getAuthenticatedUser();
@@ -165,7 +165,7 @@ return [
             error_log($e->getMessage());
             return new RedirectRenderer('login');
         }
-    }),
+    })->setMiddleware(['auth']),
 
     'form/login' => Route::create('form/login', function (): HTTPRenderer {
         try {
