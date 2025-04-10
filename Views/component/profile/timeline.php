@@ -8,7 +8,7 @@ $postCount = count($posts);
   <div class="w-full flex-1">
     <div class="w-full h-fit p-2">
       <div class="flex space-x-2">
-        <div><img src="/images/undo-icon.svg" alt="undo"></div>
+        <div><img src="/images/undo-icon.svg" alt="undo" id="undoButton"></div>
         <div><?= $username ?></div>
       </div>
       <div><?php echo $postCount ?> 件のポスト</div>
@@ -77,6 +77,7 @@ $postCount = count($posts);
    </div>
 </div>
 
+<script src="/js/undo.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('modal');
