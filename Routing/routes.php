@@ -473,40 +473,13 @@ return [
                 userId: $userId,
                 postId: $postId
             );
-            $success = $likeDAO->createLike($like);
-
+            
+            $isLiked = $likeDAO->checkIsLiked($like);
+            $success = $isLiked ? $likeDAO->unlike($like) : $likeDAO->createLike($like);
+            
             if($success === false) throw new Exception('Failed to like post!');
-
-            return new RedirectRenderer('post?id=' . $postId);
-        } catch (Exception $e) {
-            error_log($e->getMessage());
-
-            return new RedirectRenderer('login');
-        }
-    })->setMiddleware(['auth']),
-    'form/unlike' => Route::create('form/unlike', function(): HTTPRenderer {
-        try {
-            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
-
-            $postId = $_POST['post_id'];
-
-            // TODO: do validation
-
-            $user = Authenticate::getAuthenticatedUser();
-            if($user === null) return new RedirectRenderer('login');
-
-            $userId = $user->getId();
-
-            $likeDAO = DAOFactory::getLikeDAO();
-            $like = new Like(
-                userId: $userId,
-                postId: $postId
-            );
-            $success = $likeDAO->unlike($like);
-
-            if($success === false) throw new Exception('Failed to like post!');
-
-            return new RedirectRenderer('post?id=' . $postId);
+            
+            return new JSONRenderer(['status' => 'success']);
         } catch (Exception $e) {
             error_log($e->getMessage());
 

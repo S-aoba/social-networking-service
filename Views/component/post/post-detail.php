@@ -44,3 +44,4 @@
     </div>
 </div>
 <script src="/js/undo.js"></script>
+<script src="/js/like.js"></script>

@@ -29,28 +29,25 @@
           <?php endif; ?>
         </div>
         <div class="w-full h-full flex items-center justify-start space-x-2 py-5">
-          <?php if($data['like']): ?>
-            <div class="flex items-center justify-start space-x-1">
-              <form action="form/unlike" method="POST" class="w-full h-full flex items-center">
-                <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
-                <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
-                <button type="submit" name="unlike" class= "z-20 hover:bg-red-100 rounded-full p-2 hover:cursor-pointer transition duration-300">
-                  <img src="/images/like-icon.svg" alt="unlike-icon" class="size-4">
-                </button>
-              </form>
-              <div class="text-sm text-gray-400"><?= $data['likeCount'] ?></div>
-            </div>
-          <?php else: ?>
-            <form action="form/like" method="POST" class="w-full h-full flex items-center">
+          <div class="flex items-center justify-start space-x-1">
+            <form method="POST" class="post-form w-full h-full flex items-center">
               <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
               <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
-              <button type="submit" name="unlike" class= "z-20 hover:bg-red-100 rounded-full p-2 hover:cursor-pointer transition duration-300">
-                <img src="/images/unlike-icon.svg" alt="unlike-icon" class="size-4">
-              </button>
-            </form>
-          <?php endif; ?>
+              <button type="submit" name="like-button" class= "z-20 hover:bg-red-100 rounded-full p-2 hover:cursor-pointer transition duration-300">
+                  <?php if($data['like']): ?>
+                  <div class="flex items-center space-x-2">
+                    <img src="/images/like-icon.svg" alt="unlike-icon" class="size-4">
+                    <div class="text-sm text-gray-400"><?= $data['likeCount'] ?></div>
+                  </div>
+                  <?php else: ?>
+                  <img src="/images/unlike-icon.svg" alt="unlike-icon" class="size-4">
+                  <?php endif; ?>
+                </button>
+              </form>
+            </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+

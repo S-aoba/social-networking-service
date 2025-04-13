@@ -44,18 +44,24 @@ class LikeDAOImpl implements LikeDAO {
     return true;
   }
 
-  public function getLikesByUserId(int $userId): array
+  public function checkIsLiked(Like $like): bool
   {
-    return [];
+    return $this->checkRowIsLiked($like);
   }
 
-  public function getLikesByPostId(int $postId): array
+  private function checkRowIsLiked(Like $like): bool 
   {
-    return [];
-  }
+    $mysqli = DatabaseManager::getMysqliConnection();
 
-  public function getAllLikes(): array
-  {
-    return [];
+    $query = "SELECT 1 FROM likes WHERE user_id = ? AND post_id = ?";
+
+    $result = $mysqli->prepareAndFetchAll($query, 'ii', [
+      $like->getUserId(),
+      $like->getPostId()
+    ]);
+    
+    if(count($result) === 0) return false;
+
+    return true;
   }
 }

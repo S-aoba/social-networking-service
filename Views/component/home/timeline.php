@@ -8,3 +8,5 @@
      <?php endforeach; ?>
    </div>
 </div>
+
+<script src="/js/like.js"></script>
