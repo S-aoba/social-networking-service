@@ -94,3 +94,4 @@ $postCount = count($posts);
     });  
   });
 </script>
+<script src="/js/like.js"></script>
