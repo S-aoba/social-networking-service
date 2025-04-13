@@ -43,19 +43,4 @@ class LikeDAOImpl implements LikeDAO {
 
     return true;
   }
-
-  public function getLikesByUserId(int $userId): array
-  {
-    return [];
-  }
-
-  public function getLikesByPostId(int $postId): array
-  {
-    return [];
-  }
-
-  public function getAllLikes(): array
-  {
-    return [];
-  }
 }
