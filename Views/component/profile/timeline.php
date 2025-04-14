@@ -90,21 +90,6 @@ $postCount = $post === null ? 0 : count($posts);
 </div>
 
 <script src="/js/undo.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('modal');
-    const editProfileButton = document.getElementById('edit-profile-button');
-    const usernameInput = document.getElementById('username');
-      
-    editProfileButton.addEventListener('click', () => {
-      if(modal.classList.contains('hidden')) {
-        modal.classList.remove('hidden');
-        usernameInput.focus();
-      } else {
-        modal.classList.add('hidden');
-      }
-    });  
-  });
-</script>
+<script src="/js/profile-modal.js"></script>
 <script src="/js/like.js"></script>
 <script src="/js/follow.js"></script>
