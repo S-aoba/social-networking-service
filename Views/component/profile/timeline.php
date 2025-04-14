@@ -15,6 +15,8 @@ $postCount = count($posts);
       <div class="flex items-center justify-between">
         <img src="<?php echo $imagepath ?>" alt="user-icon" class="size-32">
         <button id="edit-profile-button" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">プロフィールを編集</button>
+         <!-- <button class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">フォロー</button> -->
+         <!-- <button class="p-2 border bg-slate-700 text-white border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-700/70 cursor-pointer">フォロー中</button> -->
       </div>
       <div class="flex flex-col space-y-2">
         <div>
