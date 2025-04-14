@@ -17,7 +17,6 @@ $postCount = count($posts);
         <!-- <button id="edit-profile-button" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">プロフィールを編集</button> -->
         <form method="POST" id="follow-form">
           <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
-          <input type="hidden" name="follower_id" value=1>
           <input type="hidden" name="following_id" value=2>
           
           <button id="follow-btn" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">フォロー</button>
