@@ -56,6 +56,10 @@ return [
             $username = $_GET['user'];
             // TODO: do validation
             
+            $user = Authenticate::getAuthenticatedUser();
+
+            if($user === null) return new RedirectRenderer('login');
+
             $profileDAO = DAOFactory::getProfileDAO();
             $profile = $profileDAO->getByUsername($username);
 
@@ -66,7 +70,12 @@ return [
             $followerCount = $followDAO->getFollowerCount($profile->getUserId());
             $followingCount = $followDAO->getFollowingCount($profile->getUserId());
 
+            $isFollow = $followDAO->checkIsFollow($user->getId(), $profile->getUserId());
+
             return new HTMLRenderer('page/profile', [
+                'isFollow' => $isFollow,
+                'loginedUserId' => $user->getId(),
+                'profile' => $profile ,
                 'userId' => $profile->getUserId(),
                 'username' => $profile->getUsername(),
                 'imagePath' => $profile->getImagePath(),

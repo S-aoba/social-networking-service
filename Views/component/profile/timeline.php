@@ -1,6 +1,6 @@
 <?php
 $imagepath = $imagepath === null ? '/images/default-icon.png' : $imagepath;
-$postCount = count($posts);
+$postCount = $post === null ? 0 : count($posts);
 ?>
 
 <div class="col-span-8 w-full h-full flex flex-col">
@@ -14,14 +14,19 @@ $postCount = count($posts);
       <div><?php echo $postCount ?> 件のポスト</div>
       <div class="flex items-center justify-between">
         <img src="<?php echo $imagepath ?>" alt="user-icon" class="size-32">
-        <!-- <button id="edit-profile-button" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">プロフィールを編集</button> -->
-        <form method="POST" id="follow-form">
-          <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
-          <input type="hidden" name="following_id" value=2>
-          
-          <button id="follow-btn" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">フォロー</button>
-          <!-- <button class="p-2 border bg-slate-700 text-white border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-700/70 cursor-pointer">フォロー中</button> -->
-        </form>
+        <?php if($loginedUserId === $profile->getUserId()): ?>
+          <button id="edit-profile-button" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">プロフィールを編集</button>
+        <?php else: ?>
+          <form method="POST" id="follow-form">
+            <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
+            <input type="hidden" name="following_id" value=2>
+            <?php if($isFollow): ?>
+              <button class="p-2 border bg-slate-700 text-white border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-700/70 cursor-pointer">フォロー中</button>
+            <?php else : ?>
+              <button id="follow-btn" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">フォロー</button>
+            <?php endif ; ?>
+          </form>
+        <?php endif; ?>
       </div>
       <div class="flex flex-col space-y-2">
         <div>
