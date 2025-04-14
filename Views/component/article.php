@@ -3,13 +3,15 @@
 ?>
 
 <div class="relative divide-y divide-slate-200">
-  <a href="/post?id=<?= $data['post']->getId() ?>" class="absolute w-full h-full z-10 hover:bg-gray-200/40 transition duration-300"></a>
+  <!-- <a href="/post?id=<?= $data['post']->getId() ?>" class="absolute w-full h-full z-10 hover:bg-gray-200/40 transition duration-300"></a> -->
   <div class="flex">
     <div class="p-5">
       <div class="size-10 rounded-full overflow-hidden">
-        <img src="<?php echo $imagePath ?>" alt="posted-user-icon" class="w-full h-full object-cover">
-          </div>
+        <a href="<?php echo '/profile?user=' . $data['postedUser']->getUsername(); ?>"">
+          <img src="<?php echo $imagePath ?>" alt="posted-user-icon" class="w-full h-full object-cover">
+        </a>
       </div>
+    </div>
     <div class="w-full">
       <div class="flex space-x-4 py-2">
         <p class="text-sm font-semibold"><?php echo $data['postedUser']->getUsername()  ?></p>
