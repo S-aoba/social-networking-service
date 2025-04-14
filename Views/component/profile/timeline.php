@@ -14,9 +14,15 @@ $postCount = count($posts);
       <div><?php echo $postCount ?> 件のポスト</div>
       <div class="flex items-center justify-between">
         <img src="<?php echo $imagepath ?>" alt="user-icon" class="size-32">
-        <button id="edit-profile-button" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">プロフィールを編集</button>
-         <!-- <button class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">フォロー</button> -->
-         <!-- <button class="p-2 border bg-slate-700 text-white border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-700/70 cursor-pointer">フォロー中</button> -->
+        <!-- <button id="edit-profile-button" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">プロフィールを編集</button> -->
+        <form method="POST" id="follow-form">
+          <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
+          <input type="hidden" name="follower_id" value=1>
+          <input type="hidden" name="following_id" value=2>
+          
+          <button id="follow-btn" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">フォロー</button>
+          <!-- <button class="p-2 border bg-slate-700 text-white border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-700/70 cursor-pointer">フォロー中</button> -->
+        </form>
       </div>
       <div class="flex flex-col space-y-2">
         <div>
@@ -97,3 +103,4 @@ $postCount = count($posts);
   });
 </script>
 <script src="/js/like.js"></script>
+<script src="/js/follow.js"></script>
