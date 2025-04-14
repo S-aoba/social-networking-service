@@ -1,6 +1,6 @@
 <?php
 $imagepath = $imagepath === null ? '/images/default-icon.png' : $imagepath;
-$postCount = $post === null ? 0 : count($posts);
+$postCount = $posts === null ? 0 : count($posts);
 ?>
 
 <div class="col-span-8 w-full h-full flex flex-col">
