@@ -82,6 +82,27 @@ class FollowDAOImpl implements FollowDAO
     return $followingRow;
   }
 
+  public function checkIsFollow(int $userId, int $followingId): bool
+  {
+    return $this->checkRowIsFollow($userId, $followingId);
+  }
+
+  private function checkRowIsFollow(int $userId, int $followingId):bool 
+  {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT 1 FROM follows WHERE follower_id = ? AND following_id = ?";
+
+    $result = $mysqli->prepareAndFetchAll($query, 'ii', [
+      $userId,
+      $followingId
+    ]);
+
+    if(count($result) === 0) return false;
+
+    return true;
+  }
+
   private function getRowFollower(int $userId): ?array {
     $mysqli = DatabaseManager::getMysqliConnection();
 
