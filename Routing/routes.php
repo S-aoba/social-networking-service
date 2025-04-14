@@ -321,14 +321,19 @@ return [
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $request = [
-                'follower_id' => $_POST['follower_id'], // 自身のID
-                'following_id' => $_POST['following_id'], // フォロー対象のID
-            ];
+            $user = Authenticate::getAuthenticatedUser();
+
+            if($user === null) return new RedirectRenderer('login');
+
+            $userId = $user->getId();
+            $followingId = $_POST['following_id'];
+            
 
             // TODO: do validation
             $followDAO = DAOFactory::getFollowDAO();
-            $success = $followDAO->follow($request['follower_id'], $request['following_id']);
+
+            $isFollow = $followDAO->checkIsFollow($userId, $followingId);
+            $success = $isFollow ? $followDAO->unfollow($userId, $followingId) : $followDAO->follow($userId, $followingId);
 
             if(!$success) throw new Exception('Failed follow');
 
@@ -339,30 +344,6 @@ return [
 
             return new JSONRenderer(['status' => 'error']);
         }    
-    })->setMiddleware(['auth']),
-    'form/unfollow' => Route::create('form/unfollow', function(): HTTPRenderer {
-        try {
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
-
-            $request = [
-                'follower_id' => $_POST['follower_id'], // 自身のID
-                'following_id' => $_POST['following_id'], // フォロー対象のID
-            ];
-
-            // TODO: do validation
-            $followDAO = DAOFactory::getFollowDAO();
-            $success = $followDAO->unfollow($request['follower_id'], $request['following_id']);
-
-            if(!$success) throw new Exception('Failed unfollow');
-
-            return new JSONRenderer(['status' => 'success']);
-        } catch (\Exception $e) {
-            error_log($e->getMessage());
-            FlashData::setFlashData('error', 'An error occurred.');
-
-            return new JSONRenderer(['status' => 'error']);
-        }
-        
     })->setMiddleware(['auth']),
     'form/delete/post' => Route::create('form/delete/post', function(): HTTPRenderer {
         try {
