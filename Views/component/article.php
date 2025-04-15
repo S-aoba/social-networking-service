@@ -7,7 +7,7 @@
   <div class="flex">
     <div class="p-5">
       <div class="size-10 rounded-full overflow-hidden">
-        <a href="<?php echo '/profile?user=' . $data['postedUser']->getUsername(); ?>"">
+        <a href="<?php echo '/profile?user=' . $data['postedUser']->getUsername(); ?>"" class="z-30 relative hover:opacity-50">
           <img src="<?php echo $imagePath ?>" alt="posted-user-icon" class="w-full h-full object-cover">
         </a>
       </div>
