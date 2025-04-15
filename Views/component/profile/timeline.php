@@ -3,7 +3,7 @@ $imagepath = $profile->getImagePath() === null ? '/images/default-icon.png' : $p
 $postCount = $posts === null ? 0 : count($posts);
 ?>
 
-<div class="col-span-8 w-full h-full flex flex-col">
+<div class="col-span-8 w-full h-full flex flex-col overflow-auto">
   <?php include "Views/component/profile/edit-profile-modal.php" ?>
   <div class="w-full flex-1">
     <div class="w-full h-fit p-2">
