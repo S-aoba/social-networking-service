@@ -1,5 +1,5 @@
 <?php
-$imagepath = $imagepath === null ? '/images/default-icon.png' : $imagepath;
+$imagepath = $profile->getImagePath() === null ? '/images/default-icon.png' : $profile->getImagePath();
 $postCount = $posts === null ? 0 : count($posts);
 ?>
 
@@ -9,7 +9,7 @@ $postCount = $posts === null ? 0 : count($posts);
     <div class="w-full h-fit p-2">
       <div class="flex space-x-2">
         <div><img src="/images/undo-icon.svg" alt="undo" id="undoButton"></div>
-        <div><?= $username ?></div>
+        <div><?= $profile->getUsername() ?></div>
       </div>
       <div><?php echo $postCount ?> 件のポスト</div>
       <div class="flex items-center justify-between">
@@ -33,38 +33,38 @@ $postCount = $posts === null ? 0 : count($posts);
           <span class="font-semibold">
             ユーザ名: 
           </span>
-          <?php echo $username ?>
+          <?php echo $profile->getUsername() ?>
         </div>
-        <?php if($age !== null): ?>
+        <?php if($profile->getAge() !== null): ?>
           <div>
             <span class="font-semibold">
               年齢: 
             </span>
-            <?php echo $age ?>
+            <?php echo $profile->getAge() ?>
           </div>
         <?php endif; ?>
-        <?php if($address !== null): ?>
+        <?php if($profile->getAddress() !== null): ?>
         <div>
           <span class="font-semibold">
             住所: 
           </span>
-          <?php echo $address ?>
+          <?php echo $profile->getAddress() ?>
         </div>
         <?php endif; ?>
-        <?php if($hobby !== null): ?>
+        <?php if($profile->getHobby() !== null): ?>
         <div>
           <span class="font-semibold">
             趣味: 
           </span>
-          <?php echo $hobby ?>
+          <?php echo $profile->getHobby() ?>
         </div>
         <?php endif; ?>
-        <?php if($selfIntroduction !== null): ?>
+        <?php if($profile->getSelfIntroduction() !== null): ?>
         <div>
           <p class="font-semibold">
             自己紹介: 
           </p>
-          <?php echo $selfIntroduction ?>
+          <?php echo $profile->getSelfIntroduction() ?>
         </div>
         <?php endif; ?>
       </div>
