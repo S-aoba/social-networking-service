@@ -29,9 +29,7 @@ return [
             $followerPosts = $postDAO->getFollowingPosts($user->getId());
     
             return new HTMLRenderer('page/home', [
-                'userId'  => $profile->getUserId(),
-                'username' => $profile->getUsername(), 
-                'imagePath' => $profile->getImagePath(), 
+                'profile' => $profile,
                 'followerPosts' => $followerPosts,
             ]);
         } catch (\Exception $e) {
@@ -75,14 +73,7 @@ return [
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
                 'loginedUserId' => $user->getId(),
-                'profile' => $profile ,
-                'userId' => $profile->getUserId(),
-                'username' => $profile->getUsername(),
-                'imagePath' => $profile->getImagePath(),
-                'age' => $profile->getAge(),
-                'address' => $profile->getAddress(),
-                'hobby' => $profile->getHobby(),
-                'selfIntroduction' => $profile->getSelfIntroduction(),
+                'profile' => $profile,
                 'posts' => $posts,
                 'followerCount' => $followerCount,
                 'followingCount' => $followingCount,
@@ -114,9 +105,7 @@ return [
             $replies = $postDAO->getReplies($postId, intval($user->getId()));
 
             return new HTMLRenderer('page/post', [
-                'userId'  => $profile->getUserId(),
-                'username' => $profile->getUsername(), 
-                'imagePath' => $profile->getImagePath(), 
+                'profile' => $profile,
                 'data' => $post,
                 'replies' => $replies,
             ]);
