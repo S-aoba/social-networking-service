@@ -19,7 +19,7 @@ $navigationList = [
     [
         'label' => 'プロフィール',
         'imagePath' => '/images/profile.svg',
-        'linkPath' => "/profile?user={$username}"
+        'linkPath' => "/profile?user={$profile->getUserName()}"
     ]
 ];
 ?>
