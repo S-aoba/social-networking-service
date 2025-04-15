@@ -1,5 +1,5 @@
 <?php
-    $imagePath = $imagePath === null ? '/images/default-icon.png' : $imagePath;
+    $imagePath = $profile->getImagePath() === null ? '/images/default-icon.png' : $profile->getImagePath();
 ?>
 
 <div class="relative border-t border-slate-200 divide-y divide-slate-200">
@@ -7,14 +7,14 @@
   <div class="flex">
     <div class="p-5">
       <div class="size-10 rounded-full overflow-hidden">
-        <a href="<?php echo '/profile?user=' . $username; ?>"">
+        <a href="<?php echo '/profile?user=' . $profile->getUsername(); ?>"">
           <img src="<?php echo $imagePath ?>" alt="posted-user-icon" class="w-full h-full object-cover">
         </a>
       </div>
     </div>
     <div class="w-full">
       <div class="flex space-x-4">
-        <p class="text-sm font-semibold"><?php echo $username  ?></p>
+        <p class="text-sm font-semibold"><?php echo $profile->getUsername()  ?></p>
         <div class="text-gray-400 text-xs flex items-center">
           <?php echo $data['post']->getFormattedCreatedAt(); ?>
         </div>

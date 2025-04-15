@@ -1,5 +1,5 @@
 <?php
-    $imagePath = $imagePath === null ? 'https://picsum.photos/200/300' : $imagePath;
+    $imagePath = $profile->getImagePath() === null ? 'https://picsum.photos/200/300' : $profile->getImagePath();
 ?>
 
 <div class="col-span-8 w-full h-full flex flex-col">

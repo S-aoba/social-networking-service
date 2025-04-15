@@ -1,5 +1,5 @@
 <?php
-    $imagePath = $imagePath === null ? 'https://picsum.photos/200/300' : $imagePath;
+    $imagePath = $profile->getImagePath() === null ? '/images/default-icon.png' : $profile->getImagePath();
 ?>
 
 <div class="flex">
