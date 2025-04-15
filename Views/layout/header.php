@@ -10,8 +10,8 @@
 
         <title>Social Networking Service</title>
     </head>
-    <body class="h-screen w-screen flex flex-col items-center bg-white">
-        <main class="max-w-screen-lg w-full h-full">
+    <body class="max-h-screen h-screen w-screen flex flex-col items-center bg-white">
+        <main class="max-w-screen-lg max-h-screen w-full h-full overflow-hidden">
     
         
 
