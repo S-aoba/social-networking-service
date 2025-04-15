@@ -2,7 +2,7 @@
     $imagePath = $profile->getImagePath() === null ? 'https://picsum.photos/200/300' : $profile->getImagePath();
 ?>
 
-<div class="col-span-8 w-full h-full flex flex-col">
+<div class="col-span-8 w-full h-full flex flex-col overflow-auto">
   <div class="flex items-center gap-x-2 p-2">
     <img src="/images/undo-icon.svg" alt="undo-icon" class="size-5" id="undoButton">
     <span class="font-semibold">ポスト</span>
