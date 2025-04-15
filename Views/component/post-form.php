@@ -2,7 +2,7 @@
     $imagePath = $profile->getImagePath() === null ? '/images/default-icon.png' : $profile->getImagePath();
 ?>
 
-<div class="flex">
+<div class="w-full h-fit flex border-b border-slate-200">
   <div class="p-5">
     <div class="size-10 rounded-full overflow-hidden">
       <img src="<?php echo $imagePath ?>" alt="user-icon" class="w-full h-full object-cover">
