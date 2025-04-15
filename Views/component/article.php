@@ -3,7 +3,7 @@
 ?>
 
 <div class="relative divide-y divide-slate-200">
-  <!-- <a href="/post?id=<?= $data['post']->getId() ?>" class="absolute w-full h-full z-10 hover:bg-gray-200/40 transition duration-300"></a> -->
+  <a href="/post?id=<?= $data['post']->getId() ?>" class="absolute w-full h-full z-10 hover:bg-gray-200/40 transition duration-300"></a>
   <div class="flex">
     <div class="p-5">
       <div class="size-10 rounded-full overflow-hidden">
