@@ -2,6 +2,7 @@
 
 namespace Models;
 
+use Exception;
 use Faker\Factory;
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
@@ -39,9 +40,15 @@ class ImageService implements Model {
       return file_put_contents($filePath, $this->file) !== false;
     }
 
-    // public function DeleteFromDir(string $imagePath ): bool {
-    //   return false;
-    // }
+    public function DeleteFromDir(string $fullImagePath ): bool {
+      $filePath = $this->dir . '/' . $fullImagePath;
+
+      if(file_exists($filePath)) {
+        return unlink($filePath);
+      }
+
+      throw new Exception('Does not exists the file.');
+    }
 
     private function convertToFullImagePath(): string {
       $uuid = $this->createUUID();
