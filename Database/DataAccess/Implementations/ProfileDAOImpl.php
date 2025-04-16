@@ -4,7 +4,6 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DataAccess\Interfaces\ProfileDAO;
 use Database\DatabaseManager;
-use Models\DataTimeStamp;
 use Models\Profile;
 
 class ProfileDAOImpl implements ProfileDAO
