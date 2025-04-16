@@ -5,7 +5,7 @@
     <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
       <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-          <form id="editProfileForm" method="POST" action="/form/update/profile">
+          <form id="editProfileForm" method="POST" action="/form/update/profile" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
             <input type="hidden" name="user_id" value="<?= $profile->getUserId(); ?>">
             <div class="sm:flex-col sm:items-start">
@@ -15,9 +15,9 @@
               </div>
               <div class="mt-2 relative">
                 <img src="<?= $imagePath ?>" alt="user-icon" class="size-20" id="previewImage">
-                <label for="image_path" class="absolute top-5 left-5 hover:cursor-pointer hover:bg-gray-100 p-2 rounded-full">
+                <label for="upload-file" class="absolute top-5 left-5 hover:cursor-pointer hover:bg-gray-100 p-2 rounded-full">
                   <img src="/images/camera.svg" alt="camera-icon">
-                  <input type="file" id="image_path" name="image_path" value="<?php echo $profile->getImagePath() ?>" class="hidden">
+                  <input type="file" id="upload-file" name="upload-file" value="<?php echo $profile->getImagePath() ?>" class="hidden">
                 </label>
                 </div>
               <div class="mt-2">
