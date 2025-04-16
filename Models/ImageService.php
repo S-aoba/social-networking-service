@@ -9,10 +9,18 @@ use Models\Traits\GenericModel;
 class ImageService implements Model {
     use GenericModel;
 
+    private string $dir = '';
+
     public function __construct(
       // 実際にDBやDIRに保存する形のImagePath
       private array $file,
-    ) {}
+    ) {
+      $this->dir = dirname(__DIR__) . '/private/uploads';
+
+      if (!is_dir($this->dir)) {
+        mkdir($this->dir, 0755, true);
+      }
+    }
 
     /**
      * Front: 画像名.拡張子 (EX: test.png)
@@ -25,9 +33,11 @@ class ImageService implements Model {
       return $this->convertToFullImagePath();
     }
 
-    // public function saveToDir(): bool {
-    //   return false;
-    // }
+    public function saveToDir(string $fullImagePath): bool {
+      $filePath = $this->dir . '/' . $fullImagePath;
+
+      return file_put_contents($filePath, $this->file) !== false;
+    }
 
     // public function DeleteFromDir(string $imagePath ): bool {
     //   return false;

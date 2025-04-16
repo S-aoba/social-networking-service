@@ -401,6 +401,9 @@ return [
             $success = $profileDAO->updateProfile($profile);
             if($success === false) throw new Exception('Failed to update profile!');
 
+            $isSaveToDir = $imageService->saveToDir($fullImagePath);
+            if($isSaveToDir === false) throw new Exception('Failed save file');
+
             return new RedirectRenderer('profile?user=' . $username);
         } catch (Exception $e) {
             error_log($e->getMessage());
