@@ -1,4 +1,4 @@
-<div id="modal" class="relative z-50 " aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div id="modal" class="relative z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
   <div class="fixed inset-0 bg-gray-500/75 transition-opacity" aria-hidden="true"></div>
   
   <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -14,7 +14,7 @@
                 <p class="text-sm text-gray-500">Please fill in the following fields to update your profile.</p>
               </div>
               <div class="mt-2 relative">
-                <img src="<?= $imagePath ?>" alt="user-icon" class="size-20">
+                <img src="<?= $imagePath ?>" alt="user-icon" class="size-20" id="previewImage">
                 <label for="image_path" class="absolute top-5 left-5 hover:cursor-pointer hover:bg-gray-100 p-2 rounded-full">
                   <img src="/images/camera.svg" alt="camera-icon">
                   <input type="file" id="image_path" name="image_path" value="<?php echo $profile->getImagePath() ?>" class="hidden">
@@ -59,6 +59,19 @@
 
     cancelBtn.addEventListener('click', function() {
       modal.classList.add('hidden');
+    });
+
+    const imagePath = document.getElementById('image_path');
+    imagePath.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('previewImage');
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
     });
   });
 
