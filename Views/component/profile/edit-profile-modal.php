@@ -61,7 +61,7 @@
       modal.classList.add('hidden');
     });
 
-    const imagePath = document.getElementById('image_path');
+    const imagePath = document.getElementById('upload-file');
     imagePath.addEventListener('change', function(event) {
       const file = event.target.files[0];
       if (file) {
