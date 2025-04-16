@@ -389,6 +389,8 @@ return [
             $fullImagePath = $imageService->getFullImagePath();
 
             $profileDAO = DAOFactory::getProfileDAO();
+            $prevImagePath = $profileDAO->getImagePath($userId);
+
             $profile = new Profile(
                 username: $username,
                 userId: $userId,
@@ -403,6 +405,12 @@ return [
 
             $isSaveToDir = $imageService->saveToDir($fullImagePath);
             if($isSaveToDir === false) throw new Exception('Failed save file');
+
+            if($prevImagePath !== null) {
+                $isDeleteFromDir = $imageService->DeleteFromDir($prevImagePath);
+
+                if($isDeleteFromDir === false) throw new Exception("Failed delete prev file");
+            }
 
             return new RedirectRenderer('profile?user=' . $username);
         } catch (Exception $e) {
