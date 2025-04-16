@@ -3,6 +3,7 @@
 use Database\DataAccess\DAOFactory;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
+use Models\ImageService;
 use Models\Like;
 use Models\Post;
 use Models\Profile;
@@ -369,24 +370,29 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
+            
             $username = $_POST['username'];
-            $imagePath = $_POST['image_path'] === '' ? null : $_POST['image_path'];
             $age = $_POST['age'];
             $address = $_POST['address'];
             $hobby = $_POST['hobby'];
             $selfIntroduction = $_POST['self_introduction'];
+            
+            $file = $_FILES['upload-file'];
 
             $userId = $_POST['user_id'];
-
+        
             // TODO: do validation
             $user = Authenticate::getAuthenticatedUser();
             if(intval($userId) !== $user->getId()) throw new Exception('Invalid user!');
+            
+            $imageService = new ImageService(file: $file);
+            $fullImagePath = $imageService->getFullImagePath();
 
             $profileDAO = DAOFactory::getProfileDAO();
             $profile = new Profile(
                 username: $username,
                 userId: $userId,
-                imagePath: $imagePath,
+                imagePath: $fullImagePath,
                 address: $address,
                 age: $age,
                 hobby: $hobby,
