@@ -385,11 +385,8 @@ return [
             $user = Authenticate::getAuthenticatedUser();
             if(intval($userId) !== $user->getId()) throw new Exception('Invalid user!');
             
-            $imageService = new ImageService(file: $file);
-            $fullImagePath = $imageService->generateFullImagePath();
-
             $profileDAO = DAOFactory::getProfileDAO();
-            $prevImagePath = $profileDAO->getImagePath($userId);
+            // $prevImagePath = $profileDAO->getImagePath($userId);
 
             $profile = new Profile(
                 username: $username,
@@ -402,15 +399,6 @@ return [
             );
             $success = $profileDAO->updateProfile($profile);
             if($success === false) throw new Exception('Failed to update profile!');
-
-            $isSaveToDir = $imageService->saveToDir($fullImagePath);
-            if($isSaveToDir === false) throw new Exception('Failed save file');
-
-            if($prevImagePath !== null) {
-                $isDeleteFromDir = $imageService->DeleteFromDir($prevImagePath);
-
-                if($isDeleteFromDir === false) throw new Exception("Failed delete prev file");
-            }
 
             return new RedirectRenderer('profile?user=' . $username);
         } catch (Exception $e) {
