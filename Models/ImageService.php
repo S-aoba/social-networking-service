@@ -37,7 +37,7 @@ class ImageService implements Model {
     public function saveToDir(string $fullImagePath): bool {
       $filePath = $this->dir . '/' . $fullImagePath;
 
-      return file_put_contents($filePath, $this->file) !== false;
+      return move_uploaded_file($this->file['tmp_name'], $filePath) !== false;
     }
 
     public function DeleteFromDir(string $fullImagePath ): bool {
