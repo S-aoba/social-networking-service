@@ -34,6 +34,12 @@ return [
             $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
 
             $profile->setImagePath($fullImagePath);
+
+            foreach($followerPosts as $data) {
+                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
+                error_log(var_export($fullImagePath, true));
+                $data['post']->setImagePath($fullImagePath);
+            }
     
             return new HTMLRenderer('page/home', [
                 'profile' => $profile,
