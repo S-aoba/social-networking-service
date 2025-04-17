@@ -386,7 +386,7 @@ return [
             if(intval($userId) !== $user->getId()) throw new Exception('Invalid user!');
             
             $imageService = new ImageService(file: $file);
-            $fullImagePath = $imageService->getFullImagePath();
+            $fullImagePath = $imageService->generateFullImagePath();
 
             $profileDAO = DAOFactory::getProfileDAO();
             $prevImagePath = $profileDAO->getImagePath($userId);
