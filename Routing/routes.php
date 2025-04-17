@@ -306,10 +306,20 @@ return [
 
             $userId = $user->getId();
             $content = $_POST['content'];
+
+            $file = $_FILES['upload-file'];
+
+            $imageService = new ImageService(
+                fileType: $file['type'],
+                tempPath: $file['tmp_name'],
+            );
+            $fullImagePath = $imageService->generateFullImagePath();
+            
             $parentPostId = $_POST['parent_post_id'] === '' ? null : $_POST['parent_post_id'];
 
             $request = [
                 'content' => $content,
+                'imagePath' => $fullImagePath,
                 'userId' => $userId,
                 'parentPostId' => $parentPostId
             ];
@@ -323,6 +333,9 @@ return [
             $success = $postDAO->create($post);
 
             if($success === false) throw new Exception('Failed Create Post');
+
+            $isSavedToDir = $imageService->saveToDir($fullImagePath);
+            if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
 
             return new RedirectRenderer('');
         } catch (\Exception $e) {
