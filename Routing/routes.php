@@ -87,6 +87,12 @@ return [
 
             $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
 
+            foreach($posts as $data) {
+                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
+                
+                $data['post']->setImagePath($fullImagePath);
+            }
+
             $profile->setImagePath($fullImagePath);
 
             return new HTMLRenderer('page/profile', [

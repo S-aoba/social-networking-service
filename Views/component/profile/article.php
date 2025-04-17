@@ -21,6 +21,11 @@
       </div>
       <div class="py-4">
         <p class="text-sm"><?php echo $data['post']->getContent() ?></p>
+        <?php if($data['post']->getImagePath()): ?>
+          <div class="size-60 mt-2 rounded-lg overflow-hidden">
+            <img src="<?php echo $data['post']->getImagePath() ?>" alt="post-image" class="w-full h-full object-cover rounded-lg">
+          </div>
+        <?php endif; ?>
       </div>
       
       <div class="w-full h-fit flex items-center justify-start">
