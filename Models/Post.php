@@ -12,6 +12,7 @@ class Post implements Model {
         private string $content,
         private int $userId,
         private ?int $id = null,
+        private ?string $imagePath = null,
         private ?int $parentPostId = null,
         private ?string $createdAt = null,
     ) {}
@@ -38,6 +39,14 @@ class Post implements Model {
 
     public function setUserId(int $userId): void {
         $this->userId = $userId;
+    }
+
+    public function getImagePath(): ?string {
+        return $this->imagePath;
+    }
+
+    public function setImagePath(string $imagePath): void {
+        $this->imagePath = $imagePath;
     }
 
     public function getParentPostId(): ?int {

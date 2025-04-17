@@ -34,6 +34,12 @@ return [
             $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
 
             $profile->setImagePath($fullImagePath);
+
+            foreach($followerPosts as $data) {
+                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
+                
+                $data['post']->setImagePath($fullImagePath);
+            }
     
             return new HTMLRenderer('page/home', [
                 'profile' => $profile,
@@ -306,10 +312,20 @@ return [
 
             $userId = $user->getId();
             $content = $_POST['content'];
+
+            $file = $_FILES['upload-file'];
+
+            $imageService = new ImageService(
+                fileType: $file['type'],
+                tempPath: $file['tmp_name'],
+            );
+            $fullImagePath = $imageService->generateFullImagePath();
+            
             $parentPostId = $_POST['parent_post_id'] === '' ? null : $_POST['parent_post_id'];
 
             $request = [
                 'content' => $content,
+                'imagePath' => $fullImagePath,
                 'userId' => $userId,
                 'parentPostId' => $parentPostId
             ];
@@ -323,6 +339,9 @@ return [
             $success = $postDAO->create($post);
 
             if($success === false) throw new Exception('Failed Create Post');
+
+            $isSavedToDir = $imageService->saveToDir($fullImagePath);
+            if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
 
             return new RedirectRenderer('');
         } catch (\Exception $e) {

@@ -15,13 +15,14 @@ class PostDAOImpl implements PostDAO
 
       $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "INSERT INTO posts (content, user_id, parent_post_id) VALUES (?, ?, ?)";
+      $query = "INSERT INTO posts (content, image_path, user_id, parent_post_id) VALUES (?, ?, ?, ?)";
 
       $result = $mysqli->prepareAndExecute(
         $query,
-        'sii',
+        'ssii',
         [
           $post->getContent(),
+          $post->getImagePath(),
           $post->getUserId(),
           $post->getParentPostId()
         ]
@@ -58,6 +59,7 @@ class PostDAOImpl implements PostDAO
 
       $query = "SELECT 
                   posts.*, 
+                  posts.image_path AS post_image_path,
                   profiles.username, 
                   profiles.image_path, 
                   profiles.user_id,
@@ -95,6 +97,7 @@ class PostDAOImpl implements PostDAO
       foreach ($rowData as $data) {
         $post = new Post(
          content: $data['content'],
+        imagePath: $data['post_image_path'],
          userId: $data['user_id'],
          id: $data['id'],
          createdAt: $data['created_at'],
@@ -143,6 +146,7 @@ class PostDAOImpl implements PostDAO
 
       $query = "SELECT 
                     posts.*, 
+                    posts.image_path AS post_image_path,
                     profiles.username, 
                     profiles.image_path, 
                     profiles.user_id,
@@ -178,6 +182,7 @@ class PostDAOImpl implements PostDAO
 
       $query = "SELECT 
                   posts.*, 
+                  posts.image_path AS post_image_path,
                   profiles.username, 
                   profiles.image_path, 
                   profiles.user_id,
@@ -221,6 +226,7 @@ class PostDAOImpl implements PostDAO
       $mysqli = DatabaseManager::getMysqliConnection();
 
       $query = "SELECT * ,
+                posts.image_path AS post_image_path,
                 (
                     SELECT COUNT(*) 
                     FROM posts AS child 
@@ -253,6 +259,7 @@ class PostDAOImpl implements PostDAO
       foreach($rowData as $data) {
         $post = new Post(
           content: $data['content'],
+          imagePath: $data['post_image_path'],
           userId: $data['user_id'],
           id: $data['id'],
           createdAt: $data['created_at'],
