@@ -135,6 +135,14 @@ return [
 
             $profile->setImagePath($fullImagePath);
 
+            foreach($replies as $data) {
+                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
+                
+                $data['post']->setImagePath($fullImagePath);
+            }
+            
+            $post['post']->setImagePath($post['post']->getImagePath() === null ? null : $imageService->getFullImagePath($post['post']->getImagePath()));
+
             return new HTMLRenderer('page/post', [
                 'profile' => $profile,
                 'data' => $post,
@@ -468,6 +476,13 @@ return [
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
             $content = $_POST['content'];
+            $file = $_FILES['upload-file'];
+            $imageService = new ImageService(
+                fileType: $file['type'],
+                tempPath: $file['tmp_name'],
+            );
+            $fullImagePath = $imageService->generateFullImagePath();
+            
             $parentPostId = intval($_POST['parent_post_id']);
             
             // TODO: do validation
@@ -481,12 +496,16 @@ return [
 
             $post = new Post(
                 content: $content,
+                imagePath: $fullImagePath,
                 userId: $userId,
                 parentPostId: $parentPostId
             );
             
             $success = $postDAO->create($post);
             if($success === false) throw new Exception('Failed to create reply!');
+
+            $isSavedToDir = $imageService->saveToDir($fullImagePath);
+            if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
 
             return new RedirectRenderer('post?id=' . $parentPostId);
         } catch (Exception $e) {
