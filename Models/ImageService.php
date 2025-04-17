@@ -16,7 +16,7 @@ class ImageService implements Model {
       // 実際にDBやDIRに保存する形のImagePath
       private array $file,
     ) {
-      $this->dir = dirname(__DIR__) . '/private/uploads';
+      $this->dir = dirname(__DIR__) . '/public/uploads';
 
       if (!is_dir($this->dir)) {
         mkdir($this->dir, 0755, true);
