@@ -28,6 +28,12 @@ return [
     
             $postDAO = DAOFactory::getPostDAO();
             $followerPosts = $postDAO->getFollowingPosts($user->getId());
+
+            $imageService = new ImageService();
+
+            $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
+
+            $profile->setImagePath($fullImagePath);
     
             return new HTMLRenderer('page/home', [
                 'profile' => $profile,
@@ -71,6 +77,12 @@ return [
 
             $isFollow = $followDAO->checkIsFollow($user->getId(), $profile->getUserId());
 
+            $imageService = new ImageService();
+
+            $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
+
+            $profile->setImagePath($fullImagePath);
+
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
                 'loginedUserId' => $user->getId(),
@@ -104,6 +116,12 @@ return [
             if($post === null) throw new Exception('Post not found!');
 
             $replies = $postDAO->getReplies($postId, intval($user->getId()));
+
+            $imageService = new ImageService();
+
+            $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
+
+            $profile->setImagePath($fullImagePath);
 
             return new HTMLRenderer('page/post', [
                 'profile' => $profile,
@@ -382,11 +400,17 @@ return [
             $userId = $_POST['user_id'];
         
             // TODO: do validation
-            $user = Authenticate::getAuthenticatedUser();
-            if(intval($userId) !== $user->getId()) throw new Exception('Invalid user!');
             
             $profileDAO = DAOFactory::getProfileDAO();
-            // $prevImagePath = $profileDAO->getImagePath($userId);
+
+            $prevImagePath = $profileDAO->getImagePath($userId);
+            
+            $imageService = new ImageService(
+                fileType: $file['type'],
+                tempPath: $file['tmp_name'],
+            );
+            
+            $fullImagePath = $imageService->generateFullImagePath();
 
             $profile = new Profile(
                 username: $username,
@@ -397,8 +421,15 @@ return [
                 hobby: $hobby,
                 selfIntroduction: $selfIntroduction,
             );
+
             $success = $profileDAO->updateProfile($profile);
             if($success === false) throw new Exception('Failed to update profile!');
+
+            $isSavedToDir = $imageService->saveToDir($fullImagePath);
+            if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+
+            $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
+            if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
 
             return new RedirectRenderer('profile?user=' . $username);
         } catch (Exception $e) {

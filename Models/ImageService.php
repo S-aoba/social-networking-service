@@ -9,19 +9,16 @@ use Models\Traits\GenericModel;
 
 class ImageService implements Model {
     use GenericModel;
-
-    private string $dir = '';
-
+    private string $dirPath = 'uploads';
+    
     public function __construct(
-      // 実際にDBやDIRに保存する形のImagePath
-      private array $file,
-    ) {
-      $this->dir = dirname(__DIR__) . '/public/uploads';
-
-      if (!is_dir($this->dir)) {
-        mkdir($this->dir, 0755, true);
-      }
-    }
+      // 2024-04-17-unique.png
+      private ?string $imagePath = null,
+      // image/png, image/jpeg
+      private ?string $fileType = null,
+      private ?string $tempPath = null,
+    ) 
+    {}
 
     /**
      * Front: 画像名.拡張子 (EX: test.png)
@@ -34,14 +31,22 @@ class ImageService implements Model {
       return $this->convertToFullImagePath();
     }
 
-    public function saveToDir(string $fullImagePath): bool {
-      $filePath = $this->dir . '/' . $fullImagePath;
-
-      return move_uploaded_file($this->file['tmp_name'], $filePath) !== false;
+    public function getFullImagePath(string $imagePath): string {
+      return '/' . $this->dirPath . '/' . $imagePath;
     }
 
-    public function DeleteFromDir(string $fullImagePath ): bool {
-      $filePath = $this->dir . '/' . $fullImagePath;
+    public function saveToDir(string $imagePath): bool {
+      if(!is_dir($this->dirPath)) {
+        mkdir($this->dirPath, 0755, true);
+      }
+
+      $filePath = $this->dirPath . '/' . $imagePath;
+
+      return move_uploaded_file($this->tempPath, $filePath) !== false;
+    }
+
+    public function DeleteFromDir(string $imagePath ): bool {
+      $filePath = $this->dirPath . '/' . $imagePath;
 
       if(file_exists($filePath)) {
         return unlink($filePath);
@@ -71,7 +76,7 @@ class ImageService implements Model {
     }
 
     private function getFileType(): string {
-      $mimeType = $this->file['type'];
+      $mimeType = $this->fileType;
       $parts = explode("/", $mimeType);
 
       return $parts[1];
