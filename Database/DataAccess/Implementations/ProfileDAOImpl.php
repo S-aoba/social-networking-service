@@ -4,7 +4,6 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DataAccess\Interfaces\ProfileDAO;
 use Database\DatabaseManager;
-use Models\DataTimeStamp;
 use Models\Profile;
 
 class ProfileDAOImpl implements ProfileDAO
@@ -69,6 +68,27 @@ class ProfileDAOImpl implements ProfileDAO
     if($profileRow === null) return null;
 
     return $this->rowDataToProfile($profileRow);
+  }
+
+  public function getImagePath(int $userId): ?string
+  {
+    $rowImagePath = $this->getRowImagePath($userId);
+
+    if($rowImagePath === null) return null;
+
+    return $rowImagePath;
+  }
+
+  private function getRowImagePath(int $userId): ?string {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT image_path FROM profiles WHERE user_id = ?";
+
+    $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId])[0];
+
+    if($result === null) return null;
+    
+    return $result['image_path'];
   }
 
   public function updateProfile(?Profile $profile): bool

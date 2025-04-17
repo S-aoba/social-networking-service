@@ -1,4 +1,6 @@
 .env
 
 vendor
-logs
+log
+
+public/uploads
