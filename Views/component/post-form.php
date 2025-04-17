@@ -8,7 +8,7 @@
       <img src="<?php echo $imagePath ?>" alt="user-icon" class="w-full h-full object-cover">
     </div>
   </div>
-  <form action="form/post" method="post" class="w-full flex flex-col space-y-4" enctype="multipart/form-data">
+  <form action="form/post" method="post" class="w-full flex flex-col space-y-4">
     <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
     <input type="hidden" name="parent_post_id" value="">
 
