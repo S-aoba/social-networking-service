@@ -37,7 +37,7 @@ return [
 
             foreach($followerPosts as $data) {
                 $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
-                error_log(var_export($fullImagePath, true));
+                
                 $data['post']->setImagePath($fullImagePath);
             }
     
