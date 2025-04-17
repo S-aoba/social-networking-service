@@ -8,16 +8,16 @@
       <img src="<?php echo $imagePath ?>" alt="user-icon" class="w-full h-full object-cover">
     </div>
   </div>
-  <form action="form/post" method="post" class="w-full flex flex-col space-y-4">
+  <form action="form/post" method="post" class="w-full flex flex-col space-y-4" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
     <input type="hidden" name="parent_post_id" value="">
 
     <textarea name="content" id="content" class="w-full resize-none p-2 focus:outline-none" placeholder="いまどうしてる？"></textarea>
     <div class="w-full h-full">
       <div id="preview-container"></div>
-      <label for="uploads-image" class="hover:cursor-pointer">
+      <label for="upload-file" class="hover:cursor-pointer">
         <img src="/images/camera.svg" alt="upload-icon">
-        <input type="file" id="uploads-image" name="uploads-image" class="hidden" value="">
+        <input type="file" id="upload-file" name="upload-file" class="hidden" value="">
       </label>
 
     </div>
@@ -29,7 +29,7 @@
 
 <script>
   window.addEventListener('DOMContentLoaded', function() {
-    const uploadsImage = document.getElementById('uploads-image');
+    const uploadsImage = document.getElementById('upload-file');
     const previewContainer = document.getElementById('preview-container');
 
     uploadsImage.addEventListener('change', function(event) {
