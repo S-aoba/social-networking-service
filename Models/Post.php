@@ -45,7 +45,7 @@ class Post implements Model {
         return $this->imagePath;
     }
 
-    public function setImagePath(string $imagePath): void {
+    public function setImagePath(?string $imagePath): void {
         $this->imagePath = $imagePath;
     }
 
