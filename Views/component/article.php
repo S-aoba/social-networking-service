@@ -18,6 +18,11 @@
         <div class="text-gray-400 text-xs flex items-center">
           <?php echo $data['post']->getFormattedCreatedAt(); ?>
         </div>
+        <?php if($profile->getUserId() === $data['postedUser']->getUserId()): ?>
+          <div>This is my post</div>
+        <?php else : ?>
+          <div>This is not my Post</div>
+        <?php endif ;?>
       </div>
       <div class="py-4">
         <p class="text-sm"><?php echo $data['post']->getContent() ?></p>
