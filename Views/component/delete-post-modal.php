@@ -8,6 +8,7 @@
           <form action="/form/delete/post" method="POST" class="flex flex-col space-y-2">
             <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
             <input type="hidden" name="post_id" value="<?= $data['post']->getId() ?>">
+            <input type="hidden" name="posted_user_id" value="<?= $data['post']->getUserId() ?>">
             <div class="w-full h-fit">
               <p>本当に削除してもよろしいですか？</p>
             </div>
