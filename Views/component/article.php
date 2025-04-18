@@ -19,9 +19,7 @@
           <?php echo $data['post']->getFormattedCreatedAt(); ?>
         </div>
         <?php if($profile->getUserId() === $data['postedUser']->getUserId()): ?>
-          <div>This is my post</div>
-        <?php else : ?>
-          <div>This is not my Post</div>
+          <?php include "Views/component/post-menu.php" ?>
         <?php endif ;?>
       </div>
       <div class="py-4">
