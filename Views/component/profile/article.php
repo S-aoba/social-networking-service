@@ -17,6 +17,9 @@
         <p class="text-sm font-semibold"><?php echo $profile->getUsername()  ?></p>
         <div class="text-gray-400 text-xs flex items-center">
           <?php echo $data['post']->getFormattedCreatedAt(); ?>
+          <?php if($profile->getUserId() === $data['post']->getUserId()): ?>
+            <?php include "Views/component/post-menu.php" ?>
+          <?php endif ;?>
         </div>
       </div>
       <div class="py-4">

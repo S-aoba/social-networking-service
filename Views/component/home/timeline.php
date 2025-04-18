@@ -9,3 +9,5 @@
 </div>
 
 <script src="/js/like.js"></script>
+<script src="/js/open-delete-post-menu.js"></script>
+<script src="/js/open-delete-post-modal.js"></script>
