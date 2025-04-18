@@ -52,6 +52,8 @@
 </div>
 <script src="/js/undo.js"></script>
 <script src="/js/like.js"></script>
+<script src="/js/open-delete-post-menu.js"></script>
+<script src="/js/open-delete-post-modal.js"></script>
 <script>
   window.addEventListener('DOMContentLoaded', function() {
     const uploadsImage = document.getElementById('upload-file');
