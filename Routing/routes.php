@@ -169,9 +169,7 @@ return [
             if($following === null) throw new Exception('Following not found!');
 
             return new HTMLRenderer('page/following', [
-                'userId'  => $profile->getUserId(),
-                'username' => $profile->getUsername(), 
-                'imagePath' => $profile->getImagePath(),
+                'profile' => $profile,
                 'data' => $following,
             ]);
         } catch (\Exception $e) {
@@ -193,9 +191,7 @@ return [
             if($follower === null) throw new Exception('Follower not found!');
 
             return new HTMLRenderer('page/follower', [
-                'userId'  => $profile->getUserId(),
-                'username' => $profile->getUsername(), 
-                'imagePath' => $profile->getImagePath(),
+                'profile' => $profile,
                 'data' => $follower,
             ]);
         } catch (\Exception $e) {
