@@ -459,8 +459,10 @@ return [
             $isSavedToDir = $imageService->saveToDir($fullImagePath);
             if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
 
-            $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
-            if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
+            if($prevImagePath !== null) {
+                $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
+                if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
+            }
 
             return new RedirectRenderer('profile?user=' . $username);
         } catch (Exception $e) {
