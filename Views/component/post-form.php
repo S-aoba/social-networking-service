@@ -5,8 +5,10 @@
 <div class="w-full h-fit flex border-b border-slate-200">
   <div class="p-5">
     <div class="size-10 rounded-full overflow-hidden">
-      <img src="<?php echo $imagePath ?>" alt="user-icon" class="w-full h-full object-cover">
-    </div>
+        <a href="<?php echo '/profile?user=' . $profile->getUsername(); ?>"" class="z-20 relative hover:opacity-50">
+          <img src="<?php echo $imagePath ?>" alt="posted-user-icon" class="w-full h-full object-cover">
+        </a>
+      </div>
   </div>
   <form action="form/post" method="post" class="w-full flex flex-col space-y-4" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
