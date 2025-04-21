@@ -77,7 +77,7 @@
           const img = document.createElement('img');
           img.src = e.target.result;
           img.alt = 'posted-file';
-          previewContainer.classList.toggle('hidden');
+          previewContainer.classList.remove('hidden');
           postFormToolBar.classList.add('border-t', 'border-slate-100', 'pt-4');
           img.classList.add('size-full', 'rounded-2xl');
           previewContainer.appendChild(img);
