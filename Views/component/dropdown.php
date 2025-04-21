@@ -4,7 +4,7 @@
 
 <div class="relative inline-block text-left">
   <div>
-    <button  type="button" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-200 ring-inset hover:bg-gray-50" id="menu-button" aria-expanded="true" aria-haspopup="true">
+    <button  type="button" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50" id="menu-button" aria-expanded="true" aria-haspopup="true">
       <div class="flex items-center justify-center space-x-2">
         <img src="<?php echo $imagePath ?>" alt="user-icon" class="size-8 rounded-full">
         <span class="text-xs font-semibold"><?php echo $profile->getUsername() ?></span>
