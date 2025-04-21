@@ -419,7 +419,8 @@ return [
 
             
             $username = $_POST['username'];
-            $age = $_POST['age'];
+            //TODO: バリデーションを追加したらそちらに処理を任せて、以下ageの判定式は削除すること
+            $age = $_POST['age'] === '' ? null : $_POST['age'];
             $address = $_POST['address'];
             $hobby = $_POST['hobby'];
             $selfIntroduction = $_POST['self_introduction'];
@@ -433,6 +434,7 @@ return [
             $profileDAO = DAOFactory::getProfileDAO();
 
             $prevImagePath = $profileDAO->getImagePath($userId);
+
             
             $imageService = new ImageService(
                 fileType: $file['type'],
@@ -457,8 +459,10 @@ return [
             $isSavedToDir = $imageService->saveToDir($fullImagePath);
             if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
 
-            $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
-            if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
+            if($prevImagePath !== null) {
+                $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
+                if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
+            }
 
             return new RedirectRenderer('profile?user=' . $username);
         } catch (Exception $e) {
