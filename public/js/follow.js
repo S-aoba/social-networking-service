@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const followForm = document.getElementById("follow-form");
-  followForm.addEventListener('submit', async() => {
+  followForm.addEventListener('submit', async(e) => {
+    e.preventDefault();
+    
     const formData = new FormData(followForm);
     
     const res = await fetch('http://localhost:8000/form/follow', {
