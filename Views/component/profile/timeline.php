@@ -1,6 +1,20 @@
 <?php
 $imagepath = $profile->getImagePath() === null ? '/images/default-icon.png' : $profile->getImagePath();
 $postCount = $posts === null ? 0 : count($posts);
+
+$userInfoList = [
+  'username' => $profile->getUsername(),
+  'age' => $profile->getAge(),
+  'address' => $profile->getAddress(),
+  'hobby' => $profile->getHobby(),
+  'selfIntroduction' => $profile->getSelfIntroduction()
+];
+
+$followerAndFollowingCountList = [
+  'フォロー中' => $followingCount,
+  'フォロワー' => $followerCount
+];
+
 ?>
 
 <div class="col-span-8 w-full h-full flex flex-col overflow-auto">
@@ -28,59 +42,15 @@ $postCount = $posts === null ? 0 : count($posts);
           </form>
         <?php endif; ?>
       </div>
-      <div class="flex flex-col space-y-2">
-        <div>
-          <span class="font-semibold">
-            ユーザ名: 
-          </span>
-          <?php echo $profile->getUsername() ?>
-        </div>
-        <?php if($profile->getAge() !== null): ?>
-          <div>
-            <span class="font-semibold">
-              年齢: 
-            </span>
-            <?php echo $profile->getAge() ?>
-          </div>
-        <?php endif; ?>
-        <?php if($profile->getAddress() !== null): ?>
-        <div>
-          <span class="font-semibold">
-            住所: 
-          </span>
-          <?php echo $profile->getAddress() ?>
-        </div>
-        <?php endif; ?>
-        <?php if($profile->getHobby() !== null): ?>
-        <div>
-          <span class="font-semibold">
-            趣味: 
-          </span>
-          <?php echo $profile->getHobby() ?>
-        </div>
-        <?php endif; ?>
-        <?php if($profile->getSelfIntroduction() !== null): ?>
-        <div>
-          <p class="font-semibold">
-            自己紹介: 
-          </p>
-          <?php echo $profile->getSelfIntroduction() ?>
-        </div>
-        <?php endif; ?>
+      <div class="py-4 flex flex-col space-y-2">
+        <?php foreach($userInfoList as $key => $val): ?>
+          <?php include "Views/component/profile/user-info.php" ?>
+        <?php endforeach; ?>
       </div>
-      <div class="flex items-center justify-start space-x-2 text-sm text-slate-600 pt-4 pb-2">
-        <div>
-          <span class="font-semibold">
-            <?php echo $followerCount ?>
-          </span> 
-          フォロー中
-        </div>
-        <div>
-          <span class="font-semibold">
-            <?php echo $followingCount ?>
-          </span> 
-          フォロワー
-        </div>
+      <div class="flex items-center justify-start space-x-2 text-sm text-slate-600">
+        <?php foreach($followerAndFollowingCountList as $key => $val): ?>
+          <?php include "Views/component/profile/followerAndFollowing.php"; ?>
+        <?php endforeach; ?>
       </div>
     </div>
     <?php foreach ($posts as $data): ?>
