@@ -1,5 +1,5 @@
 <?php
-    $imagePath = $profile->getImagePath() === null ? 'https://picsum.photos/200/300' : $profile->getImagePath();
+    $imagePath = $currentUser->getImagePath() === null ? '/images/default-icon.png' : $currentUser->getImagePath();
 ?>
 
 <div class="col-span-8 w-full h-full flex flex-col overflow-auto">

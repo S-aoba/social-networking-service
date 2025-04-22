@@ -24,16 +24,16 @@ return [
             if($user === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId($user->getId());
+            $currentUserProfile = $profileDAO->getByUserId($user->getId());
     
             $postDAO = DAOFactory::getPostDAO();
             $followerPosts = $postDAO->getFollowingPosts($user->getId());
 
             $imageService = new ImageService();
 
-            $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
+            $fullImagePath = $currentUserProfile->getImagePath() === null ? null : $imageService->getFullImagePath($currentUserProfile->getImagePath());
 
-            $profile->setImagePath($fullImagePath);
+            $currentUserProfile->setImagePath($fullImagePath);
 
             foreach($followerPosts as $data) {
                 $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
@@ -42,7 +42,7 @@ return [
             }
     
             return new HTMLRenderer('page/home', [
-                'profile' => $profile,
+                'currentUser' => $currentUserProfile,
                 'followerPosts' => $followerPosts,
             ]);
         } catch (\Exception $e) {
@@ -73,17 +73,23 @@ return [
 
             $profileDAO = DAOFactory::getProfileDAO();
             $profile = $profileDAO->getByUsername($username);
-
+            $currentUser = $profileDAO->getByUserId($user->getId());
+            
             $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getByUserId($profile->getUserId());
 
             $followDAO = DAOFactory::getFollowDAO();
             $followerCount = $followDAO->getFollowerCount($profile->getUserId());
             $followingCount = $followDAO->getFollowingCount($profile->getUserId());
-
+            
             $isFollow = $followDAO->checkIsFollow($user->getId(), $profile->getUserId());
-
+            
             $imageService = new ImageService();
+            $currentUserImagePath = $currentUser->getImagePath() === null ? 
+                                        null 
+                                        : 
+                                        $imageService->getFullImagePath($currentUser->getImagePath());
+            $currentUser->setImagePath($currentUserImagePath);
 
             $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
 
@@ -97,7 +103,7 @@ return [
 
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
-                'loginedUserId' => $user->getId(),
+                'currentUser' => $currentUser,
                 'profile' => $profile,
                 'posts' => $posts,
                 'followerCount' => $followerCount,
@@ -120,7 +126,7 @@ return [
             if($user === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId($user->getId());
+            $currentUserProfile = $profileDAO->getByUserId($user->getId());
 
             $postDAO = DAOFactory::getPostDAO();
             $post = $postDAO->getById(intval($postId), intval($user->getId()));
@@ -131,9 +137,9 @@ return [
 
             $imageService = new ImageService();
 
-            $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
+            $fullImagePath = $currentUserProfile->getImagePath() === null ? null : $imageService->getFullImagePath($currentUserProfile->getImagePath());
 
-            $profile->setImagePath($fullImagePath);
+            $currentUserProfile->setImagePath($fullImagePath);
 
             foreach($replies as $data) {
                 $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
@@ -144,7 +150,7 @@ return [
             $post['post']->setImagePath($post['post']->getImagePath() === null ? null : $imageService->getFullImagePath($post['post']->getImagePath()));
 
             return new HTMLRenderer('page/post', [
-                'profile' => $profile,
+                'currentUser' => $currentUserProfile,
                 'data' => $post,
                 'replies' => $replies,
             ]);

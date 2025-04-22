@@ -18,7 +18,7 @@
         <div class="text-gray-400 text-xs flex items-center">
           <?php echo $data['post']->getFormattedCreatedAt(); ?>
         </div>
-        <?php if($profile->getUserId() === $data['postedUser']->getUserId()): ?>
+        <?php if($currentUser->getUserId() === $data['postedUser']->getUserId()): ?>
           <?php include "Views/component/post-menu.php" ?>
         <?php endif ;?>
       </div>

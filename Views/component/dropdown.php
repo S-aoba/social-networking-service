@@ -1,5 +1,5 @@
 <?php
-    $imagePath = $profile->getImagePath() === null ? '/images/default-icon.png' : $profile->getImagePath();
+    $imagePath = $currentUser->getImagePath() === null ? '/images/default-icon.png' : $currentUser->getImagePath();
 ?>
 
 <div class="relative inline-block text-left">
@@ -14,7 +14,7 @@
     >
       <div class="flex items-center justify-center space-x-2">
         <img src="<?php echo $imagePath ?>" alt="user-icon" class="size-8 rounded-full">
-        <span class="text-xs font-semibold"><?php echo $profile->getUsername() ?></span>
+        <span class="text-xs font-semibold"><?php echo $currentUser->getUsername() ?></span>
         <svg 
           class="-mr-1 size-5 text-gray-400" 
           viewBox="0 0 20 20" 
