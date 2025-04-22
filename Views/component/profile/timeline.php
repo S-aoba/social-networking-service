@@ -19,35 +19,14 @@ $followerAndFollowingCountList = [
 
 <div class="col-span-8 w-full h-full flex flex-col overflow-auto">
   <?php include "Views/component/profile/edit-profile-modal.php" ?>
-  <div class="w-full flex-1">
-    <div class="w-full h-fit p-2">
-      <div class="flex space-x-2">
-        <div><img src="/images/undo-icon.svg" alt="undo" id="undoButton"></div>
-        <div><?= $profile->getUsername() ?></div>
-      </div>
-      <div><?php echo $postCount ?> 件のポスト</div>
-      <div class="flex items-center justify-between">
-        <img src="<?php echo $imagepath ?>" alt="user-icon" class="size-32">
-        <?php if($loginedUserId === $profile->getUserId()): ?>
-          <button id="edit-profile-button" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">プロフィールを編集</button>
-        <?php else: ?>
-          <form method="POST" id="follow-form">
-            <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
-            <input type="hidden" name="following_id" value=2>
-            <?php if($isFollow): ?>
-              <button class="p-2 border bg-slate-700 text-white border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-700/70 cursor-pointer">フォロー中</button>
-            <?php else : ?>
-              <button id="follow-btn" class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer">フォロー</button>
-            <?php endif ; ?>
-          </form>
-        <?php endif; ?>
-      </div>
+    <div class="w-full p-2">
+      <?php include "Views/component/profile/header.php" ?>
       <div class="py-4 flex flex-col space-y-2">
         <?php foreach($userInfoList as $key => $val): ?>
           <?php include "Views/component/profile/user-info.php" ?>
         <?php endforeach; ?>
       </div>
-      <div class="flex items-center justify-start space-x-2 text-sm text-slate-600">
+      <div class="flex items-center justify-start space-x-2">
         <?php foreach($followerAndFollowingCountList as $key => $val): ?>
           <?php include "Views/component/profile/followerAndFollowing.php"; ?>
         <?php endforeach; ?>
@@ -56,7 +35,6 @@ $followerAndFollowingCountList = [
     <?php foreach ($posts as $data): ?>
     <?php include "Views/component/profile/article.php" ?>
     <?php endforeach; ?>
-   </div>
 </div>
 
 <script src="/js/undo.js"></script>
