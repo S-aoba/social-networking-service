@@ -5,7 +5,7 @@
 <div class="relative">
   <a 
     href="/post?id=<?= $data['post']->getId() ?>" 
-    class="absolute w-full h-full z-10 hover:bg-gray-200/40 transition duration-300"
+    class="absolute w-full h-full z-10 hover:bg-slate-100 hover:opacity-30 transition duration-300"
   ></a>
   <div class="flex py-2">
     <div id="contributor-avator" class="px-5">
