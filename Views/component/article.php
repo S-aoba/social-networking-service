@@ -36,7 +36,7 @@
           <?php include "Views/component/post-menu-action.php" ?>
         <?php endif ;?>
       </div>
-      <div id="post-content" class="w-full py-2 flex flex-col items-center justify-center space-y-4">
+      <div id="post-content" class="w-full py-2 flex flex-col items-start justify-center space-y-4">
         <p class="text-sm"><?php echo $data['post']->getContent() ?></p>
         <?php if($data['post']->getImagePath() !== null): ?>
           <div class="size-full rounded-lg overflow-hidden">
