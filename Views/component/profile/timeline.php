@@ -32,7 +32,7 @@ $followerAndFollowingCountList = [
         <?php endforeach; ?>
       </div>
     </div>
-    <?php if(count($posts) > 0): ?>
+    <?php if($postCount > 0): ?>
       <div class="divide-y divide-slate-200">
         <?php foreach ($posts as $data): ?>
           <?php include "Views/component/profile/article.php" ?>
