@@ -37,7 +37,7 @@
         <div id="post-form-tool-bar" class="w-full flex items-center justify-between">
           <label 
             for="upload-file" 
-            class="p-2 hover:cursor-pointer hover:bg-green-300/50 rounded-full transition duration-300"
+            class="p-2 hover:cursor-pointer hover:bg-slate-100 rounded-full transition duration-300"
           >
             <img src="/images/camera.svg" alt="upload-icon" class="size-5">
             <input 

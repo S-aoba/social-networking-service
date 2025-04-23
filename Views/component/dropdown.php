@@ -8,7 +8,7 @@
       id="user-info-menu-button"
       role="user-info-menu-button"
       type="button" 
-      class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold focus:ring-0 text-gray-900 hover:bg-gray-200 hover:cursor-pointer" 
+      class="inline-flex w-full justify-center gap-x-1.5 rounded-2xl bg-white px-3 py-2 text-sm font-semibold focus:ring-0 text-gray-900 hover:bg-slate-100 hover:cursor-pointer transition duration-300" 
       aria-expanded="true" 
       aria-haspopup="true"
     >
@@ -41,10 +41,10 @@
        tabindex="-1"
   >
     <div role="none">
-      <div class="w-full py-2 cursor-not-allowed pl-4 hover:bg-slate-100 opacity-80 transition duration-300">
+      <div class="w-full py-2 cursor-not-allowed pl-4 hover:bg-slate-100 transition duration-300">
         <p class="text-sm font-semibold">既存のアカウントを追加</p>
       </div>
-      <div class="hover:bg-slate-100 opacity-80 transition duration-300">
+      <div class="hover:bg-slate-100 transition duration-300">
         <form method="POST" action="logout" role="logout-form">
           <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
           <div class="flex items-center justify-start space-x-2 pl-4">
