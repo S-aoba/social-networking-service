@@ -49,7 +49,7 @@
         <?php endif; ?>
       </div>
       <div id="post-action" class="w-full grid grid-cols-5">
-        <div class="grid-cols-1 flex items-center">
+        <div class="grid-cols-1 flex items-center space-x-1">
           <img 
             src="/images/comment-icon.svg" 
             alt="comment-icon" 
