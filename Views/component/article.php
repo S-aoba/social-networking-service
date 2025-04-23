@@ -43,7 +43,7 @@
             <img 
               src="<?php echo $data['post']->getImagePath() ?>" 
               alt="post-image" 
-              class="w-full h-full object-cover rounded-lg"
+              class="size-full object-contain rounded-lg"
             >
           </div>
         <?php endif; ?>

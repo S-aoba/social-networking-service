@@ -19,7 +19,7 @@ $followerAndFollowingCountList = [
 
 <div class="col-span-8 w-full h-full flex flex-col overflow-auto">
   <?php include "Views/component/profile/edit-profile-modal.php" ?>
-    <div class="w-full p-2">
+    <div class="w-full p-2 border-b border-slate-200">
       <?php include "Views/component/profile/header.php" ?>
       <div class="py-4 flex flex-col space-y-2">
         <?php foreach($userInfoList as $key => $val): ?>
@@ -32,9 +32,17 @@ $followerAndFollowingCountList = [
         <?php endforeach; ?>
       </div>
     </div>
-    <?php foreach ($posts as $data): ?>
-    <?php include "Views/component/profile/article.php" ?>
-    <?php endforeach; ?>
+    <?php if(count($posts) > 0): ?>
+      <div class="divide-y divide-slate-200">
+        <?php foreach ($posts as $data): ?>
+          <?php include "Views/component/profile/article.php" ?>
+        <?php endforeach; ?>
+      </div>
+    <?php else: ?>
+      <div class="pt-10 text-center font-semibold text-lg">
+        投稿はありません
+      </div>
+    <?php endif; ?>
 </div>
 
 <script src="/js/undo.js"></script>
