@@ -9,17 +9,17 @@
   ></a>
   <div class="flex py-2">
     <div id="contributor-avator" class="px-5">
-      <div class="size-10 rounded-full overflow-hidden">
+      <div class="relative size-10 rounded-full overflow-hidden">
         <a 
           href="<?= '/profile?user=' . $currentUser->getUsername(); ?>"" 
-          class="z-20 relative hover:opacity-50"
+          class="absolute inset-0 z-20 hover:bg-slate-800/25 transition duration-300"
         >
+      </a>
           <img 
             src="<?= $imagePath ?>" 
             alt="posted-user-icon" 
             class="w-full h-full object-cover"
           >
-        </a>
       </div>  
     </div>
     <div class="w-full pl-2 pr-20">
