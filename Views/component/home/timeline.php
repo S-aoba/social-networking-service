@@ -9,7 +9,7 @@
       <?php endforeach; ?>
     </div>
   <?php else: ?>
-    <div>
+    <div class="pt-10 text-center font-semibold text-lg">
       投稿はありません
     </div>
   <?php endif; ?>
