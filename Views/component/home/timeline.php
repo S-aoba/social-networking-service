@@ -2,9 +2,17 @@
   <?php include "Views/component/home/tab.php" ?>
   <?php include "Views/component/post-form.php" ?>
 
-  <?php foreach ($followerPosts as $data): ?>
-    <?php include "Views/component/article.php" ?>
-  <?php endforeach; ?>
+  <?php if(count($followerPosts) > 0): ?>
+    <div class="divide-y divide-slate-200">
+      <?php foreach ($followerPosts as $data): ?>
+        <?php include "Views/component/article.php" ?>
+      <?php endforeach; ?>
+    </div>
+  <?php else: ?>
+    <div>
+      投稿はありません
+    </div>
+  <?php endif; ?>
    
 </div>
 
