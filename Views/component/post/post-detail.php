@@ -66,7 +66,7 @@
       </form>
     </div>
   </div>
-  <div class="w-full h-fit border-t border-slate-200">
+  <div class="w-full divide-y divide-slate-200">
     <?php
       if($replies !== null) {
         foreach ($replies as $data) {
