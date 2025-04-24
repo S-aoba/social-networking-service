@@ -19,27 +19,37 @@ use Types\ValueType;
 return [
     '' => Route::create('', function(): HTTPRenderer {
         try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
             $user = Authenticate::getAuthenticatedUser();
     
             if($user === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
             $currentUserProfile = $profileDAO->getByUserId($user->getId());
+            // TODO: currentUserProfileがnullの場合の処理を追加
     
             $postDAO = DAOFactory::getPostDAO();
+            // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
+            // TODO: followerPostsをpostsに変更(おすすめのpostとフォロー中のpostのどちらかを取得するロジックになる為)
             $followerPosts = $postDAO->getFollowingPosts($user->getId());
 
             $imageService = new ImageService();
-
-            $fullImagePath = $currentUserProfile->getImagePath() === null ? null : $imageService->getFullImagePath($currentUserProfile->getImagePath());
+            // TODO: nullの処理をgetFullImagePathに落とし込む
+            $fullImagePath = $currentUserProfile->getImagePath() === null ? 
+                            null 
+                            : 
+                            $imageService->getFullImagePath($currentUserProfile->getImagePath());
 
             $currentUserProfile->setImagePath($fullImagePath);
 
+            // TODO: imageServiceクラスにロジックを任せる
+            // TODO: imagePathがnullの場合のdefault-icon-pathをセットする処理を書く
             foreach($followerPosts as $data) {
                 $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
                 
                 $data['post']->setImagePath($fullImagePath);
             }
+
     
             return new HTMLRenderer('page/home', [
                 'currentUser' => $currentUserProfile,
