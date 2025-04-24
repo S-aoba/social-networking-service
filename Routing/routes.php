@@ -26,7 +26,9 @@ return [
     
             $profileDAO = DAOFactory::getProfileDAO();
             $currentUserProfile = $profileDAO->getByUserId($user->getId());
-            // TODO: currentUserProfileがnullの場合の処理を追加
+            if($currentUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
     
             $postDAO = DAOFactory::getPostDAO();
             // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
