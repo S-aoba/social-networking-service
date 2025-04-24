@@ -35,18 +35,18 @@ return [
             $posts = $postDAO->getFollowingPosts($user->getId());
 
             $imageService = new ImageService();
-            // TODO: nullの処理をgetFullImagePathに落とし込む
+            // TODO: nullの処理をgetPublicImagePathに落とし込む
             $fullImagePath = $currentUserProfile->getImagePath() === null ? 
                             null 
                             : 
-                            $imageService->getFullImagePath($currentUserProfile->getImagePath());
+                            $imageService->getPublicImagePath($currentUserProfile->getImagePath());
 
             $currentUserProfile->setImagePath($fullImagePath);
 
             // TODO: imageServiceクラスにロジックを任せる
             // TODO: imagePathがnullの場合のdefault-icon-pathをセットする処理を書く
             foreach($posts as $data) {
-                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
+                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getPublicImagePath($data['post']->getImagePath());
                 
                 $data['post']->setImagePath($fullImagePath);
             }
@@ -99,13 +99,13 @@ return [
             $currentUserImagePath = $currentUser->getImagePath() === null ? 
                                         null 
                                         : 
-                                        $imageService->getFullImagePath($currentUser->getImagePath());
+                                        $imageService->getPublicImagePath($currentUser->getImagePath());
             $currentUser->setImagePath($currentUserImagePath);
 
-            $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
+            $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getPublicImagePath($profile->getImagePath());
 
             foreach($posts as $data) {
-                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
+                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getPublicImagePath($data['post']->getImagePath());
                 
                 $data['post']->setImagePath($fullImagePath);
             }
@@ -148,17 +148,17 @@ return [
 
             $imageService = new ImageService();
 
-            $fullImagePath = $currentUserProfile->getImagePath() === null ? null : $imageService->getFullImagePath($currentUserProfile->getImagePath());
+            $fullImagePath = $currentUserProfile->getImagePath() === null ? null : $imageService->getPublicImagePath($currentUserProfile->getImagePath());
 
             $currentUserProfile->setImagePath($fullImagePath);
 
             foreach($replies as $data) {
-                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
+                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getPublicImagePath($data['post']->getImagePath());
                 
                 $data['post']->setImagePath($fullImagePath);
             }
             
-            $post['post']->setImagePath($post['post']->getImagePath() === null ? null : $imageService->getFullImagePath($post['post']->getImagePath()));
+            $post['post']->setImagePath($post['post']->getImagePath() === null ? null : $imageService->getPublicImagePath($post['post']->getImagePath()));
 
             return new HTMLRenderer('page/post', [
                 'currentUser' => $currentUserProfile,

@@ -31,7 +31,7 @@ class ImageService implements Model {
       return $this->convertToFullImagePath();
     }
 
-    public function getFullImagePath(string $imagePath): string {
+    public function getPublicImagePath(string $imagePath): string {
       return '/' . $this->dirPath . '/' . $imagePath;
     }
 
