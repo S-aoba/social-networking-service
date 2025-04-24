@@ -32,8 +32,7 @@ return [
     
             $postDAO = DAOFactory::getPostDAO();
             // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
-            // TODO: followerPostsをpostsに変更(おすすめのpostとフォロー中のpostのどちらかを取得するロジックになる為)
-            $followerPosts = $postDAO->getFollowingPosts($user->getId());
+            $posts = $postDAO->getFollowingPosts($user->getId());
 
             $imageService = new ImageService();
             // TODO: nullの処理をgetFullImagePathに落とし込む
@@ -46,7 +45,7 @@ return [
 
             // TODO: imageServiceクラスにロジックを任せる
             // TODO: imagePathがnullの場合のdefault-icon-pathをセットする処理を書く
-            foreach($followerPosts as $data) {
+            foreach($posts as $data) {
                 $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
                 
                 $data['post']->setImagePath($fullImagePath);
@@ -55,7 +54,7 @@ return [
     
             return new HTMLRenderer('page/home', [
                 'currentUser' => $currentUserProfile,
-                'followerPosts' => $followerPosts,
+                'posts' => $posts,
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
