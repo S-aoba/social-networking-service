@@ -36,22 +36,18 @@ return [
 
             $imageService = new ImageService();
             // TODO: nullの処理をgetPublicImagePathに落とし込む
-            $fullImagePath = $currentUserProfile->getImagePath() === null ? 
-                            null 
-                            : 
-                            $imageService->getPublicImagePath($currentUserProfile->getImagePath());
-
+            // TODO: profile imageとpost imageの処理を別メソッドにする
+            $fullImagePath = $imageService->getPublicProfileImagePath($currentUserProfile->getImagePath());
             $currentUserProfile->setImagePath($fullImagePath);
 
             // TODO: imageServiceクラスにロジックを任せる
             // TODO: imagePathがnullの場合のdefault-icon-pathをセットする処理を書く
             foreach($posts as $data) {
-                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getPublicImagePath($data['post']->getImagePath());
+                $fullImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
                 
                 $data['post']->setImagePath($fullImagePath);
             }
 
-    
             return new HTMLRenderer('page/home', [
                 'currentUser' => $currentUserProfile,
                 'posts' => $posts,
@@ -96,21 +92,18 @@ return [
             $isFollow = $followDAO->checkIsFollow($user->getId(), $profile->getUserId());
             
             $imageService = new ImageService();
-            $currentUserImagePath = $currentUser->getImagePath() === null ? 
-                                        null 
-                                        : 
-                                        $imageService->getPublicImagePath($currentUser->getImagePath());
+
+            $currentUserImagePath = $imageService->getPublicProfileImagePath($currentUser->getImagePath());
             $currentUser->setImagePath($currentUserImagePath);
 
-            $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getPublicImagePath($profile->getImagePath());
+            $fullImagePath = $imageService->getPublicProfileImagePath($profile->getImagePath());
+            $profile->setImagePath($fullImagePath);
 
             foreach($posts as $data) {
-                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getPublicImagePath($data['post']->getImagePath());
-                
+                $fullImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
                 $data['post']->setImagePath($fullImagePath);
             }
 
-            $profile->setImagePath($fullImagePath);
 
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
@@ -148,17 +141,15 @@ return [
 
             $imageService = new ImageService();
 
-            $fullImagePath = $currentUserProfile->getImagePath() === null ? null : $imageService->getPublicImagePath($currentUserProfile->getImagePath());
-
+            $fullImagePath = $imageService->getPublicProfileImagePath($currentUserProfile->getImagePath());
             $currentUserProfile->setImagePath($fullImagePath);
 
             foreach($replies as $data) {
-                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getPublicImagePath($data['post']->getImagePath());
-                
+                $fullImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
                 $data['post']->setImagePath($fullImagePath);
             }
             
-            $post['post']->setImagePath($post['post']->getImagePath() === null ? null : $imageService->getPublicImagePath($post['post']->getImagePath()));
+            $post['post']->setImagePath($imageService->getPublicPostImagePath($post['post']->getImagePath()));
 
             return new HTMLRenderer('page/post', [
                 'currentUser' => $currentUserProfile,
