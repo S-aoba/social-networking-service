@@ -35,8 +35,7 @@ return [
             $posts = $postDAO->getFollowingPosts($user->getId());
 
             $imageService = new ImageService();
-            // TODO: nullの処理をgetPublicImagePathに落とし込む
-            // TODO: profile imageとpost imageの処理を別メソッドにする
+            
             $fullImagePath = $imageService->getPublicProfileImagePath($currentUserProfile->getImagePath());
             $currentUserProfile->setImagePath($fullImagePath);
 
