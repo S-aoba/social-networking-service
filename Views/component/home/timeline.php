@@ -2,9 +2,9 @@
   <?php include "Views/component/home/tab.php" ?>
   <?php include "Views/component/post-form.php" ?>
 
-  <?php if(count($followerPosts) > 0): ?>
+  <?php if(count($posts) > 0): ?>
     <div class="divide-y divide-slate-200">
-      <?php foreach ($followerPosts as $data): ?>
+      <?php foreach ($posts as $data): ?>
         <?php include "Views/component/article.php" ?>
       <?php endforeach; ?>
     </div>
