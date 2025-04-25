@@ -36,15 +36,15 @@ return [
 
             $imageService = new ImageService();
             
-            $fullImagePath = $imageService->getPublicProfileImagePath($currentUserProfile->getImagePath());
-            $currentUserProfile->setImagePath($fullImagePath);
+            $publicProfileImagePath = $imageService->getPublicProfileImagePath($currentUserProfile->getImagePath());
+            $currentUserProfile->setImagePath($publicProfileImagePath);
 
             // TODO: imageServiceクラスにロジックを任せる
             // TODO: imagePathがnullの場合のdefault-icon-pathをセットする処理を書く
             foreach($posts as $data) {
-                $fullImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
+                $publicPostImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
                 
-                $data['post']->setImagePath($fullImagePath);
+                $data['post']->setImagePath($publicPostImagePath);
             }
 
             return new HTMLRenderer('page/home', [
@@ -92,15 +92,16 @@ return [
             
             $imageService = new ImageService();
 
-            $currentUserImagePath = $imageService->getPublicProfileImagePath($currentUser->getImagePath());
-            $currentUser->setImagePath($currentUserImagePath);
+            // TODO: current userとtarget userでの変数名の使い方をもう少しわかりやすくしたい
+            $publicCurrentUserProfileImagePath = $imageService->getPublicProfileImagePath($currentUser->getImagePath());
+            $currentUser->setImagePath($publicCurrentUserProfileImagePath);
 
-            $fullImagePath = $imageService->getPublicProfileImagePath($profile->getImagePath());
-            $profile->setImagePath($fullImagePath);
+            $publicProfileImagePath = $imageService->getPublicProfileImagePath($profile->getImagePath());
+            $profile->setImagePath($publicProfileImagePath);
 
             foreach($posts as $data) {
-                $fullImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
-                $data['post']->setImagePath($fullImagePath);
+                $publicPostImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
+                $data['post']->setImagePath($publicPostImagePath);
             }
 
 
@@ -140,15 +141,16 @@ return [
 
             $imageService = new ImageService();
 
-            $fullImagePath = $imageService->getPublicProfileImagePath($currentUserProfile->getImagePath());
-            $currentUserProfile->setImagePath($fullImagePath);
+            $publicCurrentUserProfileImagePath = $imageService->getPublicProfileImagePath($currentUserProfile->getImagePath());
+            $currentUserProfile->setImagePath($publicCurrentUserProfileImagePath);
 
             foreach($replies as $data) {
-                $fullImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
-                $data['post']->setImagePath($fullImagePath);
+                $publicReplyImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
+                $data['post']->setImagePath($publicReplyImagePath);
             }
             
-            $post['post']->setImagePath($imageService->getPublicPostImagePath($post['post']->getImagePath()));
+            $publicPostImagePath = $imageService->getPublicPostImagePath($post['post']->getImagePath());
+            $post['post']->setImagePath($publicPostImagePath);
 
             return new HTMLRenderer('page/post', [
                 'currentUser' => $currentUserProfile,
