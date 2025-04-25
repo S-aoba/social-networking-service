@@ -31,7 +31,15 @@ class ImageService implements Model {
       return $this->convertToFullImagePath();
     }
 
-    public function getPublicImagePath(string $imagePath): string {
+    public function getPublicProfileImagePath(?string $imagePath): string {
+      if($imagePath === null) return '/images/default-icon.png';
+
+      return '/' . $this->dirPath . '/' . $imagePath;
+    }
+
+    public function getPublicPostImagePath(?string $imagePath): ?string {
+      if($imagePath === null) return null;
+
       return '/' . $this->dirPath . '/' . $imagePath;
     }
 
