@@ -14,7 +14,7 @@
   <div class="py-2 flex items-end justify-between">
     <img src="<?php echo $imagepath ?>" alt="user-icon" class="size-32 rounded-full">
 
-    <?php if($loginedUserId === $profile->getUserId()): ?>
+    <?php if($currentUser->getUserId() === $profile->getUserId()): ?>
       <button 
           id="edit-profile-button" 
           class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer"
