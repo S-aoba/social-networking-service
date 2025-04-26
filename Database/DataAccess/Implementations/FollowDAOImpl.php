@@ -139,7 +139,7 @@ class FollowDAOImpl implements FollowDAO
   private function getRowFollowerCount(int $userId): int {
     $mysqli = DatabaseManager::getMysqliConnection();
 
-    $query = "SELECT COUNT(*) FROM follows where follower_id = ?";
+    $query = "SELECT COUNT(*) FROM follows where following_id = ?";
 
     $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
 
@@ -149,7 +149,7 @@ class FollowDAOImpl implements FollowDAO
   private function getRowFollowingCount(int $userId): int {
     $mysqli = DatabaseManager::getMysqliConnection();
 
-    $query = "SELECT COUNT(*) FROM follows where following_id = ?";
+    $query = "SELECT COUNT(*) FROM follows where follower_id = ?";
     
     $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
     
