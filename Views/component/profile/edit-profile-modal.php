@@ -14,7 +14,7 @@
                 <p class="text-sm text-gray-500">Please fill in the following fields to update your profile.</p>
               </div>
               <div class="mt-2 relative">
-                <img src="<?= $imagePath ?>" alt="user-icon" class="size-20" id="previewImage">
+                <img src="<?= $queryUser->getImagePath(); ?>" alt="user-icon" class="size-20" id="previewImage">
                 <label for="upload-file" class="absolute top-5 left-5 hover:cursor-pointer hover:bg-gray-100 p-2 rounded-full">
                   <img src="/images/camera.svg" alt="camera-icon">
                   <input type="file" id="upload-file" name="upload-file" value="<?php echo $queryUser->getImagePath() ?>" class="hidden">

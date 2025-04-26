@@ -53,8 +53,10 @@ return [
 
             foreach($posts as $data) {
                 $publicPostImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
+                $publicAuthorImagePath = $imageService->buildPublicPostImagePath($data['author']->getImagePath());
                 
                 $data['post']->setImagePath($publicPostImagePath);
+                $data['author']->setImagePath($publicAuthorImagePath);
             }
 
             return new HTMLRenderer('page/home', [

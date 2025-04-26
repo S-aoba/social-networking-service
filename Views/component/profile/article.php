@@ -1,7 +1,3 @@
-<?php
-    $imagePath = $queryUser->getImagePath() === null ? '/images/default-icon.png' : $queryUser->getImagePath();
-?>
-
 <div class="relative">
   <a 
     href="/post?id=<?= $data['post']->getId() ?>" 
@@ -16,7 +12,7 @@
         >
         </a>
           <img 
-            src="<?= $imagePath ?>" 
+            src="<?= $authUser->getImagePath(); ?>" 
             alt="contributor-icon" 
             class="w-full h-full object-cover"
           >

@@ -1,7 +1,3 @@
-<?php
-    $imagePath = $authUser->getImagePath() === null ? '/images/default-icon.png' : $authUser->getImagePath();
-?>
-
 <div class="relative inline-block text-left">
   <div>
     <button 
@@ -13,7 +9,7 @@
       aria-haspopup="true"
     >
       <div class="flex items-center justify-center space-x-2">
-        <img src="<?php echo $imagePath ?>" alt="user-icon" class="size-8 rounded-full">
+        <img src="<?= $authUser->getImagePath() ?>" alt="user-icon" class="size-8 rounded-full">
         <span class="text-xs font-semibold"><?php echo $authUser->getUsername() ?></span>
         <svg 
           class="-mr-1 size-5 text-gray-400" 

@@ -12,7 +12,7 @@
   </div>
   
   <div class="py-2 flex items-end justify-between">
-    <img src="<?php echo $imagepath ?>" alt="user-icon" class="size-32 rounded-full">
+    <img src="<?= $queryUser->getImagePath(); ?>" alt="user-icon" class="size-32 rounded-full">
 
     <?php if($authUser->getUserId() === $queryUser->getUserId()): ?>
       <button 

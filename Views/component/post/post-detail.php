@@ -1,7 +1,3 @@
-<?php
-    $imagePath = $authUser->getImagePath() === null ? '/images/default-icon.png' : $authUser->getImagePath();
-?>
-
 <div class="col-span-8 w-full h-full flex flex-col overflow-auto">
   <div class="flex items-center gap-x-2 p-2">
     <?php include "Views/component/undo.php" ?>
@@ -14,7 +10,7 @@
     <div role="contributor-icon" class="px-5">
       <div class="size-10 rounded-full overflow-hidden">
         <a href="<?php echo '/profile?user=' . $authUser->getUsername(); ?>"" class="z-20 relative hover:brightness-90 transition duration-300">
-          <img src="<?php echo $imagePath ?>" alt="posted-user-icon" class="w-full h-full object-cover">
+          <img src="<?= $authUser->getImagePath(); ?>" alt="posted-user-icon" class="w-full h-full object-cover">
         </a>
       </div>
     </div>

@@ -1,5 +1,4 @@
 <?php
-$imagepath = $queryUser->getImagePath() === null ? '/images/default-icon.png' : $queryUser->getImagePath();
 $postCount = $posts === null ? 0 : count($posts);
 
 $userInfoList = [
