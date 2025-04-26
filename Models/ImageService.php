@@ -37,7 +37,7 @@ class ImageService implements Model {
       return '/' . $this->dirPath . '/' . $imagePath;
     }
 
-    public function getPublicPostImagePath(?string $imagePath): ?string {
+    public function buildPublicPostImagePath(?string $imagePath): ?string {
       if($imagePath === null) return null;
 
       return '/' . $this->dirPath . '/' . $imagePath;

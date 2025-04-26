@@ -52,7 +52,7 @@ return [
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             foreach($posts as $data) {
-                $publicPostImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
+                $publicPostImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
                 
                 $data['post']->setImagePath($publicPostImagePath);
             }
@@ -104,7 +104,7 @@ return [
             $queryUserProfile->setImagePath($publicQueryUserImagePath);
 
             foreach($posts as $data) {
-                $publicPostImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
+                $publicPostImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
                 $data['post']->setImagePath($publicPostImagePath);
             }
 
@@ -151,11 +151,11 @@ return [
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             foreach($replies as $data) {
-                $publicReplyImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
+                $publicReplyImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
                 $data['post']->setImagePath($publicReplyImagePath);
             }
             
-            $publicPostImagePath = $imageService->getPublicPostImagePath($post['post']->getImagePath());
+            $publicPostImagePath = $imageService->buildPublicPostImagePath($post['post']->getImagePath());
             $post['post']->setImagePath($publicPostImagePath);
 
             return new HTMLRenderer('page/post', [
