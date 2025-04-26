@@ -103,7 +103,7 @@ class PostDAOImpl implements PostDAO
          createdAt: $data['created_at'],
          parentPostId: $data['parent_post_id'],
         );
-        $postedUser = new Profile(
+        $author = new Profile(
           username: $data['username'],
           userId: $data['user_id'],
           imagePath: $data['image_path']
@@ -111,7 +111,7 @@ class PostDAOImpl implements PostDAO
 
         $arr = [
           'post' => $post,
-          'postedUser' => $postedUser,
+          'author' => $author,
           'replyCount' => $data['reply_count'],
           'likeCount' => $data['like_count'],
           'like' => $data['liked'],

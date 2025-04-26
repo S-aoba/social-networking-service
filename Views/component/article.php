@@ -1,5 +1,5 @@
 <?php
-    $imagePath = $data['postedUser']->getImagePath() === null ? '/images/default-icon.png' : $imagePath;
+    $imagePath = $data['author']->getImagePath() === null ? '/images/default-icon.png' : $imagePath;
 ?>
 
 <div class="relative">
@@ -26,13 +26,13 @@
       <div class="w-full flex items-center justify-between">
         <div class="w-full flex items-center space-x-2">
           <p class="text-sm font-semibold">
-            <?= $data['postedUser']->getUsername(); ?>
+            <?= $data['author']->getUsername(); ?>
           </p>
           <div class="text-gray-400 text-xs flex items-center">
             <?= $data['post']->getFormattedCreatedAt(); ?>
           </div>
         </div>
-        <?php if($authUser->getUserId() === $data['postedUser']->getUserId()): ?>
+        <?php if($authUser->getUserId() === $data['author']->getUserId()): ?>
           <?php include "Views/component/post-menu-action.php" ?>
         <?php endif ;?>
       </div>
