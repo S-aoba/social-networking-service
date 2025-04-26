@@ -350,7 +350,7 @@ return [
                 fileType: $file['type'],
                 tempPath: $file['tmp_name'],
             );
-            $fullImagePath = $imageService->generateFullImagePath();
+            $fullImagePath = $imageService->generatePublicImagePath();
             
             $parentPostId = $_POST['parent_post_id'] === '' ? null : $_POST['parent_post_id'];
 
@@ -462,7 +462,7 @@ return [
                 tempPath: $file['tmp_name'],
             );
             
-            $fullImagePath = $imageService->generateFullImagePath();
+            $fullImagePath = $imageService->generatePublicImagePath();
 
             $profile = new Profile(
                 username: $username,
@@ -502,7 +502,7 @@ return [
                 fileType: $file['type'],
                 tempPath: $file['tmp_name'],
             );
-            $fullImagePath = $imageService->generateFullImagePath();
+            $fullImagePath = $imageService->generatePublicImagePath();
             
             $parentPostId = intval($_POST['parent_post_id']);
             

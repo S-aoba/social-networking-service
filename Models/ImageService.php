@@ -27,7 +27,7 @@ class ImageService implements Model {
      * 
      * @return 2024-04-16-uniqu-key.png
      */
-    public function generateFullImagePath(): string {
+    public function generatePublicImagePath(): string {
       return $this->convertToFullImagePath();
     }
 
