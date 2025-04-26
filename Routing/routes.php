@@ -48,7 +48,7 @@ return [
 
             $imageService = new ImageService();
             
-            $publicAuthUserImagePath = $imageService->getPublicProfileImagePath($authUserProfile->getImagePath());
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             foreach($posts as $data) {
@@ -97,10 +97,10 @@ return [
             
             $imageService = new ImageService();
 
-            $publicAuthUserImagePath = $imageService->getPublicProfileImagePath($authUserProfile->getImagePath());
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            $publicQueryUserImagePath = $imageService->getPublicProfileImagePath($queryUserProfile->getImagePath());
+            $publicQueryUserImagePath = $imageService->buildPublicProfileImagePath($queryUserProfile->getImagePath());
             $queryUserProfile->setImagePath($publicQueryUserImagePath);
 
             foreach($posts as $data) {
@@ -147,7 +147,7 @@ return [
 
             $imageService = new ImageService();
 
-            $publicAuthUserImagePath = $imageService->getPublicProfileImagePath($authUserProfile->getImagePath());
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             foreach($replies as $data) {
