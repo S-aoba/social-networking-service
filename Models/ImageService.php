@@ -28,7 +28,7 @@ class ImageService implements Model {
      * @return 2024-04-16-uniqu-key.png
      */
     public function generatePublicImagePath(): string {
-      return $this->convertToFullImagePath();
+      return $this->convertToPublicImagePath();
     }
 
     public function buildPublicProfileImagePath(?string $imagePath): string {
@@ -63,7 +63,7 @@ class ImageService implements Model {
       throw new Exception('Does not exists the file.');
     }
 
-    private function convertToFullImagePath(): string {
+    private function convertToPublicImagePath(): string {
       $uuid = $this->createUUID();
 
       $currentDate = $this->createCurrentDate();
