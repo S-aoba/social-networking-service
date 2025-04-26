@@ -1,5 +1,5 @@
 <?php
-    $imagePath = $currentUser->getImagePath() === null ? '/images/default-icon.png' : $currentUser->getImagePath();
+    $imagePath = $authUser->getImagePath() === null ? '/images/default-icon.png' : $authUser->getImagePath();
 ?>
 
 <div class="col-span-8 w-full h-full flex flex-col overflow-auto">
@@ -13,7 +13,7 @@
   <div class="w-full h-fit flex border-b border-slate-200 py-4 pr-4">
     <div role="contributor-icon" class="px-5">
       <div class="size-10 rounded-full overflow-hidden">
-        <a href="<?php echo '/profile?user=' . $currentUser->getUsername(); ?>"" class="z-20 relative hover:brightness-90 transition duration-300">
+        <a href="<?php echo '/profile?user=' . $authUser->getUsername(); ?>"" class="z-20 relative hover:brightness-90 transition duration-300">
           <img src="<?php echo $imagePath ?>" alt="posted-user-icon" class="w-full h-full object-cover">
         </a>
       </div>

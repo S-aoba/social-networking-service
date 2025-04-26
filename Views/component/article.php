@@ -11,7 +11,7 @@
     <div id="contributor-avator" class="px-5">
       <div class="relative size-10 rounded-full overflow-hidden">
         <a 
-          href="<?= '/profile?user=' . $currentUser->getUsername(); ?>"" 
+          href="<?= '/profile?user=' . $authUser->getUsername(); ?>"" 
           class="absolute inset-0 z-20 hover:bg-slate-800/25 transition duration-300"
         >
       </a>
@@ -32,7 +32,7 @@
             <?= $data['post']->getFormattedCreatedAt(); ?>
           </div>
         </div>
-        <?php if($currentUser->getUserId() === $data['postedUser']->getUserId()): ?>
+        <?php if($authUser->getUserId() === $data['postedUser']->getUserId()): ?>
           <?php include "Views/component/post-menu-action.php" ?>
         <?php endif ;?>
       </div>

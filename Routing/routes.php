@@ -58,7 +58,7 @@ return [
             }
 
             return new HTMLRenderer('page/home', [
-                'currentUser' => $authUserProfile,
+                'authUser' => $authUserProfile,
                 'posts' => $posts,
             ]);
         } catch (\Exception $e) {
@@ -110,7 +110,7 @@ return [
 
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
-                'currentUser' => $authUserProfile,
+                'authUser' => $authUserProfile,
                 'profile' => $queryUserProfile,
                 'posts' => $posts,
                 'followerCount' => $followerCount,
@@ -159,7 +159,7 @@ return [
             $post['post']->setImagePath($publicPostImagePath);
 
             return new HTMLRenderer('page/post', [
-                'currentUser' => $authUserProfile,
+                'authUser' => $authUserProfile,
                 'data' => $post,
                 'replies' => $replies,
             ]);
@@ -187,7 +187,7 @@ return [
             if($following === null) throw new Exception('Following not found!');
 
             return new HTMLRenderer('page/following', [
-                'currentUser' => $authUserProfile,
+                'authUser' => $authUserProfile,
                 'data' => $following,
             ]);
         } catch (\Exception $e) {
@@ -212,7 +212,7 @@ return [
             if($follower === null) throw new Exception('Follower not found!');
 
             return new HTMLRenderer('page/follower', [
-                'currentUser' => $authUserProfile,
+                'authUser' => $authUserProfile,
                 'data' => $follower,
             ]);
         } catch (\Exception $e) {
