@@ -7,7 +7,7 @@
         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
           <form id="editProfileForm" method="POST" action="/form/update/profile" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
-            <input type="hidden" name="user_id" value="<?= $profile->getUserId(); ?>">
+            <input type="hidden" name="user_id" value="<?= $queryUser->getUserId(); ?>">
             <div class="sm:flex-col sm:items-start">
               <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title">Edit Profile</h3>
               <div class="mt-2">
@@ -17,28 +17,28 @@
                 <img src="<?= $imagePath ?>" alt="user-icon" class="size-20" id="previewImage">
                 <label for="upload-file" class="absolute top-5 left-5 hover:cursor-pointer hover:bg-gray-100 p-2 rounded-full">
                   <img src="/images/camera.svg" alt="camera-icon">
-                  <input type="file" id="upload-file" name="upload-file" value="<?php echo $profile->getImagePath() ?>" class="hidden">
+                  <input type="file" id="upload-file" name="upload-file" value="<?php echo $queryUser->getImagePath() ?>" class="hidden">
                 </label>
                 </div>
               <div class="mt-2">
                 <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                <input type="text" id="username" name="username" class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter your username" value="<?php echo $profile->getUsername() ?>">
+                <input type="text" id="username" name="username" class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter your username" value="<?php echo $queryUser->getUsername() ?>">
               </div> 
               <div class="mt-2">
                 <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
-                <input type="number" id="age" name="age" class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter your age" value="<?php echo $profile->getAge() ?>">
+                <input type="number" id="age" name="age" class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter your age" value="<?php echo $queryUser->getAge() ?>">
               </div>
               <div class="mt-2">
                 <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
-                <input type="text" id="address" name="address" class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter your address" value="<?php echo $profile->getAddress() ?>">
+                <input type="text" id="address" name="address" class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter your address" value="<?php echo $queryUser->getAddress() ?>">
               </div>
               <div class="mt-2">
                 <label for="hobby" class="block text-sm font-medium text-gray-700">Hobby</label>
-                <input type="text" id="hobby" name="hobby" class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter your hobby" value="<?php echo $profile->getHobby() ?>">
+                <input type="text" id="hobby" name="hobby" class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter your hobby" value="<?php echo $queryUser->getHobby() ?>">
               </div>
               <div class="mt-2">
                 <label for="self_introduction" class="block text-sm font-medium text-gray-700">Self Introduction</label>
-                <textarea id="self_introduction" name="self_introduction" rows="4" class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter your self introduction"><?php echo $profile->getSelfIntroduction() ?></textarea>
+                <textarea id="self_introduction" name="self_introduction" rows="4" class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter your self introduction"><?php echo $queryUser->getSelfIntroduction() ?></textarea>
               </div>
             </div>
           </div>

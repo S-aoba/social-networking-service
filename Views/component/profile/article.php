@@ -1,5 +1,5 @@
 <?php
-    $imagePath = $profile->getImagePath() === null ? '/images/default-icon.png' : $profile->getImagePath();
+    $imagePath = $queryUser->getImagePath() === null ? '/images/default-icon.png' : $queryUser->getImagePath();
 ?>
 
 <div class="relative">
@@ -11,7 +11,7 @@
     <div id="contributor-avator" class="px-5">
       <div class="relative size-10 rounded-full overflow-hidden">
         <a 
-          href="<?= '/profile?user=' . $profile->getUsername(); ?>"" 
+          href="<?= '/profile?user=' . $queryUser->getUsername(); ?>"" 
           class="z-20 relative hover:opacity-50"
         >
         </a>
@@ -26,13 +26,13 @@
       <div class="w-full flex items-center justify-between">
         <div class="w-full flex items-center space-x-2">
           <p class="text-sm font-semibold">
-            <?= $profile->getUsername(); ?>
+            <?= $queryUser->getUsername(); ?>
           </p>
           <div class="text-gray-400 text-xs flex items-center">
             <?= $data['post']->getFormattedCreatedAt(); ?>
           </div>
         </div>
-        <?php if($profile->getUserId() === $data['post']->getUserId()): ?>
+        <?php if($queryUser->getUserId() === $data['post']->getUserId()): ?>
           <?php include "Views/component/post-menu-action.php" ?>
         <?php endif ;?>
       </div>

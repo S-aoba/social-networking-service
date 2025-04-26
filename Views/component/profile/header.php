@@ -3,7 +3,7 @@
     <?php include "Views/component/undo.php" ?>
     <div class="w-full flex flex-col">
       <span class="text-base font-semibold">
-        <?= $profile->getUsername() ?>
+        <?= $queryUser->getUsername() ?>
       </span>
       <span class="text-xs text-slate-400 font-mono">
         <?php echo $postCount ?> 件のポスト
@@ -14,7 +14,7 @@
   <div class="py-2 flex items-end justify-between">
     <img src="<?php echo $imagepath ?>" alt="user-icon" class="size-32 rounded-full">
 
-    <?php if($authUser->getUserId() === $profile->getUserId()): ?>
+    <?php if($authUser->getUserId() === $queryUser->getUserId()): ?>
       <button 
           id="edit-profile-button" 
           class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer"

@@ -1,13 +1,13 @@
 <?php
-$imagepath = $profile->getImagePath() === null ? '/images/default-icon.png' : $profile->getImagePath();
+$imagepath = $queryUser->getImagePath() === null ? '/images/default-icon.png' : $queryUser->getImagePath();
 $postCount = $posts === null ? 0 : count($posts);
 
 $userInfoList = [
-  'username' => $profile->getUsername(),
-  'age' => $profile->getAge(),
-  'address' => $profile->getAddress(),
-  'hobby' => $profile->getHobby(),
-  'selfIntroduction' => $profile->getSelfIntroduction()
+  'username' => $queryUser->getUsername(),
+  'age' => $queryUser->getAge(),
+  'address' => $queryUser->getAddress(),
+  'hobby' => $queryUser->getHobby(),
+  'selfIntroduction' => $queryUser->getSelfIntroduction()
 ];
 
 $followerAndFollowingCountList = [

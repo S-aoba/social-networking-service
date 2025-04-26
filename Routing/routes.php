@@ -111,7 +111,7 @@ return [
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
                 'authUser' => $authUserProfile,
-                'profile' => $queryUserProfile,
+                'queryUser' => $queryUserProfile,
                 'posts' => $posts,
                 'followerCount' => $followerCount,
                 'followingCount' => $followingCount,
