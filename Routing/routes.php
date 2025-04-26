@@ -20,24 +20,24 @@ return [
     '' => Route::create('', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
-            $user = Authenticate::getAuthenticatedUser();
+            $authUser = Authenticate::getAuthenticatedUser();
     
-            if($user === null) return new RedirectRenderer('login');
+            if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
-            $currentUserProfile = $profileDAO->getByUserId($user->getId());
-            if($currentUserProfile === null) {
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
                 return new RedirectRenderer('login');
             }
     
             $postDAO = DAOFactory::getPostDAO();
             // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
-            $posts = $postDAO->getFollowingPosts($user->getId());
+            $posts = $postDAO->getFollowingPosts($authUserProfile->getUserId());
 
             $imageService = new ImageService();
             
-            $publicProfileImagePath = $imageService->getPublicProfileImagePath($currentUserProfile->getImagePath());
-            $currentUserProfile->setImagePath($publicProfileImagePath);
+            $publicAuthUserImagePath = $imageService->getPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             // TODO: imageServiceクラスにロジックを任せる
             // TODO: imagePathがnullの場合のdefault-icon-pathをセットする処理を書く
@@ -48,7 +48,7 @@ return [
             }
 
             return new HTMLRenderer('page/home', [
-                'currentUser' => $currentUserProfile,
+                'currentUser' => $authUserProfile,
                 'posts' => $posts,
             ]);
         } catch (\Exception $e) {
@@ -92,7 +92,6 @@ return [
             
             $imageService = new ImageService();
 
-            // TODO: current userとtarget userでの変数名の使い方をもう少しわかりやすくしたい
             $publicAuthUserImagePath = $imageService->getPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
@@ -125,24 +124,24 @@ return [
             $postId = $_GET['id'];
 
             // TODO: do validation
-            $user = Authenticate::getAuthenticatedUser();
+            $authUser = Authenticate::getAuthenticatedUser();
     
-            if($user === null) return new RedirectRenderer('login');
+            if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
-            $currentUserProfile = $profileDAO->getByUserId($user->getId());
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
 
             $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById(intval($postId), intval($user->getId()));
+            $post = $postDAO->getById(intval($postId), intval($authUserProfile->getUserId()));
 
             if($post === null) throw new Exception('Post not found!');
 
-            $replies = $postDAO->getReplies($postId, intval($user->getId()));
+            $replies = $postDAO->getReplies($postId, intval($authUserProfile->getUserId()));
 
             $imageService = new ImageService();
 
-            $publicCurrentUserProfileImagePath = $imageService->getPublicProfileImagePath($currentUserProfile->getImagePath());
-            $currentUserProfile->setImagePath($publicCurrentUserProfileImagePath);
+            $publicAuthUserImagePath = $imageService->getPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             foreach($replies as $data) {
                 $publicReplyImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
@@ -153,7 +152,7 @@ return [
             $post['post']->setImagePath($publicPostImagePath);
 
             return new HTMLRenderer('page/post', [
-                'currentUser' => $currentUserProfile,
+                'currentUser' => $authUserProfile,
                 'data' => $post,
                 'replies' => $replies,
             ]);
@@ -166,19 +165,19 @@ return [
     })->setMiddleware(['auth']),
     'following' => Route::create('following', function(): HTTPRenderer {
         try {
-            $user = Authenticate::getAuthenticatedUser();
+            $authUser = Authenticate::getAuthenticatedUser();
     
-            if($user === null) return new RedirectRenderer('login');
+            if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId($user->getId());
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
 
             $followDAO = DAOFactory::getFollowDAO();
-            $following = $followDAO->getFollowing($profile->getUserId());
+            $following = $followDAO->getFollowing($authUserProfile->getUserId());
             if($following === null) throw new Exception('Following not found!');
 
             return new HTMLRenderer('page/following', [
-                'profile' => $profile,
+                'currentUser' => $authUserProfile,
                 'data' => $following,
             ]);
         } catch (\Exception $e) {
@@ -188,19 +187,19 @@ return [
     })->setMiddleware(['auth']),
     'follower' => Route::create('follower', function(): HTTPRenderer {
         try {
-            $user = Authenticate::getAuthenticatedUser();
+            $authUser = Authenticate::getAuthenticatedUser();
     
-            if($user === null) return new RedirectRenderer('login');
+            if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId($user->getId());
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
 
             $followDAO = DAOFactory::getFollowDAO();
-            $follower = $followDAO->getFollower($profile->getUserId());
+            $follower = $followDAO->getFollower($authUserProfile->getUserId());
             if($follower === null) throw new Exception('Follower not found!');
 
             return new HTMLRenderer('page/follower', [
-                'profile' => $profile,
+                'currentUser' => $authUserProfile,
                 'data' => $follower,
             ]);
         } catch (\Exception $e) {
