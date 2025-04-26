@@ -17,6 +17,18 @@ use Routing\Route;
 use Types\ValueType;
 
 return [
+    'login' => Route::create('login', function (): HTTPRenderer {
+        return new HTMLRenderer('page/login');
+    })->setMiddleware(['guest']),
+    'register' => Route::create('register', function (): HTTPRenderer {
+        return new HTMLRenderer('page/register');
+    })->setMiddleware(['guest']),
+    'logout' => Route::create('logout', function (): HTTPRenderer {
+        Authenticate::logoutUser();
+        FlashData::setFlashData('success', 'Logged out.');
+        return new RedirectRenderer('login');
+    })->setMiddleware(['auth']),
+    
     '' => Route::create('', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
@@ -56,17 +68,6 @@ return [
 
             return new RedirectRenderer('login');
         }
-    })->setMiddleware(['auth']),
-    'login' => Route::create('login', function (): HTTPRenderer {
-        return new HTMLRenderer('page/login');
-    })->setMiddleware(['guest']),
-    'register' => Route::create('register', function (): HTTPRenderer {
-        return new HTMLRenderer('page/register');
-    })->setMiddleware(['guest']),
-    'logout' => Route::create('logout', function (): HTTPRenderer {
-        Authenticate::logoutUser();
-        FlashData::setFlashData('success', 'Logged out.');
-        return new RedirectRenderer('login');
     })->setMiddleware(['auth']),
     'profile' => Route::create('profile', function(): HTTPRenderer {
         try {
