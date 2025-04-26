@@ -79,7 +79,13 @@ return [
 
             $profileDAO = DAOFactory::getProfileDAO();
             $queryUserProfile = $profileDAO->getByUsername($username);
+            if($queryUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
             
             $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
@@ -102,7 +108,6 @@ return [
                 $publicPostImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
                 $data['post']->setImagePath($publicPostImagePath);
             }
-
 
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
@@ -130,6 +135,9 @@ return [
     
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
 
             $postDAO = DAOFactory::getPostDAO();
             $post = $postDAO->getById(intval($postId), intval($authUserProfile->getUserId()));
@@ -171,6 +179,9 @@ return [
     
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
 
             $followDAO = DAOFactory::getFollowDAO();
             $following = $followDAO->getFollowing($authUserProfile->getUserId());
@@ -193,6 +204,9 @@ return [
     
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
 
             $followDAO = DAOFactory::getFollowDAO();
             $follower = $followDAO->getFollower($authUserProfile->getUserId());
