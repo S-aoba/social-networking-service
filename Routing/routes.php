@@ -28,7 +28,7 @@ return [
         FlashData::setFlashData('success', 'Logged out.');
         return new RedirectRenderer('login');
     })->setMiddleware(['auth']),
-    
+
     '' => Route::create('', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
@@ -51,8 +51,6 @@ return [
             $publicAuthUserImagePath = $imageService->getPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            // TODO: imageServiceクラスにロジックを任せる
-            // TODO: imagePathがnullの場合のdefault-icon-pathをセットする処理を書く
             foreach($posts as $data) {
                 $publicPostImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
                 
