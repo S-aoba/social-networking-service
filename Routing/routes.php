@@ -73,31 +73,31 @@ return [
             $username = $_GET['user'];
             // TODO: do validation
             
-            $user = Authenticate::getAuthenticatedUser();
+            $authUser = Authenticate::getAuthenticatedUser();
 
-            if($user === null) return new RedirectRenderer('login');
+            if($authUser === null) return new RedirectRenderer('login');
 
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUsername($username);
-            $currentUser = $profileDAO->getByUserId($user->getId());
+            $queryUserProfile = $profileDAO->getByUsername($username);
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
             
             $postDAO = DAOFactory::getPostDAO();
-            $posts = $postDAO->getByUserId($profile->getUserId());
+            $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
 
             $followDAO = DAOFactory::getFollowDAO();
-            $followerCount = $followDAO->getFollowerCount($profile->getUserId());
-            $followingCount = $followDAO->getFollowingCount($profile->getUserId());
+            $followerCount = $followDAO->getFollowerCount($queryUserProfile->getUserId());
+            $followingCount = $followDAO->getFollowingCount($queryUserProfile->getUserId());
             
-            $isFollow = $followDAO->checkIsFollow($user->getId(), $profile->getUserId());
+            $isFollow = $followDAO->checkIsFollow($authUserProfile->getUserId(), $queryUserProfile->getUserId());
             
             $imageService = new ImageService();
 
             // TODO: current userとtarget userでの変数名の使い方をもう少しわかりやすくしたい
-            $publicCurrentUserProfileImagePath = $imageService->getPublicProfileImagePath($currentUser->getImagePath());
-            $currentUser->setImagePath($publicCurrentUserProfileImagePath);
+            $publicAuthUserImagePath = $imageService->getPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            $publicProfileImagePath = $imageService->getPublicProfileImagePath($profile->getImagePath());
-            $profile->setImagePath($publicProfileImagePath);
+            $publicQueryUserImagePath = $imageService->getPublicProfileImagePath($queryUserProfile->getImagePath());
+            $queryUserProfile->setImagePath($publicQueryUserImagePath);
 
             foreach($posts as $data) {
                 $publicPostImagePath = $imageService->getPublicPostImagePath($data['post']->getImagePath());
@@ -107,8 +107,8 @@ return [
 
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
-                'currentUser' => $currentUser,
-                'profile' => $profile,
+                'currentUser' => $authUserProfile,
+                'profile' => $queryUserProfile,
                 'posts' => $posts,
                 'followerCount' => $followerCount,
                 'followingCount' => $followingCount,
