@@ -198,6 +198,11 @@ return [
             $followDAO = DAOFactory::getFollowDAO();
             $following = $followDAO->getFollowing($authUserProfile->getUserId());
             if($following === null) throw new Exception('Following not found!');
+
+            foreach($following as $user) {
+                $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                $user->setImagePath($publicAuthorImagePath);
+            };
             
             return new HTMLRenderer('page/following', [
                 'authUser' => $authUserProfile,
@@ -227,6 +232,11 @@ return [
             $followDAO = DAOFactory::getFollowDAO();
             $follower = $followDAO->getFollower($authUserProfile->getUserId());
             if($follower === null) throw new Exception('Follower not found!');
+            
+            foreach($follower as $user) {
+                $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                $user->setImagePath($publicAuthorImagePath);
+            };
 
             return new HTMLRenderer('page/follower', [
                 'authUser' => $authUserProfile,
