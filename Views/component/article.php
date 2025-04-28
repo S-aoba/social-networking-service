@@ -12,8 +12,8 @@
         >
       </a>
           <img 
-            src="<?= $authUser->getImagePath(); ?>" 
-            alt="posted-user-icon" 
+            src="<?= $data['author']->getImagePath(); ?>" 
+            alt="contributor-icon" 
             class="w-full h-full object-cover"
           >
       </div>  

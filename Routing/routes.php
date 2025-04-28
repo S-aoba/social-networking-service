@@ -48,16 +48,18 @@ return [
 
             $imageService = new ImageService();
             
+            if($posts !== null) {
+                foreach($posts as $data) {
+                    $publicPostImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
+                    $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($data['author']->getImagePath());
+                    
+                    $data['post']->setImagePath($publicPostImagePath);
+                    $data['author']->setImagePath($publicAuthorImagePath);
+                }
+            }
+
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
-
-            foreach($posts as $data) {
-                $publicPostImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
-                $publicAuthorImagePath = $imageService->buildPublicPostImagePath($data['author']->getImagePath());
-                
-                $data['post']->setImagePath($publicPostImagePath);
-                $data['author']->setImagePath($publicAuthorImagePath);
-            }
 
             return new HTMLRenderer('page/home', [
                 'authUser' => $authUserProfile,
@@ -75,8 +77,10 @@ return [
             // TODO: do validation
             
             $authUser = Authenticate::getAuthenticatedUser();
-
+            
             if($authUser === null) return new RedirectRenderer('login');
+            
+            $imageService = new ImageService();
 
             $profileDAO = DAOFactory::getProfileDAO();
             $queryUserProfile = $profileDAO->getByUsername($username);
@@ -87,35 +91,34 @@ return [
             if($authUserProfile === null) {
                 return new RedirectRenderer('login');
             }
-            
-            $postDAO = DAOFactory::getPostDAO();
-            $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
-            foreach ($posts as &$data) {
-                $data['author'] = $queryUserProfile;
-            }
-            if(isset($data)) {
-                unset($data);
-            }
-
-            $followDAO = DAOFactory::getFollowDAO();
-            $followerCount = $followDAO->getFollowerCount($queryUserProfile->getUserId());
-            $followingCount = $followDAO->getFollowingCount($queryUserProfile->getUserId());
-            
-            $isFollow = $followDAO->checkIsFollow($authUserProfile->getUserId(), $queryUserProfile->getUserId());
-            
-            $imageService = new ImageService();
 
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             $publicQueryUserImagePath = $imageService->buildPublicProfileImagePath($queryUserProfile->getImagePath());
             $queryUserProfile->setImagePath($publicQueryUserImagePath);
+            
+            $postDAO = DAOFactory::getPostDAO();
+            $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
+            if($posts !== null) {
+                foreach ($posts as &$data) {
+                    $data['author'] = $queryUserProfile;
+                }
+                if(isset($data)) {
+                    unset($data);
+                }
 
-            foreach($posts as $data) {
-                $publicPostImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
-                $data['post']->setImagePath($publicPostImagePath);
-            }
+                foreach($posts as $data) {
+                    $publicPostImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
+                    $data['post']->setImagePath($publicPostImagePath);
+                }
+            };
 
+            $followDAO = DAOFactory::getFollowDAO();
+            $followerCount = $followDAO->getFollowerCount($queryUserProfile->getUserId());
+            $followingCount = $followDAO->getFollowingCount($queryUserProfile->getUserId());
+            $isFollow = $followDAO->checkIsFollow($authUserProfile->getUserId(), $queryUserProfile->getUserId());
+            
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
                 'authUser' => $authUserProfile,
