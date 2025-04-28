@@ -72,12 +72,7 @@ class PostDAOImpl implements PostDAO
                         SELECT COUNT(*) 
                         FROM likes 
                         WHERE post_id = posts.id
-                    ) AS like_count,
-                    (
-                        SELECT COUNT(*) 
-                        FROM likes 
-                        WHERE post_id = posts.id AND user_id = ?
-                    ) AS liked
+                    ) AS like_count
                 FROM posts
                 JOIN profiles ON posts.user_id = profiles.user_id
                 WHERE posts.user_id = ? 
@@ -85,7 +80,7 @@ class PostDAOImpl implements PostDAO
                 ORDER BY posts.created_at DESC
                 LIMIT 10;
                 ";
-      $result = $mysqli->prepareAndFetchAll($query, 'iii', [$userId, $userId, $userId]) ?? null;
+      $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $userId]) ?? null;
       if($result === null) return null;
 
       return $this->rowDataToPost($result);
@@ -114,7 +109,6 @@ class PostDAOImpl implements PostDAO
           'author' => $author,
           'replyCount' => $data['reply_count'],
           'likeCount' => $data['like_count'],
-          'like' => $data['liked'],
         ];
 
         $output[] = $arr;
@@ -125,23 +119,23 @@ class PostDAOImpl implements PostDAO
 
     public function getById(int $postId, int $userId): ?array
     {
-      $postRow = $this->getRowById($postId, $userId);
+      $postRow = $this->getRowById($postId);
 
       if($postRow === null) return null;
 
       return $postRow[0];
     }
 
-    public function getReplies(int $parentPostId, int $userId): ?array
+    public function getReplies(int $parentPostId): ?array
     {
-      $repliesRow = $this->getRowByParentPostId($parentPostId, $userId);
+      $repliesRow = $this->getRowByParentPostId($parentPostId);
 
       if($repliesRow === null) return null;
 
       return $repliesRow;
     }
     
-    private function getRowByParentPostId(int $parentPostId, int $userId): ?array {
+    private function getRowByParentPostId(int $parentPostId): ?array {
       $mysqli = DatabaseManager::getMysqliConnection();
 
       $query = "SELECT 
@@ -159,25 +153,20 @@ class PostDAOImpl implements PostDAO
                         SELECT COUNT(*) 
                         FROM likes 
                         WHERE post_id = posts.id
-                    ) AS like_count,
-                    (
-                        SELECT COUNT(*) 
-                        FROM likes 
-                        WHERE post_id = posts.id AND user_id = ?
-                    ) AS liked
+                    ) AS like_count
                 FROM posts
                 JOIN profiles ON posts.user_id = profiles.user_id
                 WHERE posts.parent_post_id = ?
                 ORDER BY posts.created_at DESC;
               ";
 
-      $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $parentPostId]);
+      $result = $mysqli->prepareAndFetchAll($query, 'i', [$parentPostId]);
       if(count($result) === 0) return null;
 
       return $this->rowDataToPost($result);
     }
 
-    private function getRowById(int $postId, int $userId): ?array {
+    private function getRowById(int $postId): ?array {
       $mysqli = DatabaseManager::getMysqliConnection();
 
       $query = "SELECT 
@@ -195,18 +184,13 @@ class PostDAOImpl implements PostDAO
                         SELECT COUNT(*) 
                         FROM likes 
                         WHERE post_id = posts.id
-                    ) AS like_count,
-                    (
-                        SELECT COUNT(*) 
-                        FROM likes 
-                        WHERE post_id = posts.id AND user_id = ?
-                    ) AS liked
+                    ) AS like_count
                 FROM posts 
                 JOIN profiles ON posts.user_id = profiles.user_id
                 WHERE posts.id = ?
               ";
 
-      $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $postId]);
+      $result = $mysqli->prepareAndFetchAll($query, 'i', [$postId]);
 
       if(count($result) === 0) return null;
 
@@ -236,18 +220,13 @@ class PostDAOImpl implements PostDAO
                         SELECT COUNT(*) 
                         FROM likes 
                         WHERE post_id = posts.id
-                    ) AS like_count,
-                    (
-                        SELECT COUNT(*) 
-                        FROM likes 
-                        WHERE post_id = posts.id AND user_id = ?
-                    ) AS liked
+                    ) AS like_count
                 FROM posts 
                 WHERE user_id = ? 
                 ORDER BY posts.created_at DESC 
                 LIMIT 10";
 
-      $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $userId]);
+      $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
       if(count($result) === 0) return null;
 
       return $this->rowDataToOwnPost($result);
@@ -270,7 +249,6 @@ class PostDAOImpl implements PostDAO
           'post' => $post,
           'replyCount' => $data['reply_count'],
           'likeCount' => $data['like_count'],
-          'like' => $data['liked'],
         ]; 
         $output[] = $arr;
       }
