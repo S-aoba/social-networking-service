@@ -90,6 +90,12 @@ return [
             
             $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
+            foreach ($posts as &$data) {
+                $data['author'] = $queryUserProfile;
+            }
+            if(isset($data)) {
+                unset($data);
+            }
 
             $followDAO = DAOFactory::getFollowDAO();
             $followerCount = $followDAO->getFollowerCount($queryUserProfile->getUserId());
