@@ -207,7 +207,7 @@ return [
                 $user->setImagePath($publicAuthorImagePath);
             };
             
-            return new HTMLRenderer('page/following', [
+            return new HTMLRenderer('page/follower', [
                 'authUser' => $authUserProfile,
                 'data' => $following,
             ]);
