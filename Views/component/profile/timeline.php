@@ -10,8 +10,16 @@ $userInfoList = [
 ];
 
 $followerAndFollowingCountList = [
-  'フォロー中' => $followingCount,
-  'フォロワー' => $followerCount
+  'follow' => [
+    'label' => 'フォロー中',
+    'val' => $followingCount,
+    'href' => '/following'
+  ],
+  'follower' => [
+    'label' => 'フォロワー',
+    'val' => $followerCount,
+    'href' => '/follower'
+  ]
 ];
 
 ?>
@@ -26,7 +34,7 @@ $followerAndFollowingCountList = [
         <?php endforeach; ?>
       </div>
       <div class="flex items-center justify-start space-x-2">
-        <?php foreach($followerAndFollowingCountList as $key => $val): ?>
+        <?php foreach($followerAndFollowingCountList as $key => $data): ?>
           <?php include "Views/component/profile/followerAndFollowing.php"; ?>
         <?php endforeach; ?>
       </div>
