@@ -190,10 +190,15 @@ return [
                 return new RedirectRenderer('login');
             }
 
+            $imageService = new ImageService();
+            
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
+
             $followDAO = DAOFactory::getFollowDAO();
             $following = $followDAO->getFollowing($authUserProfile->getUserId());
             if($following === null) throw new Exception('Following not found!');
-
+            
             return new HTMLRenderer('page/following', [
                 'authUser' => $authUserProfile,
                 'data' => $following,
@@ -214,6 +219,10 @@ return [
             if($authUserProfile === null) {
                 return new RedirectRenderer('login');
             }
+            $imageService = new ImageService();
+            
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             $followDAO = DAOFactory::getFollowDAO();
             $follower = $followDAO->getFollower($authUserProfile->getUserId());
