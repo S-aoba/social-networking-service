@@ -10,6 +10,6 @@ interface PostDAO
   public function getById(int $postId, int $userId): ?array;
   public function getByUserId(int $userId): ?array;
   public function getFollowingPosts(int $userId): ?array;
-  public function getReplies(int $parentPostId): ?array;
+  public function getReplies(int $parentPostId, int $userId): ?array;
   public function deletePost(int $postId): bool;
 }
