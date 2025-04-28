@@ -24,7 +24,7 @@
     <?php else: ?>
       <form method="POST" id="follow-form">
         <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
-        <input type="hidden" name="following_id" value=2>
+        <input type="hidden" name="following_id" value=<?= $queryUser->getUserId(); ?>>
         <?php if($isFollow): ?>
           <button 
             class="px-6 py-2 text-sm bg-white font-mono border border-slate-200 rounded-3xl font-semibold hover:brightness-90 cursor-pointer"
