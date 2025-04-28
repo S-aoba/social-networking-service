@@ -140,7 +140,6 @@ return [
 
             // TODO: do validation
             $authUser = Authenticate::getAuthenticatedUser();
-    
             if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
@@ -153,22 +152,27 @@ return [
             $post = $postDAO->getById(intval($postId), intval($authUserProfile->getUserId()));
 
             if($post === null) throw new Exception('Post not found!');
-
-            $replies = $postDAO->getReplies($postId, intval($authUserProfile->getUserId()));
-
+            
             $imageService = new ImageService();
-
+            
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            foreach($replies as $data) {
-                $publicReplyImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
-                $data['post']->setImagePath($publicReplyImagePath);
+            $publicPostImagePath = $imageService->buildPublicPostImagePath($post['post']->getImagePath());
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($post['author']->getImagePath());
+            $post['post']->setImagePath($publicPostImagePath);
+            $post['author']->setImagePath($publicAuthUserImagePath);
+
+            $replies = $postDAO->getReplies($postId, intval($authUserProfile->getUserId()));
+            if($replies != null) {
+                foreach($replies as $data) {
+                    $publicReplyImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
+                    $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($data['author']->getImagePath());
+                    $data['post']->setImagePath($publicReplyImagePath);
+                    $data['author']->setImagePath($publicAuthUserImagePath);
+                }
             }
             
-            $publicPostImagePath = $imageService->buildPublicPostImagePath($post['post']->getImagePath());
-            $post['post']->setImagePath($publicPostImagePath);
-
             return new HTMLRenderer('page/post', [
                 'authUser' => $authUserProfile,
                 'data' => $post,
