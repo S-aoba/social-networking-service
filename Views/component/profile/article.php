@@ -12,7 +12,7 @@
         >
         </a>
           <img 
-            src="<?= $authUser->getImagePath(); ?>" 
+            src="<?= $queryUser->getImagePath(); ?>" 
             alt="contributor-icon" 
             class="w-full h-full object-cover"
           >
