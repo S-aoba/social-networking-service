@@ -108,13 +108,13 @@ class ProfileDAOImpl implements ProfileDAO
       $query,
       'ssssssi',
       [
-        $queryUser->getUsername(),
-        $queryUser->getImagePath(),
-        $queryUser->getAddress(),
-        $queryUser->getAge(),
-        $queryUser->getHobby(),
-        $queryUser->getSelfIntroduction(),
-        $queryUser->getUserId()
+        $profile->getUsername(),
+        $profile->getImagePath(),
+        $profile->getAddress(),
+        $profile->getAge(),
+        $profile->getHobby(),
+        $profile->getSelfIntroduction(),
+        $profile->getUserId()
       ]
     );
     if (!$result) return false;
