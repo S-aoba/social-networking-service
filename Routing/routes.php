@@ -475,54 +475,57 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            
-            $username = $_POST['username'];
-            //TODO: バリデーションを追加したらそちらに処理を任せて、以下ageの判定式は削除すること
-            $age = $_POST['age'] === '' ? null : $_POST['age'];
-            $address = $_POST['address'];
-            $hobby = $_POST['hobby'];
-            $selfIntroduction = $_POST['self_introduction'];
-            
-            $file = $_FILES['upload-file'];
+            $requiredFields = [
+                'username' => ValueType::STRING,
+                'age' => ValueType::INT,
+                'address' => ValueType::STRING,
+                'hobby' => ValueType::STRING,
+                'self_introduction' => ValueType::STRING
+            ];
 
-            $userId = $_POST['user_id'];
-        
-            // TODO: do validation
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            
+            $user = Authenticate::getAuthenticatedUser();
+            $userId = $user->getId();
             
             $profileDAO = DAOFactory::getProfileDAO();
-
             $prevImagePath = $profileDAO->getImagePath($userId);
-
             
-            $imageService = new ImageService(
-                type: $file['type'],
-                tempPath: $file['tmp_name'],
-            );
-            
-            $fullImagePath = $imageService->generatePublicImagePath();
+            $file = $_FILES['upload-file'];
+            $imageService = null;
+            $publicAuthUserImagePath = null;
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $validatedFileData = ValidationHelper::validateFile($file);
+                $imageService = new ImageService(
+                    type: $validatedFileData['type'],
+                    tempPath: $file['tmp_name']
+                );
+                $publicAuthUserImagePath = $imageService->generatePublicImagePath();
+            }
 
             $profile = new Profile(
-                username: $username,
+                username: $validatedData['username'],
                 userId: $userId,
-                imagePath: $fullImagePath,
-                address: $address,
-                age: $age,
-                hobby: $hobby,
-                selfIntroduction: $selfIntroduction,
+                age: $validatedData['age'],
+                imagePath: $publicAuthUserImagePath,
+                address: $validatedData['address'],
+                hobby: $validatedData['hobby'],
+                selfIntroduction: $validatedData['self_introduction']
             );
-
             $success = $profileDAO->updateProfile($profile);
             if($success === false) throw new Exception('Failed to update profile!');
 
-            $isSavedToDir = $imageService->saveToDir($fullImagePath);
-            if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $isSavedToDir = $imageService->saveToDir($publicAuthUserImagePath);
+                if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
 
-            if($prevImagePath !== null) {
-                $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
-                if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
+                if($prevImagePath !== null) {
+                    $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
+                    if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
+                }
             }
 
-            return new RedirectRenderer('profile?user=' . $username);
+            return new RedirectRenderer('profile?user=' . $validatedData['username']);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
