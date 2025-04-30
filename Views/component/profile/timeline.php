@@ -52,7 +52,6 @@ $followerAndFollowingCountList = [
     <?php endif; ?>
 </div>
 
-<script src="/js/undo.js"></script>
 <script src="/js/profile-modal.js"></script>
 <script src="/js/like.js"></script>
 <script src="/js/follow.js"></script>

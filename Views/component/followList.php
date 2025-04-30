@@ -17,4 +17,3 @@
     <?php endforeach; ?>
   </div>
 </div>
-<script src="/js/undo.js"></script>
