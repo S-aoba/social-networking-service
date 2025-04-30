@@ -12,9 +12,6 @@ class ImageService implements Model {
     private string $dirPath = 'uploads';
     
     public function __construct(
-      // 2024-04-17-unique.png
-      private ?string $imagePath = null,
-      // image/png, image/jpeg
       private ?string $fileType = null,
       private ?string $tempPath = null,
     ) 
