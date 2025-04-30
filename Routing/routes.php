@@ -387,11 +387,11 @@ return [
                 fileType: $file['type'],
                 tempPath: $file['tmp_name'],
             );
-            $fullImagePath = $imageService->generatePublicImagePath();
+            $publicPostImagePath = $imageService->generatePublicImagePath();
 
             $request = [
                 'content' => $validatedData['content'],
-                'imagePath' => $fullImagePath,
+                'imagePath' => $publicPostImagePath,
                 'userId' => $userId,
                 'parentPostId' => null,
             ];
@@ -401,7 +401,7 @@ return [
             $success = $postDAO->create($post);
             if($success === false) throw new Exception('Failed Create Post');
 
-            $isSavedToDir = $imageService->saveToDir($fullImagePath);
+            $isSavedToDir = $imageService->saveToDir($publicPostImagePath);
             if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
 
             return new RedirectRenderer('');
