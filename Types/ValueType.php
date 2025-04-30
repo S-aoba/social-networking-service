@@ -10,4 +10,5 @@ enum ValueType: string
     case DATE = 'date'; // YYYY-MM-DD string
     case EMAIL = 'email';
     case PASSWORD = 'password';
+    case FILE = 'file';
 }
