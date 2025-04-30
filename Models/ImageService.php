@@ -12,7 +12,7 @@ class ImageService implements Model {
     private string $dirPath = 'uploads';
     
     public function __construct(
-      private ?string $fileType = null,
+      private ?string $type = null,
       private ?string $tempPath = null,
     ) 
     {}
@@ -81,7 +81,7 @@ class ImageService implements Model {
     }
 
     private function getFileType(): string {
-      $mimeType = $this->fileType;
+      $mimeType = $this->type;
       $parts = explode("/", $mimeType);
 
       return $parts[1];
