@@ -382,12 +382,16 @@ return [
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
             $file = $_FILES['upload-file'];
-
-            $imageService = new ImageService(
-                fileType: $file['type'],
-                tempPath: $file['tmp_name'],
-            );
-            $publicPostImagePath = $imageService->generatePublicImagePath();
+            $imageService = null;
+            $publicPostImagePath = null;
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $validatedFileData = ValidationHelper::validateFile($file);
+                $imageService = new ImageService(
+                    type: $validatedFileData['type'],
+                    tempPath: $file['tmp_name'],
+                );
+                $publicPostImagePath = $imageService->generatePublicImagePath();
+            }
 
             $request = [
                 'content' => $validatedData['content'],
@@ -401,8 +405,10 @@ return [
             $success = $postDAO->create($post);
             if($success === false) throw new Exception('Failed Create Post');
 
-            $isSavedToDir = $imageService->saveToDir($publicPostImagePath);
-            if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $isSavedToDir = $imageService->saveToDir($publicPostImagePath);
+                if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+            }
 
             return new RedirectRenderer('');
         } catch (\InvalidArgumentException $e) {
@@ -412,9 +418,6 @@ return [
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'An error occurred.');
-
-            // TODO: Change redirect route to error page or login page.
             return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
@@ -492,7 +495,7 @@ return [
 
             
             $imageService = new ImageService(
-                fileType: $file['type'],
+                type: $file['type'],
                 tempPath: $file['tmp_name'],
             );
             
@@ -533,7 +536,7 @@ return [
             $content = $_POST['content'];
             $file = $_FILES['upload-file'];
             $imageService = new ImageService(
-                fileType: $file['type'],
+                type: $file['type'],
                 tempPath: $file['tmp_name'],
             );
             $fullImagePath = $imageService->generatePublicImagePath();

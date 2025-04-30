@@ -65,6 +65,19 @@ class ValidationHelper
 
         return $validatedData;
     }
+    
+    public static function validateFile(array $file): array {
+        $availableTypeList = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp'];
+
+        $type = $file['type'];
+        $type = in_array($type, $availableTypeList, true) ? $type : false;
+        if($type === false) throw new \InvalidArgumentException('The provided value is not a valid type.');
+        // fileの容量の検証 
+
+        return [
+            'type' => $type
+        ];
+    }
 
     public static function type(?string $type): string {
         if($type === null) throw new \InvalidArgumentException("The provided value is null.");
@@ -89,4 +102,5 @@ class ValidationHelper
 
         return $order;
     }
+
 }
