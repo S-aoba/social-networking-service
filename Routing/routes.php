@@ -374,9 +374,12 @@ return [
 
             $user = Authenticate::getAuthenticatedUser();
             if($user === null) return new RedirectRenderer('login');
-
             $userId = $user->getId();
-            $content = $_POST['content'];
+            
+            $requiredFields = [
+                'content' => ValueType::STRING
+            ];            
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
             $file = $_FILES['upload-file'];
 
@@ -385,30 +388,27 @@ return [
                 tempPath: $file['tmp_name'],
             );
             $fullImagePath = $imageService->generatePublicImagePath();
-            
-            $parentPostId = $_POST['parent_post_id'] === '' ? null : $_POST['parent_post_id'];
 
             $request = [
-                'content' => $content,
+                'content' => $validatedData['content'],
                 'imagePath' => $fullImagePath,
                 'userId' => $userId,
-                'parentPostId' => $parentPostId
+                'parentPostId' => null,
             ];
             
-            // TODO: do validatoin
-
             $post = new Post(...$request);
-
             $postDAO = DAOFactory::getPostDAO();
-
             $success = $postDAO->create($post);
-
             if($success === false) throw new Exception('Failed Create Post');
 
             $isSavedToDir = $imageService->saveToDir($fullImagePath);
             if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
 
             return new RedirectRenderer('');
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
