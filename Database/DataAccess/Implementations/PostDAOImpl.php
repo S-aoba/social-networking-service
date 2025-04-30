@@ -64,20 +64,22 @@ class PostDAOImpl implements PostDAO
                   profiles.image_path, 
                   profiles.user_id,
                   (
-                        SELECT COUNT(*) 
-                        FROM posts AS child 
-                        WHERE child.parent_post_id = posts.id
-                    ) AS reply_count,
-                    (
-                        SELECT COUNT(*) 
-                        FROM likes 
-                        WHERE post_id = posts.id
-                    ) AS like_count,
-                    (
-                        SELECT COUNT(*) 
-                        FROM likes 
-                        WHERE post_id = posts.id AND user_id = ?
-                    ) AS liked
+                    SELECT COUNT(*) 
+                    FROM posts AS child 
+                    WHERE child.parent_post_id = posts.id
+                  ) AS reply_count,
+                  (
+                    SELECT COUNT(*) 
+                    FROM likes 
+                    WHERE post_id = posts.id
+                  ) AS like_count,
+                  (
+                    SELECT EXISTS(
+                      SELECT 1
+                      FROM likes
+                      WHERE post_id = posts.id AND user_id = ?
+                    )
+                  ) AS liked
                 FROM posts
                 JOIN profiles ON posts.user_id = profiles.user_id
                 WHERE posts.user_id = ? 
@@ -103,7 +105,7 @@ class PostDAOImpl implements PostDAO
          createdAt: $data['created_at'],
          parentPostId: $data['parent_post_id'],
         );
-        $postedUser = new Profile(
+        $author = new Profile(
           username: $data['username'],
           userId: $data['user_id'],
           imagePath: $data['image_path']
@@ -111,10 +113,10 @@ class PostDAOImpl implements PostDAO
 
         $arr = [
           'post' => $post,
-          'postedUser' => $postedUser,
+          'author' => $author,
           'replyCount' => $data['reply_count'],
           'likeCount' => $data['like_count'],
-          'like' => $data['liked'],
+          'liked' => $data['liked']
         ];
 
         $output[] = $arr;
@@ -151,19 +153,21 @@ class PostDAOImpl implements PostDAO
                     profiles.image_path, 
                     profiles.user_id,
                     (
-                        SELECT COUNT(*) 
-                        FROM posts AS child 
-                        WHERE child.parent_post_id = posts.id
+                      SELECT COUNT(*) 
+                      FROM posts AS child 
+                      WHERE child.parent_post_id = posts.id
                     ) AS reply_count,
                     (
-                        SELECT COUNT(*) 
-                        FROM likes 
-                        WHERE post_id = posts.id
+                      SELECT COUNT(*) 
+                      FROM likes 
+                      WHERE post_id = posts.id
                     ) AS like_count,
                     (
-                        SELECT COUNT(*) 
-                        FROM likes 
+                      SELECT EXISTS(
+                        SELECT 1
+                        FROM likes
                         WHERE post_id = posts.id AND user_id = ?
+                      )
                     ) AS liked
                 FROM posts
                 JOIN profiles ON posts.user_id = profiles.user_id
@@ -187,20 +191,22 @@ class PostDAOImpl implements PostDAO
                   profiles.image_path, 
                   profiles.user_id,
                   (
-                        SELECT COUNT(*) 
-                        FROM posts AS child 
-                        WHERE child.parent_post_id = posts.id
-                    ) AS reply_count,
-                    (
-                        SELECT COUNT(*) 
-                        FROM likes 
-                        WHERE post_id = posts.id
-                    ) AS like_count,
-                    (
-                        SELECT COUNT(*) 
-                        FROM likes 
-                        WHERE post_id = posts.id AND user_id = ?
-                    ) AS liked
+                    SELECT COUNT(*) 
+                    FROM posts AS child 
+                    WHERE child.parent_post_id = posts.id
+                  ) AS reply_count,
+                  (
+                    SELECT COUNT(*) 
+                    FROM likes 
+                    WHERE post_id = posts.id
+                  ) AS like_count,
+                  (
+                    SELECT EXISTS(
+                      SELECT 1
+                      FROM likes
+                      WHERE post_id = posts.id AND user_id = ?
+                    )
+                  ) AS liked
                 FROM posts 
                 JOIN profiles ON posts.user_id = profiles.user_id
                 WHERE posts.id = ?
@@ -228,20 +234,22 @@ class PostDAOImpl implements PostDAO
       $query = "SELECT * ,
                 posts.image_path AS post_image_path,
                 (
-                    SELECT COUNT(*) 
-                    FROM posts AS child 
-                    WHERE child.parent_post_id = posts.id
+                  SELECT COUNT(*) 
+                  FROM posts AS child 
+                  WHERE child.parent_post_id = posts.id
                 ) AS reply_count,
                 (
-                        SELECT COUNT(*) 
-                        FROM likes 
-                        WHERE post_id = posts.id
-                    ) AS like_count,
-                    (
-                        SELECT COUNT(*) 
-                        FROM likes 
-                        WHERE post_id = posts.id AND user_id = ?
-                    ) AS liked
+                  SELECT COUNT(*) 
+                  FROM likes 
+                  WHERE post_id = posts.id
+                ) AS like_count,
+                (
+                  SELECT EXISTS(
+                    SELECT 1
+                    FROM likes
+                    WHERE post_id = posts.id AND user_id = ?
+                  )
+                ) AS liked
                 FROM posts 
                 WHERE user_id = ? 
                 ORDER BY posts.created_at DESC 
@@ -270,7 +278,7 @@ class PostDAOImpl implements PostDAO
           'post' => $post,
           'replyCount' => $data['reply_count'],
           'likeCount' => $data['like_count'],
-          'like' => $data['liked'],
+          'liked' => $data['liked']
         ]; 
         $output[] = $arr;
       }

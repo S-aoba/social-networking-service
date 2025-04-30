@@ -1,46 +1,68 @@
-<?php
-    $imagePath = $profile->getImagePath() === null ? '/images/default-icon.png' : $profile->getImagePath();
-?>
-
 <div class="relative inline-block text-left">
   <div>
-    <button  type="button" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-200 ring-inset hover:bg-gray-50" id="menu-button" aria-expanded="true" aria-haspopup="true">
+    <button 
+      id="user-info-menu-button"
+      role="user-info-menu-button"
+      type="button" 
+      class="inline-flex w-full justify-center gap-x-1.5 rounded-2xl bg-white px-3 py-2 text-sm font-semibold focus:ring-0 text-gray-900 hover:bg-slate-100 hover:cursor-pointer transition duration-300" 
+      aria-expanded="true" 
+      aria-haspopup="true"
+    >
       <div class="flex items-center justify-center space-x-2">
-        <img src="<?php echo $imagePath ?>" alt="user-icon" class="size-8">
-        <span class="text-xs font-semibold"><?php echo $profile->getUsername() ?></span>
-        <svg class="-mr-1 size-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-          <path fill-rule="evenodd" d="M14.78 11.78a.75.75 0 0 1-1.06 0L10 8.06l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06z" clip-rule="evenodd" />
+        <img src="<?= $authUser->getImagePath() ?>" alt="user-icon" class="size-8 rounded-full">
+        <span class="text-xs font-semibold"><?php echo $authUser->getUsername() ?></span>
+        <svg 
+          class="-mr-1 size-5 text-gray-400" 
+          viewBox="0 0 20 20" 
+          fill="currentColor" 
+          aria-hidden="true" 
+          data-slot="icon"
+        >
+          <path 
+            fill-rule="evenodd" 
+            d="M14.78 11.78a.75.75 0 0 1-1.06 0L10 8.06l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06z" 
+            clip-rule="evenodd" 
+          />
         </svg>
       </div>
     </button>
   </div>
 
-  <!--
-    Dropdown menu, show/hide based on menu state.
-
-    Entering: "transition ease-out duration-100"
-      From: "transform opacity-0 scale-95"
-      To: "transform opacity-100 scale-100"
-    Leaving: "transition ease-in duration-75"
-      From: "transform opacity-100 scale-100"
-      To: "transform opacity-0 scale-95"
-  -->
-  <div class="hidden absolute left-0 bottom-30 z-10 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-    <div class="py-1" role="none">
-      <form method="POST" action="logout" role="logout" class="hover:bg-gray-50">
-        <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
-        <div class="flex items-center justify-start space-x-2 pl-2">
-          <img src="/images/logout.svg" alt="logout-icon" class="size-5">
-          <button type="submit" class="block w-full py-2 text-left text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-3">Log out</button>
-        </div>
-      </form>
+  <div
+       id="user-info-menu" 
+       class="hidden absolute left-0 bottom-30 z-10 w-56 py-2 border border-slate-200 rounded-2xl  bg-white shadow-lg ring-slate-200 focus:outline-hidden" 
+       role="user-info-menu" 
+       aria-orientation="vertical" 
+       aria-labelledby="user-info-menu-button" 
+       tabindex="-1"
+  >
+    <div role="none">
+      <div class="w-full py-2 cursor-not-allowed pl-4 hover:bg-slate-100 transition duration-300">
+        <p class="text-sm font-semibold">既存のアカウントを追加</p>
+      </div>
+      <div class="hover:bg-slate-100 transition duration-300">
+        <form method="POST" action="logout" role="logout-form">
+          <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
+          <div class="flex items-center justify-start space-x-2 pl-4">
+            <img src="/images/logout.svg" alt="logout-icon" class="size-5 cursor-pointer">
+            <button 
+              type="submit" 
+              class="block w-full py-2 text-left text-sm text-gray-900 font-semibold cursor-pointer" 
+              role="menuitem" 
+              tabindex="-1"
+            >
+            Log out
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  const button = document.getElementById('menu-button');
-  const menu = document.querySelector('[role="menu"]');
+  const button = document.getElementById('user-info-menu-button');
+  const menu = document.getElementById('user-info-menu');
 
   button.addEventListener('click', () => {
     menu.classList.toggle('hidden');

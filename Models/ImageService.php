@@ -27,11 +27,19 @@ class ImageService implements Model {
      * 
      * @return 2024-04-16-uniqu-key.png
      */
-    public function generateFullImagePath(): string {
-      return $this->convertToFullImagePath();
+    public function generatePublicImagePath(): string {
+      return $this->convertToPublicImagePath();
     }
 
-    public function getFullImagePath(string $imagePath): string {
+    public function buildPublicProfileImagePath(?string $imagePath): string {
+      if($imagePath === null) return '/images/default-icon.png';
+
+      return '/' . $this->dirPath . '/' . $imagePath;
+    }
+
+    public function buildPublicPostImagePath(?string $imagePath): ?string {
+      if($imagePath === null) return null;
+
       return '/' . $this->dirPath . '/' . $imagePath;
     }
 
@@ -55,7 +63,7 @@ class ImageService implements Model {
       throw new Exception('Does not exists the file.');
     }
 
-    private function convertToFullImagePath(): string {
+    private function convertToPublicImagePath(): string {
       $uuid = $this->createUUID();
 
       $currentDate = $this->createCurrentDate();

@@ -17,40 +17,6 @@ use Routing\Route;
 use Types\ValueType;
 
 return [
-    '' => Route::create('', function(): HTTPRenderer {
-        try {
-            $user = Authenticate::getAuthenticatedUser();
-    
-            if($user === null) return new RedirectRenderer('login');
-    
-            $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId($user->getId());
-    
-            $postDAO = DAOFactory::getPostDAO();
-            $followerPosts = $postDAO->getFollowingPosts($user->getId());
-
-            $imageService = new ImageService();
-
-            $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
-
-            $profile->setImagePath($fullImagePath);
-
-            foreach($followerPosts as $data) {
-                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
-                
-                $data['post']->setImagePath($fullImagePath);
-            }
-    
-            return new HTMLRenderer('page/home', [
-                'profile' => $profile,
-                'followerPosts' => $followerPosts,
-            ]);
-        } catch (\Exception $e) {
-            error_log($e->getMessage());
-
-            return new RedirectRenderer('login');
-        }
-    })->setMiddleware(['auth']),
     'login' => Route::create('login', function (): HTTPRenderer {
         return new HTMLRenderer('page/login');
     })->setMiddleware(['guest']),
@@ -62,43 +28,101 @@ return [
         FlashData::setFlashData('success', 'Logged out.');
         return new RedirectRenderer('login');
     })->setMiddleware(['auth']),
+
+    '' => Route::create('', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+            $authUser = Authenticate::getAuthenticatedUser();
+    
+            if($authUser === null) return new RedirectRenderer('login');
+    
+            $profileDAO = DAOFactory::getProfileDAO();
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
+    
+            $postDAO = DAOFactory::getPostDAO();
+            // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
+            $posts = $postDAO->getFollowingPosts($authUserProfile->getUserId());
+
+            $imageService = new ImageService();
+            
+            if($posts !== null) {
+                foreach($posts as $data) {
+                    $publicPostImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
+                    $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($data['author']->getImagePath());
+                    
+                    $data['post']->setImagePath($publicPostImagePath);
+                    $data['author']->setImagePath($publicAuthorImagePath);
+                }
+            }
+
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
+
+            return new HTMLRenderer('page/home', [
+                'authUser' => $authUserProfile,
+                'posts' => $posts,
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['auth']),
     'profile' => Route::create('profile', function(): HTTPRenderer {
         try {
             $username = $_GET['user'];
             // TODO: do validation
             
-            $user = Authenticate::getAuthenticatedUser();
-
-            if($user === null) return new RedirectRenderer('login');
-
-            $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUsername($username);
-
-            $postDAO = DAOFactory::getPostDAO();
-            $posts = $postDAO->getByUserId($profile->getUserId());
-
-            $followDAO = DAOFactory::getFollowDAO();
-            $followerCount = $followDAO->getFollowerCount($profile->getUserId());
-            $followingCount = $followDAO->getFollowingCount($profile->getUserId());
-
-            $isFollow = $followDAO->checkIsFollow($user->getId(), $profile->getUserId());
-
+            $authUser = Authenticate::getAuthenticatedUser();
+            
+            if($authUser === null) return new RedirectRenderer('login');
+            
             $imageService = new ImageService();
 
-            $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
-
-            foreach($posts as $data) {
-                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
-                
-                $data['post']->setImagePath($fullImagePath);
+            $profileDAO = DAOFactory::getProfileDAO();
+            $queryUserProfile = $profileDAO->getByUsername($username);
+            if($queryUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
             }
 
-            $profile->setImagePath($fullImagePath);
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
+            $publicQueryUserImagePath = $imageService->buildPublicProfileImagePath($queryUserProfile->getImagePath());
+            $queryUserProfile->setImagePath($publicQueryUserImagePath);
+            
+            $postDAO = DAOFactory::getPostDAO();
+            $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
+            if($posts !== null) {
+                foreach ($posts as &$data) {
+                    $data['author'] = $queryUserProfile;
+                }
+                if(isset($data)) {
+                    unset($data);
+                }
+
+                foreach($posts as $data) {
+                    $publicPostImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
+                    $data['post']->setImagePath($publicPostImagePath);
+                }
+            };
+
+            $followDAO = DAOFactory::getFollowDAO();
+            $followerCount = $followDAO->getFollowerCount($queryUserProfile->getUserId());
+            $followingCount = $followDAO->getFollowingCount($queryUserProfile->getUserId());
+            $isFollow = $followDAO->checkIsFollow($authUserProfile->getUserId(), $queryUserProfile->getUserId());
+            
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
-                'loginedUserId' => $user->getId(),
-                'profile' => $profile,
+                'authUser' => $authUserProfile,
+                'queryUser' => $queryUserProfile,
                 'posts' => $posts,
                 'followerCount' => $followerCount,
                 'followingCount' => $followingCount,
@@ -115,36 +139,42 @@ return [
             $postId = $_GET['id'];
 
             // TODO: do validation
-            $user = Authenticate::getAuthenticatedUser();
-    
-            if($user === null) return new RedirectRenderer('login');
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId($user->getId());
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
 
             $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById(intval($postId), intval($user->getId()));
+            $post = $postDAO->getById(intval($postId), intval($authUserProfile->getUserId()));
 
             if($post === null) throw new Exception('Post not found!');
-
-            $replies = $postDAO->getReplies($postId, intval($user->getId()));
-
+            
             $imageService = new ImageService();
+            
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            $fullImagePath = $profile->getImagePath() === null ? null : $imageService->getFullImagePath($profile->getImagePath());
+            $publicPostImagePath = $imageService->buildPublicPostImagePath($post['post']->getImagePath());
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($post['author']->getImagePath());
+            $post['post']->setImagePath($publicPostImagePath);
+            $post['author']->setImagePath($publicAuthUserImagePath);
 
-            $profile->setImagePath($fullImagePath);
-
-            foreach($replies as $data) {
-                $fullImagePath = $data['post']->getImagePath() === null ? null : $imageService->getFullImagePath($data['post']->getImagePath());
-                
-                $data['post']->setImagePath($fullImagePath);
+            $replies = $postDAO->getReplies($postId, intval($authUserProfile->getUserId()));
+            if($replies != null) {
+                foreach($replies as $data) {
+                    $publicReplyImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
+                    $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($data['author']->getImagePath());
+                    $data['post']->setImagePath($publicReplyImagePath);
+                    $data['author']->setImagePath($publicAuthUserImagePath);
+                }
             }
             
-            $post['post']->setImagePath($post['post']->getImagePath() === null ? null : $imageService->getFullImagePath($post['post']->getImagePath()));
-
             return new HTMLRenderer('page/post', [
-                'profile' => $profile,
+                'authUser' => $authUserProfile,
                 'data' => $post,
                 'replies' => $replies,
             ]);
@@ -157,19 +187,32 @@ return [
     })->setMiddleware(['auth']),
     'following' => Route::create('following', function(): HTTPRenderer {
         try {
-            $user = Authenticate::getAuthenticatedUser();
+            $authUser = Authenticate::getAuthenticatedUser();
     
-            if($user === null) return new RedirectRenderer('login');
+            if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId($user->getId());
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
+
+            $imageService = new ImageService();
+            
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             $followDAO = DAOFactory::getFollowDAO();
-            $following = $followDAO->getFollowing($profile->getUserId());
+            $following = $followDAO->getFollowing($authUserProfile->getUserId());
             if($following === null) throw new Exception('Following not found!');
 
-            return new HTMLRenderer('page/following', [
-                'profile' => $profile,
+            foreach($following as $user) {
+                $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                $user->setImagePath($publicAuthorImagePath);
+            };
+            
+            return new HTMLRenderer('page/follower', [
+                'authUser' => $authUserProfile,
                 'data' => $following,
             ]);
         } catch (\Exception $e) {
@@ -179,19 +222,31 @@ return [
     })->setMiddleware(['auth']),
     'follower' => Route::create('follower', function(): HTTPRenderer {
         try {
-            $user = Authenticate::getAuthenticatedUser();
+            $authUser = Authenticate::getAuthenticatedUser();
     
-            if($user === null) return new RedirectRenderer('login');
+            if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId($user->getId());
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
+            $imageService = new ImageService();
+            
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             $followDAO = DAOFactory::getFollowDAO();
-            $follower = $followDAO->getFollower($profile->getUserId());
+            $follower = $followDAO->getFollower($authUserProfile->getUserId());
             if($follower === null) throw new Exception('Follower not found!');
+            
+            foreach($follower as $user) {
+                $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                $user->setImagePath($publicAuthorImagePath);
+            };
 
             return new HTMLRenderer('page/follower', [
-                'profile' => $profile,
+                'authUser' => $authUserProfile,
                 'data' => $follower,
             ]);
         } catch (\Exception $e) {
@@ -329,7 +384,7 @@ return [
                 fileType: $file['type'],
                 tempPath: $file['tmp_name'],
             );
-            $fullImagePath = $imageService->generateFullImagePath();
+            $fullImagePath = $imageService->generatePublicImagePath();
             
             $parentPostId = $_POST['parent_post_id'] === '' ? null : $_POST['parent_post_id'];
 
@@ -441,7 +496,7 @@ return [
                 tempPath: $file['tmp_name'],
             );
             
-            $fullImagePath = $imageService->generateFullImagePath();
+            $fullImagePath = $imageService->generatePublicImagePath();
 
             $profile = new Profile(
                 username: $username,
@@ -481,7 +536,7 @@ return [
                 fileType: $file['type'],
                 tempPath: $file['tmp_name'],
             );
-            $fullImagePath = $imageService->generateFullImagePath();
+            $fullImagePath = $imageService->generatePublicImagePath();
             
             $parentPostId = intval($_POST['parent_post_id']);
             
