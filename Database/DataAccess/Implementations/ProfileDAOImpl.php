@@ -10,7 +10,7 @@ class ProfileDAOImpl implements ProfileDAO
 {
   public function create(Profile $profile): bool
   {
-      if ($queryUser->getId() !== null) throw new \Exception('Cannot create a profile with an existing ID. id: ' . $queryUser->getId());
+      if ($profile->getId() !== null) throw new \Exception('Cannot create a profile with an existing ID. id: ' . $profile->getId());
 
       $mysqli = DatabaseManager::getMysqliConnection();
 
@@ -20,19 +20,19 @@ class ProfileDAOImpl implements ProfileDAO
         $query,
         'ssssssi',
         [
-          $queryUser->getUsername(),
-          $queryUser->getImagePath(),
-          $queryUser->getAddress(),
-          $queryUser->getAge(),
-          $queryUser->getHobby(),
-          $queryUser->getSelfIntroduction(),
-          $queryUser->getUserId()
+          $profile->getUsername(),
+          $profile->getImagePath(),
+          $profile->getAddress(),
+          $profile->getAge(),
+          $profile->getHobby(),
+          $profile->getSelfIntroduction(),
+          $profile->getUserId()
         ]
       );
 
       if (!$result) return false;
 
-      $queryUser->setId($mysqli->insert_id);
+      $profile->setId($mysqli->insert_id);
 
       return true;
   }
