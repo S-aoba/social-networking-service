@@ -72,7 +72,11 @@ class ValidationHelper
         $type = $file['type'];
         $type = in_array($type, $availableTypeList, true) ? $type : false;
         if($type === false) throw new \InvalidArgumentException('The provided value is not a valid type.');
-        // fileの容量の検証 
+        
+        $maxSize = 1 * 1024 * 1024; // 2MB
+        if($file['size'] > $maxSize) {
+            throw new \InvalidArgumentException('The uploaded file exceeds the maximum allowed size of 2MB.');
+        }
 
         return [
             'type' => $type
