@@ -452,19 +452,27 @@ return [
     'form/delete/post' => Route::create('form/delete/post', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
-            $postId = $_POST['post_id'];
-            $postedUserId = $_POST['posted_user_id'];
 
-            // TODO: do validation
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
 
-            $user = Authenticate::getAuthenticatedUser();
+            $requiredFields = [
+                'post_id' => ValueType::INT,
+                'contributor_id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+
+            if($validatedData['contributor_id'] !== $authUser->getId()) throw new Exception('Invalid user!');
             
-            if(intval($postedUserId) !== $user->getId()) throw new Exception('Invalid user!');
             $postDAO = DAOFactory::getPostDAO();
-            $success = $postDAO->deletePost($postId);
+            $success = $postDAO->deletePost($validatedData['post_id']);
             if($success === false) throw new Exception('Failed to delete post!');
 
             return new RedirectRenderer('');
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
