@@ -142,11 +142,13 @@ return [
     })->setMiddleware(['auth']),
     'post' => Route::create('post', function(): HTTPRenderer {
         try {
-            $postId = $_GET['id'];
-
-            // TODO: do validation
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
+            
+            $requiredFields = [
+                'id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
     
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
@@ -155,12 +157,10 @@ return [
             }
 
             $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById(intval($postId), intval($authUserProfile->getUserId()));
-
+            $post = $postDAO->getById($validatedData['id'], $authUserProfile->getUserId());
             if($post === null) throw new Exception('Post not found!');
             
             $imageService = new ImageService();
-            
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
@@ -169,7 +169,7 @@ return [
             $post['post']->setImagePath($publicPostImagePath);
             $post['author']->setImagePath($publicAuthUserImagePath);
 
-            $replies = $postDAO->getReplies($postId, intval($authUserProfile->getUserId()));
+            $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());
             if($replies != null) {
                 foreach($replies as $data) {
                     $publicReplyImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
@@ -184,6 +184,10 @@ return [
                 'data' => $post,
                 'replies' => $replies,
             ]);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('');
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
