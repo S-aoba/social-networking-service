@@ -13,11 +13,6 @@
         name="csrf_token" 
         value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>"
       >
-      <input 
-        type="hidden" 
-        name="parent_post_id" 
-        value=''
-      >
       <textarea 
         id="content" 
         name="content" 

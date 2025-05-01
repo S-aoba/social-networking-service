@@ -65,28 +65,21 @@ class ValidationHelper
 
         return $validatedData;
     }
+    
+    public static function validateFile(array $file): array {
+        $availableTypeList = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp'];
 
-    public static function type(?string $type): string {
-        if($type === null) throw new \InvalidArgumentException("The provided value is null.");
-
-        $availableTypeList = ['cpu', 'gpu', 'motherboard', 'power', 'memory', 'ssd', 'hd'];
-
-        // If provided value extis in availableTypeList, Keep the original $type value.
-        // If provided value does not extis in availableTypeList, Set to false.
-        $type = strtolower($type);
+        $type = $file['type'];
         $type = in_array($type, $availableTypeList, true) ? $type : false;
-        if($type === false) throw new \InvalidArgumentException("The provided value is not a valid type.");
+        if($type === false) throw new \InvalidArgumentException('The provided value is not a valid type.');
+        
+        $maxSize = 2 * 1024 * 1024; // 2MB
+        if($file['size'] > $maxSize) {
+            throw new \InvalidArgumentException('The uploaded file exceeds the maximum allowed size of 2MB.');
+        }
 
-        return $type;
-    }
-
-    public static function order(string $order): string {
-
-        $order = strtoupper($order);
-        $orderList = ['ASC', 'DESC'];
-        $order = in_array($order, $orderList, true) ? $order : false;
-        if($order === false) throw new \InvalidArgumentException('The provided value is not a valid order.');
-
-        return $order;
+        return [
+            'type' => $type
+        ];
     }
 }

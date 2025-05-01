@@ -73,25 +73,27 @@ return [
     })->setMiddleware(['auth']),
     'profile' => Route::create('profile', function(): HTTPRenderer {
         try {
-            $username = $_GET['user'];
-            // TODO: do validation
-            
             $authUser = Authenticate::getAuthenticatedUser();
             
             if($authUser === null) return new RedirectRenderer('login');
             
-            $imageService = new ImageService();
+            $requiredFields = [
+                'user' => ValueType::STRING
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
 
             $profileDAO = DAOFactory::getProfileDAO();
-            $queryUserProfile = $profileDAO->getByUsername($username);
+            $queryUserProfile = $profileDAO->getByUsername($validatedData['user']);
             if($queryUserProfile === null) {
                 return new RedirectRenderer('login');
             }
+
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
             if($authUserProfile === null) {
                 return new RedirectRenderer('login');
             }
 
+            $imageService = new ImageService();
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
@@ -127,6 +129,10 @@ return [
                 'followerCount' => $followerCount,
                 'followingCount' => $followingCount,
             ]);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('');
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
@@ -136,11 +142,13 @@ return [
     })->setMiddleware(['auth']),
     'post' => Route::create('post', function(): HTTPRenderer {
         try {
-            $postId = $_GET['id'];
-
-            // TODO: do validation
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
+            
+            $requiredFields = [
+                'id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
     
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
@@ -149,12 +157,10 @@ return [
             }
 
             $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById(intval($postId), intval($authUserProfile->getUserId()));
-
+            $post = $postDAO->getById($validatedData['id'], $authUserProfile->getUserId());
             if($post === null) throw new Exception('Post not found!');
             
             $imageService = new ImageService();
-            
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
@@ -163,7 +169,7 @@ return [
             $post['post']->setImagePath($publicPostImagePath);
             $post['author']->setImagePath($publicAuthUserImagePath);
 
-            $replies = $postDAO->getReplies($postId, intval($authUserProfile->getUserId()));
+            $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());
             if($replies != null) {
                 foreach($replies as $data) {
                     $publicReplyImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
@@ -178,6 +184,10 @@ return [
                 'data' => $post,
                 'replies' => $replies,
             ]);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('');
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
@@ -374,47 +384,50 @@ return [
 
             $user = Authenticate::getAuthenticatedUser();
             if($user === null) return new RedirectRenderer('login');
-
             $userId = $user->getId();
-            $content = $_POST['content'];
+            
+            $requiredFields = [
+                'content' => ValueType::STRING
+            ];            
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
             $file = $_FILES['upload-file'];
-
-            $imageService = new ImageService(
-                fileType: $file['type'],
-                tempPath: $file['tmp_name'],
-            );
-            $fullImagePath = $imageService->generatePublicImagePath();
-            
-            $parentPostId = $_POST['parent_post_id'] === '' ? null : $_POST['parent_post_id'];
+            $imageService = null;
+            $publicPostImagePath = null;
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $validatedFileData = ValidationHelper::validateFile($file);
+                $imageService = new ImageService(
+                    type: $validatedFileData['type'],
+                    tempPath: $file['tmp_name'],
+                );
+                $publicPostImagePath = $imageService->generatePublicImagePath();
+            }
 
             $request = [
-                'content' => $content,
-                'imagePath' => $fullImagePath,
+                'content' => $validatedData['content'],
+                'imagePath' => $publicPostImagePath,
                 'userId' => $userId,
-                'parentPostId' => $parentPostId
+                'parentPostId' => null,
             ];
             
-            // TODO: do validatoin
-
             $post = new Post(...$request);
-
             $postDAO = DAOFactory::getPostDAO();
-
             $success = $postDAO->create($post);
-
             if($success === false) throw new Exception('Failed Create Post');
 
-            $isSavedToDir = $imageService->saveToDir($fullImagePath);
-            if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $isSavedToDir = $imageService->saveToDir($publicPostImagePath);
+                if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+            }
 
             return new RedirectRenderer('');
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'An error occurred.');
-
-            // TODO: Change redirect route to error page or login page.
             return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
@@ -422,26 +435,32 @@ return [
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $user = Authenticate::getAuthenticatedUser();
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
+            $userId = $authUser->getId();
 
-            if($user === null) return new RedirectRenderer('login');
+            $requiredFields = [
+                'following_id' => ValueType::INT
+            ];
 
-            $userId = $user->getId();
-            $followingId = $_POST['following_id'];
-            
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
-            // TODO: do validation
             $followDAO = DAOFactory::getFollowDAO();
-
-            $isFollow = $followDAO->checkIsFollow($userId, $followingId);
-            $success = $isFollow ? $followDAO->unfollow($userId, $followingId) : $followDAO->follow($userId, $followingId);
+            $isFollow = $followDAO->checkIsFollow($userId, $validatedData['following_id']);
+            $success = $isFollow ? 
+                        $followDAO->unfollow($userId, $validatedData['following_id']) 
+                        :
+                        $followDAO->follow($userId, $validatedData['following_id']);
 
             if(!$success) throw new Exception('Failed follow');
 
             return new JSONRenderer(['status' => 'success']);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
         } catch (\Exception $e) {
             error_log($e->getMessage());
-            FlashData::setFlashData('error', 'An error occurred.');
 
             return new JSONRenderer(['status' => 'error']);
         }    
@@ -449,19 +468,27 @@ return [
     'form/delete/post' => Route::create('form/delete/post', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
-            $postId = $_POST['post_id'];
-            $postedUserId = $_POST['posted_user_id'];
 
-            // TODO: do validation
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
 
-            $user = Authenticate::getAuthenticatedUser();
+            $requiredFields = [
+                'post_id' => ValueType::INT,
+                'author_id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+
+            if($validatedData['author_id'] !== $authUser->getId()) throw new Exception('Invalid user!');
             
-            if(intval($postedUserId) !== $user->getId()) throw new Exception('Invalid user!');
             $postDAO = DAOFactory::getPostDAO();
-            $success = $postDAO->deletePost($postId);
+            $success = $postDAO->deletePost($validatedData['post_id']);
             if($success === false) throw new Exception('Failed to delete post!');
 
             return new RedirectRenderer('');
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
@@ -472,54 +499,61 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            
-            $username = $_POST['username'];
-            //TODO: バリデーションを追加したらそちらに処理を任せて、以下ageの判定式は削除すること
-            $age = $_POST['age'] === '' ? null : $_POST['age'];
-            $address = $_POST['address'];
-            $hobby = $_POST['hobby'];
-            $selfIntroduction = $_POST['self_introduction'];
-            
-            $file = $_FILES['upload-file'];
+            $requiredFields = [
+                'username' => ValueType::STRING,
+                'age' => ValueType::INT,
+                'address' => ValueType::STRING,
+                'hobby' => ValueType::STRING,
+                'self_introduction' => ValueType::STRING
+            ];
 
-            $userId = $_POST['user_id'];
-        
-            // TODO: do validation
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            
+            $user = Authenticate::getAuthenticatedUser();
+            $userId = $user->getId();
             
             $profileDAO = DAOFactory::getProfileDAO();
-
             $prevImagePath = $profileDAO->getImagePath($userId);
-
             
-            $imageService = new ImageService(
-                fileType: $file['type'],
-                tempPath: $file['tmp_name'],
-            );
-            
-            $fullImagePath = $imageService->generatePublicImagePath();
+            $file = $_FILES['upload-file'];
+            $imageService = null;
+            $publicAuthUserImagePath = null;
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $validatedFileData = ValidationHelper::validateFile($file);
+                $imageService = new ImageService(
+                    type: $validatedFileData['type'],
+                    tempPath: $file['tmp_name']
+                );
+                $publicAuthUserImagePath = $imageService->generatePublicImagePath();
+            }
 
             $profile = new Profile(
-                username: $username,
+                username: $validatedData['username'],
                 userId: $userId,
-                imagePath: $fullImagePath,
-                address: $address,
-                age: $age,
-                hobby: $hobby,
-                selfIntroduction: $selfIntroduction,
+                age: $validatedData['age'],
+                imagePath: $publicAuthUserImagePath,
+                address: $validatedData['address'],
+                hobby: $validatedData['hobby'],
+                selfIntroduction: $validatedData['self_introduction']
             );
-
             $success = $profileDAO->updateProfile($profile);
             if($success === false) throw new Exception('Failed to update profile!');
 
-            $isSavedToDir = $imageService->saveToDir($fullImagePath);
-            if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $isSavedToDir = $imageService->saveToDir($publicAuthUserImagePath);
+                if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
 
-            if($prevImagePath !== null) {
-                $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
-                if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
+                if($prevImagePath !== null) {
+                    $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
+                    if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
+                }
             }
 
-            return new RedirectRenderer('profile?user=' . $username);
+            return new RedirectRenderer('profile?user=' . $validatedData['username']);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
@@ -530,39 +564,49 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $content = $_POST['content'];
-            $file = $_FILES['upload-file'];
-            $imageService = new ImageService(
-                fileType: $file['type'],
-                tempPath: $file['tmp_name'],
-            );
-            $fullImagePath = $imageService->generatePublicImagePath();
-            
-            $parentPostId = intval($_POST['parent_post_id']);
-            
-            // TODO: do validation
-
             $user = Authenticate::getAuthenticatedUser();
             
             if($user === null) return new RedirectRenderer('login');
             $userId = $user->getId();
-            
-            $postDAO = DAOFactory::getPostDAO();
 
+            $requiredFields = [
+                'content' => ValueType::STRING,
+                'parent_post_id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            
+            $file = $_FILES['upload-file'];
+            $imageService = null;
+            $publicPostImagePath = null;
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $imageService = new ImageService(
+                    type: $file['type'],
+                    tempPath: $file['tmp_name'],
+                );
+                $publicPostImagePath = $imageService->generatePublicImagePath();
+            }
+
+            $postDAO = DAOFactory::getPostDAO();
             $post = new Post(
-                content: $content,
-                imagePath: $fullImagePath,
+                content: $validatedData['content'],
+                imagePath: $publicPostImagePath,
                 userId: $userId,
-                parentPostId: $parentPostId
+                parentPostId: $validatedData['parent_post_id']
             );
             
             $success = $postDAO->create($post);
             if($success === false) throw new Exception('Failed to create reply!');
 
-            $isSavedToDir = $imageService->saveToDir($fullImagePath);
-            if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $isSavedToDir = $imageService->saveToDir($publicPostImagePath);
+                if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+            }
 
-            return new RedirectRenderer('post?id=' . $parentPostId);
+            return new RedirectRenderer('post?id=' . $validatedData['parent_post_id']);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
@@ -573,27 +617,29 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $postId = $_POST['post_id'];
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
+            $userId = $authUser->getId();
 
-            // TODO: do validation
-
-            $user = Authenticate::getAuthenticatedUser();
-            if($user === null) return new RedirectRenderer('login');
-
-            $userId = $user->getId();
+            $requiredFields = [
+                'post_id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
             $likeDAO = DAOFactory::getLikeDAO();
             $like = new Like(
                 userId: $userId,
-                postId: $postId
-            );
-            
+                postId: $validatedData['post_id']
+            );            
             $isLiked = $likeDAO->checkIsLiked($like);
             $success = $isLiked ? $likeDAO->unlike($like) : $likeDAO->createLike($like);
-            
             if($success === false) throw new Exception('Failed to like post!');
             
             return new JSONRenderer(['status' => 'success']);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
