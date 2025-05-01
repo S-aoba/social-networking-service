@@ -7,13 +7,13 @@
     <div id="contributor-avator" class="px-5">
       <div class="relative size-10 rounded-full overflow-hidden">
         <a 
-          href="<?= '/profile?user=' . $authUser->getUsername(); ?>"" 
+          href="<?= '/profile?user=' . $data['author']->getUsername(); ?>"" 
           class="absolute inset-0 z-20 hover:bg-slate-800/25 transition duration-300"
         >
       </a>
           <img 
             src="<?= $data['author']->getImagePath(); ?>" 
-            alt="contributor-icon" 
+            alt="author-icon" 
             class="w-full h-full object-cover"
           >
       </div>  

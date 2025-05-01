@@ -425,26 +425,32 @@ return [
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $user = Authenticate::getAuthenticatedUser();
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
+            $userId = $authUser->getId();
 
-            if($user === null) return new RedirectRenderer('login');
+            $requiredFields = [
+                'following_id' => ValueType::INT
+            ];
 
-            $userId = $user->getId();
-            $followingId = $_POST['following_id'];
-            
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
-            // TODO: do validation
             $followDAO = DAOFactory::getFollowDAO();
-
-            $isFollow = $followDAO->checkIsFollow($userId, $followingId);
-            $success = $isFollow ? $followDAO->unfollow($userId, $followingId) : $followDAO->follow($userId, $followingId);
+            $isFollow = $followDAO->checkIsFollow($userId, $validatedData['following_id']);
+            $success = $isFollow ? 
+                        $followDAO->unfollow($userId, $validatedData['following_id']) 
+                        :
+                        $followDAO->follow($userId, $validatedData['following_id']);
 
             if(!$success) throw new Exception('Failed follow');
 
             return new JSONRenderer(['status' => 'success']);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
         } catch (\Exception $e) {
             error_log($e->getMessage());
-            FlashData::setFlashData('error', 'An error occurred.');
 
             return new JSONRenderer(['status' => 'error']);
         }    
@@ -458,11 +464,11 @@ return [
 
             $requiredFields = [
                 'post_id' => ValueType::INT,
-                'contributor_id' => ValueType::INT
+                'author_id' => ValueType::INT
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
-            if($validatedData['contributor_id'] !== $authUser->getId()) throw new Exception('Invalid user!');
+            if($validatedData['author_id'] !== $authUser->getId()) throw new Exception('Invalid user!');
             
             $postDAO = DAOFactory::getPostDAO();
             $success = $postDAO->deletePost($validatedData['post_id']);
