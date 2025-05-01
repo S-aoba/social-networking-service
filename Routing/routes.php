@@ -73,25 +73,27 @@ return [
     })->setMiddleware(['auth']),
     'profile' => Route::create('profile', function(): HTTPRenderer {
         try {
-            $username = $_GET['user'];
-            // TODO: do validation
-            
             $authUser = Authenticate::getAuthenticatedUser();
             
             if($authUser === null) return new RedirectRenderer('login');
             
-            $imageService = new ImageService();
+            $requiredFields = [
+                'user' => ValueType::STRING
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
 
             $profileDAO = DAOFactory::getProfileDAO();
-            $queryUserProfile = $profileDAO->getByUsername($username);
+            $queryUserProfile = $profileDAO->getByUsername($validatedData['user']);
             if($queryUserProfile === null) {
                 return new RedirectRenderer('login');
             }
+
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
             if($authUserProfile === null) {
                 return new RedirectRenderer('login');
             }
 
+            $imageService = new ImageService();
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
@@ -127,6 +129,10 @@ return [
                 'followerCount' => $followerCount,
                 'followingCount' => $followingCount,
             ]);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('');
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
