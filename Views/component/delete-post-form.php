@@ -15,7 +15,7 @@
   >
   <input 
     type="hidden" 
-    name="posted_user_id" 
+    name="contributor_id" 
     value="<?= $data['post']->getUserId() ?>"
   >
   <div class="w-full space-y-2">
