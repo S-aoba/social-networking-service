@@ -526,6 +526,10 @@ return [
             }
 
             return new RedirectRenderer('profile?user=' . $validatedData['username']);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
@@ -536,39 +540,49 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $content = $_POST['content'];
-            $file = $_FILES['upload-file'];
-            $imageService = new ImageService(
-                type: $file['type'],
-                tempPath: $file['tmp_name'],
-            );
-            $fullImagePath = $imageService->generatePublicImagePath();
-            
-            $parentPostId = intval($_POST['parent_post_id']);
-            
-            // TODO: do validation
-
             $user = Authenticate::getAuthenticatedUser();
             
             if($user === null) return new RedirectRenderer('login');
             $userId = $user->getId();
-            
-            $postDAO = DAOFactory::getPostDAO();
 
+            $requiredFields = [
+                'content' => ValueType::STRING,
+                'parent_post_id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            
+            $file = $_FILES['upload-file'];
+            $imageService = null;
+            $publicPostImagePath = null;
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $imageService = new ImageService(
+                    type: $file['type'],
+                    tempPath: $file['tmp_name'],
+                );
+                $publicPostImagePath = $imageService->generatePublicImagePath();
+            }
+
+            $postDAO = DAOFactory::getPostDAO();
             $post = new Post(
-                content: $content,
-                imagePath: $fullImagePath,
+                content: $validatedData['content'],
+                imagePath: $publicPostImagePath,
                 userId: $userId,
-                parentPostId: $parentPostId
+                parentPostId: $validatedData['parent_post_id']
             );
             
             $success = $postDAO->create($post);
             if($success === false) throw new Exception('Failed to create reply!');
 
-            $isSavedToDir = $imageService->saveToDir($fullImagePath);
-            if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $isSavedToDir = $imageService->saveToDir($publicPostImagePath);
+                if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+            }
 
-            return new RedirectRenderer('post?id=' . $parentPostId);
+            return new RedirectRenderer('post?id=' . $validatedData['parent_post_id']);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
