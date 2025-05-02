@@ -36,7 +36,9 @@
               type="file" 
               name="upload-file" 
               class="hidden" 
-              value="">
+              value=""
+              accept="image/png, image/jpg, image/jpeg, image/gif, image/webp"
+            >
           </label>
           <button 
             type="submit" 

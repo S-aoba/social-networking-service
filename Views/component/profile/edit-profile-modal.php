@@ -17,7 +17,14 @@
                 <img src="<?= $queryUser->getImagePath(); ?>" alt="user-icon" class="size-20" id="previewImage">
                 <label for="upload-file" class="absolute top-5 left-5 hover:cursor-pointer hover:bg-gray-100 p-2 rounded-full">
                   <img src="/images/camera.svg" alt="camera-icon">
-                  <input type="file" id="upload-file" name="upload-file" value="<?php echo $queryUser->getImagePath() ?>" class="hidden">
+                  <input 
+                    id="upload-file" 
+                    type="file" 
+                    name="upload-file" 
+                    value="<?php echo $queryUser->getImagePath() ?>" 
+                    class="hidden"
+                    accept="image/png, image/jpg, image/jpeg, image/gif, image/webp"
+                  >
                 </label>
                 </div>
               <div class="mt-2">
