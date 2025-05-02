@@ -30,7 +30,7 @@
             for="upload-file" 
             class="p-2 hover:cursor-pointer hover:bg-slate-100 rounded-full transition duration-300"
           >
-            <img src="/images/camera.svg" alt="upload-icon" class="size-5">
+            <img src="/images/upload-icon.svg" alt="upload-icon" class="size-5">
             <input 
               id="upload-file" 
               type="file" 
