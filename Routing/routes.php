@@ -3,6 +3,7 @@
 use Database\DataAccess\DAOFactory;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
+use Models\Conversation;
 use Models\ImageService;
 use Models\Like;
 use Models\Post;
@@ -264,6 +265,63 @@ return [
             return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
+    'messages' => Route::create('message', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+            $authUser = Authenticate::getAuthenticatedUser();
+    
+            if($authUser === null) return new RedirectRenderer('login');
+
+            $profileDAO = DAOFactory::getProfileDAO();
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
+
+            $imageService = new ImageService();
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
+
+            // TODO: $authUserのidを使用してConversations dataを取得する
+
+
+            return new HTMLRenderer('page/messages', [
+                'authUser' => $authUserProfile
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    }),
+    'message' => Route::create('message', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+            $authUser = Authenticate::getAuthenticatedUser();
+    
+            if($authUser === null) return new RedirectRenderer('login');
+
+            $profileDAO = DAOFactory::getProfileDAO();
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
+            
+            $imageService = new ImageService();
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
+
+            // TODO: coversations idを使用して個別のDMのデータを取得する
+
+            return new HTMLRenderer('page/message', [
+                'authUser' => $authUserProfile
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    }),
 
     'form/login' => Route::create('form/login', function (): HTTPRenderer {
         try {
@@ -641,6 +699,54 @@ return [
 
             return new JSONRenderer(['status' => 'error']);
         } catch (Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['auth']),
+    'form/conversation' => Route::create('form/conversation', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+            $authUser = Authenticate::getAuthenticatedUser();
+    
+            if($authUser === null) return new RedirectRenderer('login');
+
+            $requiredFields = [
+                'user1_id' => ValueType::INT,
+                'user2_id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+
+            if ($validatedData['user1_id'] !== $authUser->getId()) {
+                throw new Exception('Invalid user1_id — not matching authenticated user.');
+            }
+
+            if ($validatedData['user1_id'] === $validatedData['user2_id']) {
+                throw new Exception('Cannot start a conversation with yourself.');
+            }
+            
+            $userDAO = DAOFactory::getUserDAO();
+            $isPartnerExists = $userDAO->getById($validatedData['user2_id']);
+            if($isPartnerExists === null) throw new Exception('Partner is not exists.');
+
+            $conversation = new Conversation(
+                user1Id: $validatedData['user1_id'],
+                user2Id: $validatedData['user2_id'],
+            );
+            $conversationDAO = DAOFactory::getConversationDAO();
+
+            $isExistsConversation = $conversationDAO->existsByUserPair($conversation);
+            if($isExistsConversation) throw new Exception('Conversation already exists.');
+
+            $success = $conversationDAO->create($conversation);
+            if($success === false) throw new Exception('Failed to create conversation.');
+
+            return new RedirectRenderer('page/messages');
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
+        } catch (\Exception $e) {
             error_log($e->getMessage());
 
             return new RedirectRenderer('login');
