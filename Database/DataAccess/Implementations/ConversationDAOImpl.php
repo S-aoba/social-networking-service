@@ -6,6 +6,7 @@ use Database\DataAccess\Interfaces\ConversationDAO;
 use Database\DatabaseManager;
 use DateTime;
 use Models\Conversation;
+use Models\DirectMessge;
 
 class ConversationDAOImpl implements ConversationDAO {
   public function create(Conversation $conversation): bool
@@ -110,12 +111,21 @@ class ConversationDAOImpl implements ConversationDAO {
         id: $data['conversation_id'],
       );
 
-      // TODO: Add the message to the conversation
-      $message = null;
+      $directMessage = null;
+      if($data['dm_conversation_id'] !== null) {
+        $directMessage = new DirectMessge(
+          conversationId: $data['dm_conversation_id'],
+          senderId: $data['sender_id'],
+          content: $data['content'],
+          id: $data['dm_id'],
+          read_at: $data['read_at'],
+          createdAt: $data['dm_created_at']
+        );
+      }
 
       $conversations[] = [
         'conversation' => $conversation,
-        'message' => $message,
+        'directMessage' => $directMessage,
       ];
     }
 
