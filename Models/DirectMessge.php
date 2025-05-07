@@ -14,7 +14,7 @@ class DirectMessge implements Model {
         private string $content,
         private ?int $id = null,
         private ?string $read_at = null,
-        private ?DataTimeStamp $timeStamp = null,
+        private ?string $createdAt = null,
     ) {}
 
     public function getConversationId(): int
@@ -67,13 +67,13 @@ class DirectMessge implements Model {
         $this->read_at = $read_at;
     }
 
-    public function getTimeStamp(): ?DataTimeStamp
+    public function getCreatedAt(): ?string
     {
-        return $this->timeStamp;
+        return $this->createdAt;
     }
 
-    public function setTimeStamp(DataTimeStamp $timeStamp): void
+    public function setCreatedAt(string $createdAt): void
     {
-        $this->timeStamp = $timeStamp;
+        $this->createdAt = $createdAt;
     }
 }
