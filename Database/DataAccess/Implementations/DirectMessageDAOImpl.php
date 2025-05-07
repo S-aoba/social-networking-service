@@ -4,7 +4,7 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DataAccess\Interfaces\DirectMessageDAO;
 use Database\DatabaseManager;
-
+use Models\DataTimeStamp;
 use Models\DirectMessge;
 
 class DirectMessageDAOImpl implements DirectMessageDAO {
@@ -29,8 +29,46 @@ class DirectMessageDAOImpl implements DirectMessageDAO {
     return true;
   }
   
-  public function findByConversationId(int $conversationId): ?array
+  public function findAllByConversationId(int $conversationId): ?array
   {
-    return null;
+    $directMessageRowData = $this->findAllRowByConversationId($conversationId);
+
+    if($directMessageRowData === null) return null;
+
+    return $directMessageRowData;
+  }
+
+  private function findAllRowByConversationId(int $conversationId): ?array {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT *
+              FROM direct_messages
+              WHERE conversation_id = ?
+             ";
+
+    $result = $mysqli->prepareAndFetchAll($query, 'i', [$conversationId]);
+
+    if(empty($result)) return null;
+    
+    return $this->rowDataToDirectMessages($result);
+  }
+
+  private function rowDataToDirectMessages(array $rowData): array {
+    $directmessages = [];
+
+    foreach($rowData as $data) {
+      $directMessage = new DirectMessge(
+        conversationId: $data['conversation_id'],
+        senderId: $data['sender_id'],
+        content: $data['content'],
+        id: $data['id'],
+        read_at: $data['read_at'],
+        createdAt: $data['created_at']
+      );
+
+      $directmessages[] = $directMessage;
+    }
+
+    return $directmessages;
   }
 }
