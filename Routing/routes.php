@@ -286,6 +286,13 @@ return [
 
             $conversationDAO = DAOFactory::getConversationDAO();
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
+            
+            if($conversations !== null) {
+                foreach($conversations as $data) {
+                    $publicPartnerImagePath = $imageService->buildPublicProfileImagePath($data['partner']->getImagePath());
+                    $data['partner']->setImagePath($publicPartnerImagePath);
+                }
+            }
 
             return new HTMLRenderer('page/messages', [
                 'authUser' => $authUserProfile,
