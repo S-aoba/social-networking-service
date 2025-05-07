@@ -12,7 +12,7 @@ class Conversation implements Model {
         private int $user1Id,
         private int $user2Id,
         private ?int $id = null,
-        private ?DataTimeStamp $timeStamp = null,
+        private ?string $createdAt = null,
     ) {}
 
     public function getUser1Id(): int
@@ -45,14 +45,14 @@ class Conversation implements Model {
         $this->id = $id;
     }
 
-    public function getTimeStamp(): ?DataTimeStamp
+    public function getCreatedAt(): ?string
     {
         return $this->formatCreatedAt();
     }
 
-    public function setTimeStamp(DataTimeStamp $timeStamp): void
+    public function setCreatedAt(string $createdAt): void
     {
-        $this->timeStamp = $timeStamp;
+        $this->createdAt = $createdAt;
     }
 
     private function formatCreatedAt(): string
