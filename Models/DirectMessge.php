@@ -69,11 +69,37 @@ class DirectMessge implements Model {
 
     public function getCreatedAt(): ?string
     {
-        return $this->createdAt;
+        return $this->formatCreatedAt();
     }
 
     public function setCreatedAt(string $createdAt): void
     {
         $this->createdAt = $createdAt;
+    }
+
+    private function formatCreatedAt(): string
+    {
+        $timezone = new \DateTimeZone('Asia/Tokyo');
+
+        $createdAt = new \DateTimeImmutable($this->createdAt, $timezone);
+        $now = new \DateTimeImmutable('now', $timezone);
+
+        $diff = $now->diff($createdAt);
+
+        if ($diff->y > 0) {
+            return $diff->y . '年前';
+        } elseif ($diff->m > 0) {
+            return $diff->m . 'ヶ月前';
+        } elseif ($diff->d > 0) {
+            return $diff->d . '日前';
+        } elseif ($diff->h > 0) {
+            return $diff->h . '時間前';
+        } elseif ($diff->i > 0) {
+            return $diff->i . '分前';
+        } elseif ($diff->s > 0) {
+            return $diff->s . '秒前';
+        } else {
+            return 'たった今';
+        }
     }
 }
