@@ -304,6 +304,11 @@ return [
     
             if($authUser === null) return new RedirectRenderer('login');
 
+            $requiredFields = [
+                'id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
+            
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
             if($authUserProfile === null) {
