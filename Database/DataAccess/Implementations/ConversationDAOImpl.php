@@ -4,7 +4,7 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DataAccess\Interfaces\ConversationDAO;
 use Database\DatabaseManager;
-
+use DateTime;
 use Models\Conversation;
 
 class ConversationDAOImpl implements ConversationDAO {
@@ -30,7 +30,11 @@ class ConversationDAOImpl implements ConversationDAO {
 
   public function findAllByUserId(int $userId): ?array
   {
-    return null;
+    $conversationsRowData = $this->findAllRowByUserId($userId);
+
+    if($conversationsRowData === null) return null;
+
+    return $conversationsRowData;
   }
 
   public function existsByUserPair(Conversation $conversation): bool
@@ -45,6 +49,35 @@ class ConversationDAOImpl implements ConversationDAO {
   public function delete(int $id): bool
   {
     return false;
+  }
+
+  private function findAllRowByUserId(int $userId): ?array {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT 
+                c.id AS conversation_id,
+                c.user1_id,
+                c.user2_id,
+                dm.id AS dm_id,
+                dm.conversation_id as dm_conversation_id,
+                dm.sender_id,
+                dm.content,
+                dm.read_at,
+                dm.created_at AS dm_created_at
+              FROM conversations c
+              LEFT JOIN direct_messages dm 
+                ON dm.conversation_id = c.id
+              WHERE c.user1_id = ? OR c.user2_id = ?
+              ";
+    
+    $result = $mysqli->prepareAndFetchAll($query, 'ii', [
+      $userId,
+      $userId
+    ]);
+
+    if(empty($result)) return null;
+    
+    return $this->rowDataToConversation($result);
   }
 
   private function existsRowByUserPair(Conversation $conversation): bool {
@@ -65,5 +98,27 @@ class ConversationDAOImpl implements ConversationDAO {
     ]);
 
     return !empty($result);
+  }
+
+  private function rowDataToConversation(array $rowData): array {
+    $conversations = [];
+
+    foreach($rowData as $data) {
+      $conversation = new Conversation(
+        user1Id: $data['user1_id'],
+        user2Id: $data['user2_id'],
+        id: $data['conversation_id'],
+      );
+
+      // TODO: Add the message to the conversation
+      $message = null;
+
+      $conversations[] = [
+        'conversation' => $conversation,
+        'message' => $message,
+      ];
+    }
+
+    return $conversations;
   }
 }

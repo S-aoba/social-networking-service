@@ -282,11 +282,12 @@ return [
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            // TODO: $authUserのidを使用してConversations dataを取得する
-
+            $conversationDAO = DAOFactory::getConversationDAO();
+            $conversations = $conversationDAO->findAllByUserId($authUser->getId());
 
             return new HTMLRenderer('page/messages', [
-                'authUser' => $authUserProfile
+                'authUser' => $authUserProfile,
+                'conversations' => $conversations
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
