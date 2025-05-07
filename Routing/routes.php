@@ -1,9 +1,11 @@
 <?php
 
 use Database\DataAccess\DAOFactory;
+use Faker\ValidGenerator;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
 use Models\Conversation;
+use Models\DirectMessge;
 use Models\ImageService;
 use Models\Like;
 use Models\Post;
@@ -747,6 +749,42 @@ return [
             error_log($e->getMessage());
 
             return new JSONRenderer(['status' => 'error']);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['auth']),
+    'form/direct-message' => Route::create('form/message', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
+
+            $requiredFields = [
+                'conversation_id' => ValueType::INT,
+                'sender_id' => ValueType::INT,
+                'content' => ValueType::STRING
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+
+            if($validatedData['sender_id'] !== $authUser->getId()) {
+                throw new Exception('Cannot start a message with yourself');
+            }
+
+            // TODO: conversationの存在検証
+
+            $directMessage = new DirectMessge(
+                conversationId: $validatedData['conversation_id'],
+                senderId: $validatedData['sender_id'],
+                content: $validatedData['content']
+            );
+            $directMessageDAO = DAOFactory::getDirectMessage();
+            $success = $directMessageDAO->create($directMessage);
+            if($success === false) throw new Exception('Failed to create direct message.');
+            
+            return new JSONRenderer(['status' => 'Create direct message successfully']);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
