@@ -319,10 +319,12 @@ return [
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            // TODO: coversations idを使用して個別のDMのデータを取得する
-
+            $directMessageDAO = DAOFactory::getDirectMessage();
+            $directMessages = $directMessageDAO->findAllByConversationId($validatedData['id']);
+            
             return new HTMLRenderer('page/message', [
-                'authUser' => $authUserProfile
+                'authUser' => $authUserProfile,
+                'directMessages' => $directMessages
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
