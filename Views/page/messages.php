@@ -33,7 +33,7 @@
               <p class="font-semibold"><?= $data['partner']->getUsername(); ?></p>
               <span class="text-slate-400">
                 <?= $data['directMessage'] === null ? 
-                      '3時間前' 
+                      $data['conversation']->getCreatedAt()
                       :  
                       $data['directMessage']->getCreatedAt()?>
               </span>

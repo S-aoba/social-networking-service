@@ -60,6 +60,7 @@ class ConversationDAOImpl implements ConversationDAO {
                 c.id AS conversation_id,
                 c.user1_id,
                 c.user2_id,
+                c.created_at AS conversation_created_at,
                 dm.id AS dm_id,
                 dm.conversation_id AS dm_conversation_id,
                 dm.sender_id,
@@ -121,6 +122,7 @@ class ConversationDAOImpl implements ConversationDAO {
         user1Id: $data['user1_id'],
         user2Id: $data['user2_id'],
         id: $data['conversation_id'],
+        createdAt: $data['conversation_created_at']
       );
 
       $directMessage = null;
