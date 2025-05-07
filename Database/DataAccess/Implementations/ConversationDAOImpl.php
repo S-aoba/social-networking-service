@@ -61,7 +61,7 @@ class ConversationDAOImpl implements ConversationDAO {
                 c.user1_id,
                 c.user2_id,
                 dm.id AS dm_id,
-                dm.conversation_id as dm_conversation_id,
+                dm.conversation_id AS dm_conversation_id,
                 dm.sender_id,
                 dm.content,
                 dm.read_at,
@@ -70,13 +70,19 @@ class ConversationDAOImpl implements ConversationDAO {
                 p.user_id,
                 p.image_path
               FROM conversations c
-              LEFT JOIN direct_messages dm 
-                ON dm.conversation_id = c.id
-              LEFT JOIN profiles p
-                ON p.user_id = c.user2_id
+              LEFT JOIN (
+                  SELECT d1.*
+                  FROM direct_messages d1
+                  INNER JOIN (
+                      SELECT conversation_id, MAX(created_at) AS latest_created
+                      FROM direct_messages
+                      GROUP BY conversation_id
+                  ) d2 ON d1.conversation_id = d2.conversation_id AND d1.created_at = d2.latest_created
+              ) dm ON dm.conversation_id = c.id
+              LEFT JOIN profiles p ON p.user_id = c.user2_id
               WHERE c.user1_id = ? OR c.user2_id = ?
               ";
-    
+
     $result = $mysqli->prepareAndFetchAll($query, 'ii', [
       $userId,
       $userId
