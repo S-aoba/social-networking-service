@@ -7,6 +7,7 @@ use Database\DatabaseManager;
 use DateTime;
 use Models\Conversation;
 use Models\DirectMessge;
+use Models\Profile;
 
 class ConversationDAOImpl implements ConversationDAO {
   public function create(Conversation $conversation): bool
@@ -64,10 +65,15 @@ class ConversationDAOImpl implements ConversationDAO {
                 dm.sender_id,
                 dm.content,
                 dm.read_at,
-                dm.created_at AS dm_created_at
+                dm.created_at AS dm_created_at,
+                p.username,
+                p.user_id,
+                p.image_path
               FROM conversations c
               LEFT JOIN direct_messages dm 
                 ON dm.conversation_id = c.id
+              LEFT JOIN profiles p
+                ON p.user_id = c.user2_id
               WHERE c.user1_id = ? OR c.user2_id = ?
               ";
     
@@ -123,9 +129,16 @@ class ConversationDAOImpl implements ConversationDAO {
         );
       }
 
+      $partner = new Profile(
+        username: $data['username'],
+        userId: $data['user_id'],
+        imagePath: $data['image_path'],
+      );
+
       $conversations[] = [
         'conversation' => $conversation,
         'directMessage' => $directMessage,
+        'partner' => $partner,
       ];
     }
 
