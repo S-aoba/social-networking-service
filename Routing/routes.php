@@ -294,9 +294,19 @@ return [
                 }
             }
 
+            $followDAO = DAOFactory::getFollowDAO();
+            $follower = $followDAO->getFollower($authUserProfile->getUserId());
+            if($follower === null) throw new Exception('Follower not found!');
+            
+            foreach($follower as $user) {
+                $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                $user->setImagePath($publicAuthorImagePath);
+            };
+
             return new HTMLRenderer('page/messages', [
                 'authUser' => $authUserProfile,
-                'conversations' => $conversations
+                'conversations' => $conversations,
+                'followers' => $follower
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -769,7 +779,7 @@ return [
             $success = $conversationDAO->create($conversation);
             if($success === false) throw new Exception('Failed to create conversation.');
 
-            return new RedirectRenderer('page/messages');
+            return new JSONRenderer(['status' => 'success']);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 

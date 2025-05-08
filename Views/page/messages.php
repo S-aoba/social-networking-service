@@ -9,7 +9,7 @@
           <div class="flex items-center justify-center size-8 hover:bg-gray-400/30 rounded-full cursor-not-allowed transition duration-300">
             <img src="images/settings-icon.svg" alt="settings-icon" class="size-5">
           </div>
-          <div class="flex items-center justify-center size-8 hover:bg-gray-400/30 rounded-full cursor-not-allowed transition duration-300">
+          <div id="compose-conversation-button" class="flex items-center justify-center size-8 hover:bg-gray-400/30 rounded-full transition duration-300 cursor-pointer">
             <img src="images/compose-icon.svg" alt="compose-icon" class="size-5">
           </div>
         </div>
@@ -55,3 +55,40 @@
   </div>
   <?php include "Views/component/dm/dm-message-preview.php" ?>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const createConversationForms = document.querySelectorAll('.create-conversation-form');
+    createConversationForms.forEach(form => {
+      form.addEventListener('click', (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        
+        fetch('form/conversation', {
+          method: 'POST',
+          body: formData,
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Network response was not ok');
+          }
+        })
+        .then(data => {
+          if (data.status === 'success') {
+            window.location.reload();
+          } else {
+            console.error('Error creating conversation:', data.error);
+          }
+        })
+      })
+    })
+
+    const composeConversationButton = document.getElementById('compose-conversation-button');
+    composeConversationButton.addEventListener('click', () => {
+      const createConversationModal = document.getElementById('create-conversation-modal');
+      createConversationModal.classList.remove('hidden');
+    })
+  })
+</script>

@@ -1,4 +1,4 @@
-<div id="create-conversation-modal" class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div id="create-conversation-modal" class="relative z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
   <div class="fixed inset-0 bg-gray-500/75 transition-opacity" aria-hidden="true"></div>
   
   <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -14,18 +14,23 @@
         </div>
         <!-- Follower List -->
         <div>
-          <div class="flex p-4 cursor-pointer transition duration-300 hover:bg-slate-100">
+        <?php foreach($followers as $data): ?>
+          <form class="create-conversation-form flex p-4 cursor-pointer transition duration-300 hover:bg-slate-100">
+            <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
+            <input type="hidden" name="user1_id" value="<?= $authUser->getUserId(); ?>">
+            <input type="hidden" name="user2_id" value="<?= $data->getUserId(); ?>">
             <!-- User icon -->
-              <div class="w-12 shrink-0">
-                <img src="images/default-icon.png" alt="user-icon" class="size-10 rounded-full">
-              </div>
+            <div class="w-12 shrink-0">
+              <img src="images/default-icon.png" alt="user-icon" class="size-10 rounded-full">
+            </div>
             <!-- User info -->
             <div class="flex-1 min-w-0">
               <div class="flex items-center space-x-4 text-sm pb-2">
-                <p class="font-semibold">Admin</p>
+                <p class="font-semibold"><?= $data->getUsername(); ?></p>
               </div>
             </div>
-          </div>
+          </form>
+          <?php endforeach ;?>
         </div>
       </div>
     </div>
@@ -41,5 +46,4 @@
       modal.classList.add('hidden');
     });
   });
-
 </script>
