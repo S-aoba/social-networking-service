@@ -20,34 +20,36 @@
     </div>
     <!-- DM Message List -->
       <div class="flex-1 py-4">
-      <?php foreach($conversations as $data): ?>
-        <!-- DM Message List Item -->
-        <div class="flex p-4 cursor-pointer transition duration-300 hover:bg-slate-100">
-          <!-- User icon -->
-            <div class="w-12 shrink-0">
-              <img src="<?= $data['partner']->getImagePath(); ?>" alt="user-icon" class="size-10 rounded-full">
-            </div>
-          <!-- User info and message -->
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center space-x-4 text-sm pb-2">
-              <p class="font-semibold"><?= $data['partner']->getUsername(); ?></p>
-              <span class="text-slate-400">
-                <?= $data['directMessage'] === null ? 
-                      $data['conversation']->getCreatedAt()
-                      :  
-                      $data['directMessage']->getCreatedAt()?>
-              </span>
-            </div>
-            <?php if($data['directMessage'] !== null): ?>
-              <div class="text-sm">
-                <p class="truncate overflow-hidden whitespace-nowrap text-ellipsis">
-                  <?= $data['directMessage']->getContent(); ?>
-                </p>
+        <?php foreach($conversations as $data): ?>
+          <!-- DM Message List Item -->
+          <a href="/message?id=<?= $data['conversation']->getId(); ?>">
+            <div class="flex p-4 cursor-pointer transition duration-300 hover:bg-slate-100">
+              <!-- User icon -->
+                <div class="w-12 shrink-0">
+                  <img src="<?= $data['partner']->getImagePath(); ?>" alt="user-icon" class="size-10 rounded-full">
+                </div>
+              <!-- User info and message -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center space-x-4 text-sm pb-2">
+                  <p class="font-semibold"><?= $data['partner']->getUsername(); ?></p>
+                  <span class="text-slate-400">
+                    <?= $data['directMessage'] === null ? 
+                          $data['conversation']->getCreatedAt()
+                          :  
+                          $data['directMessage']->getCreatedAt()?>
+                  </span>
+                </div>
+                <?php if($data['directMessage'] !== null): ?>
+                  <div class="text-sm">
+                    <p class="truncate overflow-hidden whitespace-nowrap text-ellipsis">
+                      <?= $data['directMessage']->getContent(); ?>
+                    </p>
+                  </div>
+                <?php endif; ?>
               </div>
-            <?php endif; ?>
-          </div>
-        </div>
-      <?php endforeach; ?>
+            </div>
+          </a>
+        <?php endforeach; ?>
       </div>
   </div>
   <?php include "Views/component/dm/dm-message-preview.php" ?>
