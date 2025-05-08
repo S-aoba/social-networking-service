@@ -1,3 +1,4 @@
+<?php include "Views/component/dm/create-conversation-modal.php" ?>
 <div class="w-full h-full grid grid-cols-12">
   <?php include "Views/component/banner.php" ?>
   <div class="col-span-4 w-full h-full flex flex-col overflow-auto border-r border-slate-200">
