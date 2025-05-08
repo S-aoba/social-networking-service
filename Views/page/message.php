@@ -61,7 +61,6 @@
         <div class="flex flex-col items-center justify-center space-y-2">
           <img src="<?= $data['partner']->getImagePath(); ?>" alt="partner-user-icon">
           <span class="font-semibold"><?= $data['partner']->getUsername(); ?></span>
-          <p class="text-xs text-slate-600">2021年11月からSNSを利用しています</p>
         </div>
       </div>
       <!-- Direct Messages -->
