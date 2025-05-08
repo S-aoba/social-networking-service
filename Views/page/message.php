@@ -73,14 +73,14 @@
               <span class="font-semibold">
                 <?= $authUser->getUsername(); ?>
               </span>
-              <div class="p-4 bg-slate-100 rounded-3xl mb-2">
+              <div class="w-96 break-all p-4 bg-slate-100 rounded-3xl mb-2">
                 <p><?= $m->getContent(); ?></p>
               </div>
               <span class="text-xs text-slate-400"><?= $m->getCreatedAt(); ?></span>
             </div>
           <?php else: ?>
             <!-- PartnerUser -->
-            <div class="p-3 flex flex-col items-start justify-center space-y-2">
+            <div class="w-96 break-all p-3 flex flex-col items-start justify-center space-y-2">
               <span class="font-semibold">
                 <?= $data['partner']->getUsername(); ?>
               </span>
