@@ -5,9 +5,9 @@
     <div class="min-h-full flex items-center justify-center">
       <div class="w-[38rem] h-[45rem] bg-white rounded-3xl">
         <div class="flex items-center">
-          <div class="size-12 flex items-center justify-center">
+          <div id="close-button" class="size-12 flex items-center justify-center">
             <div class="size-10 flex items-center justify-center hover:bg-gray-400/50 rounded-full hover:cursor-pointer transition duration-300">
-              <img id="close-button" src="/images/close-icon.svg" alt="close-icon" class="size-5">
+              <img src="/images/close-icon.svg" alt="close-icon" class="size-5">
             </div>
           </div>
           <p class="text-lg font-semibold">新しいメッセージ</p>
@@ -35,9 +35,9 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('create-conversation-modal');
-    const cancelBtn = document.getElementById('cancelBtn');
+    const closeButton = document.getElementById('close-button');
 
-    cancelBtn.addEventListener('click', function() {
+    closeButton.addEventListener('click', function() {
       modal.classList.add('hidden');
     });
   });
