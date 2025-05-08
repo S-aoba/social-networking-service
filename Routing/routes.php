@@ -326,11 +326,22 @@ return [
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
+            $conversationDAO = DAOFactory::getConversationDAO();
+            $conversations = $conversationDAO->findAllByUserId($authUser->getId());
+            
+            if($conversations !== null) {
+                foreach($conversations as $data) {
+                    $publicPartnerImagePath = $imageService->buildPublicProfileImagePath($data['partner']->getImagePath());
+                    $data['partner']->setImagePath($publicPartnerImagePath);
+                }
+            }
+
             $directMessageDAO = DAOFactory::getDirectMessage();
             $directMessages = $directMessageDAO->findAllByConversationId($validatedData['id']);
             
             return new HTMLRenderer('page/message', [
                 'authUser' => $authUserProfile,
+                'conversations' => $conversations,
                 'directMessages' => $directMessages
             ]);
         } catch (\Exception $e) {
