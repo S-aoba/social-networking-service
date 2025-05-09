@@ -1,3 +1,4 @@
+<?php include "Views/component/dm/create-conversation-modal.php" ?>
 <div class="w-full h-full grid grid-cols-12">
   <?php include "Views/component/banner.php" ?>
   <div class="col-span-4 w-full h-full flex flex-col overflow-auto border-r border-slate-200">
@@ -9,7 +10,7 @@
           <div class="flex items-center justify-center size-8 hover:bg-gray-400/30 rounded-full cursor-not-allowed transition duration-300">
             <img src="images/settings-icon.svg" alt="settings-icon" class="size-5">
           </div>
-          <div class="flex items-center justify-center size-8 hover:bg-gray-400/30 rounded-full cursor-not-allowed transition duration-300">
+          <div id="compose-conversation-button" class="flex items-center justify-center size-8 hover:bg-gray-400/30 rounded-full transition duration-300 cursor-pointer">
             <img src="images/compose-icon.svg" alt="compose-icon" class="size-5">
           </div>
         </div>
@@ -104,3 +105,5 @@
       <?php endif; ?>
     </div>
 </div>
+
+<script src="js/open-create-conversation-modal.js"></script>
