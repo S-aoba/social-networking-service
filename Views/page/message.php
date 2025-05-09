@@ -68,7 +68,7 @@
     </div>
     <div class="pb-10 flex flex-col items-center justify-center border-b border-slate-100">
       <div class="flex flex-col items-center justify-center space-y-2">
-        <img src="<?= $partner->getImagePath(); ?>" alt="partner-user-icon">
+        <img src="<?= $partner->getImagePath(); ?>" alt="partner-user-icon" class="size-20 rounded-full">
         <span class="font-semibold"><?= $partner->getUsername(); ?></span>
       </div>
     </div>
