@@ -64,17 +64,16 @@
 
     <!-- Partner User Information -->
     <div class="px-4 py-2 font-semibold">
-      <?= $conversation['partner']->getUsername(); ?>
+      <?= $partner->getUsername(); ?>
     </div>
     <div class="pb-10 flex flex-col items-center justify-center border-b border-slate-100">
       <div class="flex flex-col items-center justify-center space-y-2">
-        <img src="<?= $conversation['partner']->getImagePath(); ?>" alt="partner-user-icon">
-        <span class="font-semibold"><?= $conversation['partner']->getUsername(); ?></span>
+        <img src="<?= $partner->getImagePath(); ?>" alt="partner-user-icon">
+        <span class="font-semibold"><?= $partner->getUsername(); ?></span>
       </div>
     </div>
 
     <!-- Direct Message Content -->
-    <!-- TODO: direct messageのuser処理のロジックがおかしい -->
     <div class="flex-1 overflow-y-auto px-4 py-2 space-y-4">
       <?php if($directMessages !== null): ?>
         <?php foreach($directMessages as $m): ?>
@@ -90,7 +89,7 @@
           <?php else: ?>
             <!-- PartnerUser -->
             <div class="max-w-96 break-all p-3 flex flex-col items-start justify-center space-y-2">
-              <span class="font-semibold"><?= $conversation['partner']->getUsername(); ?></span>
+              <span class="font-semibold"><?= $partner->getUsername(); ?></span>
               <div class="p-4 bg-slate-100 rounded-3xl mb-2">
                 <p><?= $m->getContent(); ?></p>
               </div>
@@ -106,7 +105,7 @@
       <form action="form/direct-message" method="POST" class="relative flex space-x-2">
         <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken
         () ?>">
-        <input type="hidden" name="conversation_id" value="<?= $conversation['conversation']->getId(); ?>">
+        <input type="hidden" name="conversation_id" value="<?= $conversation->getId(); ?>">
         <input type="hidden" name="sender_id" value="<?= $authUser->getUserId(); ?>">        
         <input 
             type="text" 
