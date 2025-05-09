@@ -353,12 +353,22 @@ return [
 
             $directMessageDAO = DAOFactory::getDirectMessage();
             $directMessages = $directMessageDAO->findAllByConversationId($conversation['conversation']->getId());
+
+            $followDAO = DAOFactory::getFollowDAO();
+            $follower = $followDAO->getFollower($authUserProfile->getUserId());
+            if($follower === null) throw new Exception('Follower not found!');
+            
+            foreach($follower as $user) {
+                $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                $user->setImagePath($publicAuthorImagePath);
+            };
             
             return new HTMLRenderer('page/message', [
                 'authUser' => $authUserProfile,
                 'conversations' => $conversations,
                 'conversation' => $conversation,
-                'directMessages' => $directMessages
+                'directMessages' => $directMessages,
+                'followers' => $follower
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
