@@ -39,7 +39,7 @@ class ConversationDAOImpl implements ConversationDAO {
     return $conversationsRowData;
   }
 
-  public function findByConversationId(int $id): ?array
+  public function findByConversationId(int $id): ?Conversation
   {
     $conversationRowData = $this->findRowByConversationId($id);
 
@@ -110,28 +110,23 @@ class ConversationDAOImpl implements ConversationDAO {
     return $this->rowDataToConversations($result);
   }
 
-  private function findRowByConversationId(int $id): ?array {
+  private function findRowByConversationId(int $id): ?Conversation {
     $mysqli = DatabaseManager::getMysqliConnection();
 
     $query = "SELECT 
-                c.id AS conversation_id,
-                c.user1_id,
-                c.user2_id,
-                c.created_at AS conversation_created_at,
-                p.username,
-                p.user_id,
-                p.image_path
-              FROM conversations c
-              JOIN profiles p ON c.user2_id = p.user_id
-              WHERE c.id = ?
+                id,
+                user1_id,
+                user2_id,
+                created_at
+              FROM conversations
+              WHERE id = ?
               ";
     
     $result = $mysqli->prepareAndFetchAll($query, 'i', [$id]);
 
-    
     if(empty($result)) return null;
     
-    return $this->rowDataToConversations($result)[0];
+    return $this->rowDataToConversation($result[0]);
   }
 
   private function existsRowByUserPair(Conversation $conversation): bool {
@@ -191,5 +186,14 @@ class ConversationDAOImpl implements ConversationDAO {
     }
 
     return $conversations;
+  }
+
+  private function rowDataToConversation(array $rowData): Conversation {
+    return new Conversation(
+      id: $rowData['id'],
+      user1Id: $rowData['user1_id'],
+      user2Id: $rowData['user2_id'],
+      createdAt: $rowData['created_at']
+    );
   }
 }
