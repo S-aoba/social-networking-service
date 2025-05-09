@@ -115,7 +115,7 @@
           >
         <button 
           type="submit" 
-          class="absolute right-0 px-4 py-2 rounded-md cursor-pointer"
+          class="absolute right-0 px-4 py-2 rounded-md focus:outline-none"
         >
           <img 
             src="images/send-icon.svg" 
