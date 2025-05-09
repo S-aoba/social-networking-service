@@ -107,12 +107,12 @@
         () ?>">
         <input type="hidden" name="conversation_id" value="<?= $conversation->getId(); ?>">
         <input type="hidden" name="sender_id" value="<?= $authUser->getUserId(); ?>">        
-        <input 
-            type="text" 
+        <textarea 
             name="content" 
-            class="flex-1 bg-slate-200 text-sm p-2 border border-slate-200 rounded-md focus:outline-none" 
+            class="w-full resize-none h-10 bg-slate-200 text-sm p-2 border border-slate-200 rounded-md focus:outline-none" 
             placeholder="新しいメッセージを作成"
           >
+        </textarea>
         <button 
           type="submit" 
           class="absolute right-0 px-4 py-2 rounded-md focus:outline-none"
