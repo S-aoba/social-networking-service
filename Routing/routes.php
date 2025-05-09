@@ -317,32 +317,47 @@ return [
     'message' => Route::create('message', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+            
+            // 認証状態を確認
             $authUser = Authenticate::getAuthenticatedUser();
-    
             if($authUser === null) return new RedirectRenderer('login');
 
+            // queryの値をバリデーションする
             $requiredFields = [
                 'id' => ValueType::INT
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
-            
+
+            // 認証ユーザーのProfile dataを取得する
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
+            if($authUserProfile === null)  return new RedirectRenderer('login');
+            
 
+            // queryの値を使ってconversation dataを取得する
             $conversationDAO = DAOFactory::getConversationDAO();
+            
             $conversation = $conversationDAO->findByConversationId($validatedData['id']);
-            if($conversation === null) return new RedirectRenderer('messages');
+            if($conversation === null)  return new RedirectRenderer('messages');
+            
+            // Partner dataを取得する
+            $authUserId = $authUserProfile->getUserId();
+            $partnerId = $authUserId === $conversation->getUser2Id()
+                ? $conversation->getUser1Id()
+                : $conversation->getUser2Id();
+            $partnerProfile = $profileDAO->getByUserId($partnerId);
             
             $imageService = new ImageService();
+            
+            // 認証ユーザーアイコンのフォーマット
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            $publicPartnerUserImagePath = $imageService->buildPublicProfileImagePath($conversation['partner']->getImagePath());
-            $conversation['partner']->setImagePath($publicPartnerUserImagePath);
-            
+            // Partnerユーザーアイコンのフォーマット
+            $publicPartnerUserImagePath = $imageService->buildPublicProfileImagePath($partnerProfile->getImagePath());
+            $partnerProfile->setImagePath($publicPartnerUserImagePath);
+
+            // conversations dataを取得する
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
             if($conversations !== null) {
                 foreach($conversations as $data) {
@@ -351,25 +366,28 @@ return [
                 }
             }
 
+            // Direct Messages dataを取得する
             $directMessageDAO = DAOFactory::getDirectMessage();
-            $directMessages = $directMessageDAO->findAllByConversationId($conversation['conversation']->getId());
+            $directMessages = $directMessageDAO->findAllByConversationId($conversation->getId());
 
+            // Followers dataを取得する
             $followDAO = DAOFactory::getFollowDAO();
-            $follower = $followDAO->getFollower($authUserProfile->getUserId());
-            if($follower === null) throw new Exception('Follower not found!');
-            
-            foreach($follower as $user) {
-                $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
-                $user->setImagePath($publicAuthorImagePath);
-            };
+            $followers = $followDAO->getFollower($authUserProfile->getUserId());
+            if($followers !== null) {
+                foreach($followers as $user) {
+                    $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                    $user->setImagePath($publicAuthorImagePath);
+                };
+            }
             
             return new HTMLRenderer('page/message', [
+                'conversation' => $conversation,
+                'partner' => $partnerProfile,
+                'directMessages' => $directMessages,
                 'authUser' => $authUserProfile,
                 'conversations' => $conversations,
-                'conversation' => $conversation,
-                'directMessages' => $directMessages,
-                'followers' => $follower
-            ]);
+                'followers' => $followers
+            ]);           
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
