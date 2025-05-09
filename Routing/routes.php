@@ -331,14 +331,19 @@ return [
             if($authUserProfile === null) {
                 return new RedirectRenderer('login');
             }
+
+            $conversationDAO = DAOFactory::getConversationDAO();
+            $conversation = $conversationDAO->findByConversationId($validatedData['id']);
+            if($conversation === null) return new RedirectRenderer('messages');
             
             $imageService = new ImageService();
             $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            $conversationDAO = DAOFactory::getConversationDAO();
-            $conversations = $conversationDAO->findAllByUserId($authUser->getId());
+            $publicPartnerUserImagePath = $imageService->buildPublicProfileImagePath($conversation['partner']->getImagePath());
+            $conversation['partner']->setImagePath($publicPartnerUserImagePath);
             
+            $conversations = $conversationDAO->findAllByUserId($authUser->getId());
             if($conversations !== null) {
                 foreach($conversations as $data) {
                     $publicPartnerImagePath = $imageService->buildPublicProfileImagePath($data['partner']->getImagePath());
@@ -347,11 +352,12 @@ return [
             }
 
             $directMessageDAO = DAOFactory::getDirectMessage();
-            $directMessages = $directMessageDAO->findAllByConversationId($validatedData['id']);
+            $directMessages = $directMessageDAO->findAllByConversationId($conversation['conversation']->getId());
             
             return new HTMLRenderer('page/message', [
                 'authUser' => $authUserProfile,
                 'conversations' => $conversations,
+                'conversation' => $conversation,
                 'directMessages' => $directMessages
             ]);
         } catch (\Exception $e) {
