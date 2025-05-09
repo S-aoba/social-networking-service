@@ -63,12 +63,12 @@
 
       <!-- Partner User infomation -->
       <div class="px-4 py-2 font-semibold">
-        <?= $data['partner']->getUsername(); ?>
+        <?= $conversation['partner']->getUsername(); ?>
       </div>
       <div class="pb-10 flex flex-col items-center justify-center border-b border-slate-100">
         <div class="flex flex-col items-center justify-center space-y-2">
-          <img src="<?= $data['partner']->getImagePath(); ?>" alt="partner-user-icon">
-          <span class="font-semibold"><?= $data['partner']->getUsername(); ?></span>
+          <img src="<?= $conversation['partner']->getImagePath(); ?>" alt="partner-user-icon">
+          <span class="font-semibold"><?= $conversation['partner']->getUsername(); ?></span>
         </div>
       </div>
       
