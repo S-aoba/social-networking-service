@@ -39,6 +39,14 @@ class ConversationDAOImpl implements ConversationDAO {
     return $conversationsRowData;
   }
 
+  public function findByConversationId(int $id): ?array
+  {
+    $conversationRowData = $this->findRowByConversationId($id);
+
+    if($conversationRowData === null) return null;
+    return $conversationRowData;
+  }
+
   public function existsByUserPair(Conversation $conversation): bool
   {
     $conversationRowData = $this->existsRowByUserPair($conversation);
@@ -99,7 +107,31 @@ class ConversationDAOImpl implements ConversationDAO {
 
     if(empty($result)) return null;
     
-    return $this->rowDataToConversation($result);
+    return $this->rowDataToConversations($result);
+  }
+
+  private function findRowByConversationId(int $id): ?array {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT 
+                c.id AS conversation_id,
+                c.user1_id,
+                c.user2_id,
+                c.created_at AS conversation_created_at,
+                p.username,
+                p.user_id,
+                p.image_path
+              FROM conversations c
+              JOIN profiles p ON c.user2_id = p.user_id
+              WHERE c.id = ?
+              ";
+    
+    $result = $mysqli->prepareAndFetchAll($query, 'i', [$id]);
+
+    
+    if(empty($result)) return null;
+    
+    return $this->rowDataToConversations($result)[0];
   }
 
   private function existsRowByUserPair(Conversation $conversation): bool {
@@ -122,7 +154,7 @@ class ConversationDAOImpl implements ConversationDAO {
     return !empty($result);
   }
 
-  private function rowDataToConversation(array $rowData): array {
+  private function rowDataToConversations(array $rowData): array {
     $conversations = [];
 
     foreach($rowData as $data) {
@@ -134,7 +166,7 @@ class ConversationDAOImpl implements ConversationDAO {
       );
 
       $directMessage = null;
-      if($data['dm_conversation_id'] !== null) {
+      if(isset($data['dm_conversation_id']) && $data['dm_conversation_id'] !== null) {
         $directMessage = new DirectMessge(
           conversationId: $data['dm_conversation_id'],
           senderId: $data['sender_id'],
