@@ -1,6 +1,6 @@
 <div 
   id="modal-<?= $data['conversation']->getId(); ?>"
-  class="relative hidden cursor-default" 
+  class="relative z-50 cursor-default hidden" 
   aria-labelledby="modal-title" 
   role="dialog" 
   aria-modal="true"
