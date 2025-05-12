@@ -23,42 +23,13 @@
     </div>
 
     <!-- Conversations -->
-      <div class="flex-1 py-4">
-
-        <!-- Conversation -->
-        <?php foreach($conversations as $data): ?>
-          <a href="/message?id=<?= $data['conversation']->getId(); ?>">
-            <div class="flex p-4 cursor-pointer transition duration-300 hover:bg-slate-100">
-              <!-- User icon -->
-                <div class="w-12 shrink-0">
-                  <img src="<?= $data['partner']->getImagePath(); ?>" alt="user-icon" class="size-10 rounded-full">
-                </div>
-              <!-- User info and message -->
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center space-x-4 text-sm pb-2">
-                  <p class="font-semibold"><?= $data['partner']->getUsername(); ?></p>
-                  <span class="text-slate-400">
-                    <?= $data['directMessage'] === null ? 
-                          $data['conversation']->getCreatedAt()
-                          :  
-                          $data['directMessage']->getCreatedAt()?>
-                  </span>
-                </div>
-                <?php if($data['directMessage'] !== null): ?>
-                  <div class="text-sm">
-                    <p class="truncate overflow-hidden whitespace-nowrap text-ellipsis">
-                      <?= $data['directMessage']->getContent(); ?>
-                    </p>
-                  </div>
-                <?php endif; ?>
-              </div>
-            </div>
-          </a>
-        <?php endforeach; ?>
-      </div>
+    <div class="flex-1 py-4">
+      <?php foreach($conversations as $data): ?>
+        <?php include "Views/component/dm/conversation-item.php" ?>
+      <?php endforeach; ?>
     </div>
-    
-    
+  </div>
+      
     <!-- Direct Messages -->
     <div class="relative col-span-6 w-full flex flex-col h-screen border-r border-slate-200">
 
