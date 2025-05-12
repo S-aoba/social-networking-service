@@ -19,7 +19,7 @@
     <!-- DM Search bar -->
     <div class="relative pt-2 px-4">
       <img src="images/search-icon.svg" alt="search-icon" class="absolute top-5 left-7 size-5">
-      <input type="text" class="size-full text-sm border border-slate-300 rounded-3xl py-2.5 pl-8 placeholder-slate-600 focus:outline-none" placeholder="ダイレクトメッセージを検索">
+      <input type="text" class="size-full text-sm border border-slate-200 rounded-3xl py-2.5 pl-8 placeholder-slate-600 focus:outline-none" placeholder="ダイレクトメッセージを検索">
     </div>
 
     <!-- Conversations -->
@@ -60,13 +60,13 @@
     
     
     <!-- Direct Messages -->
-    <div class="relative col-span-6 w-full flex flex-col h-screen">
+    <div class="relative col-span-6 w-full flex flex-col h-screen border-r border-slate-200">
 
     <!-- Partner User Information -->
     <div class="px-4 py-2 font-semibold">
       <?= $partner->getUsername(); ?>
     </div>
-    <div class="pb-10 flex flex-col items-center justify-center border-b border-slate-100">
+    <div class="pb-10 flex flex-col items-center justify-center border-b border-slate-200">
       <div class="flex flex-col items-center justify-center space-y-2">
         <img src="<?= $partner->getImagePath(); ?>" alt="partner-user-icon" class="size-20 rounded-full">
         <span class="font-semibold"><?= $partner->getUsername(); ?></span>
