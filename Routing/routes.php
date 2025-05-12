@@ -867,5 +867,37 @@ return [
             return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
+    'form/delete/conversation' => Route::create('form/delete/conversation', function(): HTTPRenderer {
+        try {
+            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
+
+            $requiredFields = [
+                'conversation_id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+
+            $conversationDAO = DAOFactory::getConversationDAO();
+            $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
+            if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
+
+            if($conversation->getUser1Id() !== $authUser->getId()) throw new Exception('Invalid user! No action cannot be token.');
+
+            $success = $conversationDAO->delete($conversation->getId());
+            if($success === false) throw new Exception('Failed to delete conversation.');
+            
+            return new RedirectRenderer('messages');
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['auth']),
 ];
 

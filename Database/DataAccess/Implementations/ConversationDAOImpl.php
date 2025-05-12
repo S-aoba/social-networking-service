@@ -58,7 +58,15 @@ class ConversationDAOImpl implements ConversationDAO {
 
   public function delete(int $id): bool
   {
-    return false;
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "DELETE FROM conversations WHERE id = ?";
+
+    $result = $mysqli->prepareAndExecute($query, 'i', [$id]);
+
+    if($result === false) return false;
+    
+    return true;
   }
 
   private function findAllRowByUserId(int $userId): ?array {
