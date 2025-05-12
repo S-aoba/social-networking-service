@@ -21,16 +21,7 @@
                 $data['directMessage']->getCreatedAt()?>
         </span>
       </div>
-      <button 
-      type="button"
-      class="z-20 size-7 flex items-center justify-center hover:bg-sky-200/80 rounded-full transition duration-300"
-      >
-        <img 
-          src="/images/menu-icon.svg" 
-          alt="post-menu-icon" 
-          class="size-5 cursor-pointer focus:ring-0"
-        >
-      </button>
+      <?php include "Views/component/dm/conversation-menu-action.php" ?>
     </div>
 
     <?php if($data['directMessage'] !== null): ?>

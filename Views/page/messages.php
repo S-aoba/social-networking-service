@@ -19,5 +19,7 @@
   <?php include "Views/component/dm/dm-message-preview.php" ?>
 </div>
 
-<script src="js/open-create-conversation-modal.js"></script>
 <script src="js/compose-conversation-form.js"></script>
+<script src="js/open-create-conversation-modal.js"></script>
+<script src="js/open-delete-conversation-menu.js"></script>
+<script src="js/open-delete-conversation-modal.js"></script>
