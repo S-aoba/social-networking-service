@@ -6,7 +6,7 @@
     </div>
     <button 
       type="button"
-      class="py-2 px-7 text-white text-lg bg-slate-400 rounded-3xl hover:brightness-90 cursor-pointer transition duration-300"
+      class="compose-conversation-button py-2 px-7 text-white text-lg bg-slate-400 rounded-3xl hover:brightness-90 cursor-pointer transition duration-300"
     >
     新しいメッセージ
     </button>
