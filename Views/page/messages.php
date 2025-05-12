@@ -57,3 +57,4 @@
 </div>
 
 <script src="js/open-create-conversation-modal.js"></script>
+<script src="js/compose-conversation-form.js"></script>
