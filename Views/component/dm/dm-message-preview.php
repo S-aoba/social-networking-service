@@ -12,5 +12,3 @@
     </button>
   </div>
 </div>
-
-<!-- TODO: Add script for opening the modal to create dm message -->
