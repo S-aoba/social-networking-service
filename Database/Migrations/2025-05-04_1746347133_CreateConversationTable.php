@@ -16,8 +16,8 @@ class CreateConversationTable implements SchemaMigration
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (user1_id) REFERENCES users(id),
-                FOREIGN KEY (user2_id) REFERENCES users(id)
+                FOREIGN KEY (user1_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (user2_id) REFERENCES users(id) ON DELETE CASCADE
             )"
         ];
     }
