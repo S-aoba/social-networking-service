@@ -14,7 +14,7 @@ $navigationList = [
     [
         'label' => 'メッセージ',
         'imagePath' => '/images/message.svg',
-        'linkPath' => '#'
+        'linkPath' => '/messages'
     ],
     [
         'label' => 'プロフィール',

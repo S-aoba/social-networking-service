@@ -1,8 +1,11 @@
 <?php
 
 use Database\DataAccess\DAOFactory;
+use Faker\ValidGenerator;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
+use Models\Conversation;
+use Models\DirectMessge;
 use Models\ImageService;
 use Models\Like;
 use Models\Post;
@@ -264,7 +267,135 @@ return [
             return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
+    'messages' => Route::create('message', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+            $authUser = Authenticate::getAuthenticatedUser();
+    
+            if($authUser === null) return new RedirectRenderer('login');
 
+            $profileDAO = DAOFactory::getProfileDAO();
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
+
+            $imageService = new ImageService();
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
+
+            $conversationDAO = DAOFactory::getConversationDAO();
+            $conversations = $conversationDAO->findAllByUserId($authUser->getId());
+            
+            if($conversations !== null) {
+                foreach($conversations as $data) {
+                    $publicPartnerImagePath = $imageService->buildPublicProfileImagePath($data['partner']->getImagePath());
+                    $data['partner']->setImagePath($publicPartnerImagePath);
+                }
+            }
+
+            $followDAO = DAOFactory::getFollowDAO();
+            $follower = $followDAO->getFollower($authUserProfile->getUserId());
+            if($follower === null) throw new Exception('Follower not found!');
+            
+            foreach($follower as $user) {
+                $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                $user->setImagePath($publicAuthorImagePath);
+            };
+
+            return new HTMLRenderer('page/messages', [
+                'authUser' => $authUserProfile,
+                'conversations' => $conversations,
+                'followers' => $follower
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    }),
+    'message' => Route::create('message', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+            
+            // 認証状態を確認
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
+
+            // queryの値をバリデーションする
+            $requiredFields = [
+                'id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
+
+            // 認証ユーザーのProfile dataを取得する
+            $profileDAO = DAOFactory::getProfileDAO();
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null)  return new RedirectRenderer('login');
+            
+
+            // queryの値を使ってconversation dataを取得する
+            $conversationDAO = DAOFactory::getConversationDAO();
+            
+            $conversation = $conversationDAO->findByConversationId($validatedData['id']);
+            if($conversation === null)  return new RedirectRenderer('messages');
+            
+            // Partner dataを取得する
+            $authUserId = $authUserProfile->getUserId();
+            $partnerId = $authUserId === $conversation->getUser2Id()
+                ? $conversation->getUser1Id()
+                : $conversation->getUser2Id();
+            $partnerProfile = $profileDAO->getByUserId($partnerId);
+            
+            $imageService = new ImageService();
+            
+            // 認証ユーザーアイコンのフォーマット
+            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
+
+            // Partnerユーザーアイコンのフォーマット
+            $publicPartnerUserImagePath = $imageService->buildPublicProfileImagePath($partnerProfile->getImagePath());
+            $partnerProfile->setImagePath($publicPartnerUserImagePath);
+
+            // conversations dataを取得する
+            $conversations = $conversationDAO->findAllByUserId($authUser->getId());
+            if($conversations !== null) {
+                foreach($conversations as $data) {
+                    $publicPartnerImagePath = $imageService->buildPublicProfileImagePath($data['partner']->getImagePath());
+                    $data['partner']->setImagePath($publicPartnerImagePath);
+                }
+            }
+
+            // Direct Messages dataを取得する
+            $directMessageDAO = DAOFactory::getDirectMessage();
+            $directMessages = $directMessageDAO->findAllByConversationId($conversation->getId());
+
+            // Followers dataを取得する
+            $followDAO = DAOFactory::getFollowDAO();
+            $followers = $followDAO->getFollower($authUserProfile->getUserId());
+            if($followers !== null) {
+                foreach($followers as $user) {
+                    $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                    $user->setImagePath($publicAuthorImagePath);
+                };
+            }
+            
+            return new HTMLRenderer('page/message', [
+                'conversation' => $conversation,
+                'partner' => $partnerProfile,
+                'directMessages' => $directMessages,
+                'authUser' => $authUserProfile,
+                'conversations' => $conversations,
+                'followers' => $followers
+            ]);           
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    }),
+
+    // Auth
     'form/login' => Route::create('form/login', function (): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -378,6 +509,8 @@ return [
             return new RedirectRenderer('register');
         }
     })->setMiddleware(['guest']),
+
+    // Create
     'form/post' => Route::create('form/post', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -465,101 +598,6 @@ return [
             return new JSONRenderer(['status' => 'error']);
         }    
     })->setMiddleware(['auth']),
-    'form/delete/post' => Route::create('form/delete/post', function(): HTTPRenderer {
-        try {
-            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
-
-            $authUser = Authenticate::getAuthenticatedUser();
-            if($authUser === null) return new RedirectRenderer('login');
-
-            $requiredFields = [
-                'post_id' => ValueType::INT,
-                'author_id' => ValueType::INT
-            ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
-
-            if($validatedData['author_id'] !== $authUser->getId()) throw new Exception('Invalid user!');
-            
-            $postDAO = DAOFactory::getPostDAO();
-            $success = $postDAO->deletePost($validatedData['post_id']);
-            if($success === false) throw new Exception('Failed to delete post!');
-
-            return new RedirectRenderer('');
-        } catch (\InvalidArgumentException $e) {
-            error_log($e->getMessage());
-
-            return new JSONRenderer(['status' => 'error']);
-        } catch (\Exception $e) {
-            error_log($e->getMessage());
-
-            return new RedirectRenderer('login');
-        }
-    })->setMiddleware(['auth']),
-    'form/update/profile' => Route::create('form/update/profile', function(): HTTPRenderer {
-        try {
-            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
-
-            $requiredFields = [
-                'username' => ValueType::STRING,
-                'age' => ValueType::INT,
-                'address' => ValueType::STRING,
-                'hobby' => ValueType::STRING,
-                'self_introduction' => ValueType::STRING
-            ];
-
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
-            
-            $user = Authenticate::getAuthenticatedUser();
-            $userId = $user->getId();
-            
-            $profileDAO = DAOFactory::getProfileDAO();
-            $prevImagePath = $profileDAO->getImagePath($userId);
-            
-            $file = $_FILES['upload-file'];
-            $imageService = null;
-            $publicAuthUserImagePath = null;
-            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
-                $validatedFileData = ValidationHelper::validateFile($file);
-                $imageService = new ImageService(
-                    type: $validatedFileData['type'],
-                    tempPath: $file['tmp_name']
-                );
-                $publicAuthUserImagePath = $imageService->generatePublicImagePath();
-            }
-
-            $profile = new Profile(
-                username: $validatedData['username'],
-                userId: $userId,
-                age: $validatedData['age'],
-                imagePath: $publicAuthUserImagePath,
-                address: $validatedData['address'],
-                hobby: $validatedData['hobby'],
-                selfIntroduction: $validatedData['self_introduction']
-            );
-            $success = $profileDAO->updateProfile($profile);
-            if($success === false) throw new Exception('Failed to update profile!');
-
-            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
-                $isSavedToDir = $imageService->saveToDir($publicAuthUserImagePath);
-                if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
-
-                if($prevImagePath !== null) {
-                    $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
-                    if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
-                }
-            }
-
-            return new RedirectRenderer('profile?user=' . $validatedData['username']);
-        } catch (\InvalidArgumentException $e) {
-            error_log($e->getMessage());
-
-            return new JSONRenderer(['status' => 'error']);
-        } catch (Exception $e) {
-            error_log($e->getMessage());
-
-            return new RedirectRenderer('login');
-        }
-    })->setMiddleware(['auth']),
     'form/reply' => Route::create('form/reply', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
@@ -641,6 +679,221 @@ return [
 
             return new JSONRenderer(['status' => 'error']);
         } catch (Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['auth']),
+    'form/conversation' => Route::create('form/conversation', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+            $authUser = Authenticate::getAuthenticatedUser();
+    
+            if($authUser === null) return new RedirectRenderer('login');
+
+            $requiredFields = [
+                'user1_id' => ValueType::INT,
+                'user2_id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+
+            if ($validatedData['user1_id'] !== $authUser->getId()) {
+                throw new Exception('Invalid user1_id — not matching authenticated user.');
+            }
+
+            if ($validatedData['user1_id'] === $validatedData['user2_id']) {
+                throw new Exception('Cannot start a conversation with yourself.');
+            }
+            
+            $userDAO = DAOFactory::getUserDAO();
+            $isPartnerExists = $userDAO->getById($validatedData['user2_id']);
+            if($isPartnerExists === null) throw new Exception('Partner is not exists.');
+
+            $conversation = new Conversation(
+                user1Id: $validatedData['user1_id'],
+                user2Id: $validatedData['user2_id'],
+            );
+            $conversationDAO = DAOFactory::getConversationDAO();
+
+            $isExistsConversation = $conversationDAO->existsByUserPair($conversation);
+            if($isExistsConversation) throw new Exception('Conversation already exists.');
+
+            $success = $conversationDAO->create($conversation);
+            if($success === false) throw new Exception('Failed to create conversation.');
+
+            return new JSONRenderer(['status' => 'success']);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['auth']),
+    'form/direct-message' => Route::create('form/message', function(): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
+
+            $requiredFields = [
+                'conversation_id' => ValueType::INT,
+                'sender_id' => ValueType::INT,
+                'content' => ValueType::STRING
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+
+            if($validatedData['sender_id'] !== $authUser->getId()) {
+                throw new Exception('Cannot start a message with yourself');
+            }
+
+            // TODO: conversationの存在検証
+
+            $directMessage = new DirectMessge(
+                conversationId: $validatedData['conversation_id'],
+                senderId: $validatedData['sender_id'],
+                content: $validatedData['content']
+            );
+            $directMessageDAO = DAOFactory::getDirectMessage();
+            $success = $directMessageDAO->create($directMessage);
+            if($success === false) throw new Exception('Failed to create direct message.');
+            
+            return new RedirectRenderer("message?id={$validatedData['conversation_id']}");
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['auth']),
+
+    // Update
+    'form/update/profile' => Route::create('form/update/profile', function(): HTTPRenderer {
+        try {
+            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $requiredFields = [
+                'username' => ValueType::STRING,
+                'age' => ValueType::INT,
+                'address' => ValueType::STRING,
+                'hobby' => ValueType::STRING,
+                'self_introduction' => ValueType::STRING
+            ];
+
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            
+            $user = Authenticate::getAuthenticatedUser();
+            $userId = $user->getId();
+            
+            $profileDAO = DAOFactory::getProfileDAO();
+            $prevImagePath = $profileDAO->getImagePath($userId);
+            
+            $file = $_FILES['upload-file'];
+            $imageService = null;
+            $publicAuthUserImagePath = null;
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $validatedFileData = ValidationHelper::validateFile($file);
+                $imageService = new ImageService(
+                    type: $validatedFileData['type'],
+                    tempPath: $file['tmp_name']
+                );
+                $publicAuthUserImagePath = $imageService->generatePublicImagePath();
+            }
+
+            $profile = new Profile(
+                username: $validatedData['username'],
+                userId: $userId,
+                age: $validatedData['age'],
+                imagePath: $publicAuthUserImagePath,
+                address: $validatedData['address'],
+                hobby: $validatedData['hobby'],
+                selfIntroduction: $validatedData['self_introduction']
+            );
+            $success = $profileDAO->updateProfile($profile);
+            if($success === false) throw new Exception('Failed to update profile!');
+
+            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+                $isSavedToDir = $imageService->saveToDir($publicAuthUserImagePath);
+                if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
+
+                if($prevImagePath !== null) {
+                    $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
+                    if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
+                }
+            }
+
+            return new RedirectRenderer('profile?user=' . $validatedData['username']);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['auth']),
+
+    // Delete
+    'form/delete/post' => Route::create('form/delete/post', function(): HTTPRenderer {
+        try {
+            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
+
+            $requiredFields = [
+                'post_id' => ValueType::INT,
+                'author_id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+
+            if($validatedData['author_id'] !== $authUser->getId()) throw new Exception('Invalid user!');
+            
+            $postDAO = DAOFactory::getPostDAO();
+            $success = $postDAO->deletePost($validatedData['post_id']);
+            if($success === false) throw new Exception('Failed to delete post!');
+
+            return new RedirectRenderer('');
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['auth']),
+    'form/delete/conversation' => Route::create('form/delete/conversation', function(): HTTPRenderer {
+        try {
+            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
+
+            $requiredFields = [
+                'conversation_id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+
+            $conversationDAO = DAOFactory::getConversationDAO();
+            $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
+            if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
+
+            if($conversation->getUser1Id() !== $authUser->getId()) throw new Exception('Invalid user! No action cannot be token.');
+
+            $success = $conversationDAO->delete($conversation->getId());
+            if($success === false) throw new Exception('Failed to delete conversation.');
+            
+            return new RedirectRenderer('messages');
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'error']);
+        } catch (\Exception $e) {
             error_log($e->getMessage());
 
             return new RedirectRenderer('login');
