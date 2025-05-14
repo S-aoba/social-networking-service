@@ -405,7 +405,7 @@ return [
                 'password' => ValueType::STRING,
             ];
 
-            $validatedData = ValidationHelper::validateFields($required_fields, $_POST);
+            $validatedData = ValidationHelper::validateAuth($required_fields, $_POST);
 
             Authenticate::authenticate($validatedData['email'], $validatedData['password']);
 
@@ -443,7 +443,7 @@ return [
             $userDao = DAOFactory::getUserDAO();
 
             // シンプルな検証
-            $validatedData = ValidationHelper::validateFields($required_fields, $_POST);
+            $validatedData = ValidationHelper::validateAuth($required_fields, $_POST);
 
             if($validatedData['confirm_password'] !== $validatedData['password']){
                 FlashData::setFlashData('error', 'Invalid Password!');
