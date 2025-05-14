@@ -10,9 +10,7 @@ class ImagePathGenerator
     {
         $uuid = $this->createUUID();
         $currentDate = $this->createCurrentDate();
-        // ファイルタイプは保存処理を行うクラスで扱う方が適切かもしれません
-        // ここでは一旦nullとしておきます
-        $fileType = null;
+        
         return $currentDate . '-' . $uuid .  '.' . $fileType;
     }
 
