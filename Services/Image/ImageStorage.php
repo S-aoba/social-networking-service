@@ -4,17 +4,19 @@ namespace Services\Image;
 
 use Exception;
 
+use Helpers\Settings;
+
 use Models\File;
 
 class ImageStorage
 {
-    private string $dirPath = 'uploads';
-    private ?string $tempPath;
-
     public function __construct(
-      private File $file
+      private File $file,
+      private string $dirPath = ''
     )
-    {}
+    {
+      $this->dirPath = $this->dirPath ?: Settings::env('FILE_DIR_PATH');
+    }
 
     public function save(string $imagePath): bool
     {
