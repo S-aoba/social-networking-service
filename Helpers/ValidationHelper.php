@@ -71,7 +71,7 @@ class ValidationHelper
         $validatedData = [];
 
         foreach ($fields as $field => $type) {
-            if (!isset($data[$field]) || ($data)[$field] === '') {
+            if (!isset($data[$field])) {
                 throw new \InvalidArgumentException("Missing field: $field");
             }
 
