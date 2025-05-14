@@ -14,7 +14,7 @@
                 <p class="text-sm text-gray-500">Please fill in the following fields to update your profile.</p>
               </div>
               <div class="mt-2 relative">
-                <img src="<?= $queryUser->getImagePath(); ?>" alt="user-icon" class="size-20 brightness-90" id="previewImage">
+                <img src="<?= $queryUser->getImagePath(); ?>" alt="user-icon" class="size-20 brightness-90 rounded-full" id="previewImage">
                 <label for="upload-file" class="absolute top-5 left-5 hover:cursor-pointer bg-gray-700/70 hover:brightness-110 transition duration-300 p-2 rounded-full">
                   <img src="/images/upload-icon.svg" alt="upload-icon">
                   <input 
