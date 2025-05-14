@@ -17,6 +17,12 @@ class ValidationHelper
         // 値がすべてのチェックをパスしたら、そのまま返します。
         return $value;
     }
+
+    public static function string ($value): ?string {
+        if($value === '') return null;
+
+        return is_string($value) ? $value : throw new \InvalidArgumentException("The provided value is not a valid string.");
+    }
     
     public static function validateDate(string $date, string $format = 'Y-m-d'): string
     {
@@ -78,8 +84,8 @@ class ValidationHelper
             $value = $data[$field];
 
             $validatedValue = match ($type) {
-                ValueType::STRING => is_string($value) ? $value : throw new \InvalidArgumentException("The provided value is not a valid string."),
-                ValueType::INT => self::integer($value), // 必要に応じて、この方法をさらにカスタマイズすることができます。
+                ValueType::STRING => self::string($value),
+                ValueType::INT => self::integer($value), 
                 ValueType::FLOAT => filter_var($value, FILTER_VALIDATE_FLOAT),
                 ValueType::DATE => self::validateDate($value),
                 ValueType::EMAIL => filter_var($value, FILTER_VALIDATE_EMAIL),
