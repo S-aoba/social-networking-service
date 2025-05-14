@@ -30,6 +30,13 @@ class File implements Model {
     return $this->type === '' ? null : $this->type;
   }
 
+  public function getTypeWithoutPrefix(): ?string {
+    if ($this->getType() !== null && str_starts_with($this->getType(), 'image/')) {
+        return substr($this->getType(), strlen('image/'));
+    }
+    return null;
+  }
+
   public function getTmpName(): ?string {
     return $this->tmpName === '' ? null : $this->tmpName;
   }
