@@ -6,8 +6,10 @@ use Types\ValueType;
 
 class ValidationHelper
 {
-    public static function integer($value, float $min = -INF, float $max = INF): int
+    public static function integer($value, float $min = -INF, float $max = INF): ?int
     {
+        if($value === '') return null;
+        
         // PHPには、データを検証する組み込み関数があります。詳細は https://www.php.net/manual/en/filter.filters.validate.php を参照ください。
         $value = filter_var($value, FILTER_VALIDATE_INT, ["min_range" => (int) $min, "max_range"=>(int) $max]);
 
