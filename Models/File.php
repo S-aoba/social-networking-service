@@ -36,4 +36,11 @@ class File implements Model {
   public function getSize(): int {
     return $this->file['size'];
   }
+
+  public function isValid(): bool {
+    return $this->getError() === UPLOAD_ERR_OK &&
+           !empty($this->getTmpName()) &&
+           is_uploaded_file($this->getTmpName()) &&
+           $this->getSize() > 0;
+  }
 }
