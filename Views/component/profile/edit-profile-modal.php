@@ -21,12 +21,11 @@
                     id="upload-file" 
                     type="file" 
                     name="upload-file" 
-                    value="<?php echo $queryUser->getImagePath() ?>" 
                     class="hidden"
                     accept="image/png, image/jpg, image/jpeg, image/gif, image/webp"
                   >
                 </label>
-                </div>
+              </div>
               <div class="mt-2">
                 <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
                 <input type="text" id="username" name="username" class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter your username" value="<?php echo $queryUser->getUsername() ?>">
