@@ -1,22 +1,30 @@
 <?php
 
-use Database\DataAccess\DAOFactory;
-use Faker\ValidGenerator;
-use Helpers\Authenticate;
-use Helpers\ValidationHelper;
-use Models\Conversation;
-use Models\DirectMessge;
-use Models\ImageService;
-use Models\Like;
-use Models\Post;
-use Models\Profile;
-use Models\User;
+use Routing\Route;
+
 use Response\FlashData;
 use Response\HTTPRenderer;
 use Response\Render\HTMLRenderer;
 use Response\Render\JSONRenderer;
 use Response\Render\RedirectRenderer;
-use Routing\Route;
+
+use Helpers\Authenticate;
+use Helpers\ValidationHelper;
+
+use Database\DataAccess\DAOFactory;
+
+use Models\Conversation;
+use Models\DirectMessge;
+use Models\File;
+use Models\ImageService;
+use Models\Like;
+use Models\Post;
+use Models\Profile;
+use Models\User;
+
+use Services\Image\ImagePathGenerator;
+use Services\Image\ImageStorage;
+
 use Types\ValueType;
 
 return [
@@ -833,6 +841,46 @@ return [
             error_log($e->getMessage());
 
             return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['auth']),
+    'form/update/profile/icon' => Route::create('form/update/profile/icon', function(): HTTPRenderer {
+        try {
+            if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
+            $user = Authenticate::getAuthenticatedUser();
+            if($user === null) return new RedirectRenderer('login');
+            
+            $file = File::fromArray($_FILES['upload-file']);
+            if($file->isValid() === false) return new JSONRenderer(['status' => 'File upload is invalid.']);
+
+            $validatedFileData = ValidationHelper::validateFile($file);
+
+            $publicProfileIconPath = (new ImagePathGenerator())->generate($validatedFileData->getTypeWithoutPrefix());
+            
+            $profileDAO = DAOFactory::getProfileDAO();
+            $profile = $profileDAO->getByUserId($user->getId());
+            $prevProfileImagePath = $profile->getImagePath();
+            if($profile === null) return new RedirectRenderer('login');
+
+            $success = $profileDAO->updataPrpfileIcon($publicProfileIconPath, $user->getId());
+            if($success === false) throw new Exception('Failed to update profile!');
+
+            $imageStorage = new ImageStorage();
+            $imageStorage->save($publicProfileIconPath, $validatedFileData->getTmpName());
+            
+            if($prevProfileImagePath !== null) {
+                $imageStorage->delete($prevProfileImagePath);
+            }
+            
+            return new RedirectRenderer('profile?user=' . $profile->getUsername());
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'Invalid error.']);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer(['status' => 'An unexpected error has occurred.']);
         }
     })->setMiddleware(['auth']),
 
