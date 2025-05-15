@@ -782,6 +782,11 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
+            $user = Authenticate::getAuthenticatedUser();
+            if($user === null) return new RedirectRenderer('login');
+
+            // TODO: Action権限を確認する
+
             $requiredFields = [
                 'username' => ValueType::STRING,
                 'age' => ValueType::INT,
@@ -791,46 +796,20 @@ return [
             ];
 
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
-            
-            $user = Authenticate::getAuthenticatedUser();
-            $userId = $user->getId();
-            
-            $profileDAO = DAOFactory::getProfileDAO();
-            $prevImagePath = $profileDAO->getImagePath($userId);
-            
-            $file = $_FILES['upload-file'];
-            $imageService = null;
-            $publicAuthUserImagePath = null;
-            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
-                $validatedFileData = ValidationHelper::validateFile($file);
-                $imageService = new ImageService(
-                    type: $validatedFileData['type'],
-                    tempPath: $file['tmp_name']
-                );
-                $publicAuthUserImagePath = $imageService->generatePublicImagePath();
-            }
-
+            // TODO: それぞれのfieldの最大値、最小値のバリデーションを検証する(ビジネスロジック)
+                        
             $profile = new Profile(
                 username: $validatedData['username'],
-                userId: $userId,
+                userId: $user->getId(),
                 age: $validatedData['age'],
-                imagePath: $publicAuthUserImagePath,
                 address: $validatedData['address'],
                 hobby: $validatedData['hobby'],
                 selfIntroduction: $validatedData['self_introduction']
             );
+            
+            $profileDAO = DAOFactory::getProfileDAO();
             $success = $profileDAO->updateProfile($profile);
             if($success === false) throw new Exception('Failed to update profile!');
-
-            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
-                $isSavedToDir = $imageService->saveToDir($publicAuthUserImagePath);
-                if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
-
-                if($prevImagePath !== null) {
-                    $isDeletePrevImageFromDir = $imageService->DeleteFromDir($prevImagePath);
-                    if($isDeletePrevImageFromDir === false) throw new Exception('Failed to delete prev image path from the directory.');
-                }
-            }
 
             return new RedirectRenderer('profile?user=' . $validatedData['username']);
         } catch (\InvalidArgumentException $e) {

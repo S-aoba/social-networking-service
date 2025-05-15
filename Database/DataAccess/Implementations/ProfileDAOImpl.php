@@ -95,10 +95,18 @@ class ProfileDAOImpl implements ProfileDAO
   {
     if ($profile === null) return false;
 
+    $rowData = $this->updateRowProfile($profile);
+
+    if($rowData === false) return false;
+
+    return true;
+  }
+
+  private function updateRowProfile(Profile $profile): bool {
     $mysqli = DatabaseManager::getMysqliConnection();
+
     $query = "UPDATE profiles 
-              SET username = ?, 
-                  image_path = ?, 
+              SET username = ?,
                   address = ?, 
                   age = ?, 
                   hobby = ?, 
@@ -106,10 +114,9 @@ class ProfileDAOImpl implements ProfileDAO
               WHERE user_id = ?";
     $result = $mysqli->prepareAndExecute(
       $query,
-      'ssssssi',
+      'sssssi',
       [
         $profile->getUsername(),
-        $profile->getImagePath(),
         $profile->getAddress(),
         $profile->getAge(),
         $profile->getHobby(),
@@ -117,6 +124,7 @@ class ProfileDAOImpl implements ProfileDAO
         $profile->getUserId()
       ]
     );
+
     if (!$result) return false;
 
     return true;
