@@ -2,6 +2,8 @@
 
 namespace Helpers;
 
+use Models\File;
+
 use Types\ValueType;
 
 class ValidationHelper
@@ -102,20 +104,18 @@ class ValidationHelper
         return $validatedData;
     }
     
-    public static function validateFile(array $file): array {
+    public static function validateFile(File $file): File {
         $availableTypeList = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp'];
 
-        $type = $file['type'];
+        $type = $file->getType();
         $type = in_array($type, $availableTypeList, true) ? $type : false;
         if($type === false) throw new \InvalidArgumentException('The provided value is not a valid type.');
         
         $maxSize = 2 * 1024 * 1024; // 2MB
-        if($file['size'] > $maxSize) {
+        if($file->getSize() > $maxSize) {
             throw new \InvalidArgumentException('The uploaded file exceeds the maximum allowed size of 2MB.');
         }
 
-        return [
-            'type' => $type
-        ];
+        return $file;
     }
 }

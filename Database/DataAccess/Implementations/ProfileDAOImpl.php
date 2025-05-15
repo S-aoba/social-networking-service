@@ -122,6 +122,28 @@ class ProfileDAOImpl implements ProfileDAO
     return true;
   }
 
+  public function updataPrpfileIcon(string $imagePath, int $userId): bool
+  {
+    $rowData = $this->updateRowProfileIcon($imagePath, $userId);
+
+    if($rowData === false) return false;
+
+    return true;
+  }
+
+  private function updateRowProfileIcon(string $imagePath, int $userId): bool 
+  {
+     $mysqli = DatabaseManager::getMysqliConnection();
+
+     $query = "UPDATE profiles SET image_path = ? WHERE user_id = ?";
+
+     $result = $mysqli->prepareAndExecute($query, 'si', [$imagePath, $userId]);
+
+     if($result === false) return false;
+
+     return true;
+  }
+
   public function deleteProfile(int $userId): bool
   {
     return false;
