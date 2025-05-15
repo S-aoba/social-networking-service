@@ -17,7 +17,7 @@ class ImageStorage
       $this->dirPath = $this->dirPath ?: Settings::env('FILE_DIR_PATH');
     }
 
-    public function save(string $imagePath): bool
+    public function save(string $imagePath, string $tmpPath): bool
     {
         if (!is_dir($this->dirPath)) {
             mkdir($this->dirPath, 0755, true);
@@ -25,7 +25,7 @@ class ImageStorage
 
         $filePath = $this->dirPath . '/' . $imagePath;
 
-        return move_uploaded_file($this->tempPath, $filePath) !== false;
+        return move_uploaded_file($tmpPath, $filePath) !== false;
     }
 
     public function delete(string $imagePath): bool
