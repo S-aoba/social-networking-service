@@ -11,7 +11,6 @@ use Models\File;
 class ImageStorage
 {
     public function __construct(
-      private File $file,
       private string $dirPath = ''
     )
     {
