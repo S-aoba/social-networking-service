@@ -223,7 +223,7 @@ return [
 
             $followDAO = DAOFactory::getFollowDAO();
             $following = $followDAO->getFollowing($authUserProfile->getUserId());
-
+            
             if($following !== null) {
                 foreach($following as $user) {
                     $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());

@@ -50,11 +50,11 @@ class FollowDAOImpl implements FollowDAO
 
   public function getFollowing(int $userId): ?array
   {
-    $followingRow = $this->getRowFollowing($userId);
+    $followingRowData = $this->getRowFollowing($userId);
 
-    if($followingRow === null) return null;
+    if($followingRowData === null) return null;
 
-    return $followingRow;
+    return $followingRowData;
   }
 
   private function getRowFollowing(int $userId): ?array {
@@ -68,18 +68,18 @@ class FollowDAOImpl implements FollowDAO
 
     $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
 
-    if(!$result === null) return null;
+    if(count($result) === 0) return null;
 
     return $this->rowDataToProfile($result);
   }
 
   public function getFollower(int $userId): ?array
   {
-    $followingRow = $this->getRowFollower($userId);
+    $follwerRowData = $this->getRowFollower($userId);
 
-    if($followingRow === null) return null;
+    if($follwerRowData === null) return null;
 
-    return $followingRow;
+    return $follwerRowData;
   }
 
   public function checkIsFollow(int $userId, int $followingId): bool
@@ -114,7 +114,7 @@ class FollowDAOImpl implements FollowDAO
 
     $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
 
-    if(!$result === null) return null;
+    if(count($result) === 0) return null;
 
     return $this->rowDataToProfile($result);
   }
