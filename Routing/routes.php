@@ -150,40 +150,44 @@ return [
     })->setMiddleware(['auth']),
     'post' => Route::create('post', function(): HTTPRenderer {
         try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
             
-            $requiredFields = [
-                'id' => ValueType::INT
-            ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
-    
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
             if($authUserProfile === null) {
                 return new RedirectRenderer('login');
             }
 
-            $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById($validatedData['id'], $authUserProfile->getUserId());
-            if($post === null) throw new Exception('Post not found!');
-            
             $imageUrlBuilder = new ImageUrlBuilder();
+
             $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
+            $requiredFields = [
+                'id' => ValueType::INT
+            ];
+            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
+            
+            $postDAO = DAOFactory::getPostDAO();
+            $post = $postDAO->getById($validatedData['id'], $authUserProfile->getUserId());
+            if($post === null) return new RedirectRenderer('');
+            
             $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($post['post']->getImagePath());
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($post['author']->getImagePath());
+            $publicAuthorUserImagePath = $imageUrlBuilder->buildProfileImageUrl($post['author']->getImagePath());
             $post['post']->setImagePath($publicPostImagePath);
-            $post['author']->setImagePath($publicAuthUserImagePath);
+            $post['author']->setImagePath($publicAuthorUserImagePath);
 
             $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());
             if($replies != null) {
                 foreach($replies as $data) {
                     $publicReplyImagePath = $imageUrlBuilder->buildProfileImageUrl($data['post']->getImagePath());
-                    $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($data['author']->getImagePath());
+                    $publicAuthorUserImagePath = $imageUrlBuilder->buildProfileImageUrl($data['author']->getImagePath());
+                    
                     $data['post']->setImagePath($publicReplyImagePath);
-                    $data['author']->setImagePath($publicAuthUserImagePath);
+                    $data['author']->setImagePath($publicAuthorUserImagePath);
                 }
             }
             
