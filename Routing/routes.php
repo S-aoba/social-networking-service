@@ -647,7 +647,6 @@ return [
 
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
-            $userId = $authUser->getId();
 
             $requiredFields = [
                 'post_id' => ValueType::INT
@@ -656,10 +655,12 @@ return [
 
             $likeDAO = DAOFactory::getLikeDAO();
             $like = new Like(
-                userId: $userId,
+                userId: $authUser->getId(),
                 postId: $validatedData['post_id']
-            );            
+            );
+
             $isLiked = $likeDAO->checkIsLiked($like);
+            
             $success = $isLiked ? $likeDAO->unlike($like) : $likeDAO->createLike($like);
             if($success === false) throw new Exception('Failed to like post!');
             
