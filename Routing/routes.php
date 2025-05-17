@@ -16,7 +16,6 @@ use Database\DataAccess\DAOFactory;
 use Models\Conversation;
 use Models\DirectMessge;
 use Models\File;
-use Models\ImageService;
 use Models\Like;
 use Models\Post;
 use Models\Profile;
