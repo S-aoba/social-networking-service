@@ -242,15 +242,15 @@ return [
     })->setMiddleware(['auth']),
     'follower' => Route::create('follower', function(): HTTPRenderer {
         try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
-    
             if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
+            if($authUserProfile === null) return new RedirectRenderer('login');
+
             $imageUrlBuilder = new ImageUrlBuilder();
             
             $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
@@ -258,12 +258,13 @@ return [
 
             $followDAO = DAOFactory::getFollowDAO();
             $follower = $followDAO->getFollower($authUserProfile->getUserId());
-            if($follower === null) throw new Exception('Follower not found!');
             
-            foreach($follower as $user) {
-                $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
-                $user->setImagePath($publicAuthorImagePath);
-            };
+            if($follower !== null) {
+                foreach($follower as $user) {
+                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
+                    $user->setImagePath($publicAuthorImagePath);
+                };
+            }
 
             return new HTMLRenderer('page/follower', [
                 'authUser' => $authUserProfile,
