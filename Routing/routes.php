@@ -765,8 +765,8 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $user = Authenticate::getAuthenticatedUser();
-            if($user === null) return new RedirectRenderer('login');
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
 
             // TODO: Action権限を確認する
 
@@ -783,7 +783,7 @@ return [
                         
             $profile = new Profile(
                 username: $validatedData['username'],
-                userId: $user->getId(),
+                userId: $authUser->getId(),
                 age: $validatedData['age'],
                 address: $validatedData['address'],
                 hobby: $validatedData['hobby'],
