@@ -532,16 +532,10 @@ return [
             ];            
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
-            $file = $_FILES['upload-file'];
-            $imageService = null;
-            $publicPostImagePath = null;
-            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+            $file = File::fromArray($_FILES['upload-file']);          
+            if($file->isValid()) {
                 $validatedFileData = ValidationHelper::validateFile($file);
-                $imageService = new ImageService(
-                    type: $validatedFileData['type'],
-                    tempPath: $file['tmp_name'],
-                );
-                $publicPostImagePath = $imageService->generatePublicImagePath();
+                $publicPostImagePath = (new ImagePathGenerator())->generate($validatedFileData->getTypeWithoutPrefix());
             }
 
             $request = [
@@ -556,8 +550,9 @@ return [
             $success = $postDAO->create($post);
             if($success === false) throw new Exception('Failed Create Post');
 
-            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
-                $isSavedToDir = $imageService->saveToDir($publicPostImagePath);
+            if($file->isValid()) {
+                $imageStorage = new ImageStorage();
+                $isSavedToDir = $imageStorage->save($publicPostImagePath, $validatedFileData->getTmpName());
                 if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
             }
 
@@ -621,15 +616,10 @@ return [
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
             
-            $file = $_FILES['upload-file'];
-            $imageService = null;
-            $publicPostImagePath = null;
-            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
-                $imageService = new ImageService(
-                    type: $file['type'],
-                    tempPath: $file['tmp_name'],
-                );
-                $publicPostImagePath = $imageService->generatePublicImagePath();
+            $file = File::fromArray($_FILES['upload-file']);          
+            if($file->isValid()) {
+                $validatedFileData = ValidationHelper::validateFile($file);
+                $publicPostImagePath = (new ImagePathGenerator())->generate($validatedFileData->getTypeWithoutPrefix());
             }
 
             $postDAO = DAOFactory::getPostDAO();
@@ -643,8 +633,9 @@ return [
             $success = $postDAO->create($post);
             if($success === false) throw new Exception('Failed to create reply!');
 
-            if(isset($file) && $file['error'] === UPLOAD_ERR_OK) {
-                $isSavedToDir = $imageService->saveToDir($publicPostImagePath);
+            if($file->isValid()) {
+                $imageStorage = new ImageStorage();
+                $isSavedToDir = $imageStorage->save($publicPostImagePath, $validatedFileData->getTmpName());
                 if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
             }
 
