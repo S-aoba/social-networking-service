@@ -326,29 +326,22 @@ return [
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
             
-            // 認証状態を確認
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
 
-            // queryの値をバリデーションする
+            $profileDAO = DAOFactory::getProfileDAO();
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null)  return new RedirectRenderer('login');
+
             $requiredFields = [
                 'id' => ValueType::INT
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
 
-            // 認証ユーザーのProfile dataを取得する
-            $profileDAO = DAOFactory::getProfileDAO();
-            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null)  return new RedirectRenderer('login');
-            
-
-            // queryの値を使ってconversation dataを取得する
-            $conversationDAO = DAOFactory::getConversationDAO();
-            
+            $conversationDAO = DAOFactory::getConversationDAO();            
             $conversation = $conversationDAO->findByConversationId($validatedData['id']);
             if($conversation === null)  return new RedirectRenderer('messages');
             
-            // Partner dataを取得する
             $authUserId = $authUserProfile->getUserId();
             $partnerId = $authUserId === $conversation->getUser2Id()
                 ? $conversation->getUser1Id()
@@ -357,33 +350,30 @@ return [
             
             $imageUrlBuilder = new ImageUrlBuilder();
             
-            // 認証ユーザーアイコンのフォーマット
             $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            // Partnerユーザーアイコンのフォーマット
             $publicPartnerUserImagePath = $imageUrlBuilder->buildProfileImageUrl($partnerProfile->getImagePath());
             $partnerProfile->setImagePath($publicPartnerUserImagePath);
 
-            // conversations dataを取得する
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
             if($conversations !== null) {
                 foreach($conversations as $data) {
                     $publicPartnerImagePath = $imageUrlBuilder->buildProfileImageUrl($data['partner']->getImagePath());
+
                     $data['partner']->setImagePath($publicPartnerImagePath);
                 }
             }
 
-            // Direct Messages dataを取得する
             $directMessageDAO = DAOFactory::getDirectMessage();
             $directMessages = $directMessageDAO->findAllByConversationId($conversation->getId());
 
-            // Followers dataを取得する
             $followDAO = DAOFactory::getFollowDAO();
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
             if($followers !== null) {
                 foreach($followers as $user) {
                     $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
+
                     $user->setImagePath($publicAuthorImagePath);
                 };
             }
@@ -396,6 +386,10 @@ return [
                 'conversations' => $conversations,
                 'followers' => $followers
             ]);           
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('messages');
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
