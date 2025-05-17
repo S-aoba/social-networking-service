@@ -24,7 +24,7 @@ use Models\User;
 
 use Services\Image\ImagePathGenerator;
 use Services\Image\ImageStorage;
-
+use Services\Image\ImageUrlBuilder;
 use Types\ValueType;
 
 return [
@@ -57,19 +57,19 @@ return [
             // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
             $posts = $postDAO->getFollowingPosts($authUserProfile->getUserId());
 
-            $imageService = new ImageService();
+            $imageUrlBuilder = new ImageUrlBuilder();
             
             if($posts !== null) {
                 foreach($posts as $data) {
-                    $publicPostImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
-                    $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($data['author']->getImagePath());
+                    $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($data['post']->getImagePath());
+                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($data['author']->getImagePath());
                     
                     $data['post']->setImagePath($publicPostImagePath);
                     $data['author']->setImagePath($publicAuthorImagePath);
                 }
             }
 
-            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             return new HTMLRenderer('page/home', [
@@ -104,11 +104,11 @@ return [
                 return new RedirectRenderer('login');
             }
 
-            $imageService = new ImageService();
-            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $imageUrlBuilder = new ImageUrlBuilder();
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            $publicQueryUserImagePath = $imageService->buildPublicProfileImagePath($queryUserProfile->getImagePath());
+            $publicQueryUserImagePath = $imageUrlBuilder->buildProfileImageUrl($queryUserProfile->getImagePath());
             $queryUserProfile->setImagePath($publicQueryUserImagePath);
             
             $postDAO = DAOFactory::getPostDAO();
@@ -122,7 +122,7 @@ return [
                 }
 
                 foreach($posts as $data) {
-                    $publicPostImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
+                    $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($data['post']->getImagePath());
                     $data['post']->setImagePath($publicPostImagePath);
                 }
             };
@@ -171,20 +171,20 @@ return [
             $post = $postDAO->getById($validatedData['id'], $authUserProfile->getUserId());
             if($post === null) throw new Exception('Post not found!');
             
-            $imageService = new ImageService();
-            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $imageUrlBuilder = new ImageUrlBuilder();
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            $publicPostImagePath = $imageService->buildPublicPostImagePath($post['post']->getImagePath());
-            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($post['author']->getImagePath());
+            $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($post['post']->getImagePath());
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($post['author']->getImagePath());
             $post['post']->setImagePath($publicPostImagePath);
             $post['author']->setImagePath($publicAuthUserImagePath);
 
             $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());
             if($replies != null) {
                 foreach($replies as $data) {
-                    $publicReplyImagePath = $imageService->buildPublicPostImagePath($data['post']->getImagePath());
-                    $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($data['author']->getImagePath());
+                    $publicReplyImagePath = $imageUrlBuilder->buildProfileImageUrl($data['post']->getImagePath());
+                    $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($data['author']->getImagePath());
                     $data['post']->setImagePath($publicReplyImagePath);
                     $data['author']->setImagePath($publicAuthUserImagePath);
                 }
@@ -218,9 +218,9 @@ return [
                 return new RedirectRenderer('login');
             }
 
-            $imageService = new ImageService();
+            $imageUrlBuilder = new ImageUrlBuilder();
             
-            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             $followDAO = DAOFactory::getFollowDAO();
@@ -228,7 +228,7 @@ return [
             if($following === null) throw new Exception('Following not found!');
 
             foreach($following as $user) {
-                $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
                 $user->setImagePath($publicAuthorImagePath);
             };
             
@@ -252,9 +252,9 @@ return [
             if($authUserProfile === null) {
                 return new RedirectRenderer('login');
             }
-            $imageService = new ImageService();
+            $imageUrlBuilder = new ImageUrlBuilder();
             
-            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             $followDAO = DAOFactory::getFollowDAO();
@@ -262,7 +262,7 @@ return [
             if($follower === null) throw new Exception('Follower not found!');
             
             foreach($follower as $user) {
-                $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
                 $user->setImagePath($publicAuthorImagePath);
             };
 
@@ -288,8 +288,8 @@ return [
                 return new RedirectRenderer('login');
             }
 
-            $imageService = new ImageService();
-            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $imageUrlBuilder = new ImageUrlBuilder();
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             $conversationDAO = DAOFactory::getConversationDAO();
@@ -297,7 +297,7 @@ return [
             
             if($conversations !== null) {
                 foreach($conversations as $data) {
-                    $publicPartnerImagePath = $imageService->buildPublicProfileImagePath($data['partner']->getImagePath());
+                    $publicPartnerImagePath = $imageUrlBuilder->buildProfileImageUrl($data['partner']->getImagePath());
                     $data['partner']->setImagePath($publicPartnerImagePath);
                 }
             }
@@ -307,7 +307,7 @@ return [
             if($follower === null) throw new Exception('Follower not found!');
             
             foreach($follower as $user) {
-                $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
                 $user->setImagePath($publicAuthorImagePath);
             };
 
@@ -355,21 +355,21 @@ return [
                 : $conversation->getUser2Id();
             $partnerProfile = $profileDAO->getByUserId($partnerId);
             
-            $imageService = new ImageService();
+            $imageUrlBuilder = new ImageUrlBuilder();
             
             // 認証ユーザーアイコンのフォーマット
-            $publicAuthUserImagePath = $imageService->buildPublicProfileImagePath($authUserProfile->getImagePath());
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             // Partnerユーザーアイコンのフォーマット
-            $publicPartnerUserImagePath = $imageService->buildPublicProfileImagePath($partnerProfile->getImagePath());
+            $publicPartnerUserImagePath = $imageUrlBuilder->buildProfileImageUrl($partnerProfile->getImagePath());
             $partnerProfile->setImagePath($publicPartnerUserImagePath);
 
             // conversations dataを取得する
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
             if($conversations !== null) {
                 foreach($conversations as $data) {
-                    $publicPartnerImagePath = $imageService->buildPublicProfileImagePath($data['partner']->getImagePath());
+                    $publicPartnerImagePath = $imageUrlBuilder->buildProfileImageUrl($data['partner']->getImagePath());
                     $data['partner']->setImagePath($publicPartnerImagePath);
                 }
             }
@@ -383,7 +383,7 @@ return [
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
             if($followers !== null) {
                 foreach($followers as $user) {
-                    $publicAuthorImagePath = $imageService->buildPublicProfileImagePath($user->getImagePath());
+                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
                     $user->setImagePath($publicAuthorImagePath);
                 };
             }
