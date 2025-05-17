@@ -257,10 +257,10 @@ return [
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             $followDAO = DAOFactory::getFollowDAO();
-            $follower = $followDAO->getFollower($authUserProfile->getUserId());
+            $followers = $followDAO->getFollower($authUserProfile->getUserId());
             
-            if($follower !== null) {
-                foreach($follower as $user) {
+            if($followers !== null) {
+                foreach($followers as $user) {
                     $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
                     $user->setImagePath($publicAuthorImagePath);
                 };
@@ -268,7 +268,7 @@ return [
 
             return new HTMLRenderer('page/follower', [
                 'authUser' => $authUserProfile,
-                'data' => $follower,
+                'data' => $followers,
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -278,17 +278,16 @@ return [
     'messages' => Route::create('message', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
-    
             if($authUser === null) return new RedirectRenderer('login');
 
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
+            if($authUserProfile === null) return new RedirectRenderer('login');
 
             $imageUrlBuilder = new ImageUrlBuilder();
+
             $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
@@ -303,18 +302,19 @@ return [
             }
 
             $followDAO = DAOFactory::getFollowDAO();
-            $follower = $followDAO->getFollower($authUserProfile->getUserId());
-            if($follower === null) throw new Exception('Follower not found!');
+            $followers = $followDAO->getFollower($authUserProfile->getUserId());
             
-            foreach($follower as $user) {
-                $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
-                $user->setImagePath($publicAuthorImagePath);
-            };
+            if($followers !== null) {
+                foreach($followers as $user) {
+                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
+                    $user->setImagePath($publicAuthorImagePath);
+                };
+            }
 
             return new HTMLRenderer('page/messages', [
                 'authUser' => $authUserProfile,
                 'conversations' => $conversations,
-                'followers' => $follower
+                'followers' => $followers
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
