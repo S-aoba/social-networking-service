@@ -809,8 +809,8 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $user = Authenticate::getAuthenticatedUser();
-            if($user === null) return new RedirectRenderer('login');
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
             
             $file = File::fromArray($_FILES['upload-file']);
             if($file->isValid() === false) return new JSONRenderer(['status' => 'File upload is invalid.']);
@@ -820,7 +820,7 @@ return [
             $publicProfileIconPath = (new ImagePathGenerator())->generate($validatedFileData->getTypeWithoutPrefix());
             
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId($user->getId());
+            $profile = $profileDAO->getByUserId($authUser->getId());
             $prevProfileImagePath = $profile->getImagePath();
             if($profile === null) return new RedirectRenderer('login');
 
