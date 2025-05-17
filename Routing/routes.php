@@ -42,8 +42,8 @@ return [
     '' => Route::create('', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
-    
             if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
@@ -51,13 +51,16 @@ return [
             if($authUserProfile === null) {
                 return new RedirectRenderer('login');
             }
-    
+            
+            $imageUrlBuilder = new ImageUrlBuilder(); 
+
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
+
             $postDAO = DAOFactory::getPostDAO();
             // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
             $posts = $postDAO->getFollowingPosts($authUserProfile->getUserId());
 
-            $imageUrlBuilder = new ImageUrlBuilder();
-            
             if($posts !== null) {
                 foreach($posts as $data) {
                     $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($data['post']->getImagePath());
@@ -67,9 +70,6 @@ return [
                     $data['author']->setImagePath($publicAuthorImagePath);
                 }
             }
-
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
-            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             return new HTMLRenderer('page/home', [
                 'authUser' => $authUserProfile,
@@ -83,8 +83,9 @@ return [
     })->setMiddleware(['auth']),
     'profile' => Route::create('profile', function(): HTTPRenderer {
         try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
-            
             if($authUser === null) return new RedirectRenderer('login');
             
             $requiredFields = [
@@ -94,22 +95,19 @@ return [
 
             $profileDAO = DAOFactory::getProfileDAO();
             $queryUserProfile = $profileDAO->getByUsername($validatedData['user']);
-            if($queryUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
-
-            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
+            if($queryUserProfile === null) return new RedirectRenderer('login');
 
             $imageUrlBuilder = new ImageUrlBuilder();
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
-            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             $publicQueryUserImagePath = $imageUrlBuilder->buildProfileImageUrl($queryUserProfile->getImagePath());
             $queryUserProfile->setImagePath($publicQueryUserImagePath);
-            
+
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) return new RedirectRenderer('login');
+
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
+
             $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
             if($posts !== null) {
@@ -152,40 +150,42 @@ return [
     })->setMiddleware(['auth']),
     'post' => Route::create('post', function(): HTTPRenderer {
         try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
             
+            $profileDAO = DAOFactory::getProfileDAO();
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) return new RedirectRenderer('login');
+            
+            $imageUrlBuilder = new ImageUrlBuilder();
+
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
+
             $requiredFields = [
                 'id' => ValueType::INT
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
-    
-            $profileDAO = DAOFactory::getProfileDAO();
-            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
-
+            
             $postDAO = DAOFactory::getPostDAO();
             $post = $postDAO->getById($validatedData['id'], $authUserProfile->getUserId());
-            if($post === null) throw new Exception('Post not found!');
+            if($post === null) return new RedirectRenderer('');
             
-            $imageUrlBuilder = new ImageUrlBuilder();
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
-            $authUserProfile->setImagePath($publicAuthUserImagePath);
-
             $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($post['post']->getImagePath());
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($post['author']->getImagePath());
+            $publicAuthorUserImagePath = $imageUrlBuilder->buildProfileImageUrl($post['author']->getImagePath());
             $post['post']->setImagePath($publicPostImagePath);
-            $post['author']->setImagePath($publicAuthUserImagePath);
+            $post['author']->setImagePath($publicAuthorUserImagePath);
 
             $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());
             if($replies != null) {
                 foreach($replies as $data) {
-                    $publicReplyImagePath = $imageUrlBuilder->buildProfileImageUrl($data['post']->getImagePath());
-                    $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($data['author']->getImagePath());
+                    $publicReplyImagePath = $imageUrlBuilder->buildPostImageUrl($data['post']->getImagePath());
+                    $publicAuthorUserImagePath = $imageUrlBuilder->buildProfileImageUrl($data['author']->getImagePath());
+
                     $data['post']->setImagePath($publicReplyImagePath);
-                    $data['author']->setImagePath($publicAuthUserImagePath);
+                    $data['author']->setImagePath($publicAuthorUserImagePath);
                 }
             }
             
@@ -207,15 +207,14 @@ return [
     })->setMiddleware(['auth']),
     'following' => Route::create('following', function(): HTTPRenderer {
         try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
-    
             if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
+            if($authUserProfile === null) return new RedirectRenderer('login');
 
             $imageUrlBuilder = new ImageUrlBuilder();
             
@@ -224,12 +223,13 @@ return [
 
             $followDAO = DAOFactory::getFollowDAO();
             $following = $followDAO->getFollowing($authUserProfile->getUserId());
-            if($following === null) throw new Exception('Following not found!');
 
-            foreach($following as $user) {
-                $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
-                $user->setImagePath($publicAuthorImagePath);
-            };
+            if($following !== null) {
+                foreach($following as $user) {
+                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
+                    $user->setImagePath($publicAuthorImagePath);
+                };
+            }
             
             return new HTMLRenderer('page/follower', [
                 'authUser' => $authUserProfile,
@@ -242,32 +242,33 @@ return [
     })->setMiddleware(['auth']),
     'follower' => Route::create('follower', function(): HTTPRenderer {
         try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
-    
             if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
+            if($authUserProfile === null) return new RedirectRenderer('login');
+
             $imageUrlBuilder = new ImageUrlBuilder();
             
             $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             $followDAO = DAOFactory::getFollowDAO();
-            $follower = $followDAO->getFollower($authUserProfile->getUserId());
-            if($follower === null) throw new Exception('Follower not found!');
+            $followers = $followDAO->getFollower($authUserProfile->getUserId());
             
-            foreach($follower as $user) {
-                $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
-                $user->setImagePath($publicAuthorImagePath);
-            };
+            if($followers !== null) {
+                foreach($followers as $user) {
+                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
+                    $user->setImagePath($publicAuthorImagePath);
+                };
+            }
 
             return new HTMLRenderer('page/follower', [
                 'authUser' => $authUserProfile,
-                'data' => $follower,
+                'data' => $followers,
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -277,17 +278,16 @@ return [
     'messages' => Route::create('message', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
-    
             if($authUser === null) return new RedirectRenderer('login');
 
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
+            if($authUserProfile === null) return new RedirectRenderer('login');
 
             $imageUrlBuilder = new ImageUrlBuilder();
+
             $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
@@ -302,18 +302,19 @@ return [
             }
 
             $followDAO = DAOFactory::getFollowDAO();
-            $follower = $followDAO->getFollower($authUserProfile->getUserId());
-            if($follower === null) throw new Exception('Follower not found!');
+            $followers = $followDAO->getFollower($authUserProfile->getUserId());
             
-            foreach($follower as $user) {
-                $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
-                $user->setImagePath($publicAuthorImagePath);
-            };
+            if($followers !== null) {
+                foreach($followers as $user) {
+                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
+                    $user->setImagePath($publicAuthorImagePath);
+                };
+            }
 
             return new HTMLRenderer('page/messages', [
                 'authUser' => $authUserProfile,
                 'conversations' => $conversations,
-                'followers' => $follower
+                'followers' => $followers
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -325,29 +326,22 @@ return [
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
             
-            // 認証状態を確認
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
 
-            // queryの値をバリデーションする
+            $profileDAO = DAOFactory::getProfileDAO();
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null)  return new RedirectRenderer('login');
+
             $requiredFields = [
                 'id' => ValueType::INT
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
 
-            // 認証ユーザーのProfile dataを取得する
-            $profileDAO = DAOFactory::getProfileDAO();
-            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null)  return new RedirectRenderer('login');
-            
-
-            // queryの値を使ってconversation dataを取得する
-            $conversationDAO = DAOFactory::getConversationDAO();
-            
+            $conversationDAO = DAOFactory::getConversationDAO();            
             $conversation = $conversationDAO->findByConversationId($validatedData['id']);
             if($conversation === null)  return new RedirectRenderer('messages');
             
-            // Partner dataを取得する
             $authUserId = $authUserProfile->getUserId();
             $partnerId = $authUserId === $conversation->getUser2Id()
                 ? $conversation->getUser1Id()
@@ -356,33 +350,30 @@ return [
             
             $imageUrlBuilder = new ImageUrlBuilder();
             
-            // 認証ユーザーアイコンのフォーマット
             $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            // Partnerユーザーアイコンのフォーマット
             $publicPartnerUserImagePath = $imageUrlBuilder->buildProfileImageUrl($partnerProfile->getImagePath());
             $partnerProfile->setImagePath($publicPartnerUserImagePath);
 
-            // conversations dataを取得する
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
             if($conversations !== null) {
                 foreach($conversations as $data) {
                     $publicPartnerImagePath = $imageUrlBuilder->buildProfileImageUrl($data['partner']->getImagePath());
+
                     $data['partner']->setImagePath($publicPartnerImagePath);
                 }
             }
 
-            // Direct Messages dataを取得する
             $directMessageDAO = DAOFactory::getDirectMessage();
             $directMessages = $directMessageDAO->findAllByConversationId($conversation->getId());
 
-            // Followers dataを取得する
             $followDAO = DAOFactory::getFollowDAO();
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
             if($followers !== null) {
                 foreach($followers as $user) {
                     $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
+
                     $user->setImagePath($publicAuthorImagePath);
                 };
             }
@@ -395,6 +386,10 @@ return [
                 'conversations' => $conversations,
                 'followers' => $followers
             ]);           
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('messages');
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
@@ -522,9 +517,8 @@ return [
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $user = Authenticate::getAuthenticatedUser();
-            if($user === null) return new RedirectRenderer('login');
-            $userId = $user->getId();
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
             
             $requiredFields = [
                 'content' => ValueType::STRING
@@ -540,7 +534,7 @@ return [
             $request = [
                 'content' => $validatedData['content'],
                 'imagePath' => $publicPostImagePath,
-                'userId' => $userId,
+                'userId' => $authUser->getId(),
                 'parentPostId' => null,
             ];
             
@@ -559,7 +553,7 @@ return [
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new RedirectRenderer('');
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
@@ -604,10 +598,8 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $user = Authenticate::getAuthenticatedUser();
-            
-            if($user === null) return new RedirectRenderer('login');
-            $userId = $user->getId();
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
                 'content' => ValueType::STRING,
@@ -625,7 +617,7 @@ return [
             $post = new Post(
                 content: $validatedData['content'],
                 imagePath: $publicPostImagePath,
-                userId: $userId,
+                userId: $authUser->getId(),
                 parentPostId: $validatedData['parent_post_id']
             );
             
@@ -655,7 +647,6 @@ return [
 
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
-            $userId = $authUser->getId();
 
             $requiredFields = [
                 'post_id' => ValueType::INT
@@ -664,10 +655,12 @@ return [
 
             $likeDAO = DAOFactory::getLikeDAO();
             $like = new Like(
-                userId: $userId,
+                userId: $authUser->getId(),
                 postId: $validatedData['post_id']
-            );            
+            );
+
             $isLiked = $likeDAO->checkIsLiked($like);
+
             $success = $isLiked ? $likeDAO->unlike($like) : $likeDAO->createLike($like);
             if($success === false) throw new Exception('Failed to like post!');
             
@@ -685,8 +678,8 @@ return [
     'form/conversation' => Route::create('form/conversation', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
-    
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
@@ -772,8 +765,8 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $user = Authenticate::getAuthenticatedUser();
-            if($user === null) return new RedirectRenderer('login');
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
 
             // TODO: Action権限を確認する
 
@@ -790,7 +783,7 @@ return [
                         
             $profile = new Profile(
                 username: $validatedData['username'],
-                userId: $user->getId(),
+                userId: $authUser->getId(),
                 age: $validatedData['age'],
                 address: $validatedData['address'],
                 hobby: $validatedData['hobby'],
@@ -816,8 +809,8 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $user = Authenticate::getAuthenticatedUser();
-            if($user === null) return new RedirectRenderer('login');
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
             
             $file = File::fromArray($_FILES['upload-file']);
             if($file->isValid() === false) return new JSONRenderer(['status' => 'File upload is invalid.']);
@@ -827,7 +820,7 @@ return [
             $publicProfileIconPath = (new ImagePathGenerator())->generate($validatedFileData->getTypeWithoutPrefix());
             
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId($user->getId());
+            $profile = $profileDAO->getByUserId($authUser->getId());
             $prevProfileImagePath = $profile->getImagePath();
             if($profile === null) return new RedirectRenderer('login');
 
