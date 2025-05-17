@@ -157,10 +157,8 @@ return [
             
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
-
+            if($authUserProfile === null) return new RedirectRenderer('login');
+            
             $imageUrlBuilder = new ImageUrlBuilder();
 
             $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
@@ -185,7 +183,7 @@ return [
                 foreach($replies as $data) {
                     $publicReplyImagePath = $imageUrlBuilder->buildProfileImageUrl($data['post']->getImagePath());
                     $publicAuthorUserImagePath = $imageUrlBuilder->buildProfileImageUrl($data['author']->getImagePath());
-                    
+
                     $data['post']->setImagePath($publicReplyImagePath);
                     $data['author']->setImagePath($publicAuthorUserImagePath);
                 }
@@ -209,15 +207,14 @@ return [
     })->setMiddleware(['auth']),
     'following' => Route::create('following', function(): HTTPRenderer {
         try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
-    
             if($authUser === null) return new RedirectRenderer('login');
     
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
+            if($authUserProfile === null) return new RedirectRenderer('login');
 
             $imageUrlBuilder = new ImageUrlBuilder();
             
@@ -226,12 +223,13 @@ return [
 
             $followDAO = DAOFactory::getFollowDAO();
             $following = $followDAO->getFollowing($authUserProfile->getUserId());
-            if($following === null) throw new Exception('Following not found!');
 
-            foreach($following as $user) {
-                $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
-                $user->setImagePath($publicAuthorImagePath);
-            };
+            if($following !== null) {
+                foreach($following as $user) {
+                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
+                    $user->setImagePath($publicAuthorImagePath);
+                };
+            }
             
             return new HTMLRenderer('page/follower', [
                 'authUser' => $authUserProfile,
