@@ -181,7 +181,7 @@ return [
             $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());
             if($replies != null) {
                 foreach($replies as $data) {
-                    $publicReplyImagePath = $imageUrlBuilder->buildProfileImageUrl($data['post']->getImagePath());
+                    $publicReplyImagePath = $imageUrlBuilder->buildPostImageUrl($data['post']->getImagePath());
                     $publicAuthorUserImagePath = $imageUrlBuilder->buildProfileImageUrl($data['author']->getImagePath());
 
                     $data['post']->setImagePath($publicReplyImagePath);
@@ -598,10 +598,8 @@ return [
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $user = Authenticate::getAuthenticatedUser();
-            
-            if($user === null) return new RedirectRenderer('login');
-            $userId = $user->getId();
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
                 'content' => ValueType::STRING,
@@ -619,7 +617,7 @@ return [
             $post = new Post(
                 content: $validatedData['content'],
                 imagePath: $publicPostImagePath,
-                userId: $userId,
+                userId: $authUser->getId(),
                 parentPostId: $validatedData['parent_post_id']
             );
             
