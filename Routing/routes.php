@@ -231,7 +231,7 @@ return [
                 };
             }
             
-            return new HTMLRenderer('page/follower', [
+            return new HTMLRenderer('page/following', [
                 'authUser' => $authUserProfile,
                 'data' => $following,
             ]);
