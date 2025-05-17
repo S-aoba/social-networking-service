@@ -660,7 +660,7 @@ return [
             );
 
             $isLiked = $likeDAO->checkIsLiked($like);
-            
+
             $success = $isLiked ? $likeDAO->unlike($like) : $likeDAO->createLike($like);
             if($success === false) throw new Exception('Failed to like post!');
             
@@ -678,8 +678,8 @@ return [
     'form/conversation' => Route::create('form/conversation', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
-    
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
