@@ -51,7 +51,9 @@ return [
             if($authUserProfile === null) {
                 return new RedirectRenderer('login');
             }
-    
+            
+            $imageUrlBuilder = new ImageUrlBuilder(); 
+
             $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
@@ -59,7 +61,6 @@ return [
             // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
             $posts = $postDAO->getFollowingPosts($authUserProfile->getUserId());
 
-            $imageUrlBuilder = new ImageUrlBuilder();            
             if($posts !== null) {
                 foreach($posts as $data) {
                     $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($data['post']->getImagePath());
@@ -82,8 +83,9 @@ return [
     })->setMiddleware(['auth']),
     'profile' => Route::create('profile', function(): HTTPRenderer {
         try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
+
             $authUser = Authenticate::getAuthenticatedUser();
-            
             if($authUser === null) return new RedirectRenderer('login');
             
             $requiredFields = [
@@ -93,22 +95,19 @@ return [
 
             $profileDAO = DAOFactory::getProfileDAO();
             $queryUserProfile = $profileDAO->getByUsername($validatedData['user']);
-            if($queryUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
-
-            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
+            if($queryUserProfile === null) return new RedirectRenderer('login');
 
             $imageUrlBuilder = new ImageUrlBuilder();
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
-            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
             $publicQueryUserImagePath = $imageUrlBuilder->buildProfileImageUrl($queryUserProfile->getImagePath());
             $queryUserProfile->setImagePath($publicQueryUserImagePath);
-            
+
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if($authUserProfile === null) return new RedirectRenderer('login');
+
+            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
+            $authUserProfile->setImagePath($publicAuthUserImagePath);
+
             $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
             if($posts !== null) {
