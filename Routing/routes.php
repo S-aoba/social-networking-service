@@ -517,9 +517,8 @@ return [
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
-            $user = Authenticate::getAuthenticatedUser();
-            if($user === null) return new RedirectRenderer('login');
-            $userId = $user->getId();
+            $authUser = Authenticate::getAuthenticatedUser();
+            if($authUser === null) return new RedirectRenderer('login');
             
             $requiredFields = [
                 'content' => ValueType::STRING
@@ -535,7 +534,7 @@ return [
             $request = [
                 'content' => $validatedData['content'],
                 'imagePath' => $publicPostImagePath,
-                'userId' => $userId,
+                'userId' => $authUser->getId(),
                 'parentPostId' => null,
             ];
             
@@ -554,7 +553,7 @@ return [
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new RedirectRenderer('');
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
