@@ -43,27 +43,22 @@ return [
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Invalid request method!');
 
-            // Login User認証
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
     
-            // Profile dataを取得
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
             if($authUserProfile === null) {
                 return new RedirectRenderer('login');
             }
     
-            // Login Userの画像パスを構築する
             $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
             $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            // Post dataを取得
             $postDAO = DAOFactory::getPostDAO();
             // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
             $posts = $postDAO->getFollowingPosts($authUserProfile->getUserId());
 
-            // Post dataの画像パスを構築する
             $imageUrlBuilder = new ImageUrlBuilder();            
             if($posts !== null) {
                 foreach($posts as $data) {
