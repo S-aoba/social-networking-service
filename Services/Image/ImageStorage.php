@@ -6,8 +6,6 @@ use Exception;
 
 use Helpers\Settings;
 
-use Models\File;
-
 class ImageStorage
 {
     public function __construct(
