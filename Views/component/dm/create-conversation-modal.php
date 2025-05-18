@@ -14,23 +14,32 @@
         </div>
         <!-- Follower List -->
         <div>
-        <?php foreach($followers as $data): ?>
-          <form class="create-conversation-form flex p-4 cursor-pointer transition duration-300 hover:bg-slate-100">
-            <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
-            <input type="hidden" name="user1_id" value="<?= $authUser->getUserId(); ?>">
-            <input type="hidden" name="user2_id" value="<?= $data->getUserId(); ?>">
-            <!-- User icon -->
-            <div class="w-12 shrink-0">
-              <img src="images/default-icon.png" alt="user-icon" class="size-10 rounded-full">
-            </div>
-            <!-- User info -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center space-x-4 text-sm pb-2">
-                <p class="font-semibold"><?= $data->getUsername(); ?></p>
+        <?php if($followers === null): ?>
+          <div class="flex flex-col space-y-2 items-center justify-center pt-10">
+            <p class="text-2xl font-semibold">
+              まだフォロワーがいません
+            </p>
+            <p class="text-sm text-slate-400">フォローされるとここに表示されます</p>
+          </div>
+        <?php else: ?>
+          <?php foreach($followers as $data): ?>
+            <form class="create-conversation-form flex p-4 cursor-pointer transition duration-300 hover:bg-slate-100">
+              <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
+              <input type="hidden" name="user1_id" value="<?= $authUser->getUserId(); ?>">
+              <input type="hidden" name="user2_id" value="<?= $data->getUserId(); ?>">
+              <!-- User icon -->
+              <div class="w-12 shrink-0">
+                <img src="images/default-icon.png" alt="user-icon" class="size-10 rounded-full">
               </div>
-            </div>
-          </form>
+              <!-- User info -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center space-x-4 text-sm pb-2">
+                  <p class="font-semibold"><?= $data->getUsername(); ?></p>
+                </div>
+              </div>
+            </form>
           <?php endforeach ;?>
+        <?php endif; ?>
         </div>
       </div>
     </div>
