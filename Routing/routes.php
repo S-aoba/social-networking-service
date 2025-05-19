@@ -20,7 +20,7 @@ use Models\Like;
 use Models\Post;
 use Models\Profile;
 use Models\User;
-
+use Services\Conversation\ConversationParnerResolver;
 use Services\Image\ImagePathGenerator;
 use Services\Image\ImageStorage;
 use Services\Image\ImageUrlBuilder;
@@ -343,10 +343,9 @@ return [
             if($conversation === null)  return new RedirectRenderer('messages');
             
             $authUserId = $authUserProfile->getUserId();
-            $partnerId = $authUserId === $conversation->getUser2Id()
-                ? $conversation->getUser1Id()
-                : $conversation->getUser2Id();
-            $partnerProfile = $profileDAO->getByUserId($partnerId);
+            $conversationParnerResolver = new ConversationParnerResolver($profileDAO);
+            $partnerProfile = $conversationParnerResolver->resolverPartnerProfile($authUserId, $conversation);
+            if($partnerProfile === null) return new RedirectRenderer('login');
             
             $imageUrlBuilder = new ImageUrlBuilder();
             
