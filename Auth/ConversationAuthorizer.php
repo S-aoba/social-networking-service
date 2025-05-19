@@ -5,7 +5,7 @@ namespace Auth;
 use Database\DataAccess\Interfaces\ProfileDAO;
 use Models\Conversation;
 
-class ConversationAuthorizer 
+class ConversationAuthorizer extends Authorizer
 {
   public function isJoin(int $userId, Conversation $conversation): bool {
     return $conversation->getUser1Id() === $userId || $conversation->getUser2Id() === $userId;

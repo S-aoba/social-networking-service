@@ -1,5 +1,6 @@
 <?php
 
+use Auth\Authorizer;
 use Auth\ConversationAuthorizer;
 use Routing\Route;
 
@@ -867,8 +868,10 @@ return [
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
             $postDAO = DAOFactory::getPostDAO();
-            $isExistsPost = $postDAO->findById($validatedData['post_id']);
-            if($isExistsPost === null) throw new Exception('Target post is not exits.');
+            $post = $postDAO->findById($validatedData['post_id']);
+            if($post === null) throw new Exception('Target post is not exits.');
+
+            if(Authorizer::isOwnedByUser($post->getUserId(), $authUser->getId(),) === false) throw new Exception('Cannnot the action.');
             
             $success = $postDAO->deletePost($validatedData['post_id']);
             if($success === false) throw new Exception('Failed to delete post!');
@@ -900,7 +903,7 @@ return [
             $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
             if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
 
-            if($conversation->getUser1Id() !== $authUser->getId()) throw new Exception('Invalid user! No action cannot be token.');
+            if(Authorizer::isOwnedByUser($conversation->getUser1Id(), $authUser->getId()) === false) throw new Exception('Cannnot the action.');
 
             $success = $conversationDAO->delete($conversation->getId());
             if($success === false) throw new Exception('Failed to delete conversation.');
