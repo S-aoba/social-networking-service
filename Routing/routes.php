@@ -24,6 +24,7 @@ use Models\Profile;
 use Models\User;
 use Services\Conversation\ConversationParnerResolver;
 use Services\Image\ImagePathGenerator;
+use Services\Image\ImagePathResolver;
 use Services\Image\ImageStorage;
 use Services\Image\ImageUrlBuilder;
 use Types\ValueType;
@@ -55,12 +56,12 @@ return [
             }
             
             $imageUrlBuilder = new ImageUrlBuilder(); 
+            $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
 
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
-            $authUserProfile->setImagePath($publicAuthUserImagePath);
+            $imagePathResolver->resolve($authUserProfile);
 
-            $postDAO = DAOFactory::getPostDAO();
             // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
+            $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getFollowingPosts($authUserProfile->getUserId());
 
             if($posts !== null) {
@@ -98,17 +99,15 @@ return [
             $profileDAO = DAOFactory::getProfileDAO();
             $queryUserProfile = $profileDAO->getByUsername($validatedData['user']);
             if($queryUserProfile === null) return new RedirectRenderer('login');
-
-            $imageUrlBuilder = new ImageUrlBuilder();
-
-            $publicQueryUserImagePath = $imageUrlBuilder->buildProfileImageUrl($queryUserProfile->getImagePath());
-            $queryUserProfile->setImagePath($publicQueryUserImagePath);
-
+            
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
             if($authUserProfile === null) return new RedirectRenderer('login');
 
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
-            $authUserProfile->setImagePath($publicAuthUserImagePath);
+            $imageUrlBuilder = new ImageUrlBuilder();
+            $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
+            
+            $imagePathResolver->resolve($queryUserProfile);
+            $imagePathResolver->resolve($authUserProfile);
 
             $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
@@ -162,9 +161,9 @@ return [
             if($authUserProfile === null) return new RedirectRenderer('login');
             
             $imageUrlBuilder = new ImageUrlBuilder();
+            $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
 
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
-            $authUserProfile->setImagePath($publicAuthUserImagePath);
+            $imagePathResolver->resolve($authUserProfile);
 
             $requiredFields = [
                 'id' => ValueType::INT
@@ -176,10 +175,10 @@ return [
             if($post === null) return new RedirectRenderer('');
             
             $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($post['post']->getImagePath());
-            $publicAuthorUserImagePath = $imageUrlBuilder->buildProfileImageUrl($post['author']->getImagePath());
             $post['post']->setImagePath($publicPostImagePath);
-            $post['author']->setImagePath($publicAuthorUserImagePath);
 
+            $imagePathResolver->resolve($post['author']);
+            
             $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());
             if($replies != null) {
                 foreach($replies as $data) {
@@ -219,9 +218,9 @@ return [
             if($authUserProfile === null) return new RedirectRenderer('login');
 
             $imageUrlBuilder = new ImageUrlBuilder();
+            $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
             
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
-            $authUserProfile->setImagePath($publicAuthUserImagePath);
+            $imagePathResolver->resolve($authUserProfile);
 
             $followDAO = DAOFactory::getFollowDAO();
             $following = $followDAO->getFollowing($authUserProfile->getUserId());
@@ -254,9 +253,8 @@ return [
             if($authUserProfile === null) return new RedirectRenderer('login');
 
             $imageUrlBuilder = new ImageUrlBuilder();
-            
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
-            $authUserProfile->setImagePath($publicAuthUserImagePath);
+            $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
+            $imagePathResolver->resolve($authUserProfile);
 
             $followDAO = DAOFactory::getFollowDAO();
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
@@ -289,17 +287,16 @@ return [
             if($authUserProfile === null) return new RedirectRenderer('login');
 
             $imageUrlBuilder = new ImageUrlBuilder();
-
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
-            $authUserProfile->setImagePath($publicAuthUserImagePath);
-
+            $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
+            
+            $imagePathResolver->resolve($authUserProfile);
+            
             $conversationDAO = DAOFactory::getConversationDAO();
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
             
-            if($conversations !== null) {
+            if(!empty($conversations)) {
                 foreach($conversations as $data) {
-                    $publicPartnerImagePath = $imageUrlBuilder->buildProfileImageUrl($data['partner']->getImagePath());
-                    $data['partner']->setImagePath($publicPartnerImagePath);
+                    $imagePathResolver->resolve($data['partner']);
                 }
             }
 
@@ -350,19 +347,15 @@ return [
             if($partnerProfile === null) return new RedirectRenderer('login');
             
             $imageUrlBuilder = new ImageUrlBuilder();
-            
-            $publicAuthUserImagePath = $imageUrlBuilder->buildProfileImageUrl($authUserProfile->getImagePath());
-            $authUserProfile->setImagePath($publicAuthUserImagePath);
 
-            $publicPartnerUserImagePath = $imageUrlBuilder->buildProfileImageUrl($partnerProfile->getImagePath());
-            $partnerProfile->setImagePath($publicPartnerUserImagePath);
+            $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
+            $imagePathResolver->resolve($authUserProfile);
+            $imagePathResolver->resolve($partnerProfile);
 
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
-            if($conversations !== null) {
+            if(!empty($conversations)) {
                 foreach($conversations as $data) {
-                    $publicPartnerImagePath = $imageUrlBuilder->buildProfileImageUrl($data['partner']->getImagePath());
-
-                    $data['partner']->setImagePath($publicPartnerImagePath);
+                    $imagePathResolver->resolve($data['partner']);
                 }
             }
 
@@ -835,7 +828,7 @@ return [
             $prevProfileImagePath = $profile->getImagePath();
             if($profile === null) return new RedirectRenderer('login');
 
-            $success = $profileDAO->updataPrpfileIcon($publicProfileIconPath, $user->getId());
+            $success = $profileDAO->updataPrpfileIcon($publicProfileIconPath, $authUser->getId());
             if($success === false) throw new Exception('Failed to update profile!');
 
             $imageStorage = new ImageStorage();
