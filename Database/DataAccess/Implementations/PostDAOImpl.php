@@ -90,10 +90,10 @@ class PostDAOImpl implements PostDAO
       $result = $mysqli->prepareAndFetchAll($query, 'iii', [$userId, $userId, $userId]) ?? null;
       if($result === null) return null;
 
-      return $this->rowDataToPost($result);
+      return $this->rowDataToFullPost($result);
     }
 
-    private function rowDataToPost(?array $rowData): ?array {
+    private function rowDataToFullPost(?array $rowData): ?array {
       $output = [];
 
       foreach ($rowData as $data) {
@@ -178,7 +178,7 @@ class PostDAOImpl implements PostDAO
       $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $parentPostId]);
       if(count($result) === 0) return null;
 
-      return $this->rowDataToPost($result);
+      return $this->rowDataToFullPost($result);
     }
 
     private function getRowById(int $postId, int $userId): ?array {
@@ -216,7 +216,7 @@ class PostDAOImpl implements PostDAO
 
       if(count($result) === 0) return null;
 
-      return $this->rowDataToPost($result);
+      return $this->rowDataToFullPost($result);
     }
 
     public function getByUserId(int $userId): ?array
@@ -284,5 +284,46 @@ class PostDAOImpl implements PostDAO
       }
 
       return $output;
+    }
+
+    public function findById(int $postId): ?Post
+    {
+      $postRowData = $this->findRowById($postId);
+
+      if($postRowData === null) return null;
+
+      return $postRowData;
+    }
+
+    private function findRowById(int $postId): ?Post {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "SELECT *
+                FROM posts
+                WHERE id = ?
+              ";
+      
+      $result = $mysqli->prepareAndFetchAll($query, 'i', [$postId]);
+
+      if(empty($result)) return null;
+
+      return $this->rowDataToPost($result);
+    }
+
+    private function rowDataToPost(array $rowData): Post {
+      $post = [];
+
+      foreach($rowData as $data) {
+        $post[] = new Post(
+          content: $data['content'],
+          userId: $data['user_id'],
+          id: $data['id'],
+          imagePath: $data['image_path'],
+          parentPostId: $data['parent_post_id'],
+          createdAt: $data['created_at']
+        );
+      }
+
+      return $post[0];
     }
 }
