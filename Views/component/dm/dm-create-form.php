@@ -3,7 +3,6 @@
     <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken
     () ?>">
     <input type="hidden" name="conversation_id" value="<?= $conversation->getId(); ?>">
-    <input type="hidden" name="sender_id" value="<?= $authUser->getUserId(); ?>">        
     <textarea 
       id="content"
       name="content" 

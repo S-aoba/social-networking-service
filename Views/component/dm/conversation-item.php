@@ -21,7 +21,11 @@
                 $data['directMessage']->getCreatedAt()?>
         </span>
       </div>
-      <?php include "Views/component/dm/conversation-menu-action.php" ?>
+
+      <?php if($data['conversation']->getUser1Id() === $authUser->getUserId()): ?>
+        <?php include "Views/component/dm/conversation-menu-action.php" ?>
+      <?php endif; ?>
+      
     </div>
 
     <?php if($data['directMessage'] !== null): ?>

@@ -1,5 +1,7 @@
 <?php
 
+use Auth\Authorizer;
+use Auth\ConversationAuthorizer;
 use Routing\Route;
 
 use Response\FlashData;
@@ -690,21 +692,24 @@ return [
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
-            if ($validatedData['user1_id'] !== $authUser->getId()) {
-                throw new Exception('Invalid user1_id — not matching authenticated user.');
-            }
-
-            if ($validatedData['user1_id'] === $validatedData['user2_id']) {
-                throw new Exception('Cannot start a conversation with yourself.');
-            }
+            $conversationAuthorizer = new ConversationAuthorizer();
             
-            $userDAO = DAOFactory::getUserDAO();
-            $isPartnerExists = $userDAO->getById($validatedData['user2_id']);
-            if($isPartnerExists === null) throw new Exception('Partner is not exists.');
+            if($conversationAuthorizer->isSameId($validatedData['user1_id'], $authUser->getId()) === false) throw new Exception('Invalid user1_id — not matching authenticated user.');
+            
+            if ($conversationAuthorizer->isSameId($validatedData['user1_id'], $validatedData['user2_id'])) throw new Exception('Cannot start a conversation with yourself.');
+            
+            $profileDAO = DAOFactory::getProfileDAO();
+            $partnerProfile = $profileDAO->getByUserId($validatedData['user2_id']);
+            if($partnerProfile === null) throw new Exception('Partner is not exists.');
+
+            $followDAO = DAOFactory::getFollowDAO();
+            $isMutualFollow = $conversationAuthorizer->isMutualFollow($followDAO, $authUser->getId(), $partnerProfile->getUserId());
+
+            if($isMutualFollow === false) throw new Exception('AuthUser and PartnerUser is not mutualFollow.');
 
             $conversation = new Conversation(
-                user1Id: $validatedData['user1_id'],
-                user2Id: $validatedData['user2_id'],
+                user1Id: $authUser->getId(),
+                user2Id: $partnerProfile->getUserId(),
             );
             $conversationDAO = DAOFactory::getConversationDAO();
 
@@ -734,28 +739,33 @@ return [
 
             $requiredFields = [
                 'conversation_id' => ValueType::INT,
-                'sender_id' => ValueType::INT,
                 'content' => ValueType::STRING
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
-
-            if($validatedData['sender_id'] !== $authUser->getId()) throw new Exception('Sender ID does not match the authenticated user.');
 
             $conversationDAO = DAOFactory::getConversationDAO();
             $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
             if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
 
+            $conversationAuthorizer = new ConversationAuthorizer();
+            $isJoinTheConversation = $conversationAuthorizer->isJoin($authUser->getId(), $conversation);
+            if($isJoinTheConversation === false) throw new Exception('Cannnot the action.');
+
+            $profileDAO = DAOFactory::getProfileDAO();
+            $partnerProfile = $conversationAuthorizer->isExistsPartnerUser($authUser->getId(), $conversation, $profileDAO);
+            if($partnerProfile === false) throw new Exception('Partner User is not exists.');
+
             $directMessage = new DirectMessge(
                 conversationId: $validatedData['conversation_id'],
-                senderId: $validatedData['sender_id'],
+                senderId: $authUser->getId(),
                 content: $validatedData['content']
             );
-            
+
             $directMessageDAO = DAOFactory::getDirectMessage();
             $success = $directMessageDAO->create($directMessage);
             if($success === false) throw new Exception('Failed to create direct message.');
             
-            return new RedirectRenderer("message?id={$validatedData['conversation_id']}");
+            return new RedirectRenderer("message?id={$conversation->getId()}");
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
@@ -861,8 +871,10 @@ return [
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
             $postDAO = DAOFactory::getPostDAO();
-            $isExistsPost = $postDAO->findById($validatedData['post_id']);
-            if($isExistsPost === null) throw new Exception('Target post is not exits.');
+            $post = $postDAO->findById($validatedData['post_id']);
+            if($post === null) throw new Exception('Target post is not exits.');
+
+            if(Authorizer::isOwnedByUser($post->getUserId(), $authUser->getId(),) === false) throw new Exception('Cannnot the action.');
             
             $success = $postDAO->deletePost($validatedData['post_id']);
             if($success === false) throw new Exception('Failed to delete post!');
@@ -894,7 +906,7 @@ return [
             $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
             if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
 
-            if($conversation->getUser1Id() !== $authUser->getId()) throw new Exception('Invalid user! No action cannot be token.');
+            if(Authorizer::isOwnedByUser($conversation->getUser1Id(), $authUser->getId()) === false) throw new Exception('Cannnot the action.');
 
             $success = $conversationDAO->delete($conversation->getId());
             if($success === false) throw new Exception('Failed to delete conversation.');
