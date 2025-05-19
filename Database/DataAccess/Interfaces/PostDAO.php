@@ -12,4 +12,6 @@ interface PostDAO
   public function getFollowingPosts(int $userId): ?array;
   public function getReplies(int $parentPostId, int $userId): ?array;
   public function deletePost(int $postId): bool;
+
+  public function findById(int $postId): ?Post;
 }
