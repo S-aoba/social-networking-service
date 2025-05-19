@@ -7,6 +7,11 @@ use Models\Conversation;
 
 class ConversationAuthorizer extends Authorizer
 {
+  public function isSameId(int $resourceUserId, int $authUserId): bool 
+  {
+    return $resourceUserId === $authUserId;
+  }
+
   public function isJoin(int $userId, Conversation $conversation): bool {
     return $conversation->getUser1Id() === $userId || $conversation->getUser2Id() === $userId;
   }
