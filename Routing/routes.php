@@ -613,13 +613,16 @@ return [
             }
 
             $postDAO = DAOFactory::getPostDAO();
+            $parentPost = $postDAO->findById($validatedData['parent_post_id']);
+            if($parentPost === null) throw new Exception('Parent post is not exits.');
+
             $post = new Post(
                 content: $validatedData['content'],
                 imagePath: $publicPostImagePath,
                 userId: $authUser->getId(),
-                parentPostId: $validatedData['parent_post_id']
+                parentPostId: $parentPost->getId()
             );
-            
+
             $success = $postDAO->create($post);
             if($success === false) throw new Exception('Failed to create reply!');
 
@@ -854,14 +857,14 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'post_id' => ValueType::INT,
-                'author_id' => ValueType::INT
+                'post_id' => ValueType::INT
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
-            if($validatedData['author_id'] !== $authUser->getId()) throw new Exception('Invalid user!');
-            
             $postDAO = DAOFactory::getPostDAO();
+            $isExistsPost = $postDAO->findById($validatedData['post_id']);
+            if($isExistsPost === null) throw new Exception('Target post is not exits.');
+            
             $success = $postDAO->deletePost($validatedData['post_id']);
             if($success === false) throw new Exception('Failed to delete post!');
 
