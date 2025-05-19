@@ -29,7 +29,7 @@
               <input type="hidden" name="user2_id" value="<?= $data->getUserId(); ?>">
               <!-- User icon -->
               <div class="w-12 shrink-0">
-                <img src="images/default-icon.png" alt="user-icon" class="size-10 rounded-full">
+                <img src="<?= $data->getImagePath(); ?>" alt="user-icon" class="size-10 rounded-full">
               </div>
               <!-- User info -->
               <div class="flex-1 min-w-0">
