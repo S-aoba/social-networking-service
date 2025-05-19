@@ -743,9 +743,13 @@ return [
             $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
             if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
 
-            $isJoinTheConversation = (new ConversationAuthorizer())->isJoin($authUser->getId(), $conversation);
-
+            $conversationAuthorizer = new ConversationAuthorizer();
+            $isJoinTheConversation = $conversationAuthorizer->isJoin($authUser->getId(), $conversation);
             if($isJoinTheConversation === false) throw new Exception('Cannnot the action.');
+
+            $profileDAO = DAOFactory::getProfileDAO();
+            $partnerProfile = $conversationAuthorizer->isExistsPartnerUser($authUser->getId(), $conversation, $profileDAO);
+            if($partnerProfile === false) throw new Exception('Partner User is not exists.');
 
             $directMessage = new DirectMessge(
                 conversationId: $validatedData['conversation_id'],
