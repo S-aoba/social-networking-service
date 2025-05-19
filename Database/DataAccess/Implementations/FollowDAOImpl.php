@@ -8,6 +8,16 @@ use Models\Profile;
 
 class FollowDAOImpl implements FollowDAO
 {
+  public function isMutualFollow(int $userId, int $partnerId): bool
+  {
+    $rowData = $this->isRowMutualFollow($userId, $partnerId);
+
+    if($rowData === false) return false;
+
+    return true;
+  }
+
+
   public function follow(int $userId, int $followUserId): bool
   {
     $mysqli = DatabaseManager::getMysqliConnection();
@@ -89,6 +99,7 @@ class FollowDAOImpl implements FollowDAO
 
   private function checkRowIsFollow(int $userId, int $followingId):bool 
   {
+
     $mysqli = DatabaseManager::getMysqliConnection();
 
     $query = "SELECT 1 FROM follows WHERE follower_id = ? AND following_id = ?";
@@ -158,5 +169,28 @@ class FollowDAOImpl implements FollowDAO
 
   private function converToCount(array $rowData): int {
     return intval($rowData[0]['COUNT(*)']);
+  }
+
+  private function isRowMutualFollow(int $userId, int $partnerId): bool
+  {
+    $mysqli = DatabaseManager::getMysqliConnection();
+
+    $query = "SELECT
+              EXISTS (
+                  SELECT 1
+                  FROM follows AS f1
+                  JOIN follows AS f2
+                    ON f1.follower_id = f2.following_id
+                  AND f1.following_id = f2.follower_id
+                  WHERE f1.follower_id = ?
+                    AND f1.following_id = ?
+              ) AS is_mutual_follow
+              ";
+    
+    $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $partnerId]);
+
+    if($result[0]['is_mutual_follow'] === 0) return false;
+
+    return true;
   }
 }

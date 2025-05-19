@@ -13,4 +13,5 @@ interface FollowDAO
   public function getFollowing(int $userId): ?array;
   public function getFollower(int $userId): ?array;
   public function checkIsFollow(int $userId, int $followingId): bool;
+  public function isMutualFollow(int $userId, int $partnerId): bool;
 }

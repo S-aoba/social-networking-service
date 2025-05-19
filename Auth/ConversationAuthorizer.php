@@ -2,11 +2,18 @@
 
 namespace Auth;
 
+use Database\DataAccess\Interfaces\FollowDAO;
 use Database\DataAccess\Interfaces\ProfileDAO;
+
 use Models\Conversation;
 
 class ConversationAuthorizer extends Authorizer
 {
+  public function isMutualFollow(FollowDAO $followDAO, int $userId, int $partnerId): bool 
+  {
+    return $followDAO->isMutualFollow($userId, $partnerId);
+  }
+
   public function isSameId(int $resourceUserId, int $authUserId): bool 
   {
     return $resourceUserId === $authUserId;

@@ -692,21 +692,24 @@ return [
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
-            if ($validatedData['user1_id'] !== $authUser->getId()) {
-                throw new Exception('Invalid user1_id — not matching authenticated user.');
-            }
-
-            if ($validatedData['user1_id'] === $validatedData['user2_id']) {
-                throw new Exception('Cannot start a conversation with yourself.');
-            }
+            $conversationAuthorizer = new ConversationAuthorizer();
             
-            $userDAO = DAOFactory::getUserDAO();
-            $isPartnerExists = $userDAO->getById($validatedData['user2_id']);
-            if($isPartnerExists === null) throw new Exception('Partner is not exists.');
+            if($conversationAuthorizer->isSameId($validatedData['user1_id'], $authUser->getId()) === false) throw new Exception('Invalid user1_id — not matching authenticated user.');
+            
+            if ($conversationAuthorizer->isSameId($validatedData['user1_id'], $validatedData['user2_id'])) throw new Exception('Cannot start a conversation with yourself.');
+            
+            $profileDAO = DAOFactory::getProfileDAO();
+            $partnerProfile = $profileDAO->getByUserId($validatedData['user2_id']);
+            if($partnerProfile === null) throw new Exception('Partner is not exists.');
+
+            $followDAO = DAOFactory::getFollowDAO();
+            $isMutualFollow = $conversationAuthorizer->isMutualFollow($followDAO, $authUser->getId(), $partnerProfile->getUserId());
+
+            if($isMutualFollow === false) throw new Exception('AuthUser and PartnerUser is not mutualFollow.');
 
             $conversation = new Conversation(
-                user1Id: $validatedData['user1_id'],
-                user2Id: $validatedData['user2_id'],
+                user1Id: $authUser->getId(),
+                user2Id: $partnerProfile->getUserId(),
             );
             $conversationDAO = DAOFactory::getConversationDAO();
 
