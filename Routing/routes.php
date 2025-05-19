@@ -767,8 +767,6 @@ return [
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
 
-            // TODO: Action権限を確認する
-
             $requiredFields = [
                 'username' => ValueType::STRING,
                 'age' => ValueType::INT,
