@@ -740,7 +740,9 @@ return [
                 throw new Exception('Cannot start a message with yourself');
             }
 
-            // TODO: conversationの存在検証
+            $conversationDAO = DAOFactory::getConversationDAO();
+            $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
+            if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
 
             $directMessage = new DirectMessge(
                 conversationId: $validatedData['conversation_id'],
