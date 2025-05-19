@@ -739,9 +739,7 @@ return [
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
-            if($validatedData['sender_id'] !== $authUser->getId()) {
-                throw new Exception('Cannot start a message with yourself');
-            }
+            if($validatedData['sender_id'] !== $authUser->getId()) throw new Exception('Sender ID does not match the authenticated user.');
 
             $conversationDAO = DAOFactory::getConversationDAO();
             $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
@@ -752,6 +750,7 @@ return [
                 senderId: $validatedData['sender_id'],
                 content: $validatedData['content']
             );
+            
             $directMessageDAO = DAOFactory::getDirectMessage();
             $success = $directMessageDAO->create($directMessage);
             if($success === false) throw new Exception('Failed to create direct message.');
