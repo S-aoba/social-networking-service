@@ -1,5 +1,6 @@
 <?php
 
+use Auth\ConversationAuthorizer;
 use Routing\Route;
 
 use Response\FlashData;
@@ -734,28 +735,29 @@ return [
 
             $requiredFields = [
                 'conversation_id' => ValueType::INT,
-                'sender_id' => ValueType::INT,
                 'content' => ValueType::STRING
             ];
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
-
-            if($validatedData['sender_id'] !== $authUser->getId()) throw new Exception('Sender ID does not match the authenticated user.');
 
             $conversationDAO = DAOFactory::getConversationDAO();
             $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
             if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
 
+            $isJoinTheConversation = (new ConversationAuthorizer())->isJoin($authUser->getId(), $conversation);
+
+            if($isJoinTheConversation === false) throw new Exception('Cannnot the action.');
+
             $directMessage = new DirectMessge(
                 conversationId: $validatedData['conversation_id'],
-                senderId: $validatedData['sender_id'],
+                senderId: $authUser->getId(),
                 content: $validatedData['content']
             );
-            
+
             $directMessageDAO = DAOFactory::getDirectMessage();
             $success = $directMessageDAO->create($directMessage);
             if($success === false) throw new Exception('Failed to create direct message.');
             
-            return new RedirectRenderer("message?id={$validatedData['conversation_id']}");
+            return new RedirectRenderer("message?id={$conversation->getId()}");
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
