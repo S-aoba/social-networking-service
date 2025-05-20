@@ -174,9 +174,7 @@ return [
             $post = $postDAO->getById($validatedData['id'], $authUserProfile->getUserId());
             if($post === null) return new RedirectRenderer('');
             
-            $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($post['post']->getImagePath());
-            $post['post']->setImagePath($publicPostImagePath);
-
+            $imagePathResolver->resolvePost($post['post']);
             $imagePathResolver->resolveProfile($post['author']);
             
             $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());

@@ -2,6 +2,7 @@
 
 namespace Services\Image;
 
+use Models\Post;
 use Models\Profile;
 
 class ImagePathResolver 
@@ -16,6 +17,13 @@ class ImagePathResolver
     $publicImagePath = $this->imageUrlBuilder->buildProfileImageUrl($profile->getImagePath());
 
     $profile->setImagePath($publicImagePath);
+  }
+
+  public function resolvePost(Post $post): void 
+  {
+    $publicImagePath = $this->imageUrlBuilder->buildPostImageUrl($post->getImagePath());
+
+    $post->setImagePath($publicImagePath);
   }
 
   public function resolveMany(array $models, callable $resolver): void
