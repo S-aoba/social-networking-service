@@ -90,7 +90,7 @@ class PostDAOImpl implements PostDAO
 
       if($rowPost === null) return null;
 
-      return $this->rowDataToFullPost($rowPost);
+      return $this->rowDataToFullPost($rowPost)[0];
     }
 
     private function fetchById(int $postId, int $userId): ?array 
