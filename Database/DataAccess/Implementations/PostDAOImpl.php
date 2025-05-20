@@ -127,7 +127,7 @@ class PostDAOImpl implements PostDAO
 
       $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $postId]);
 
-      if(count($result) === 0) return null;
+      if(empty($result)) return null;
 
       return $result;
     }
@@ -175,7 +175,7 @@ class PostDAOImpl implements PostDAO
               ";
 
       $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $parentPostId]);
-      if(count($result) === 0) return null;
+      if(empty($result)) return null;
 
       return $result;
     }
@@ -188,6 +188,7 @@ class PostDAOImpl implements PostDAO
 
       return $this->rowDataToOwnPost($postRow);
     }
+
     private function fetchByUserId(int $userId): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -217,7 +218,7 @@ class PostDAOImpl implements PostDAO
                 LIMIT 10";
 
       $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $userId]);
-      if(count($result) === 0) return null;
+      if(empty($result)) return null;
 
       return $result;
     }
@@ -246,6 +247,7 @@ class PostDAOImpl implements PostDAO
 
       return $result;
     }
+    
     public function deletePost(int $postId): bool
     {
       $mysqli = DatabaseManager::getMysqliConnection();
