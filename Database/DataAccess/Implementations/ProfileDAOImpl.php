@@ -41,20 +41,17 @@ class ProfileDAOImpl implements ProfileDAO
 
     public function getByUsername(string $username): ?Profile
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+      $profileRowData = $this->getRowByUsername($username);
 
-      $query = "SELECT * FROM profiles WHERE username = ?";
+      if($profileRowData === null) return null;
 
-      $result = $mysqli->prepareAndFetchAll($query, 's', [$username])[0] ?? null;
-
-      if ($result === null) return null;
-
-      return $this->rowDataToProfile($result);
+      return $this->rowDataToProfile($profileRowData);
     }
 
     public function getByUserId(int $userId): ?Profile
     {
       $profileRow = $this->getRowByUserId($userId);
+      
       if($profileRow === null) return null;
 
       return $this->rowDataToProfile($profileRow);
@@ -95,7 +92,21 @@ class ProfileDAOImpl implements ProfileDAO
     }
 
     // Private
-    private function getRowByUserId(int $userId): ?array{
+    private function getRowByUsername(string $username):?array
+    {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "SELECT * FROM profiles WHERE username = ?";
+
+      $result = $mysqli->prepareAndFetchAll($query, 's', [$username])[0] ?? null;
+
+      if ($result === null) return null;
+
+      return $result;
+    }
+    
+    private function getRowByUserId(int $userId): ?array
+    {
       $mysqli = DatabaseManager::getMysqliConnection();
 
       $query = "SELECT * FROM profiles WHERE user_id = ?";
@@ -107,7 +118,8 @@ class ProfileDAOImpl implements ProfileDAO
       return $result;
     }
 
-    private function getRowImagePath(int $userId): ?string {
+    private function getRowImagePath(int $userId): ?string 
+    {
       $mysqli = DatabaseManager::getMysqliConnection();
 
       $query = "SELECT image_path FROM profiles WHERE user_id = ?";
@@ -119,7 +131,8 @@ class ProfileDAOImpl implements ProfileDAO
       return $result['image_path'];
     }
 
-    private function updateRowProfile(Profile $profile): bool {
+    private function updateRowProfile(Profile $profile): bool 
+    {
       $mysqli = DatabaseManager::getMysqliConnection();
 
       $query = "UPDATE profiles 
@@ -160,7 +173,8 @@ class ProfileDAOImpl implements ProfileDAO
       return true;
     }
 
-    private function rowDataToProfile(array $rowData): Profile{
+    private function rowDataToProfile(array $rowData): Profile
+    {
       return new Profile(
         username: $rowData['username'],
         userId: $rowData['user_id'],
