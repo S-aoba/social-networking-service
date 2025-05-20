@@ -65,7 +65,7 @@ return [
             $posts = $postDAO->getFollowingPosts($authUserProfile->getUserId());
             
             if($posts !== null) {
-                foreach($posts['data'] as $postData) {
+                foreach($posts as $postData) {
                     $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($postData['post']->getImagePath());
                     $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($postData['author']->getImagePath());
                     
@@ -76,8 +76,8 @@ return [
 
             return new HTMLRenderer('page/home', [
                 'authUser' => $authUserProfile,
-                'posts' => $posts['data'],
-                'postsCount' => $posts['data'] === null ? 0 : count($posts['data'])
+                'posts' => $posts,
+                'postsCount' => $posts === null ? 0 : count($posts)
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
