@@ -10,11 +10,13 @@
     <?php include "Views/component/dm/search-bar.php" ?>
 
     <!-- Conversations -->
-    <div class="flex-1 py-4">
-      <?php foreach($conversations as $data): ?>
-        <?php include "Views/component/dm/conversation-item.php" ?>
-      <?php endforeach; ?>
-    </div>
+    <?php if($conversations !== null): ?>
+      <div class="flex-1 py-4">
+        <?php foreach($conversations as $data): ?>
+          <?php include "Views/component/dm/conversation-item.php" ?>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
   </div>
   <?php include "Views/component/dm/dm-message-preview.php" ?>
 </div>
