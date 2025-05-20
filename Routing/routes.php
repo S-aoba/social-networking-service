@@ -58,7 +58,7 @@ return [
             $imageUrlBuilder = new ImageUrlBuilder(); 
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
 
-            $imagePathResolver->resolve($authUserProfile);
+            $imagePathResolver->resolveProfile($authUserProfile);
 
             // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
             $postDAO = DAOFactory::getPostDAO();
@@ -106,8 +106,8 @@ return [
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
             
-            $imagePathResolver->resolve($queryUserProfile);
-            $imagePathResolver->resolve($authUserProfile);
+            $imagePathResolver->resolveProfile($queryUserProfile);
+            $imagePathResolver->resolveProfile($authUserProfile);
 
             $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
@@ -163,7 +163,7 @@ return [
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
 
-            $imagePathResolver->resolve($authUserProfile);
+            $imagePathResolver->resolveProfile($authUserProfile);
 
             $requiredFields = [
                 'id' => ValueType::INT
@@ -177,7 +177,7 @@ return [
             $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($post['post']->getImagePath());
             $post['post']->setImagePath($publicPostImagePath);
 
-            $imagePathResolver->resolve($post['author']);
+            $imagePathResolver->resolveProfile($post['author']);
             
             $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());
             if($replies != null) {
@@ -220,7 +220,7 @@ return [
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
             
-            $imagePathResolver->resolve($authUserProfile);
+            $imagePathResolver->resolveProfile($authUserProfile);
 
             $followDAO = DAOFactory::getFollowDAO();
             $following = $followDAO->getFollowing($authUserProfile->getUserId());
@@ -254,7 +254,7 @@ return [
 
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
-            $imagePathResolver->resolve($authUserProfile);
+            $imagePathResolver->resolveProfile($authUserProfile);
 
             $followDAO = DAOFactory::getFollowDAO();
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
@@ -289,14 +289,14 @@ return [
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
             
-            $imagePathResolver->resolve($authUserProfile);
+            $imagePathResolver->resolveProfile($authUserProfile);
             
             $conversationDAO = DAOFactory::getConversationDAO();
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
             
             if(!empty($conversations)) {
                 foreach($conversations as $data) {
-                    $imagePathResolver->resolve($data['partner']);
+                    $imagePathResolver->resolveProfile($data['partner']);
                 }
             }
 
@@ -349,13 +349,13 @@ return [
             $imageUrlBuilder = new ImageUrlBuilder();
 
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
-            $imagePathResolver->resolve($authUserProfile);
-            $imagePathResolver->resolve($partnerProfile);
+            $imagePathResolver->resolveProfile($authUserProfile);
+            $imagePathResolver->resolveProfile($partnerProfile);
 
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
             if(!empty($conversations)) {
                 foreach($conversations as $data) {
-                    $imagePathResolver->resolve($data['partner']);
+                    $imagePathResolver->resolveProfile($data['partner']);
                 }
             }
 

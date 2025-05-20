@@ -11,7 +11,7 @@ class ImagePathResolver
   )
   {}
 
-  public function resolve(Profile $profile): void 
+  public function resolveProfile(Profile $profile): void 
   {
     $publicImagePath = $this->imageUrlBuilder->buildProfileImageUrl($profile->getImagePath());
 
