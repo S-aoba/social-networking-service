@@ -866,7 +866,7 @@ return [
             $post = $postDAO->getById($validatedData['post_id'], $authUser->getId());
             if($post === null) throw new Exception('Target post is not exits.');
 
-            if(Authorizer::isOwnedByUser($post->getUserId(), $authUser->getId(),) === false) throw new Exception('Cannnot the action.');
+            if(Authorizer::isOwnedByUser($post['post']->getUserId(), $authUser->getId(),) === false) throw new Exception('Cannnot the action.');
             
             $success = $postDAO->deletePost($validatedData['post_id']);
             if($success === false) throw new Exception('Failed to delete post!');
