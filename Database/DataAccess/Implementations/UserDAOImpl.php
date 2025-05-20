@@ -2,13 +2,15 @@
 
 namespace Database\DataAccess\Implementations;
 
-use Database\DataAccess\Interfaces\UserDAO;
 use Database\DatabaseManager;
+use Database\DataAccess\Interfaces\UserDAO;
+
 use Models\DataTimeStamp;
 use Models\User;
 
 class UserDAOImpl implements UserDAO
 {
+    // Public
     public function create(User $user, string $password): bool
     {
         if ($user->getId() !== null) throw new \Exception('Cannot create a user with an existing ID. id: ' . $user->getId());
@@ -33,6 +35,32 @@ class UserDAOImpl implements UserDAO
         return true;
     }
 
+    public function updateEmailConfirmedAt(int $userId): void {
+        $this->updateRowEmailConfirmedAt($userId);
+    }
+
+    public function getById(int $id): ?User
+    {
+        $userRaw = $this->getRawById($id);
+        if($userRaw === null) return null;
+
+        return $this->rawDataToUser($userRaw);
+    }
+
+    public function getByEmail(string $email): ?User
+    {
+        $userRaw = $this->getRawByEmail($email);
+        if($userRaw === null) return null;
+
+        return $this->rawDataToUser($userRaw);
+    }
+
+    public function getHashedPasswordById(int $id): ?string
+    {
+        return $this->getRawById($id)['password']??null;
+    }
+
+    // Private
     private function getRawById(int $id): ?array{
         $mysqli = DatabaseManager::getMysqliConnection();
 
@@ -66,10 +94,6 @@ class UserDAOImpl implements UserDAO
         $mysqli->prepareAndExecute($query, 'si', [$currentDateTime, $userId]);
     }
 
-    public function updateEmailConfirmedAt(int $userId): void {
-        $this->updateRowEmailConfirmedAt($userId);
-    }
-
     private function rawDataToUser(array $rawData): User{
         return new User(
             email: $rawData['email'],
@@ -77,26 +101,5 @@ class UserDAOImpl implements UserDAO
             company: $rawData['company'] ?? null,
             timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at'])
         );
-    }
-
-    public function getById(int $id): ?User
-    {
-        $userRaw = $this->getRawById($id);
-        if($userRaw === null) return null;
-
-        return $this->rawDataToUser($userRaw);
-    }
-
-    public function getByEmail(string $email): ?User
-    {
-        $userRaw = $this->getRawByEmail($email);
-        if($userRaw === null) return null;
-
-        return $this->rawDataToUser($userRaw);
-    }
-
-    public function getHashedPasswordById(int $id): ?string
-    {
-        return $this->getRawById($id)['password']??null;
     }
 }
