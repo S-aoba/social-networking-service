@@ -247,7 +247,7 @@ class PostDAOImpl implements PostDAO
 
       return $result;
     }
-    
+
     public function deletePost(int $postId): bool
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -290,7 +290,7 @@ class PostDAOImpl implements PostDAO
         ];
       }
 
-      return ['data' => $output];
+      return $output;
     }
 
     private function rowDataToOwnPost(array $rowData): array 
@@ -316,7 +316,7 @@ class PostDAOImpl implements PostDAO
         $output[] = $arr;
       }
 
-      return ['data' => $output];
+      return $output;
     }
 
     private function rowDataToPost(array $rowData): array 
@@ -334,6 +334,6 @@ class PostDAOImpl implements PostDAO
         );
       }
 
-      return ['data' => $post[0]];
+      return $post[0];
     }
 }
