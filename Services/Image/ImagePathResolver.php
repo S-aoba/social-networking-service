@@ -25,10 +25,4 @@ class ImagePathResolver
 
     $post->setImagePath($publicImagePath);
   }
-
-  public function resolveMany(array $models, callable $resolver): void
-  {
-      return;
-  }
-
 }
