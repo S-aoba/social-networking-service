@@ -10,7 +10,6 @@ use Models\Profile;
 
 class PostDAOImpl implements PostDAO
 {
-    // Public
     public function create(Post $post): bool
     {
       if($post->getId() !== null) throw new \Exception('Cannnot create a post with an existing ID. id: ' . $post->getId());
@@ -45,56 +44,6 @@ class PostDAOImpl implements PostDAO
       return $this->rowDataToFullPost($rowFollowingPosts);
     }
 
-    public function getById(int $postId, int $userId): ?array
-    {
-      $rowPost = $this->fetchById($postId, $userId);
-
-      if($rowPost === null) return null;
-
-      return $this->rowDataToFullPost($rowPost);
-    }
-
-    public function getReplies(int $parentPostId, int $userId): ?array
-    {
-      $repliesRow = $this->fetchReplies($parentPostId, $userId);
-
-      if($repliesRow === null) return null;
-
-      return $this->rowDataToFullPost($repliesRow);
-    }
-
-    public function getByUserId(int $userId): ?array
-    {
-      $postRow = $this->fetchByUserId($userId);
-
-      if($postRow === null) return null;
-
-      return $this->rowDataToOwnPost($postRow);
-    }
-
-    public function findParentPost(int $postId): ?array
-    {
-      $rowPost = $this->fetchParentPost($postId);
-
-      if($rowPost === null) return null;
-
-      return $this->rowDataToPost($rowPost);
-    }
-
-    public function deletePost(int $postId): bool
-    {
-      $mysqli = DatabaseManager::getMysqliConnection();
-
-      $query = "DELETE FROM posts WHERE id = ?";
-
-      $result = $mysqli->prepareAndExecute($query, 'i', [$postId]);
-
-      if($result === false) return false;
-
-      return true;
-    }
-
-    // Private
     private function fetchFollowingPosts(int $userId): ?array
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -129,49 +78,19 @@ class PostDAOImpl implements PostDAO
                 ORDER BY posts.created_at DESC
                 LIMIT 10;
                 ";
-      $result = $mysqli->prepareAndFetchAll($query, 'iii', [$userId, $userId, $userId]) ?? null;
+      $result = $mysqli->prepareAndFetchAll($query, 'iii', [$userId, $userId, $userId]);
 
-      if($result === null) return null;
+      if(empty($result)) return null;
       return $result;
     }
 
-    private function fetchReplies(int $parentPostId, int $userId): ?array 
+    public function getById(int $postId, int $userId): ?array
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+      $rowPost = $this->fetchById($postId, $userId);
 
-      $query = "SELECT 
-                    posts.*, 
-                    posts.image_path AS post_image_path,
-                    profiles.username, 
-                    profiles.image_path, 
-                    profiles.user_id,
-                    (
-                      SELECT COUNT(*) 
-                      FROM posts AS child 
-                      WHERE child.parent_post_id = posts.id
-                    ) AS reply_count,
-                    (
-                      SELECT COUNT(*) 
-                      FROM likes 
-                      WHERE post_id = posts.id
-                    ) AS like_count,
-                    (
-                      SELECT EXISTS(
-                        SELECT 1
-                        FROM likes
-                        WHERE post_id = posts.id AND user_id = ?
-                      )
-                    ) AS liked
-                FROM posts
-                JOIN profiles ON posts.user_id = profiles.user_id
-                WHERE posts.parent_post_id = ?
-                ORDER BY posts.created_at DESC;
-              ";
+      if($rowPost === null) return null;
 
-      $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $parentPostId]);
-      if(count($result) === 0) return null;
-
-      return $result;
+      return $this->rowDataToFullPost($rowPost);
     }
 
     private function fetchById(int $postId, int $userId): ?array 
@@ -213,6 +132,62 @@ class PostDAOImpl implements PostDAO
       return $result;
     }
 
+    public function getReplies(int $parentPostId, int $userId): ?array
+    {
+      $repliesRow = $this->fetchReplies($parentPostId, $userId);
+
+      if($repliesRow === null) return null;
+
+      return $this->rowDataToFullPost($repliesRow);
+    }
+
+    private function fetchReplies(int $parentPostId, int $userId): ?array 
+    {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "SELECT 
+                    posts.*, 
+                    posts.image_path AS post_image_path,
+                    profiles.username, 
+                    profiles.image_path, 
+                    profiles.user_id,
+                    (
+                      SELECT COUNT(*) 
+                      FROM posts AS child 
+                      WHERE child.parent_post_id = posts.id
+                    ) AS reply_count,
+                    (
+                      SELECT COUNT(*) 
+                      FROM likes 
+                      WHERE post_id = posts.id
+                    ) AS like_count,
+                    (
+                      SELECT EXISTS(
+                        SELECT 1
+                        FROM likes
+                        WHERE post_id = posts.id AND user_id = ?
+                      )
+                    ) AS liked
+                FROM posts
+                JOIN profiles ON posts.user_id = profiles.user_id
+                WHERE posts.parent_post_id = ?
+                ORDER BY posts.created_at DESC;
+              ";
+
+      $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $parentPostId]);
+      if(count($result) === 0) return null;
+
+      return $result;
+    }
+
+    public function getByUserId(int $userId): ?array
+    {
+      $postRow = $this->fetchByUserId($userId);
+
+      if($postRow === null) return null;
+
+      return $this->rowDataToOwnPost($postRow);
+    }
     private function fetchByUserId(int $userId): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -247,6 +222,15 @@ class PostDAOImpl implements PostDAO
       return $result;
     }
 
+    public function findParentPost(int $postId): ?array
+    {
+      $rowPost = $this->fetchParentPost($postId);
+
+      if($rowPost === null) return null;
+
+      return $this->rowDataToPost($rowPost);
+    }
+ 
     private function fetchParentPost(int $postId): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -262,6 +246,18 @@ class PostDAOImpl implements PostDAO
 
       return $result;
     }
+    public function deletePost(int $postId): bool
+    {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "DELETE FROM posts WHERE id = ?";
+
+      $result = $mysqli->prepareAndExecute($query, 'i', [$postId]);
+
+      if($result === false) return false;
+
+      return true;
+    }
 
     private function rowDataToFullPost(?array $rowData): array 
     {
@@ -276,21 +272,20 @@ class PostDAOImpl implements PostDAO
           createdAt: $data['created_at'],
           parentPostId: $data['parent_post_id'],
         );
+
         $author = new Profile(
           username: $data['username'],
           userId: $data['user_id'],
           imagePath: $data['image_path']
-        );
+        );        
 
-        $arr = [
+        $output[] = [
           'post' => $post,
           'author' => $author,
           'replyCount' => $data['reply_count'],
           'likeCount' => $data['like_count'],
           'liked' => $data['liked']
         ];
-
-        $output[] = $arr;
       }
 
       return ['data' => $output];
