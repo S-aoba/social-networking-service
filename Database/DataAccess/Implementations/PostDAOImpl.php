@@ -45,6 +45,42 @@ class PostDAOImpl implements PostDAO
       return $this->rowDataToFullPost($rowFollowingPosts);
     }
 
+    public function getById(int $postId, int $userId): ?array
+    {
+      $rowPost = $this->fetchById($postId, $userId);
+
+      if($rowPost === null) return null;
+
+      return $this->rowDataToFullPost($rowPost);
+    }
+
+    public function getReplies(int $parentPostId, int $userId): ?array
+    {
+      $repliesRow = $this->fetchReplies($parentPostId, $userId);
+
+      if($repliesRow === null) return null;
+
+      return $this->rowDataToFullPost($repliesRow);
+    }
+
+    public function getByUserId(int $userId): ?array
+    {
+      $postRow = $this->fetchByUserId($userId);
+
+      if($postRow === null) return null;
+
+      return $this->rowDataToOwnPost($postRow);
+    }
+
+    public function findParentPost(int $postId): ?array
+    {
+      $rowPost = $this->fetchParentPost($postId);
+
+      if($rowPost === null) return null;
+
+      return $this->rowDataToPost($rowPost);
+    }
+
     public function deletePost(int $postId): bool
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -56,42 +92,6 @@ class PostDAOImpl implements PostDAO
       if($result === false) return false;
 
       return true;
-    }
-
-    public function getById(int $postId, int $userId): ?array
-    {
-      $postRow = $this->getRowById($postId, $userId);
-
-      if($postRow === null) return null;
-
-      return $postRow[0];
-    }
-
-    public function getReplies(int $parentPostId, int $userId): ?array
-    {
-      $repliesRow = $this->getRowByParentPostId($parentPostId, $userId);
-
-      if($repliesRow === null) return null;
-
-      return $repliesRow;
-    }
-
-    public function getByUserId(int $userId): ?array
-    {
-      $postRow = $this->getRowByUserId($userId);
-
-      if($postRow === null) return null;
-
-      return $postRow;
-    }
-
-    public function findById(int $postId): ?Post
-    {
-      $postRowData = $this->findRowById($postId);
-
-      if($postRowData === null) return null;
-
-      return $postRowData;
     }
 
     // Private
@@ -135,7 +135,7 @@ class PostDAOImpl implements PostDAO
       return $result;
     }
 
-    private function getRowByParentPostId(int $parentPostId, int $userId): ?array 
+    private function fetchReplies(int $parentPostId, int $userId): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
@@ -171,10 +171,10 @@ class PostDAOImpl implements PostDAO
       $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $parentPostId]);
       if(count($result) === 0) return null;
 
-      return $this->rowDataToFullPost($result);
+      return $result;
     }
 
-    private function getRowById(int $postId, int $userId): ?array 
+    private function fetchById(int $postId, int $userId): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
@@ -210,10 +210,10 @@ class PostDAOImpl implements PostDAO
 
       if(count($result) === 0) return null;
 
-      return $this->rowDataToFullPost($result);
+      return $result;
     }
 
-    private function getRowByUserId(int $userId): ?array 
+    private function fetchByUserId(int $userId): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
@@ -244,10 +244,10 @@ class PostDAOImpl implements PostDAO
       $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $userId]);
       if(count($result) === 0) return null;
 
-      return $this->rowDataToOwnPost($result);
+      return $result;
     }
 
-    private function findRowById(int $postId): ?Post 
+    private function fetchParentPost(int $postId): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
@@ -260,17 +260,17 @@ class PostDAOImpl implements PostDAO
 
       if(empty($result)) return null;
 
-      return $this->rowDataToPost($result);
+      return $result;
     }
 
-    private function rowDataToFullPost(?array $rowData): ?array 
+    private function rowDataToFullPost(?array $rowData): array 
     {
       $output = [];
 
       foreach ($rowData as $data) {
         $post = new Post(
           content: $data['content'],
-        imagePath: $data['post_image_path'],
+          imagePath: $data['post_image_path'],
           userId: $data['user_id'],
           id: $data['id'],
           createdAt: $data['created_at'],
@@ -293,7 +293,7 @@ class PostDAOImpl implements PostDAO
         $output[] = $arr;
       }
 
-      return $output;
+      return ['data' => $output];
     }
 
     private function rowDataToOwnPost(array $rowData): array 
@@ -319,10 +319,10 @@ class PostDAOImpl implements PostDAO
         $output[] = $arr;
       }
 
-      return $output;
+      return ['data' => $output];
     }
 
-    private function rowDataToPost(array $rowData): Post 
+    private function rowDataToPost(array $rowData): array 
     {
       $post = [];
 
@@ -337,6 +337,6 @@ class PostDAOImpl implements PostDAO
         );
       }
 
-      return $post[0];
+      return ['data' => $post[0]];
     }
 }
