@@ -13,5 +13,5 @@ interface PostDAO
   public function getReplies(int $parentPostId, int $userId): ?array;
   public function deletePost(int $postId): bool;
 
-  public function findById(int $postId): ?array;
+  public function findParentPost(int $postId): ?array;
 }
