@@ -63,20 +63,21 @@ return [
             // TODO: フォロワータブとおすすめタブで取得するPostを変えるロジックにする
             $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getFollowingPosts($authUserProfile->getUserId());
-
+            
             if($posts !== null) {
-                foreach($posts as $data) {
-                    $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($data['post']->getImagePath());
-                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($data['author']->getImagePath());
+                foreach($posts['data'] as $postData) {
+                    $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($postData['post']->getImagePath());
+                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($postData['author']->getImagePath());
                     
-                    $data['post']->setImagePath($publicPostImagePath);
-                    $data['author']->setImagePath($publicAuthorImagePath);
+                    $postData['post']->setImagePath($publicPostImagePath);
+                    $postData['author']->setImagePath($publicAuthorImagePath);
                 }
             }
 
             return new HTMLRenderer('page/home', [
                 'authUser' => $authUserProfile,
-                'posts' => $posts,
+                'posts' => $posts['data'],
+                'postsCount' => $posts['data'] === null ? 0 : count($posts['data'])
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -606,7 +607,7 @@ return [
             }
 
             $postDAO = DAOFactory::getPostDAO();
-            $parentPost = $postDAO->findById($validatedData['parent_post_id']);
+            $parentPost = $postDAO->findParentPost($validatedData['parent_post_id']);
             if($parentPost === null) throw new Exception('Parent post is not exits.');
 
             $post = new Post(
@@ -862,7 +863,7 @@ return [
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
             $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->findById($validatedData['post_id']);
+            $post = $postDAO->getById($validatedData['post_id'], $authUser->getId());
             if($post === null) throw new Exception('Target post is not exits.');
 
             if(Authorizer::isOwnedByUser($post->getUserId(), $authUser->getId(),) === false) throw new Exception('Cannnot the action.');
