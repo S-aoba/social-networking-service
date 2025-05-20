@@ -39,8 +39,10 @@ class PostDAOImpl implements PostDAO
 
     public function getFollowingPosts(int $userId): ?array
     {
-      $followerPostsRow = $this->getRowFollowingPosts($userId);
-      return $followerPostsRow;
+      $rowFollowingPosts = $this->fetchFollowingPosts($userId);
+      if($rowFollowingPosts === null) return null;
+      
+      return $this->rowDataToFullPost($rowFollowingPosts);
     }
 
     public function deletePost(int $postId): bool
@@ -93,7 +95,7 @@ class PostDAOImpl implements PostDAO
     }
 
     // Private
-    private function getRowFollowingPosts(int $userId): ?array
+    private function fetchFollowingPosts(int $userId): ?array
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
@@ -128,42 +130,9 @@ class PostDAOImpl implements PostDAO
                 LIMIT 10;
                 ";
       $result = $mysqli->prepareAndFetchAll($query, 'iii', [$userId, $userId, $userId]) ?? null;
+
       if($result === null) return null;
-
-      return $this->rowDataToFullPost($result);
-    }
-
-    private function rowDataToFullPost(?array $rowData): ?array 
-    {
-      $output = [];
-
-      foreach ($rowData as $data) {
-        $post = new Post(
-          content: $data['content'],
-        imagePath: $data['post_image_path'],
-          userId: $data['user_id'],
-          id: $data['id'],
-          createdAt: $data['created_at'],
-          parentPostId: $data['parent_post_id'],
-        );
-        $author = new Profile(
-          username: $data['username'],
-          userId: $data['user_id'],
-          imagePath: $data['image_path']
-        );
-
-        $arr = [
-          'post' => $post,
-          'author' => $author,
-          'replyCount' => $data['reply_count'],
-          'likeCount' => $data['like_count'],
-          'liked' => $data['liked']
-        ];
-
-        $output[] = $arr;
-      }
-
-      return $output;
+      return $result;
     }
 
     private function getRowByParentPostId(int $parentPostId, int $userId): ?array 
@@ -278,6 +247,55 @@ class PostDAOImpl implements PostDAO
       return $this->rowDataToOwnPost($result);
     }
 
+    private function findRowById(int $postId): ?Post 
+    {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "SELECT *
+                FROM posts
+                WHERE id = ?
+              ";
+      
+      $result = $mysqli->prepareAndFetchAll($query, 'i', [$postId]);
+
+      if(empty($result)) return null;
+
+      return $this->rowDataToPost($result);
+    }
+
+    private function rowDataToFullPost(?array $rowData): ?array 
+    {
+      $output = [];
+
+      foreach ($rowData as $data) {
+        $post = new Post(
+          content: $data['content'],
+        imagePath: $data['post_image_path'],
+          userId: $data['user_id'],
+          id: $data['id'],
+          createdAt: $data['created_at'],
+          parentPostId: $data['parent_post_id'],
+        );
+        $author = new Profile(
+          username: $data['username'],
+          userId: $data['user_id'],
+          imagePath: $data['image_path']
+        );
+
+        $arr = [
+          'post' => $post,
+          'author' => $author,
+          'replyCount' => $data['reply_count'],
+          'likeCount' => $data['like_count'],
+          'liked' => $data['liked']
+        ];
+
+        $output[] = $arr;
+      }
+
+      return $output;
+    }
+
     private function rowDataToOwnPost(array $rowData): array 
     {
       $output = [];
@@ -302,22 +320,6 @@ class PostDAOImpl implements PostDAO
       }
 
       return $output;
-    }
-
-    private function findRowById(int $postId): ?Post 
-    {
-      $mysqli = DatabaseManager::getMysqliConnection();
-
-      $query = "SELECT *
-                FROM posts
-                WHERE id = ?
-              ";
-      
-      $result = $mysqli->prepareAndFetchAll($query, 'i', [$postId]);
-
-      if(empty($result)) return null;
-
-      return $this->rowDataToPost($result);
     }
 
     private function rowDataToPost(array $rowData): Post 
