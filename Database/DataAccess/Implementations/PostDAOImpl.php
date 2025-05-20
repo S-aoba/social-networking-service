@@ -223,7 +223,7 @@ class PostDAOImpl implements PostDAO
       return $result;
     }
 
-    public function findParentPost(int $postId): ?array
+    public function findParentPost(int $postId): ?Post
     {
       $rowPost = $this->fetchParentPost($postId);
 
@@ -319,7 +319,7 @@ class PostDAOImpl implements PostDAO
       return $output;
     }
 
-    private function rowDataToPost(array $rowData): array 
+    private function rowDataToPost(array $rowData): Post 
     {
       $post = [];
 
