@@ -261,7 +261,7 @@ class PostDAOImpl implements PostDAO
       return true;
     }
 
-    private function rowDataToFullPost(?array $rowData): array 
+    private function rowDataToFullPost(array $rowData): array 
     {
       $output = [];
 
