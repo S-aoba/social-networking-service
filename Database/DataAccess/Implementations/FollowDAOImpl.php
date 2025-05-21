@@ -9,16 +9,6 @@ use Models\Profile;
 
 class FollowDAOImpl implements FollowDAO
 {
-    // Public
-    public function isMutualFollow(int $userId, int $partnerId): bool
-    {
-      $rowData = $this->isRowMutualFollow($userId, $partnerId);
-
-      if($rowData === false) return false;
-
-      return true;
-    }
-
     public function follow(int $userId, int $followUserId): bool
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -52,11 +42,33 @@ class FollowDAOImpl implements FollowDAO
       return $followerRow;
     }
 
+    private function getRowFollowerCount(int $userId): int 
+    {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "SELECT COUNT(*) FROM follows where following_id = ?";
+
+      $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
+
+      return $this->converToCount($result);
+    }
+
     public function getFollowingCount($userId): int
     {
       $followingRow = $this->getRowFollowingCount($userId);
 
       return $followingRow;
+    }
+
+    private function getRowFollowingCount(int $userId): int 
+    {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "SELECT COUNT(*) FROM follows where follower_id = ?";
+      
+      $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
+      
+      return $this->converToCount($result);
     }
 
     public function getFollowing(int $userId): ?array
@@ -68,21 +80,6 @@ class FollowDAOImpl implements FollowDAO
       return $followingRowData;
     }
 
-    public function getFollower(int $userId): ?array
-    {
-      $follwerRowData = $this->getRowFollower($userId);
-
-      if($follwerRowData === null) return null;
-
-      return $follwerRowData;
-    }
-
-    public function checkIsFollow(int $userId, int $followingId): bool
-    {
-      return $this->checkRowIsFollow($userId, $followingId);
-    }
-
-    // Private
     private function getRowFollowing(int $userId): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -100,21 +97,13 @@ class FollowDAOImpl implements FollowDAO
       return $this->rowDataToProfile($result);
     }
 
-    private function checkRowIsFollow(int $userId, int $followingId):bool 
+    public function getFollower(int $userId): ?array
     {
+      $follwerRowData = $this->getRowFollower($userId);
 
-      $mysqli = DatabaseManager::getMysqliConnection();
+      if($follwerRowData === null) return null;
 
-      $query = "SELECT 1 FROM follows WHERE follower_id = ? AND following_id = ?";
-
-      $result = $mysqli->prepareAndFetchAll($query, 'ii', [
-        $userId,
-        $followingId
-      ]);
-
-      if(count($result) === 0) return false;
-
-      return true;
+      return $follwerRowData;
     }
 
     private function getRowFollower(int $userId): ?array 
@@ -134,49 +123,35 @@ class FollowDAOImpl implements FollowDAO
       return $this->rowDataToProfile($result);
     }
 
-    private function rowDataToProfile(array $rowData): array 
+    public function checkIsFollow(int $userId, int $followingId): bool
     {
-      $profiles = [];
-
-      foreach($rowData as $row) {
-        $profile = new Profile(
-          username: $row['username'],
-          userId: $row['user_id'],
-          selfIntroduction: $row['self_introduction'],
-          imagePath: $row['image_path'],
-        );
-
-        $profiles[] = $profile;
-      }
-
-      return $profiles;
+      return $this->checkRowIsFollow($userId, $followingId);
     }
 
-    private function getRowFollowerCount(int $userId): int 
+    private function checkRowIsFollow(int $userId, int $followingId):bool 
     {
+
       $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT COUNT(*) FROM follows where following_id = ?";
+      $query = "SELECT 1 FROM follows WHERE follower_id = ? AND following_id = ?";
 
-      $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
+      $result = $mysqli->prepareAndFetchAll($query, 'ii', [
+        $userId,
+        $followingId
+      ]);
 
-      return $this->converToCount($result);
+      if(count($result) === 0) return false;
+
+      return true;
     }
 
-    private function getRowFollowingCount(int $userId): int 
+    public function isMutualFollow(int $userId, int $partnerId): bool
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+      $rowData = $this->isRowMutualFollow($userId, $partnerId);
 
-      $query = "SELECT COUNT(*) FROM follows where follower_id = ?";
-      
-      $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
-      
-      return $this->converToCount($result);
-    }
+      if($rowData === false) return false;
 
-    private function converToCount(array $rowData): int 
-    {
-      return intval($rowData[0]['COUNT(*)']);
+      return true;
     }
 
     private function isRowMutualFollow(int $userId, int $partnerId): bool
@@ -200,5 +175,28 @@ class FollowDAOImpl implements FollowDAO
       if($result[0]['is_mutual_follow'] === 0) return false;
 
       return true;
+    }
+
+    private function rowDataToProfile(array $rowData): array 
+    {
+      $profiles = [];
+
+      foreach($rowData as $row) {
+        $profile = new Profile(
+          username: $row['username'],
+          userId: $row['user_id'],
+          selfIntroduction: $row['self_introduction'],
+          imagePath: $row['image_path'],
+        );
+
+        $profiles[] = $profile;
+      }
+
+      return $profiles;
+    }
+
+    private function converToCount(array $rowData): int 
+    {
+      return intval($rowData[0]['COUNT(*)']);
     }
 }
