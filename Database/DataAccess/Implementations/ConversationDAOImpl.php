@@ -33,14 +33,14 @@ class ConversationDAOImpl implements ConversationDAO
 
     public function findAllByUserId(int $userId): ?array
     {
-      $conversationsRowData = $this->findAllRowByUserId($userId);
+      $conversationsRowData = $this->fetchAllByUserId($userId);
 
       if($conversationsRowData === null) return null;
 
       return $conversationsRowData;
     }
 
-    private function findAllRowByUserId(int $userId): ?array 
+    private function fetchAllByUserId(int $userId): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
