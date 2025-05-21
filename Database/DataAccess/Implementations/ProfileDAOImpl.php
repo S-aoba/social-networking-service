@@ -84,14 +84,14 @@ class ProfileDAOImpl implements ProfileDAO
 
     public function getImagePath(int $userId): ?string
     {
-      $rowImagePath = $this->getRowImagePath($userId);
+      $rowImagePath = $this->fetchImagePath($userId);
 
       if($rowImagePath === null) return null;
 
       return $rowImagePath;
     }
 
-    private function getRowImagePath(int $userId): ?string 
+    private function fetchImagePath(int $userId): ?string 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
