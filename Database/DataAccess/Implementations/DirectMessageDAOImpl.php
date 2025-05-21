@@ -4,6 +4,7 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DataAccess\Interfaces\DirectMessageDAO;
 use Database\DatabaseManager;
+use Database\DataAccess\Mappers\DirectMessageMapper;
 
 use Models\DirectMessge;
 
@@ -36,7 +37,7 @@ class DirectMessageDAOImpl implements DirectMessageDAO
 
       if($directMessageRowData === null) return null;
 
-      return $directMessageRowData;
+      return DirectMessageMapper::mapRowsToDirectMessages($directMessageRowData);
     }
 
     private function fetchAllByConversationId(int $conversationId): ?array 
@@ -52,26 +53,6 @@ class DirectMessageDAOImpl implements DirectMessageDAO
 
       if(empty($result)) return null;
       
-      return $this->rowDataToDirectMessages($result);
-    }
-
-    private function rowDataToDirectMessages(array $rowData): array 
-    {
-      $directmessages = [];
-
-      foreach($rowData as $data) {
-        $directMessage = new DirectMessge(
-          conversationId: $data['conversation_id'],
-          senderId: $data['sender_id'],
-          content: $data['content'],
-          id: $data['id'],
-          read_at: $data['read_at'],
-          createdAt: $data['created_at']
-        );
-
-        $directmessages[] = $directMessage;
-      }
-
-      return $directmessages;
+      return $result;
     }
 }
