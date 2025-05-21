@@ -4,6 +4,7 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DatabaseManager;
 use Database\DataAccess\Interfaces\ProfileDAO;
+use Database\DataAccess\Mappers\ProfileMapper;
 
 use Models\Profile;
 
@@ -44,7 +45,7 @@ class ProfileDAOImpl implements ProfileDAO
 
       if($profileRowData === null) return null;
 
-      return $this->rowDataToProfile($profileRowData);
+      return ProfileMapper::mapRowToProfile($profileRowData);
     }
 
     private function fetchByUsername(string $username):?array
@@ -66,7 +67,7 @@ class ProfileDAOImpl implements ProfileDAO
 
       if($profileRow === null) return null;
 
-      return $this->rowDataToProfile($profileRow);
+      return ProfileMapper::mapRowToProfile($profileRow);
     }
 
     private function fetchByUserId(int $userId): ?array
@@ -169,19 +170,5 @@ class ProfileDAOImpl implements ProfileDAO
     public function deleteProfile(int $userId): bool
     {
       return false;
-    }
-
-    private function rowDataToProfile(array $rowData): Profile
-    {
-      return new Profile(
-        username: $rowData['username'],
-        userId: $rowData['user_id'],
-        id: $rowData['id'],
-        imagePath: $rowData['image_path'],
-        address: $rowData['address'],
-        age: $rowData['age'],
-        hobby: $rowData['hobby'],
-        selfIntroduction: $rowData['self_introduction']
-      );
     }
 }
