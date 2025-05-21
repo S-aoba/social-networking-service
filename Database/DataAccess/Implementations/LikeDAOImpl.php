@@ -48,10 +48,10 @@ class LikeDAOImpl implements LikeDAO
 
     public function hasLiked(Like $like): bool
     {
-      return $this->checkRowIsLiked($like);
+      return $this->checkIsLiked($like);
     }
 
-    private function checkRowIsLiked(Like $like): bool 
+    private function checkIsLiked(Like $like): bool 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
