@@ -92,13 +92,13 @@ class ConversationDAOImpl implements ConversationDAO
 
     public function findByConversationId(int $id): ?Conversation
     {
-      $conversationRowData = $this->findRowByConversationId($id);
+      $conversationRowData = $this->fetchById($id);
 
       if($conversationRowData === null) return null;
       return $conversationRowData;
     }
 
-    private function findRowByConversationId(int $id): ?Conversation 
+    private function fetchById(int $id): ?Conversation 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
