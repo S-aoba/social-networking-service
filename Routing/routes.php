@@ -655,7 +655,7 @@ return [
                 postId: $validatedData['post_id']
             );
 
-            $isLiked = $likeDAO->checkIsLiked($like);
+            $isLiked = $likeDAO->hasLiked($like);
 
             $success = $isLiked ? $likeDAO->unlike($like) : $likeDAO->createLike($like);
             if($success === false) throw new Exception('Failed to like post!');
