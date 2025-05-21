@@ -10,7 +10,6 @@ use Models\Like;
 
 class LikeDAOImpl implements LikeDAO 
 {
-    // Public
     public function createLike(Like $like): bool
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -52,7 +51,6 @@ class LikeDAOImpl implements LikeDAO
       return $this->checkRowIsLiked($like);
     }
 
-    // Private
     private function checkRowIsLiked(Like $like): bool 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
