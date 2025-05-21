@@ -4,9 +4,9 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DatabaseManager;
 use Database\DataAccess\Interfaces\PostDAO;
+use Database\DataAccess\Mappers\PostMapper;
 
 use Models\Post;
-use Models\Profile;
 
 class PostDAOImpl implements PostDAO
 {
@@ -41,7 +41,7 @@ class PostDAOImpl implements PostDAO
       $rowFollowingPosts = $this->fetchFollowingPosts($userId);
       if($rowFollowingPosts === null) return null;
       
-      return $this->rowDataToFullPost($rowFollowingPosts);
+      return PostMapper::mapRowsToPostDetails($rowFollowingPosts);
     }
 
     private function fetchFollowingPosts(int $userId): ?array
@@ -90,7 +90,7 @@ class PostDAOImpl implements PostDAO
 
       if($rowPost === null) return null;
 
-      return $this->rowDataToFullPost($rowPost)[0];
+      return PostMapper::mapRowsToPostDetails($rowPost)[0];
     }
 
     private function fetchById(int $postId, int $userId): ?array 
@@ -138,7 +138,7 @@ class PostDAOImpl implements PostDAO
 
       if($repliesRow === null) return null;
 
-      return $this->rowDataToFullPost($repliesRow);
+      return PostMapper::mapRowsToPostDetails($repliesRow);
     }
 
     private function fetchReplies(int $parentPostId, int $userId): ?array 
@@ -186,7 +186,7 @@ class PostDAOImpl implements PostDAO
 
       if($postRow === null) return null;
 
-      return $this->rowDataToOwnPost($postRow);
+      return PostMapper::mapRowsToOwnPosts($postRow);
     }
 
     private function fetchByUserId(int $userId): ?array 
@@ -229,7 +229,7 @@ class PostDAOImpl implements PostDAO
 
       if($rowPost === null) return null;
 
-      return $this->rowDataToPost($rowPost);
+      return PostMapper::mapRowToPost($rowPost);
     }
  
     private function fetchParentPost(int $postId): ?array 
@@ -259,81 +259,5 @@ class PostDAOImpl implements PostDAO
       if($result === false) return false;
 
       return true;
-    }
-
-    private function rowDataToFullPost(array $rowData): array 
-    {
-      $output = [];
-
-      foreach ($rowData as $data) {
-        $post = new Post(
-          content: $data['content'],
-          imagePath: $data['post_image_path'],
-          userId: $data['user_id'],
-          id: $data['id'],
-          createdAt: $data['created_at'],
-          parentPostId: $data['parent_post_id'],
-        );
-
-        $author = new Profile(
-          username: $data['username'],
-          userId: $data['user_id'],
-          imagePath: $data['image_path']
-        );        
-
-        $output[] = [
-          'post' => $post,
-          'author' => $author,
-          'replyCount' => $data['reply_count'],
-          'likeCount' => $data['like_count'],
-          'liked' => $data['liked']
-        ];
-      }
-
-      return $output;
-    }
-
-    private function rowDataToOwnPost(array $rowData): array 
-    {
-      $output = [];
-
-      foreach($rowData as $data) {
-        $post = new Post(
-          content: $data['content'],
-          imagePath: $data['post_image_path'],
-          userId: $data['user_id'],
-          id: $data['id'],
-          createdAt: $data['created_at'],
-          parentPostId: $data['parent_post_id'],
-        );
-
-        $arr = [
-          'post' => $post,
-          'replyCount' => $data['reply_count'],
-          'likeCount' => $data['like_count'],
-          'liked' => $data['liked']
-        ]; 
-        $output[] = $arr;
-      }
-
-      return $output;
-    }
-
-    private function rowDataToPost(array $rowData): Post 
-    {
-      $post = [];
-
-      foreach($rowData as $data) {
-        $post[] = new Post(
-          content: $data['content'],
-          userId: $data['user_id'],
-          id: $data['id'],
-          imagePath: $data['image_path'],
-          parentPostId: $data['parent_post_id'],
-          createdAt: $data['created_at']
-        );
-      }
-
-      return $post[0];
     }
 }
