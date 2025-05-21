@@ -148,14 +148,14 @@ class FollowDAOImpl implements FollowDAO
 
     public function isMutualFollow(int $userId, int $partnerId): bool
     {
-      $rowData = $this->isRowMutualFollow($userId, $partnerId);
+      $rowData = $this->checkIsMutualFollowing($userId, $partnerId);
 
       if($rowData === false) return false;
 
       return true;
     }
 
-    private function isRowMutualFollow(int $userId, int $partnerId): bool
+    private function checkIsMutualFollowing(int $userId, int $partnerId): bool
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
