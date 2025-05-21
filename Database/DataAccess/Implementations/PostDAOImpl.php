@@ -230,7 +230,7 @@ class PostDAOImpl implements PostDAO
 
       if($rowPost === null) return null;
 
-      return $this->rowDataToPost($rowPost);
+      return PostMapper::mapRowToPost($rowPost);
     }
  
     private function fetchParentPost(int $postId): ?array 
@@ -320,21 +320,21 @@ class PostDAOImpl implements PostDAO
       return $output;
     }
 
-    private function rowDataToPost(array $rowData): Post 
-    {
-      $post = [];
+    // private function PostMapper::mapRowToPost(array $rowData): Post 
+    // {
+    //   $post = [];
 
-      foreach($rowData as $data) {
-        $post[] = new Post(
-          content: $data['content'],
-          userId: $data['user_id'],
-          id: $data['id'],
-          imagePath: $data['image_path'],
-          parentPostId: $data['parent_post_id'],
-          createdAt: $data['created_at']
-        );
-      }
+    //   foreach($rowData as $data) {
+    //     $post[] = new Post(
+    //       content: $data['content'],
+    //       userId: $data['user_id'],
+    //       id: $data['id'],
+    //       imagePath: $data['image_path'],
+    //       parentPostId: $data['parent_post_id'],
+    //       createdAt: $data['created_at']
+    //     );
+    //   }
 
-      return $post[0];
-    }
+    //   return $post[0];
+    // }
 }

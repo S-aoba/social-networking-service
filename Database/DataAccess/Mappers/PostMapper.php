@@ -58,4 +58,23 @@ class PostMapper
             ];
         }, $rowData);
     }
+
+    /**
+     * 1件分の配列データをPostオブジェクトに変換
+     * @param array $rowData
+     * @return Post|null
+     */
+    public static function mapRowToPost(array $rowData): ?Post
+    {
+        $data = is_array($rowData[0] ?? null) ? $rowData[0] : $rowData;
+
+        return new Post(
+            content: $data['content'] ?? '',
+            userId: $data['user_id'] ?? null,
+            id: $data['id'] ?? null,
+            imagePath: $data['image_path'] ?? null,
+            parentPostId: $data['parent_post_id'] ?? null,
+            createdAt: $data['created_at'] ?? null
+        );
+    }
 }
