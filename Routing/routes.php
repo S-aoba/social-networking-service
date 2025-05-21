@@ -129,7 +129,7 @@ return [
             $followDAO = DAOFactory::getFollowDAO();
             $followerCount = $followDAO->getFollowerCount($queryUserProfile->getUserId());
             $followingCount = $followDAO->getFollowingCount($queryUserProfile->getUserId());
-            $isFollow = $followDAO->checkIsFollow($authUserProfile->getUserId(), $queryUserProfile->getUserId());
+            $isFollow = $followDAO->isFollowingSelf($authUserProfile->getUserId(), $queryUserProfile->getUserId());
             
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
@@ -568,7 +568,7 @@ return [
             $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
 
             $followDAO = DAOFactory::getFollowDAO();
-            $isFollow = $followDAO->checkIsFollow($userId, $validatedData['following_id']);
+            $isFollow = $followDAO->isFollowingSelf($userId, $validatedData['following_id']);
             $success = $isFollow ? 
                         $followDAO->unfollow($userId, $validatedData['following_id']) 
                         :
