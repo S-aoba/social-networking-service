@@ -7,7 +7,6 @@ use Database\DataAccess\Interfaces\PostDAO;
 use Database\DataAccess\Mappers\PostMapper;
 
 use Models\Post;
-use Models\Profile;
 
 class PostDAOImpl implements PostDAO
 {
