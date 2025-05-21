@@ -9,7 +9,6 @@ use Models\DirectMessge;
 
 class DirectMessageDAOImpl implements DirectMessageDAO 
 {
-    // Public
     public function create(DirectMessge $directMessage): bool
     {
       if ($directMessage->getId() !== null) throw new \Exception('Cannot create a direct-message with an existing ID. id: ' . $directMessage->getId());
@@ -40,7 +39,6 @@ class DirectMessageDAOImpl implements DirectMessageDAO
       return $directMessageRowData;
     }
 
-    // Private
     private function findAllRowByConversationId(int $conversationId): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
