@@ -4,6 +4,7 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DatabaseManager;
 use Database\DataAccess\Interfaces\PostDAO;
+use Database\DataAccess\Mappers\PostMapper;
 
 use Models\Post;
 use Models\Profile;
@@ -41,7 +42,7 @@ class PostDAOImpl implements PostDAO
       $rowFollowingPosts = $this->fetchFollowingPosts($userId);
       if($rowFollowingPosts === null) return null;
       
-      return $this->rowDataToFullPost($rowFollowingPosts);
+      return PostMapper::mapRowsToPostDetails($rowFollowingPosts);
     }
 
     private function fetchFollowingPosts(int $userId): ?array
