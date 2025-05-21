@@ -9,7 +9,6 @@ use Models\Profile;
 
 class ProfileDAOImpl implements ProfileDAO
 {
-    // Public
     public function create(Profile $profile): bool
     {
         if ($profile->getId() !== null) throw new \Exception('Cannot create a profile with an existing ID. id: ' . $profile->getId());
@@ -48,50 +47,6 @@ class ProfileDAOImpl implements ProfileDAO
       return $this->rowDataToProfile($profileRowData);
     }
 
-    public function getByUserId(int $userId): ?Profile
-    {
-      $profileRow = $this->getRowByUserId($userId);
-      
-      if($profileRow === null) return null;
-
-      return $this->rowDataToProfile($profileRow);
-    }
-
-    public function getImagePath(int $userId): ?string
-    {
-      $rowImagePath = $this->getRowImagePath($userId);
-
-      if($rowImagePath === null) return null;
-
-      return $rowImagePath;
-    }
-
-    public function updateProfile(?Profile $profile): bool
-    {
-      if ($profile === null) return false;
-
-      $rowData = $this->updateRowProfile($profile);
-
-      if($rowData === false) return false;
-
-      return true;
-    }
-
-    public function updataPrpfileIcon(string $imagePath, int $userId): bool
-    {
-      $rowData = $this->updateRowProfileIcon($imagePath, $userId);
-
-      if($rowData === false) return false;
-
-      return true;
-    }
-
-    public function deleteProfile(int $userId): bool
-    {
-      return false;
-    }
-
-    // Private
     private function getRowByUsername(string $username):?array
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -104,7 +59,16 @@ class ProfileDAOImpl implements ProfileDAO
 
       return $result;
     }
-    
+
+    public function getByUserId(int $userId): ?Profile
+    {
+      $profileRow = $this->getRowByUserId($userId);
+
+      if($profileRow === null) return null;
+
+      return $this->rowDataToProfile($profileRow);
+    }
+
     private function getRowByUserId(int $userId): ?array
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -118,6 +82,15 @@ class ProfileDAOImpl implements ProfileDAO
       return $result;
     }
 
+    public function getImagePath(int $userId): ?string
+    {
+      $rowImagePath = $this->getRowImagePath($userId);
+
+      if($rowImagePath === null) return null;
+
+      return $rowImagePath;
+    }
+
     private function getRowImagePath(int $userId): ?string 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -129,6 +102,17 @@ class ProfileDAOImpl implements ProfileDAO
       if($result === null) return null;
       
       return $result['image_path'];
+    }
+
+    public function updateProfile(?Profile $profile): bool
+    {
+      if ($profile === null) return false;
+
+      $rowData = $this->updateRowProfile($profile);
+
+      if($rowData === false) return false;
+
+      return true;
     }
 
     private function updateRowProfile(Profile $profile): bool 
@@ -160,6 +144,15 @@ class ProfileDAOImpl implements ProfileDAO
       return true;
     }
 
+    public function updataPrpfileIcon(string $imagePath, int $userId): bool
+    {
+      $rowData = $this->updateRowProfileIcon($imagePath, $userId);
+
+      if($rowData === false) return false;
+
+      return true;
+    }
+
     private function updateRowProfileIcon(string $imagePath, int $userId): bool 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -171,6 +164,11 @@ class ProfileDAOImpl implements ProfileDAO
       if($result === false) return false;
 
       return true;
+    }
+
+    public function deleteProfile(int $userId): bool
+    {
+      return false;
     }
 
     private function rowDataToProfile(array $rowData): Profile
