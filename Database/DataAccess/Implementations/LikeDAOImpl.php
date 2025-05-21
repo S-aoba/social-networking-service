@@ -46,7 +46,7 @@ class LikeDAOImpl implements LikeDAO
       return true;
     }
 
-    public function checkIsLiked(Like $like): bool
+    public function hasLiked(Like $like): bool
     {
       return $this->checkRowIsLiked($like);
     }

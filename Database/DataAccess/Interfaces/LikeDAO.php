@@ -10,5 +10,5 @@ interface LikeDAO
 
     public function unlike(Like $like): bool;
 
-    public function checkIsLiked(Like $like): bool;
+    public function hasLiked(Like $like): bool;
 }
