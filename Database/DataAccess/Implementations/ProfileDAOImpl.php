@@ -108,14 +108,14 @@ class ProfileDAOImpl implements ProfileDAO
     {
       if ($profile === null) return false;
 
-      $rowData = $this->updateRowProfile($profile);
+      $rowData = $this->saveProfile($profile);
 
       if($rowData === false) return false;
 
       return true;
     }
 
-    private function updateRowProfile(Profile $profile): bool 
+    private function saveProfile(Profile $profile): bool 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
