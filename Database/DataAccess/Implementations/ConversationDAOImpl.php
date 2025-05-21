@@ -118,16 +118,17 @@ class ConversationDAOImpl implements ConversationDAO
       return $this->rowDataToConversation($result[0]);
     }
 
+    // TODO:existsByUserPairをhasConversationWithに変更
     public function existsByUserPair(Conversation $conversation): bool
     {
-      $conversationRowData = $this->existsRowByUserPair($conversation);
+      $conversationRowData = $this->checkConversationExistsWith($conversation);
 
       if($conversationRowData === false) return false;
 
       return true;
     }
 
-    private function existsRowByUserPair(Conversation $conversation): bool 
+    private function checkConversationExistsWith(Conversation $conversation): bool 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
