@@ -7,5 +7,5 @@ use Models\DirectMessge;
 interface DirectMessageDAO
 {
     public function create(DirectMessge $directMessage): bool;
-    public function findAllByConversationId(int $conversationId): ?array;
+    public function getAllByConversationId(int $conversationId): ?array;
 }

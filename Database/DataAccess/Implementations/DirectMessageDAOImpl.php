@@ -30,8 +30,7 @@ class DirectMessageDAOImpl implements DirectMessageDAO
       return true;
     }
     
-    // TODO: findAllByConversationIdをgetAllByConversationIdに変更
-    public function findAllByConversationId(int $conversationId): ?array
+    public function getAllByConversationId(int $conversationId): ?array
     {
       $directMessageRowData = $this->fetchAllByConversationId($conversationId);
 

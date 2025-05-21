@@ -359,7 +359,7 @@ return [
             }
 
             $directMessageDAO = DAOFactory::getDirectMessage();
-            $directMessages = $directMessageDAO->findAllByConversationId($conversation->getId());
+            $directMessages = $directMessageDAO->getAllByConversationId($conversation->getId());
 
             $followDAO = DAOFactory::getFollowDAO();
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
