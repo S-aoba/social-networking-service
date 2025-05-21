@@ -8,6 +8,6 @@ interface ConversationDAO {
   public function create(Conversation $conversation): bool;
   public function findAllByUserId(int $userId): ?array;
   public function findByConversationId(int $id): ?Conversation;
-  public function existsByUserPair(Conversation $conversation): bool;
+  public function hasConversationWith(Conversation $conversation): bool;
   public function delete(int $id): bool;
 }

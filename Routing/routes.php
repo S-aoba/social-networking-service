@@ -705,7 +705,7 @@ return [
             );
             $conversationDAO = DAOFactory::getConversationDAO();
 
-            $isExistsConversation = $conversationDAO->existsByUserPair($conversation);
+            $isExistsConversation = $conversationDAO->hasConversationWith($conversation);
             if($isExistsConversation) throw new Exception('Conversation already exists.');
 
             $success = $conversationDAO->create($conversation);
