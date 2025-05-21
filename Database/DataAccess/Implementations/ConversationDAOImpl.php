@@ -11,7 +11,6 @@ use Models\Profile;
 
 class ConversationDAOImpl implements ConversationDAO 
 {
-    // Public
     public function create(Conversation $conversation): bool
     {
       if($conversation->getId() !== null) throw new \Exception('Cannot create a conversation with an existing ID. id: ' . $conversation->getId());
@@ -41,37 +40,6 @@ class ConversationDAOImpl implements ConversationDAO
       return $conversationsRowData;
     }
 
-    public function findByConversationId(int $id): ?Conversation
-    {
-      $conversationRowData = $this->findRowByConversationId($id);
-
-      if($conversationRowData === null) return null;
-      return $conversationRowData;
-    }
-
-    public function existsByUserPair(Conversation $conversation): bool
-    {
-      $conversationRowData = $this->existsRowByUserPair($conversation);
-
-      if($conversationRowData === false) return false;
-
-      return true;
-    }
-
-    public function delete(int $id): bool
-    {
-      $mysqli = DatabaseManager::getMysqliConnection();
-
-      $query = "DELETE FROM conversations WHERE id = ?";
-
-      $result = $mysqli->prepareAndExecute($query, 'i', [$id]);
-
-      if($result === false) return false;
-      
-      return true;
-    }
-
-    // Private
     private function findAllRowByUserId(int $userId): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -122,6 +90,14 @@ class ConversationDAOImpl implements ConversationDAO
       return $this->rowDataToConversations($result);
     }
 
+    public function findByConversationId(int $id): ?Conversation
+    {
+      $conversationRowData = $this->findRowByConversationId($id);
+
+      if($conversationRowData === null) return null;
+      return $conversationRowData;
+    }
+
     private function findRowByConversationId(int $id): ?Conversation 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
@@ -140,6 +116,15 @@ class ConversationDAOImpl implements ConversationDAO
       if(empty($result)) return null;
       
       return $this->rowDataToConversation($result[0]);
+    }
+
+    public function existsByUserPair(Conversation $conversation): bool
+    {
+      $conversationRowData = $this->existsRowByUserPair($conversation);
+
+      if($conversationRowData === false) return false;
+
+      return true;
     }
 
     private function existsRowByUserPair(Conversation $conversation): bool 
@@ -161,6 +146,19 @@ class ConversationDAOImpl implements ConversationDAO
       ]);
 
       return !empty($result);
+    }
+
+    public function delete(int $id): bool
+    {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "DELETE FROM conversations WHERE id = ?";
+
+      $result = $mysqli->prepareAndExecute($query, 'i', [$id]);
+
+      if($result === false) return false;
+      
+      return true;
     }
 
     private function rowDataToConversations(array $rowData): array 
