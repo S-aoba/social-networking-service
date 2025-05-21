@@ -4,10 +4,9 @@ namespace Database\DataAccess\Implementations;
 
 use Database\DatabaseManager;
 use Database\DataAccess\Interfaces\ConversationDAO;
+use Database\DataAccess\Mappers\ConversationMapper;
 
 use Models\Conversation;
-use Models\DirectMessge;
-use Models\Profile;
 
 class ConversationDAOImpl implements ConversationDAO 
 {
@@ -37,7 +36,7 @@ class ConversationDAOImpl implements ConversationDAO
 
       if($conversationsRowData === null) return null;
 
-      return $conversationsRowData;
+      return ConversationMapper::mapRowsToConversationDetails($conversationsRowData);
     }
 
     private function fetchAllByUserId(int $userId): ?array 
@@ -87,7 +86,7 @@ class ConversationDAOImpl implements ConversationDAO
 
       if(empty($result)) return null;
       
-      return $this->rowDataToConversations($result);
+      return $result;
     }
 
     public function findByConversationId(int $id): ?Conversation
@@ -95,10 +94,10 @@ class ConversationDAOImpl implements ConversationDAO
       $conversationRowData = $this->fetchById($id);
 
       if($conversationRowData === null) return null;
-      return $conversationRowData;
+      return ConversationMapper::mapRowToConversation($conversationRowData);
     }
 
-    private function fetchById(int $id): ?Conversation 
+    private function fetchById(int $id): ?array 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
@@ -115,7 +114,7 @@ class ConversationDAOImpl implements ConversationDAO
 
       if(empty($result)) return null;
       
-      return $this->rowDataToConversation($result[0]);
+      return $result[0];
     }
 
     public function hasConversationWith(Conversation $conversation): bool
@@ -159,55 +158,5 @@ class ConversationDAOImpl implements ConversationDAO
       if($result === false) return false;
       
       return true;
-    }
-
-    private function rowDataToConversations(array $rowData): array 
-    {
-      $conversations = [];
-
-      foreach($rowData as $data) {
-        $conversation = new Conversation(
-          user1Id: $data['user1_id'],
-          user2Id: $data['user2_id'],
-          id: $data['conversation_id'],
-          createdAt: $data['conversation_created_at']
-        );
-
-        $directMessage = null;
-        if(isset($data['dm_conversation_id']) && $data['dm_conversation_id'] !== null) {
-          $directMessage = new DirectMessge(
-            conversationId: $data['dm_conversation_id'],
-            senderId: $data['sender_id'],
-            content: $data['content'],
-            id: $data['dm_id'],
-            read_at: $data['read_at'],
-            createdAt: $data['dm_created_at']
-          );
-        }
-
-        $partner = new Profile(
-          username: $data['username'],
-          userId: $data['user_id'],
-          imagePath: $data['image_path'],
-        );
-
-        $conversations[] = [
-          'conversation' => $conversation,
-          'directMessage' => $directMessage,
-          'partner' => $partner,
-        ];
-      }
-
-      return $conversations;
-    }
-
-    private function rowDataToConversation(array $rowData): Conversation 
-    {
-      return new Conversation(
-        id: $rowData['id'],
-        user1Id: $rowData['user1_id'],
-        user2Id: $rowData['user2_id'],
-        createdAt: $rowData['created_at']
-      );
     }
 }
