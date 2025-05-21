@@ -123,12 +123,13 @@ class FollowDAOImpl implements FollowDAO
       return $this->rowDataToProfile($result);
     }
 
+    // TODO: checkIsFollowをisFollowingSelfに変更する
     public function checkIsFollow(int $userId, int $followingId): bool
     {
-      return $this->checkRowIsFollow($userId, $followingId);
+      return $this->checkSelfFollowStatus($userId, $followingId);
     }
 
-    private function checkRowIsFollow(int $userId, int $followingId):bool 
+    private function checkSelfFollowStatus(int $userId, int $followingId):bool 
     {
 
       $mysqli = DatabaseManager::getMysqliConnection();
