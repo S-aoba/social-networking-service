@@ -91,7 +91,7 @@ class PostDAOImpl implements PostDAO
 
       if($rowPost === null) return null;
 
-      return $this->rowDataToFullPost($rowPost)[0];
+      return PostMapper::mapRowsToPostDetails($rowPost)[0];
     }
 
     private function fetchById(int $postId, int $userId): ?array 
@@ -139,7 +139,7 @@ class PostDAOImpl implements PostDAO
 
       if($repliesRow === null) return null;
 
-      return $this->rowDataToFullPost($repliesRow);
+      return PostMapper::mapRowsToPostDetails($repliesRow);
     }
 
     private function fetchReplies(int $parentPostId, int $userId): ?array 
