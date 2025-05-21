@@ -37,12 +37,12 @@ class FollowDAOImpl implements FollowDAO
 
     public function getFollowerCount($userId): int
     {
-      $followerRow = $this->getRowFollowerCount($userId);
+      $followerRow = $this->fetchFollowerCount($userId);
 
       return $followerRow;
     }
 
-    private function getRowFollowerCount(int $userId): int 
+    private function fetchFollowerCount(int $userId): int 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
