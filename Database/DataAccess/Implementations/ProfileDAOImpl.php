@@ -40,14 +40,14 @@ class ProfileDAOImpl implements ProfileDAO
 
     public function getByUsername(string $username): ?Profile
     {
-      $profileRowData = $this->getRowByUsername($username);
+      $profileRowData = $this->fetchByUsername($username);
 
       if($profileRowData === null) return null;
 
       return $this->rowDataToProfile($profileRowData);
     }
 
-    private function getRowByUsername(string $username):?array
+    private function fetchByUsername(string $username):?array
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
