@@ -146,14 +146,14 @@ class ProfileDAOImpl implements ProfileDAO
 
     public function updataPrpfileIcon(string $imagePath, int $userId): bool
     {
-      $rowData = $this->updateRowProfileIcon($imagePath, $userId);
+      $rowData = $this->saveProfileIcon($imagePath, $userId);
 
       if($rowData === false) return false;
 
       return true;
     }
 
-    private function updateRowProfileIcon(string $imagePath, int $userId): bool 
+    private function saveProfileIcon(string $imagePath, int $userId): bool 
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
