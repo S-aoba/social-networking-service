@@ -48,8 +48,4 @@ class ImagePathResolver
       $this->resolvePost($item['post']);
     }
   }
-
-   /**
-    * Follower userの複数の画像の処理
-    */
 }
