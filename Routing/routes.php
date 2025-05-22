@@ -336,7 +336,7 @@ return [
     }),
 
     // Auth
-    'api/login' => Route::create('form/login', function (): HTTPRenderer {
+    'api/login' => Route::create('api/login', function (): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -379,7 +379,7 @@ return [
             ]);
         }
     })->setMiddleware(['guest']),
-    'api/register' => Route::create('form/register', function (): HTTPRenderer {
+    'api/register' => Route::create('api/register', function (): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
