@@ -349,23 +349,34 @@ return [
 
             Authenticate::authenticate($validatedData['email'], $validatedData['password']);
 
-            FlashData::setFlashData('success', 'Logged in successfully.');
-            return new RedirectRenderer('');
+            // TODO: message-boxesを作成したら使用する
+            // FlashData::setFlashData('success', 'Logged in successfully.');
+            return new JSONRenderer([
+                'status' => 'success',
+                'message' => 'Logged in successfully.',
+                'redirect' => ''
+            ]);
         } catch (AuthenticationFailureException $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'Failed to login, wrong email and/or password.');
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Failed to login, wrong email and/or password.'
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'Invalid Data.');
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid Data.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'An error occurred.');
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['guest']),
     'form/register' => Route::create('form/register', function (): HTTPRenderer {
