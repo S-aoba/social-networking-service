@@ -108,19 +108,8 @@ return [
 
             $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
-            if($posts !== null) {
-                foreach ($posts as &$data) {
-                    $data['author'] = $queryUserProfile;
-                }
-                if(isset($data)) {
-                    unset($data);
-                }
-
-                foreach($posts as $data) {
-                    $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($data['post']->getImagePath());
-                    $data['post']->setImagePath($publicPostImagePath);
-                }
-            };
+            $imagePathResolver->resolveProfileMany($posts, 'author');
+            $imagePathResolver->resolvePostMany($posts);
 
             $followDAO = DAOFactory::getFollowDAO();
             $followerCount = $followDAO->getFollowerCount($queryUserProfile->getUserId());
