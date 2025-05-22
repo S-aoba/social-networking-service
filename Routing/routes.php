@@ -468,7 +468,7 @@ return [
     })->setMiddleware(['guest']),
 
     // Create
-    'form/post' => Route::create('form/post', function(): HTTPRenderer {
+    'api/post' => Route::create('api/post', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -504,15 +504,23 @@ return [
                 if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
             }
 
-            return new RedirectRenderer('');
+            return new JSONRenderer([
+                'status' => 'success'
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid Data.'
+            ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
     'form/follow' => Route::create('form/follow', function(): HTTPRenderer {

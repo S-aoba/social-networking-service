@@ -7,7 +7,9 @@
     </div>
   </div>
   <div class="w-full">
-    <form action="form/post" method="post" enctype="multipart/form-data">
+    <div id="create-post-error-message" class="hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg">
+    </div>
+    <form id="create-post-form" method="post" enctype="multipart/form-data">
       <input 
         type="hidden" 
         name="csrf_token" 
@@ -51,6 +53,34 @@
     </form>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const createPostForm = document.getElementById('create-post-form');
+    const errorMessage = document.getElementById('create-post-error-message');
+
+    createPostForm.addEventListener('submit', async(e) => {
+      e.preventDefault();
+
+      const formData = new FormData(createPostForm);
+
+      const res = await fetch(
+        'api/post', {
+          method: 'POST',
+          body: formData
+        }
+      );
+
+      const data = await res.json();
+      if(data.status === 'success') window.location.reload();
+      else {
+        let msg = '';
+        errorMessage.textContent = data.message;
+        errorMessage.classList.remove('hidden');
+      }
+    })
+  })
+</script>
 
 <script>
   window.addEventListener('DOMContentLoaded', function() {
