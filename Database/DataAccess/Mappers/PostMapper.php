@@ -54,8 +54,20 @@ class PostMapper
                 createdAt: $data['created_at'] ?? null,
                 parentPostId: $data['parent_post_id'] ?? null,
             );
+
+            $profile = new Profile(
+                username: $data['username'],
+                userId: $data['author_user_id'],
+                imagePath: $data['authro_image_path'],
+                address: $data['address'],
+                age: $data['age'],
+                hobby: $data['hobby'],
+                selfIntroduction: $data['self_introduction']
+            );
+
             return [
                 'post' => $post,
+                'author' => $profile,
                 'replyCount' => $data['reply_count'] ?? 0,
                 'likeCount' => $data['like_count'] ?? 0,
                 'liked' => $data['liked'] ?? 0
