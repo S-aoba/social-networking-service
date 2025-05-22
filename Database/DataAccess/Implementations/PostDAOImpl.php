@@ -229,7 +229,7 @@ class PostDAOImpl implements PostDAO
 
       if($rowPost === null) return null;
 
-      return PostMapper::mapRowToPost($rowPost);
+      return PostMapper::toPost($rowPost);
     }
  
     private function fetchParentPost(int $postId): ?array 

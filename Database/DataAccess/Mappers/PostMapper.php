@@ -64,7 +64,7 @@ class PostMapper
      * @param array $rowData
      * @return Post|null
      */
-    public static function mapRowToPost(array $rowData): ?Post
+    public static function toPost(array $rowData): ?Post
     {
         $data = is_array($rowData[0] ?? null) ? $rowData[0] : $rowData;
 
