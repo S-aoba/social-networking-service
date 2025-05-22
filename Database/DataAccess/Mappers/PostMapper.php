@@ -39,7 +39,7 @@ class PostMapper
     /**
      * 自分の投稿一覧（著者情報なし）へ変換
      */
-    public static function mapRowsToOwnPosts(array $rowData): array
+    public static function toOwnPosts(array $rowData): array
     {
         return array_map(function($data) {
             $post = new Post(

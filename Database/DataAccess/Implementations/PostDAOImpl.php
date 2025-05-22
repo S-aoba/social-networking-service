@@ -186,7 +186,7 @@ class PostDAOImpl implements PostDAO
 
       if($postRow === null) return null;
 
-      return PostMapper::mapRowsToOwnPosts($postRow);
+      return PostMapper::toOwnPosts($postRow);
     }
 
     private function fetchByUserId(int $userId): ?array 
