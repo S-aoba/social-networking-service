@@ -9,6 +9,8 @@ class PostMapper
 {
     /**
      * 投稿＋著者情報＋カウント類を含む配列へ変換
+     * @param array $rowData DBから取得した連想配列の配列
+     * @return array<int, array{post: Post, author: Profile, replyCount: int, likeCount: int, liked: int}>
      */
     public static function toPostDetails(array $rowData): array
     {
@@ -38,6 +40,8 @@ class PostMapper
 
     /**
      * 自分の投稿一覧（著者情報なし）へ変換
+     * @param array $rowData DBから取得した連想配列の配列
+     * @return array<int, array{post: Post, replyCount: int, likeCount: int, liked: int}>
      */
     public static function toOwnPosts(array $rowData): array
     {
@@ -61,7 +65,7 @@ class PostMapper
 
     /**
      * 1件分の配列データをPostオブジェクトに変換
-     * @param array $rowData
+     * @param array $rowData DBから取得した1件または1件のみの配列
      * @return Post|null
      */
     public static function toPost(array $rowData): ?Post
