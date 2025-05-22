@@ -381,7 +381,6 @@ return [
     })->setMiddleware(['guest']),
     'form/register' => Route::create('form/register', function (): HTTPRenderer {
         try {
-            // リクエストメソッドがPOSTかどうかをチェックします
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
             $required_fields = [
@@ -393,31 +392,30 @@ return [
 
             $userDao = DAOFactory::getUserDAO();
 
-            // シンプルな検証
             $validatedData = ValidationHelper::validateAuth($required_fields, $_POST);
 
             if($validatedData['confirm_password'] !== $validatedData['password']){
-                FlashData::setFlashData('error', 'Invalid Password!');
-                return new RedirectRenderer('register');
+                return new JSONRenderer([
+                    'status' => 'error',
+                    'message' => 'Invalid Password!'
+                ]);
             }
 
-            // Eメールは一意でなければならないので、Eメールがすでに使用されていないか確認します
             if($userDao->getByEmail($validatedData['email'])){
-                // FlashData::setFlashData('error', 'Email is already in use!');
-                return new RedirectRenderer('register');
+                return new JSONRenderer([
+                    'status' => 'error',
+                    'message' => 'Email is already in use!'
+                ]);
             }
 
-            // 新しいUserオブジェクトを作成します
             $user = new User(
                 email: $validatedData['email'],
             );
 
-            // データベースにユーザーを作成しようとします
             $success = $userDao->create($user, $validatedData['password']);
             
             if (!$success) throw new Exception('Failed to create new user!');
 
-            // User作成成功後、Profileを作成する
             $profileDAO = DAOFactory::getProfileDAO();
             $profile = new Profile(
                 username: $validatedData['username'],
@@ -446,18 +444,26 @@ return [
 
             Authenticate::loginAsUser($user);
 
-            FlashData::setFlashData('success', 'Account successfully created.');
-            return new RedirectRenderer('');
+            // FlashData::setFlashData('success', 'Account successfully created.');
+            return new JSONRenderer([
+                'status' => 'success',
+                // TODO: '' routeを'home'に変更したらこちらも変更
+                'redirect' => ''
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'Invalid Data.');
-            return new RedirectRenderer('register');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid Data.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'An error occurred.');
-            return new RedirectRenderer('register');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['guest']),
 
