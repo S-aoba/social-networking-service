@@ -10,7 +10,7 @@ class PostMapper
     /**
      * 投稿＋著者情報＋カウント類を含む配列へ変換
      */
-    public static function mapRowsToPostDetails(array $rowData): array
+    public static function toPostDetails(array $rowData): array
     {
       return array_map(function($data) {
             $post = new Post(

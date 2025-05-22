@@ -41,7 +41,7 @@ class PostDAOImpl implements PostDAO
       $rowFollowingPosts = $this->fetchFollowingPosts($userId);
       if($rowFollowingPosts === null) return null;
       
-      return PostMapper::mapRowsToPostDetails($rowFollowingPosts);
+      return PostMapper::toPostDetails($rowFollowingPosts);
     }
 
     private function fetchFollowingPosts(int $userId): ?array
@@ -90,7 +90,7 @@ class PostDAOImpl implements PostDAO
 
       if($rowPost === null) return null;
 
-      return PostMapper::mapRowsToPostDetails($rowPost)[0];
+      return PostMapper::toPostDetails($rowPost)[0];
     }
 
     private function fetchById(int $postId, int $userId): ?array 
@@ -138,7 +138,7 @@ class PostDAOImpl implements PostDAO
 
       if($repliesRow === null) return null;
 
-      return PostMapper::mapRowsToPostDetails($repliesRow);
+      return PostMapper::toPostDetails($repliesRow);
     }
 
     private function fetchReplies(int $parentPostId, int $userId): ?array 
