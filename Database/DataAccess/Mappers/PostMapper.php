@@ -49,8 +49,8 @@ class PostMapper
             $post = new Post(
                 content: $data['content'] ?? '',
                 imagePath: $data['post_image_path'] ?? null,
-                userId: $data['user_id'] ?? null,
-                id: $data['id'] ?? null,
+                userId: $data['post_user_id'] ?? null,
+                id: $data['post_id'] ?? null,
                 createdAt: $data['created_at'] ?? null,
                 parentPostId: $data['parent_post_id'] ?? null,
             );

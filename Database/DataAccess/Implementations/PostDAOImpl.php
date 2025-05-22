@@ -193,8 +193,22 @@ class PostDAOImpl implements PostDAO
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT * ,
+      $query = "SELECT
+                posts.id AS post_id,
+                posts.user_id AS post_user_id,
                 posts.image_path AS post_image_path,
+                posts.created_at,
+                posts.parent_post_id,
+                posts.content,
+
+                p.id AS authro_id,
+                p.user_id AS author_user_id,
+                p.image_path AS author_image_path,
+                p.username,
+                p.address,
+                p.age,
+                p.hobby,
+                p.self_introduction,
                 (
                   SELECT COUNT(*) 
                   FROM posts AS child 
@@ -212,14 +226,15 @@ class PostDAOImpl implements PostDAO
                     WHERE post_id = posts.id AND user_id = ?
                   )
                 ) AS liked
-                FROM posts 
-                WHERE user_id = ? 
+                FROM posts
+                JOIN profiles p ON p.user_id = posts.user_id
+                WHERE posts.user_id = ? 
                 ORDER BY posts.created_at DESC 
                 LIMIT 10";
 
       $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $userId]);
       if(empty($result)) return null;
-
+      
       return $result;
     }
 
