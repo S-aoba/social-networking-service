@@ -58,7 +58,7 @@ class PostMapper
             $profile = new Profile(
                 username: $data['username'],
                 userId: $data['author_user_id'],
-                imagePath: $data['authro_image_path'],
+                imagePath: $data['author_image_path'],
                 address: $data['address'],
                 age: $data['age'],
                 hobby: $data['hobby'],
