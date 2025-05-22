@@ -41,7 +41,7 @@
             errorMessage.classList.add('hidden');
             errorMessage.textContent = '';
 
-            const res = await fetch('form/register', {
+            const res = await fetch('api/register', {
                 method: 'POST',
                 body: formData
             });
