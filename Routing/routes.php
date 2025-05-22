@@ -67,15 +67,8 @@ return [
             $postDAO = DAOFactory::getPostDAO();
             $posts = $postDAO->getFollowingPosts($authUserProfile->getUserId());
             
-            if($posts !== null) {
-                foreach($posts as $postData) {
-                    $publicPostImagePath = $imageUrlBuilder->buildPostImageUrl($postData['post']->getImagePath());
-                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($postData['author']->getImagePath());
-                    
-                    $postData['post']->setImagePath($publicPostImagePath);
-                    $postData['author']->setImagePath($publicAuthorImagePath);
-                }
-            }
+            $imagePathResolver->resolveProfileMany($posts, 'author');
+            $imagePathResolver->resolvePostMany($posts);
 
             return new HTMLRenderer('page/home', [
                 'authUser' => $authUserProfile,
@@ -177,20 +170,12 @@ return [
             $postDAO = DAOFactory::getPostDAO();
             $post = $postDAO->getById($validatedData['id'], $authUserProfile->getUserId());
             if($post === null) return new RedirectRenderer('');
-            
             $imagePathResolver->resolvePost($post['post']);
             $imagePathResolver->resolveProfile($post['author']);
             
             $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());
-            if($replies != null) {
-                foreach($replies as $data) {
-                    $publicReplyImagePath = $imageUrlBuilder->buildPostImageUrl($data['post']->getImagePath());
-                    $publicAuthorUserImagePath = $imageUrlBuilder->buildProfileImageUrl($data['author']->getImagePath());
-
-                    $data['post']->setImagePath($publicReplyImagePath);
-                    $data['author']->setImagePath($publicAuthorUserImagePath);
-                }
-            }
+            $imagePathResolver->resolveProfileMany($replies, 'author');
+            $imagePathResolver->resolvePostMany($replies);
             
             return new HTMLRenderer('page/post', [
                 'authUser' => $authUserProfile,
@@ -226,13 +211,7 @@ return [
 
             $followDAO = DAOFactory::getFollowDAO();
             $following = $followDAO->getFollowing($authUserProfile->getUserId());
-            
-            if($following !== null) {
-                foreach($following as $user) {
-                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
-                    $user->setImagePath($publicAuthorImagePath);
-                };
-            }
+            $imagePathResolver->resolveProfileMany($following, null);
             
             return new HTMLRenderer('page/following', [
                 'authUser' => $authUserProfile,
@@ -260,14 +239,8 @@ return [
 
             $followDAO = DAOFactory::getFollowDAO();
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
+            $imagePathResolver->resolveProfileMany($followers, null);
             
-            if($followers !== null) {
-                foreach($followers as $user) {
-                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
-                    $user->setImagePath($publicAuthorImagePath);
-                };
-            }
-
             return new HTMLRenderer('page/follower', [
                 'authUser' => $authUserProfile,
                 'data' => $followers,
@@ -296,21 +269,11 @@ return [
             $conversationDAO = DAOFactory::getConversationDAO();
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
             
-            if(!empty($conversations)) {
-                foreach($conversations as $data) {
-                    $imagePathResolver->resolveProfile($data['partner']);
-                }
-            }
+            $imagePathResolver->resolveProfileMany($conversations, 'partner');
 
             $followDAO = DAOFactory::getFollowDAO();
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
-            
-            if($followers !== null) {
-                foreach($followers as $user) {
-                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
-                    $user->setImagePath($publicAuthorImagePath);
-                };
-            }
+            $imagePathResolver->resolveProfileMany($followers, null);
 
             return new HTMLRenderer('page/messages', [
                 'authUser' => $authUserProfile,
@@ -355,24 +318,14 @@ return [
             $imagePathResolver->resolveProfile($partnerProfile);
 
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
-            if(!empty($conversations)) {
-                foreach($conversations as $data) {
-                    $imagePathResolver->resolveProfile($data['partner']);
-                }
-            }
+            $imagePathResolver->resolveProfileMany($conversations, 'partner');
 
             $directMessageDAO = DAOFactory::getDirectMessage();
             $directMessages = $directMessageDAO->getAllByConversationId($conversation->getId());
 
             $followDAO = DAOFactory::getFollowDAO();
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
-            if($followers !== null) {
-                foreach($followers as $user) {
-                    $publicAuthorImagePath = $imageUrlBuilder->buildProfileImageUrl($user->getImagePath());
-
-                    $user->setImagePath($publicAuthorImagePath);
-                };
-            }
+            $imagePathResolver->resolveProfileMany($followers, null);
             
             return new HTMLRenderer('page/message', [
                 'conversation' => $conversation,
