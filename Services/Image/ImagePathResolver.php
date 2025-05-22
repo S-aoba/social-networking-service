@@ -27,16 +27,18 @@ class ImagePathResolver
   }
 
   /**
-   * PostとProfileの複数の画像の処理
+   * 複数のProfile画像パスを解決する
+   * @param array|null $data 対象データ配列
+   * @param string|null $key 'author', 'partner', または null のいずれか。nullの場合は$item自体がProfile、指定時は$item[$key]がProfile
    */
   public function resolveProfileMany(?array $data, ?string $key): void
   {
-    if(empty($data)) return;
+      if(empty($data)) return;
 
-    foreach($data as $item)
-    {
-      $this->resolveProfile($key === null ? $item : $item[$key]);
-    }
+      foreach($data as $item)
+      {
+          $this->resolveProfile($key === null ? $item : $item[$key]);
+      }
   }
 
   public function resolvePostMany(?array $data): void
