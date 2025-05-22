@@ -11,7 +11,7 @@ class DirectMessageMapper
      * @param array $rowData
      * @return DirectMessge|null
      */
-    public static function mapRowToDirectMessage(array $rowData): ?DirectMessge
+    public static function toDirectMessage(array $rowData): ?DirectMessge
     {
         $data = is_array($rowData[0]) ? $rowData[0] : $rowData;
 
@@ -30,10 +30,10 @@ class DirectMessageMapper
      * @param array $rows
      * @return DirectMessge[]
      */
-    public static function mapRowsToDirectMessages(array $rows): array
+    public static function toDirectMessages(array $rows): array
     {
         if (empty($rows)) return [];
 
-        return array_map([self::class, 'mapRowToDirectMessage'], $rows);
+        return array_map([self::class, 'toDirectMessage'], $rows);
     }
 }

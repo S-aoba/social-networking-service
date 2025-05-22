@@ -11,7 +11,7 @@ class ProfileMapper
      * @param array $rowData
      * @return Profile|null
      */
-    public static function mapRowToProfile(array $rowData): ?Profile
+    public static function toProfile(array $rowData): ?Profile
     {
         // 複数行の場合は最初の1件のみ使う
         $data = is_array($rowData[0] ?? null) ? $rowData[0] : $rowData;

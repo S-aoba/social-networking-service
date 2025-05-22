@@ -45,7 +45,7 @@ class ProfileDAOImpl implements ProfileDAO
 
       if($profileRowData === null) return null;
 
-      return ProfileMapper::mapRowToProfile($profileRowData);
+      return ProfileMapper::toProfile($profileRowData);
     }
 
     private function fetchByUsername(string $username):?array
@@ -67,7 +67,7 @@ class ProfileDAOImpl implements ProfileDAO
 
       if($profileRow === null) return null;
 
-      return ProfileMapper::mapRowToProfile($profileRow);
+      return ProfileMapper::toProfile($profileRow);
     }
 
     private function fetchByUserId(int $userId): ?array

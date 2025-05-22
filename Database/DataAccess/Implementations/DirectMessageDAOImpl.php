@@ -37,7 +37,7 @@ class DirectMessageDAOImpl implements DirectMessageDAO
 
       if($directMessageRowData === null) return null;
 
-      return DirectMessageMapper::mapRowsToDirectMessages($directMessageRowData);
+      return DirectMessageMapper::toDirectMessages($directMessageRowData);
     }
 
     private function fetchAllByConversationId(int $conversationId): ?array 

@@ -13,7 +13,7 @@ class ConversationMapper
      * @param array $rowData
      * @return Conversation|null
      */
-    public static function mapRowToConversation(array $rowData): ?Conversation
+    public static function toConversation(array $rowData): ?Conversation
     {
         $data = is_array($rowData[0] ?? null) ? $rowData[0] : $rowData;
 
@@ -30,7 +30,7 @@ class ConversationMapper
      * @param array $rowData
      * @return array<int, array{conversation: Conversation, directMessage: ?DirectMessge, partner: Profile}>
      */
-    public static function mapRowsToConversationDetails(array $rowData): array
+    public static function toConversationDetails(array $rowData): array
     {
         return array_map(function($data) {
           $conversation = new Conversation(

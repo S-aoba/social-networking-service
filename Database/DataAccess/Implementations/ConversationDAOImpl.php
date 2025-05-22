@@ -36,7 +36,7 @@ class ConversationDAOImpl implements ConversationDAO
 
       if($conversationsRowData === null) return null;
 
-      return ConversationMapper::mapRowsToConversationDetails($conversationsRowData);
+      return ConversationMapper::toConversationDetails($conversationsRowData);
     }
 
     private function fetchAllByUserId(int $userId): ?array 
@@ -94,7 +94,7 @@ class ConversationDAOImpl implements ConversationDAO
       $conversationRowData = $this->fetchById($id);
 
       if($conversationRowData === null) return null;
-      return ConversationMapper::mapRowToConversation($conversationRowData);
+      return ConversationMapper::toConversation($conversationRowData);
     }
 
     private function fetchById(int $id): ?array 
