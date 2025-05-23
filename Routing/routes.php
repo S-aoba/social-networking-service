@@ -707,15 +707,24 @@ return [
             $success = $conversationDAO->create($conversation);
             if($success === false) throw new Exception('Failed to create conversation.');
 
-            return new JSONRenderer(['status' => 'success']);
+            return new JSONRenderer([
+                'status' => 'success',
+                'id' => null
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid data.'
+            ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'errror',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
     'form/direct-message' => Route::create('form/message', function(): HTTPRenderer {
