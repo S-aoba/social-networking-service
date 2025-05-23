@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     errorMessage.classList.add('hidden');
     errorMessage.textContent = '';
     
-    const res = await fetch('form/follow', {
+    const res = await fetch('api/follow', {
       method: "POST",
       body: formData
     })

@@ -523,7 +523,7 @@ return [
             ]);
         }
     })->setMiddleware(['auth']),
-    'form/follow' => Route::create('form/follow', function(): HTTPRenderer {
+    'api/follow' => Route::create('api/follow', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
