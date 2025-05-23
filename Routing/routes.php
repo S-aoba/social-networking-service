@@ -709,7 +709,7 @@ return [
 
             return new JSONRenderer([
                 'status' => 'success',
-                'id' => null
+                'id' => $conversation->getId()
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
