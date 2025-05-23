@@ -636,7 +636,9 @@ return [
             $success = $isLiked ? $likeDAO->unlike($like) : $likeDAO->createLike($like);
             if($success === false) throw new Exception('Failed to like post!');
             
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'success'
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
