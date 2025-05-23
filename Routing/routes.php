@@ -633,7 +633,7 @@ return [
 
             $isLiked = $likeDAO->hasLiked($like);
 
-            $success = $isLiked ? $likeDAO->unlike($like) : $likeDAO->createLike($like);
+            $success = $isLiked ? $likeDAO->unlike($like) : $likeDAO->like($like);
             if($success === false) throw new Exception('Failed to like post!');
 
             $likeCount = $likeDAO->getLikeCount($like);
