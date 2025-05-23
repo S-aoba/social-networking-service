@@ -74,7 +74,6 @@
       const data = await res.json();
       if(data.status === 'success') window.location.reload();
       else {
-        let msg = '';
         errorMessage.textContent = data.message;
         errorMessage.classList.remove('hidden');
       }

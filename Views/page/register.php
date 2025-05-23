@@ -50,7 +50,6 @@
             
             if(data.status === 'success') window.location.href = data.redirect;
             else {
-                let msg = '';
                 errorMessage.textContent = data.message;
                 errorMessage.classList.remove('hidden');
             }
