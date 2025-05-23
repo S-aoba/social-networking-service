@@ -29,7 +29,6 @@ window.addEventListener("DOMContentLoaded", () => {
           // TODO: いいねのbuttonにaria-label属性をつけて、imgのaltは空文字にする
           // いいねをしていない場合
           if (liked === false) {
-            console.log("いいねをしました。");
             likeIconImg.onload = function () {
               if (
                 likeCountDiv &&
@@ -46,7 +45,17 @@ window.addEventListener("DOMContentLoaded", () => {
           }
           // いいねをしている場合
           else {
-            console.log("いいねを取り消しました。");
+            likeIconImg.onload = function () {
+              if(likeCountDiv && typeof likeCount === 'number' && likeCount > 0) {
+                likeCountDiv.textContent = likeCount;
+                likeCountDiv.classList.remove('text-rose-500');
+                likeCountDiv.classList.add('text-slate-400');
+              }
+              else {
+                likeCountDiv.classList.add('hidden');
+              }
+              
+            }
             likeIconImg.src = "/images/unlike-icon.svg";
             likeIconImg.alt = "Unlike";
           }
