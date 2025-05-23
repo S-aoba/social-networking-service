@@ -4,6 +4,9 @@ window.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
 
       const formData = new FormData(form);
+      const errorMessage = document.querySelector('.like-error-message');
+      errorMessage.classList.add('hidden');
+      errorMessage.textContent = '';
       
       const res = await fetch('api/like', {
         method: "POST",
@@ -16,7 +19,8 @@ window.addEventListener('DOMContentLoaded', () => {
         window.location.reload();
       }
       else {
-        console.log('error');
+        errorMessage.textContent = data.message;
+        errorMessage.classList.remove('hidden');
       }
     })
   })

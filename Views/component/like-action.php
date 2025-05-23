@@ -16,4 +16,5 @@
     <img src="/images/unlike-icon.svg" alt="unlike-icon" class="size-4">
   <?php endif; ?>
   </button>
+  <div class="like-error-message hidden py-2 text-xs text-center text-red-600 bg-red-100 rounded-lg"></div>
 </form>
