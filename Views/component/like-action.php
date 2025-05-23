@@ -6,10 +6,10 @@
     <div class="flex items-center space-x-1">
       <?php if($data['liked']): ?>
         <img src="/images/like-icon.svg" alt="unlike-icon" class="size-4">
-        <div class="text-sm text-rose-500"><?= $data['likeCount'] ?></div>
+        <div class="like-count text-sm text-rose-500"><?= $data['likeCount'] ?></div>
       <?php else: ?>
         <img src="/images/unlike-icon.svg" alt="unlike-icon" class="size-4">
-        <div class="text-sm text-slate-400"><?= $data['likeCount'] ?></div>
+        <div class="like-count text-sm text-slate-400"><?= $data['likeCount'] ?></div>
       <?php endif; ?>
     </div>
   <?php else: ?>

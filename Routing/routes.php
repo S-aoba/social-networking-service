@@ -637,7 +637,8 @@ return [
             if($success === false) throw new Exception('Failed to like post!');
             
             return new JSONRenderer([
-                'status' => 'success'
+                'status' => 'success',
+                'liked' => $isLiked,
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
