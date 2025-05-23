@@ -37,11 +37,8 @@ window.addEventListener("DOMContentLoaded", () => {
                 likeCount > 0
               ) {
                 likeCountDiv.textContent = likeCount;
-                likeCountDiv.style.display = "inline";
-                likeCountDiv.classList.remove("text-slate-400");
+                likeCountDiv.classList.remove("hidden", "text-slate-400");
                 likeCountDiv.classList.add("text-rose-500");
-              } else if (likeCountDiv) {
-                likeCountDiv.style.display = "none";
               }
             };
             likeIconImg.src = "/images/like-icon.svg";
