@@ -5,7 +5,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       const formData = new FormData(form);
       
-      const res = await fetch('http://localhost:8000/form/like', {
+      const res = await fetch('api/like', {
         method: "POST",
         body: formData
       })

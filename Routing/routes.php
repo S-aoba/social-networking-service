@@ -613,7 +613,7 @@ return [
             return new RedirectRenderer('login');
         }
     })->setMiddleware(['auth']),
-    'form/like' => Route::create('form/like', function(): HTTPRenderer {
+    'api/like' => Route::create('api/like', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
