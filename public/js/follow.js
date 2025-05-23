@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const formData = new FormData(followForm);
     
-    const res = await fetch('http://localhost:8000/form/follow', {
+    const res = await fetch('form/follow', {
       method: "POST",
       body: formData
     })
