@@ -640,11 +640,17 @@ return [
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
     'form/conversation' => Route::create('form/conversation', function(): HTTPRenderer {
