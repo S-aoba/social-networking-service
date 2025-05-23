@@ -18,35 +18,47 @@ window.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (data.status === "success") {
-        // アイコンとカウントの更新
         const button = form.querySelector('button[type="submit"]');
         if (button) {
-          // アイコン部分を探す
-          const iconImg = button.querySelector("img");
-          const countDiv = button.querySelector("like-count");
-          if (iconImg) {
-            if (data.liked) {
-              iconImg.src = "/images/unlike-icon.svg";
-              iconImg.alt = "unlike-icon";
-            } else {
-              iconImg.src = "/images/like-icon.svg";
-              iconImg.alt = "unlike-icon";
-            }
+          const likeIconImg = button.querySelector("img");
+          const likeCountDiv = button.querySelector("div.like-count");
+
+          const liked = data.liked;
+          const likeCount = data.likeCount;
+
+          // TODO: いいねのbuttonにaria-label属性をつけて、imgのaltは空文字にする
+          // いいねをしていない場合
+          if (liked === false) {
+            console.log("いいねをしました。");
+            likeIconImg.onload = function () {
+              if (
+                likeCountDiv &&
+                typeof likeCount === "number" &&
+                likeCount > 0
+              ) {
+                likeCountDiv.textContent = likeCount;
+                likeCountDiv.style.display = "inline";
+                likeCountDiv.classList.remove("text-slate-400");
+                likeCountDiv.classList.add("text-rose-500");
+              } else if (likeCountDiv) {
+                likeCountDiv.style.display = "none";
+              }
+            };
+            likeIconImg.src = "/images/like-icon.svg";
+            likeIconImg.alt = "Like";
           }
-          if (countDiv) {
-            countDiv.textContent = data.likeCount;
-            if (data.liked) {
-              countDiv.classList.remove("text-slate-400");
-              countDiv.classList.add("text-rose-500");
-            } else {
-              countDiv.classList.remove("text-rose-500");
-              countDiv.classList.add("text-slate-400");
-            }
+          // いいねをしている場合
+          else {
+            console.log("いいねを取り消しました。");
+            likeIconImg.src = "/images/unlike-icon.svg";
+            likeIconImg.alt = "Unlike";
           }
         }
-      } else if (errorMessage) {
+      } else if (errorMessage && data.status === "error") {
         errorMessage.textContent = data.message;
         errorMessage.classList.remove("hidden");
+      } else {
+        console.log("error message field is nothing.");
       }
     });
   });
