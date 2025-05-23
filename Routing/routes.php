@@ -602,15 +602,24 @@ return [
                 if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
             }
 
-            return new RedirectRenderer('post?id=' . $validatedData['parent_post_id']);
+            return new JSONRenderer([
+                'status' => 'success',
+                'id' => $parentPost->getId()
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid data.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
     'api/like' => Route::create('api/like', function(): HTTPRenderer {
