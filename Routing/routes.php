@@ -603,8 +603,7 @@ return [
             }
 
             return new JSONRenderer([
-                'status' => 'success',
-                'id' => $parentPost->getId()
+                'status' => 'success'
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
