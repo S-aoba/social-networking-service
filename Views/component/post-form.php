@@ -63,6 +63,8 @@
       e.preventDefault();
 
       const formData = new FormData(createPostForm);
+      errorMessage.classList.add('hidden');
+      errorMessage.textContent = '';
 
       const res = await fetch(
         'api/post', {
