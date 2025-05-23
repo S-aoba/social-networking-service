@@ -26,7 +26,6 @@ window.addEventListener("DOMContentLoaded", () => {
           const liked = data.liked;
           const likeCount = data.likeCount;
 
-          // TODO: いいねのbuttonにaria-label属性をつけて、imgのaltは空文字にする
           // いいねをしていない場合
           if (liked === false) {
             likeIconImg.onload = function () {
