@@ -15,7 +15,8 @@
       </div>
     </div>
     <div class="w-full">
-      <form action="form/reply" method="post" enctype="multipart/form-data">
+      <div id="reply-error-message" class="hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
+      <form id="reply-form" method="post" enctype="multipart/form-data">
         <input 
           type="hidden" 
           name="csrf_token" 
@@ -77,6 +78,36 @@
 <script src="/js/like.js"></script>
 <script src="/js/open-delete-post-menu.js"></script>
 <script src="/js/open-delete-post-modal.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    const replyForm = document.getElementById('reply-form');
+    const errorMessage = document.getElementById('reply-error-message');
+
+    replyForm.addEventListener('submit', async(e) => {
+      e.preventDefault();
+
+      const formData = new FormData(replyForm);
+      errorMessage.textContent = '';
+      errorMessage.classList.add('hidden');
+
+      const res = await fetch('api/reply', {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if(data.status === 'success') {
+        window.location.reload();
+      }
+      else {
+        errorMessage.textContent = data.message;
+        errorMessage.classList.remove('hidden');
+      }
+    })
+
+  })
+</script>
 <script>
   window.addEventListener('DOMContentLoaded', function() {
     const uploadsImage = document.getElementById('upload-file');
