@@ -13,7 +13,10 @@
       <?php endif; ?>
     </div>
   <?php else: ?>
-    <img src="/images/unlike-icon.svg" alt="unlike-icon" class="size-4">
+    <div class="flex items-center space-x-1">
+      <img src="/images/unlike-icon.svg" alt="unlike-icon" class="size-4">
+      <div class="like-count hidden text-sm text-rose-500"></div>
+    </div>
   <?php endif; ?>
   </button>
   <div class="like-error-message hidden py-2 text-xs text-center text-red-600 bg-red-100 rounded-lg"></div>
