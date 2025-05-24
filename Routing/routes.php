@@ -766,6 +766,13 @@ return [
                 'status' => 'success',
                 'id' => $conversation->getId()
             ]);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid data.'
+            ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
