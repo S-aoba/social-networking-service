@@ -864,7 +864,10 @@ return [
                 $imageStorage->delete($prevProfileImagePath);
             }
             
-            return new RedirectRenderer('profile?user=' . $profile->getUsername());
+            return new JSONRenderer([
+                'status' => 'success',
+                'redirect' => 'profile?user=' . $profile->getUsername()
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
