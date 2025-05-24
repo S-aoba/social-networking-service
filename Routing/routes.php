@@ -886,7 +886,7 @@ return [
     })->setMiddleware(['auth']),
 
     // Delete
-    'form/delete/post' => Route::create('form/delete/post', function(): HTTPRenderer {
+    'api/delete/post' => Route::create('api/delete/post', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
