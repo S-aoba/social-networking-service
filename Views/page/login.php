@@ -3,7 +3,8 @@
         <h2 class="text-2xl font-semibold">Login</h2>
     </div>
     <div class="w-1/2 p-10 border border-slate-200 rounded">
-        <form action="form/login" method="post" class="flex flex-col space-y-4">
+        <div id="login-error-message" class="hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
+        <form id="login-form" method="post" class="flex flex-col space-y-4">
             <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
             <div class="w-full flex flex-col space-y-2">
                 <label for="email"">Email</label>
@@ -20,3 +21,31 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.getElementById('login-form');
+        const errorMessage = document.getElementById('login-error-message');
+        
+        loginForm.addEventListener('submit', async(e) => {
+            e.preventDefault();
+
+            const formData = new FormData(loginForm);
+            errorMessage.classList.add('hidden');
+            errorMessage.textContent = '';
+
+            const res = await fetch('api/login', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await res.json();
+            
+            if(data.status === 'success') window.location.href = data.redirect;
+            else {
+                errorMessage.textContent = data.message;
+                errorMessage.classList.remove('hidden');
+            }
+        })
+    })
+</script>

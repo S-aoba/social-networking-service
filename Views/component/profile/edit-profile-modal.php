@@ -64,7 +64,9 @@ $profileInfoList = [
       </div>
 
       <!-- Profile Icon -->
-      <div class="py-5 flex items-center justify-center">
+      <div class="py-5 flex flex-col items-center justify-center space-y-3">
+
+        <div id="update-profile-icon-error-message" class="hidden w-full my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
 
         <!-- Preview Icon -->
         <div class="relative size-36 rounded-full"> 
@@ -77,7 +79,7 @@ $profileInfoList = [
           <div class="absolute inset-0 size-36 rounded-full bg-[rgba(0,0,0,0.3)]"></div>
 
           <!-- Camera Icon -->
-          <form id="update-profile-icon-form" action="form/update/profile/icon" method="POST" enctype="multipart/form-data">
+          <form id="update-profile-icon-form" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
             <label for="upload-file">
               <div class="absolute inset-13 flex items-center justify-center size-10 bg-black/70 rounded-full transition duration-300 brightness-95 cursor-pointer hover:brightness-110">
@@ -102,11 +104,12 @@ $profileInfoList = [
       </div>
 
       <!-- Profile Information -->
-      <form action="form/update/profile" method="POST">
+      <form id="update-profile-form" method="POST">
         <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
         <input type="hidden" name="user_id" value="<?= $queryUser->getUserId(); ?>">
-
+        
         <div class="pt-3 flex flex-col space-y-4 border-t border-slate-200">
+          <div id="update-profile-error-message" class="hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
           <!-- data -->
           <?php foreach($profileInfoList as $key => $data): ?>
             <?php if($key === 'selfIntroduction') : ?>
@@ -143,6 +146,66 @@ $profileInfoList = [
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded',function() {
+    const updateProfileForm = document.getElementById('update-profile-form');
+    const errorMessage = document.getElementById('update-profile-error-message');
+
+    updateProfileForm.addEventListener('submit', async(e) => {
+      e.preventDefault();
+
+      const formData = new FormData(updateProfileForm);
+      errorMessage.textContent = '';
+      errorMessage.classList.add('hidden');
+
+      const res = await fetch('api/profile', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if(data.status === 'success') {
+        window.location.href = data.redirect;
+      }
+      else {
+        errorMessage.textContent = data.message;
+        errorMessage.classList.remove('hidden');
+      }
+    })
+  })
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded',function() {
+    const updateProfileIconForm = document.getElementById('update-profile-icon-form');
+    const errorMessage = document.getElementById('update-profile-icon-error-message');
+
+    updateProfileIconForm.addEventListener('submit', async(e) => {
+      e.preventDefault();
+
+      const formData = new FormData(updateProfileIconForm);
+      errorMessage.textContent = '';
+      errorMessage.classList.add('hidden');
+
+      const res = await fetch('api/profile/icon', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if(data.status === 'success') {
+        window.location.href = data.redirect;
+      }
+      else {
+        errorMessage.textContent = data.message;
+        errorMessage.classList.remove('hidden');
+      }
+    })
+  })
+</script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {

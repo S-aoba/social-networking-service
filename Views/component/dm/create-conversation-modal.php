@@ -14,6 +14,9 @@
         </div>
         <!-- Follower List -->
         <div>
+          
+        <div id="conversation-error-message" class="hidden my-2 py-2 text-center text-red-600 bg-red-100"></div>
+
         <?php if($followers === null): ?>
           <div class="flex flex-col space-y-2 items-center justify-center pt-10">
             <p class="text-2xl font-semibold">

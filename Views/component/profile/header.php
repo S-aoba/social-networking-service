@@ -38,6 +38,7 @@
         フォロー
         </button>
         <?php endif ; ?>
+        <div id="follow-error-message" class="hidden my-2 py-2 text-xs text-center text-red-600 bg-red-100 rounded-lg"></div>
       </form>
     <?php endif; ?>
   </div>

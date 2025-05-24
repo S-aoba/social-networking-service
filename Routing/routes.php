@@ -336,7 +336,7 @@ return [
     }),
 
     // Auth
-    'form/login' => Route::create('form/login', function (): HTTPRenderer {
+    'api/login' => Route::create('api/login', function (): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -349,28 +349,38 @@ return [
 
             Authenticate::authenticate($validatedData['email'], $validatedData['password']);
 
-            FlashData::setFlashData('success', 'Logged in successfully.');
-            return new RedirectRenderer('');
+            // TODO: message-boxesを作成したら使用する
+            // FlashData::setFlashData('success', 'Logged in successfully.');
+            return new JSONRenderer([
+                'status' => 'success',
+                'message' => 'Logged in successfully.',
+                'redirect' => ''
+            ]);
         } catch (AuthenticationFailureException $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'Failed to login, wrong email and/or password.');
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Failed to login, wrong email and/or password.'
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'Invalid Data.');
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid Data.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'An error occurred.');
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['guest']),
-    'form/register' => Route::create('form/register', function (): HTTPRenderer {
+    'api/register' => Route::create('api/register', function (): HTTPRenderer {
         try {
-            // リクエストメソッドがPOSTかどうかをチェックします
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
             $required_fields = [
@@ -382,31 +392,30 @@ return [
 
             $userDao = DAOFactory::getUserDAO();
 
-            // シンプルな検証
             $validatedData = ValidationHelper::validateAuth($required_fields, $_POST);
 
             if($validatedData['confirm_password'] !== $validatedData['password']){
-                FlashData::setFlashData('error', 'Invalid Password!');
-                return new RedirectRenderer('register');
+                return new JSONRenderer([
+                    'status' => 'error',
+                    'message' => 'Invalid Password!'
+                ]);
             }
 
-            // Eメールは一意でなければならないので、Eメールがすでに使用されていないか確認します
             if($userDao->getByEmail($validatedData['email'])){
-                // FlashData::setFlashData('error', 'Email is already in use!');
-                return new RedirectRenderer('register');
+                return new JSONRenderer([
+                    'status' => 'error',
+                    'message' => 'Email is already in use!'
+                ]);
             }
 
-            // 新しいUserオブジェクトを作成します
             $user = new User(
                 email: $validatedData['email'],
             );
 
-            // データベースにユーザーを作成しようとします
             $success = $userDao->create($user, $validatedData['password']);
             
             if (!$success) throw new Exception('Failed to create new user!');
 
-            // User作成成功後、Profileを作成する
             $profileDAO = DAOFactory::getProfileDAO();
             $profile = new Profile(
                 username: $validatedData['username'],
@@ -435,23 +444,31 @@ return [
 
             Authenticate::loginAsUser($user);
 
-            FlashData::setFlashData('success', 'Account successfully created.');
-            return new RedirectRenderer('');
+            // FlashData::setFlashData('success', 'Account successfully created.');
+            return new JSONRenderer([
+                'status' => 'success',
+                // TODO: '' routeを'home'に変更したらこちらも変更
+                'redirect' => ''
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'Invalid Data.');
-            return new RedirectRenderer('register');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid Data.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            FlashData::setFlashData('error', 'An error occurred.');
-            return new RedirectRenderer('register');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['guest']),
 
     // Create
-    'form/post' => Route::create('form/post', function(): HTTPRenderer {
+    'api/post' => Route::create('api/post', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -487,18 +504,26 @@ return [
                 if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
             }
 
-            return new RedirectRenderer('');
+            return new JSONRenderer([
+                'status' => 'success'
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid Data.'
+            ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
-    'form/follow' => Route::create('form/follow', function(): HTTPRenderer {
+    'api/follow' => Route::create('api/follow', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -525,14 +550,20 @@ return [
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }    
     })->setMiddleware(['auth']),
-    'form/reply' => Route::create('form/reply', function(): HTTPRenderer {
+    'api/reply' => Route::create('api/reply', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -571,18 +602,26 @@ return [
                 if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
             }
 
-            return new RedirectRenderer('post?id=' . $validatedData['parent_post_id']);
+            return new JSONRenderer([
+                'status' => 'success'
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid data.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
-    'form/like' => Route::create('form/like', function(): HTTPRenderer {
+    'api/like' => Route::create('api/like', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -602,21 +641,33 @@ return [
 
             $isLiked = $likeDAO->hasLiked($like);
 
-            $success = $isLiked ? $likeDAO->unlike($like) : $likeDAO->createLike($like);
+            $success = $isLiked ? $likeDAO->unlike($like) : $likeDAO->like($like);
             if($success === false) throw new Exception('Failed to like post!');
+
+            $likeCount = $likeDAO->getLikeCount($like);
             
-            return new JSONRenderer(['status' => 'success']);
+            return new JSONRenderer([
+                'status' => 'success',
+                'liked' => $isLiked,
+                'likeCount' => $likeCount
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
-    'form/conversation' => Route::create('form/conversation', function(): HTTPRenderer {
+    'api/conversation' => Route::create('api/conversation', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -656,18 +707,27 @@ return [
             $success = $conversationDAO->create($conversation);
             if($success === false) throw new Exception('Failed to create conversation.');
 
-            return new JSONRenderer(['status' => 'success']);
+            return new JSONRenderer([
+                'status' => 'success',
+                'redirect' => 'message?id=' . $conversation->getId()
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid data.'
+            ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'errror',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
-    'form/direct-message' => Route::create('form/message', function(): HTTPRenderer {
+    'api/direct-message' => Route::create('api/direct-message', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -702,16 +762,29 @@ return [
             $success = $directMessageDAO->create($directMessage);
             if($success === false) throw new Exception('Failed to create direct message.');
             
-            return new RedirectRenderer("message?id={$conversation->getId()}");
+            return new JSONRenderer([
+                'status' => 'success',
+                'redirect' => 'message?id=' . $conversation->getId()
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid data.'
+            ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
 
     // Update
-    'form/update/profile' => Route::create('form/update/profile', function(): HTTPRenderer {
+    'api/profile' => Route::create('api/profile', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -742,18 +815,27 @@ return [
             $success = $profileDAO->updateProfile($profile);
             if($success === false) throw new Exception('Failed to update profile!');
 
-            return new RedirectRenderer('profile?user=' . $validatedData['username']);
+            return new JSONRenderer([
+                'status' => 'success',
+                'redirect' => 'profile?user=' . $validatedData['username']
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid data.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
-    'form/update/profile/icon' => Route::create('form/update/profile/icon', function(): HTTPRenderer {
+    'api/profile/icon' => Route::create('api/profile/icon', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -782,20 +864,29 @@ return [
                 $imageStorage->delete($prevProfileImagePath);
             }
             
-            return new RedirectRenderer('profile?user=' . $profile->getUsername());
+            return new JSONRenderer([
+                'status' => 'success',
+                'redirect' => 'profile?user=' . $profile->getUsername()
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'Invalid error.']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid error.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'An unexpected error has occurred.']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
 
     // Delete
-    'form/delete/post' => Route::create('form/delete/post', function(): HTTPRenderer {
+    'api/delete/post' => Route::create('api/delete/post', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -816,18 +907,26 @@ return [
             $success = $postDAO->deletePost($validatedData['post_id']);
             if($success === false) throw new Exception('Failed to delete post!');
 
-            return new RedirectRenderer('');
+            return new JSONRenderer([
+                'status' => 'success'
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid data.'
+            ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
-    'form/delete/conversation' => Route::create('form/delete/conversation', function(): HTTPRenderer {
+    'api/delete/conversation' => Route::create('api/delete/conversation', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
@@ -848,15 +947,25 @@ return [
             $success = $conversationDAO->delete($conversation->getId());
             if($success === false) throw new Exception('Failed to delete conversation.');
             
-            return new RedirectRenderer('messages');
+            return new JSONRenderer([
+                'status' => 'success',
+                // TODO: 参加している他のconversationが存在していれば、そのページに遷移する.なければ、messages
+                'redirect' => 'messages'
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid data.'
+            ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
 ];

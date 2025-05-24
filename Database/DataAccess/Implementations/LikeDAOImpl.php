@@ -10,7 +10,7 @@ use Models\Like;
 
 class LikeDAOImpl implements LikeDAO 
 {
-    public function createLike(Like $like): bool
+    public function like(Like $like): bool
     {
       $mysqli = DatabaseManager::getMysqliConnection();
 
@@ -65,5 +65,25 @@ class LikeDAOImpl implements LikeDAO
       if(count($result) === 0) return false;
 
       return true;
+    }
+
+    public function getLikeCount(Like $like): int
+    {
+      return $this->fetchLikeCount($like);
+    }
+
+    private function fetchLikeCount(Like $like): int
+    {
+      $mysqli = DatabaseManager::getMysqliConnection();
+
+      $query = "SELECT COUNT(*) AS like_count
+                FROM likes
+                WHERE post_id = ?
+                LIMIT 1
+                ";
+      
+      $result = $mysqli->prepareAndFetchAll($query, 'i', [$like->getPostId()]);
+
+      return $result[0]['like_count'];
     }
 }

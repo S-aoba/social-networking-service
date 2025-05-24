@@ -6,9 +6,11 @@ use Models\Like;
 
 interface LikeDAO
 {
-    public function createLike(Like $like): bool;
+    public function like(Like $like): bool;
 
     public function unlike(Like $like): bool;
 
     public function hasLiked(Like $like): bool;
+
+    public function getLikeCount(Like $like): int;
 }

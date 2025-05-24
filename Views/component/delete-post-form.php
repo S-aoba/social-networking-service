@@ -1,7 +1,6 @@
 <form 
-  action="/form/delete/post" 
   method="POST" 
-  class="flex flex-col space-y-2 z-50"
+  class="delete-post-form flex flex-col space-y-2 z-50"
 >
   <input 
     type="hidden" 
@@ -19,6 +18,8 @@
     value="<?= $data['post']->getUserId() ?>"
   >
   <div class="w-full space-y-2">
+    <div class="delete-post-error-message hidden py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
+
     <p class="text-lg font-sans font-semibold">ポストを削除しますか？</p>
     <p class="text-slate-400 text-base/6">この操作は取り消せません。プロフィール、あなたをフォローしているアカウントのタイムライン、検索結果からポストが削除されます。</p>
   </div>
@@ -37,3 +38,36 @@
     </button>
   </div>
 </form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const deletePostForms = document.querySelectorAll('.delete-post-form');
+
+    deletePostForms.forEach((form) => {
+      form.addEventListener('submit', async(e) => {
+        e.preventDefault();
+  
+        const formData = new FormData(form);
+
+        const errorMessage = document.querySelector('.delete-post-error-message');
+        errorMessage.textContent = '';
+        errorMessage.classList.add('hidden');
+  
+        const res = await fetch('api/delete/post', {
+          method: 'POST',
+          body: formData
+        });
+  
+        const data = await res.json();
+  
+        if(data.status === 'success') {
+          window.location.reload();
+        }
+        else {
+          errorMessage.textContent = data.message;
+          errorMessage.classList.remove('hidden');
+        }
+      })
+    })
+  })
+</script>
