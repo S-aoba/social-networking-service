@@ -1,7 +1,6 @@
 <form 
-  action="/form/delete/conversation" 
   method="POST" 
-  class="flex flex-col space-y-2 z-50"
+  class="delete-conversation-form flex flex-col space-y-2 z-50"
 >
   <input 
     type="hidden" 
@@ -33,3 +32,31 @@
     </button>
   </div>
 </form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const deleteConversationForms = document.querySelectorAll('.delete-conversation-form');
+
+    deleteConversationForms.forEach((form) => {
+      form.addEventListener('submit', async(e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        const res = await fetch('api/delete/conversation', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if(data.status ==='success') {
+          window.location.href = data.redirect;
+        }
+        else {
+          console.log(data.message);
+        }
+      })
+    })
+  })
+</script>
