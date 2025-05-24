@@ -102,7 +102,7 @@ $profileInfoList = [
       </div>
 
       <!-- Profile Information -->
-      <form action="form/update/profile" method="POST">
+      <form id="update-profile-form" method="POST">
         <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
         <input type="hidden" name="user_id" value="<?= $queryUser->getUserId(); ?>">
 
@@ -143,6 +143,32 @@ $profileInfoList = [
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded',function() {
+    const updateProfileForm = document.getElementById('update-profile-form');
+
+    updateProfileForm.addEventListener('submit', async(e) => {
+      e.preventDefault();
+
+      const formData = new FormData(updateProfileForm);
+
+      const res = await fetch('api/profile', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if(data.status === 'success') {
+        window.location.href = data.redirect;
+      }
+      else {
+        console.log(data.message);
+      }
+    })
+  })
+</script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
