@@ -77,7 +77,7 @@ $profileInfoList = [
           <div class="absolute inset-0 size-36 rounded-full bg-[rgba(0,0,0,0.3)]"></div>
 
           <!-- Camera Icon -->
-          <form id="update-profile-icon-form" action="form/update/profile/icon" method="POST" enctype="multipart/form-data">
+          <form id="update-profile-icon-form" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
             <label for="upload-file">
               <div class="absolute inset-13 flex items-center justify-center size-10 bg-black/70 rounded-full transition duration-300 brightness-95 cursor-pointer hover:brightness-110">
@@ -170,6 +170,37 @@ $profileInfoList = [
       else {
         errorMessage.textContent = data.message;
         errorMessage.classList.remove('hidden');
+      }
+    })
+  })
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded',function() {
+    const updateProfileIconForm = document.getElementById('update-profile-icon-form');
+    // const errorMessage = document.getElementById('update-profile-error-message');
+
+    updateProfileIconForm.addEventListener('submit', async(e) => {
+      e.preventDefault();
+
+      const formData = new FormData(updateProfileIconForm);
+      // errorMessage.textContent = '';
+      // errorMessage.classList.add('hidden');
+
+      const res = await fetch('api/profile/icon', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if(data.status === 'success') {
+        window.location.href = data.redirect;
+      }
+      else {
+        console.log(data.message);
+        // errorMessage.textContent = data.message;
+        // errorMessage.classList.remove('hidden');
       }
     })
   })
