@@ -727,7 +727,7 @@ return [
             ]);
         }
     })->setMiddleware(['auth']),
-    'form/direct-message' => Route::create('form/message', function(): HTTPRenderer {
+    'api/direct-message' => Route::create('api/direct-message', function(): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
