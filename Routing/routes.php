@@ -907,7 +907,9 @@ return [
             $success = $postDAO->deletePost($validatedData['post_id']);
             if($success === false) throw new Exception('Failed to delete post!');
 
-            return new RedirectRenderer('');
+            return new JSONRenderer([
+                'status' => 'success'
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
