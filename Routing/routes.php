@@ -819,11 +819,17 @@ return [
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'error']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid data.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new RedirectRenderer('login');
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
     'form/update/profile/icon' => Route::create('form/update/profile/icon', function(): HTTPRenderer {
