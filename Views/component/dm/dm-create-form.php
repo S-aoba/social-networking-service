@@ -44,7 +44,7 @@
       const data = await res.json();
 
       if(data.status === 'success') {
-        window.location.href = 'message?id=' + data.id;
+        window.location.href = data.redirect;
       }
       else {
         errorMessage.textContent = data.message;

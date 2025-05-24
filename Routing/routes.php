@@ -764,7 +764,7 @@ return [
             
             return new JSONRenderer([
                 'status' => 'success',
-                'id' => $conversation->getId()
+                'redirect' => 'message?id=' . $conversation->getId()
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
