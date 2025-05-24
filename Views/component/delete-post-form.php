@@ -18,6 +18,8 @@
     value="<?= $data['post']->getUserId() ?>"
   >
   <div class="w-full space-y-2">
+    <div class="delete-post-error-message hidden py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
+
     <p class="text-lg font-sans font-semibold">ポストを削除しますか？</p>
     <p class="text-slate-400 text-base/6">この操作は取り消せません。プロフィール、あなたをフォローしているアカウントのタイムライン、検索結果からポストが削除されます。</p>
   </div>
@@ -46,6 +48,10 @@
         e.preventDefault();
   
         const formData = new FormData(form);
+
+        const errorMessage = document.querySelector('.delete-post-error-message');
+        errorMessage.textContent = '';
+        errorMessage.classList.add('hidden');
   
         const res = await fetch('api/delete/post', {
           method: 'POST',
@@ -58,7 +64,8 @@
           window.location.reload();
         }
         else {
-          console.log(data.messsage);
+          errorMessage.textContent = data.message;
+          errorMessage.classList.remove('hidden');
         }
       })
     })
