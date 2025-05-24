@@ -816,7 +816,7 @@ return [
             if($success === false) throw new Exception('Failed to update profile!');
 
             return new JSONRenderer([
-                'status' => 'suucess',
+                'status' => 'success',
                 'redirect' => 'profile?user=' . $validatedData['username']
             ]);
         } catch (\InvalidArgumentException $e) {
