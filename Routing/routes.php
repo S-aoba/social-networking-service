@@ -815,7 +815,10 @@ return [
             $success = $profileDAO->updateProfile($profile);
             if($success === false) throw new Exception('Failed to update profile!');
 
-            return new RedirectRenderer('profile?user=' . $validatedData['username']);
+            return new JSONRenderer([
+                'status' => 'suucess',
+                'redirect' => 'profile?user=' . $validatedData['username']
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
