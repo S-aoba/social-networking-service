@@ -926,7 +926,7 @@ return [
             ]);
         }
     })->setMiddleware(['auth']),
-    'form/delete/conversation' => Route::create('form/delete/conversation', function(): HTTPRenderer {
+    'api/delete/conversation' => Route::create('api/delete/conversation', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
