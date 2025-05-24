@@ -64,9 +64,9 @@ $profileInfoList = [
       </div>
 
       <!-- Profile Icon -->
-      <div class="py-5 flex items-center justify-center">
+      <div class="py-5 flex flex-col items-center justify-center space-y-3">
 
-        <div id="update-profile-icon-error-message" class="hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
+        <div id="update-profile-icon-error-message" class="hidden w-full my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
 
         <!-- Preview Icon -->
         <div class="relative size-36 rounded-full"> 
