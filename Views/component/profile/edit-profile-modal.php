@@ -66,6 +66,8 @@ $profileInfoList = [
       <!-- Profile Icon -->
       <div class="py-5 flex items-center justify-center">
 
+        <div id="update-profile-icon-error-message" class="hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
+
         <!-- Preview Icon -->
         <div class="relative size-36 rounded-full"> 
           <img
@@ -178,14 +180,14 @@ $profileInfoList = [
 <script>
   document.addEventListener('DOMContentLoaded',function() {
     const updateProfileIconForm = document.getElementById('update-profile-icon-form');
-    // const errorMessage = document.getElementById('update-profile-error-message');
+    const errorMessage = document.getElementById('update-profile-icon-error-message');
 
     updateProfileIconForm.addEventListener('submit', async(e) => {
       e.preventDefault();
 
       const formData = new FormData(updateProfileIconForm);
-      // errorMessage.textContent = '';
-      // errorMessage.classList.add('hidden');
+      errorMessage.textContent = '';
+      errorMessage.classList.add('hidden');
 
       const res = await fetch('api/profile/icon', {
         method: 'POST',
@@ -198,9 +200,8 @@ $profileInfoList = [
         window.location.href = data.redirect;
       }
       else {
-        console.log(data.message);
-        // errorMessage.textContent = data.message;
-        // errorMessage.classList.remove('hidden');
+        errorMessage.textContent = data.message;
+        errorMessage.classList.remove('hidden');
       }
     })
   })
