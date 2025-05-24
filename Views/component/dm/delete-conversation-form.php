@@ -14,6 +14,8 @@
   >
   
   <div class="w-full space-y-2">
+    <div class="delete-conversation-error-message hidden py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
+
     <p class="text-lg font-sans font-semibold">会話を削除しますか？</p>
     <p class="text-slate-400 text-base/6">この会話はあなたの受信トレイから削除されます。会話に参加している他のアカウントは引き続きこの会話を表示できます。</p>
   </div>
@@ -42,6 +44,10 @@
         e.preventDefault();
 
         const formData = new FormData(form);
+        
+        const errorMessage = document.querySelector('.delete-conversation-error-message');
+        errorMessage.textContent = '';
+        errorMessage.classList.add('hidden');
 
         const res = await fetch('api/delete/conversation', {
           method: 'POST',
@@ -54,7 +60,8 @@
           window.location.href = data.redirect;
         }
         else {
-          console.log(data.message);
+          errorMessage.textContent = data.message;
+          errorMessage.classList.remove('hidden');
         }
       })
     })
