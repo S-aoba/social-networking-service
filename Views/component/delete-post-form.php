@@ -1,7 +1,6 @@
 <form 
-  action="/form/delete/post" 
   method="POST" 
-  class="flex flex-col space-y-2 z-50"
+  class="delete-post-form flex flex-col space-y-2 z-50"
 >
   <input 
     type="hidden" 
@@ -37,3 +36,31 @@
     </button>
   </div>
 </form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const deletePostForms = document.querySelectorAll('.delete-post-form');
+
+    deletePostForms.forEach((form) => {
+      form.addEventListener('submit', async(e) => {
+        e.preventDefault();
+  
+        const formData = new FormData(form);
+  
+        const res = await fetch('api/delete/post', {
+          method: 'POST',
+          body: formData
+        });
+  
+        const data = await res.json();
+  
+        if(data.status === 'success') {
+          window.location.reload();
+        }
+        else {
+          console.log(data.messsage);
+        }
+      })
+    })
+  })
+</script>
