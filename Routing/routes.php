@@ -762,7 +762,10 @@ return [
             $success = $directMessageDAO->create($directMessage);
             if($success === false) throw new Exception('Failed to create direct message.');
             
-            return new RedirectRenderer("message?id={$conversation->getId()}");
+            return new JSONRenderer([
+                'status' => 'success',
+                'id' => $conversation->getId()
+            ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
