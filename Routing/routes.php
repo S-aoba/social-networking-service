@@ -835,7 +835,7 @@ return [
             ]);
         }
     })->setMiddleware(['auth']),
-    'form/update/profile/icon' => Route::create('form/update/profile/icon', function(): HTTPRenderer {
+    'api/profile/icon' => Route::create('api/profile/icon', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
