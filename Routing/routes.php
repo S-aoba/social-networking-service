@@ -784,7 +784,7 @@ return [
     })->setMiddleware(['auth']),
 
     // Update
-    'form/update/profile' => Route::create('form/update/profile', function(): HTTPRenderer {
+    'api/profile' => Route::create('api/profile', function(): HTTPRenderer {
         try {
             if($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Invalid request method!');
 
