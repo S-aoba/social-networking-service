@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if(data.status === 'success') {
         // Modalを閉じる処理
-        window.location.href = 'message?id=' + data.id;
+        window.location.href = data.redirect;
       }
       else {
         errorMessage.textContent = data.message;
