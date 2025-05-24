@@ -947,7 +947,11 @@ return [
             $success = $conversationDAO->delete($conversation->getId());
             if($success === false) throw new Exception('Failed to delete conversation.');
             
-            return new RedirectRenderer('messages');
+            return new JSONRenderer([
+                'status' => 'success',
+                // TODO: 参加している他のconversationが存在していれば、そのページに遷移する.なければ、messages
+                'redirect' => 'messages'
+            ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
