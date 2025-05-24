@@ -868,11 +868,17 @@ return [
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'Invalid error.']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'Invalid error.'
+            ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
 
-            return new JSONRenderer(['status' => 'An unexpected error has occurred.']);
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
         }
     })->setMiddleware(['auth']),
 
