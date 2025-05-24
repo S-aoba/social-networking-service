@@ -105,8 +105,9 @@ $profileInfoList = [
       <form id="update-profile-form" method="POST">
         <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
         <input type="hidden" name="user_id" value="<?= $queryUser->getUserId(); ?>">
-
+        
         <div class="pt-3 flex flex-col space-y-4 border-t border-slate-200">
+          <div id="update-profile-error-message" class="hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
           <!-- data -->
           <?php foreach($profileInfoList as $key => $data): ?>
             <?php if($key === 'selfIntroduction') : ?>
@@ -147,11 +148,14 @@ $profileInfoList = [
 <script>
   document.addEventListener('DOMContentLoaded',function() {
     const updateProfileForm = document.getElementById('update-profile-form');
+    const errorMessage = document.getElementById('update-profile-error-message');
 
     updateProfileForm.addEventListener('submit', async(e) => {
       e.preventDefault();
 
       const formData = new FormData(updateProfileForm);
+      errorMessage.textContent = '';
+      errorMessage.classList.add('hidden');
 
       const res = await fetch('api/profile', {
         method: 'POST',
@@ -164,7 +168,8 @@ $profileInfoList = [
         window.location.href = data.redirect;
       }
       else {
-        console.log(data.message);
+        errorMessage.textContent = data.message;
+        errorMessage.classList.remove('hidden');
       }
     })
   })
