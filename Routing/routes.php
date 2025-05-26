@@ -539,10 +539,10 @@ return [
             $userId = $authUser->getId();
 
             $requiredFields = [
-                'following_id' => ValueType::INT
+                'following_id' => 'required|int'
             ];
 
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $followDAO = DAOFactory::getFollowDAO();
             $isFollow = $followDAO->isFollowingSelf($userId, $validatedData['following_id']);
