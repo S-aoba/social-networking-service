@@ -291,17 +291,17 @@ return [
             if($authUserProfile === null)  return new RedirectRenderer('login');
 
             $requiredFields = [
-                'id' => ValueType::INT
+                'id' => 'required|int|exists:conversations,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
-
-            $conversationDAO = DAOFactory::getConversationDAO();            
-            $conversation = $conversationDAO->findByConversationId($validatedData['id']);
-            if($conversation === null)  return new RedirectRenderer('messages');
+            $validatedData = (new Validator($requiredFields))->validate($_GET);
             
-            $authUserId = $authUserProfile->getUserId();
+            $conversationDAO = DAOFactory::getConversationDAO();            
+            
             $conversationParnerResolver = new ConversationParnerResolver($profileDAO);
-            $partnerProfile = $conversationParnerResolver->resolverPartnerProfile($authUserId, $conversation);
+            $partnerProfile = $conversationParnerResolver->resolverPartnerProfile(
+                $authUserProfile->getUserId(), 
+                $validatedData['id']
+            );
             if($partnerProfile === null) return new RedirectRenderer('login');
             
             $imageUrlBuilder = new ImageUrlBuilder();
@@ -311,17 +311,20 @@ return [
             $imagePathResolver->resolveProfile($partnerProfile);
 
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
-            $imagePathResolver->resolveProfileMany($conversations, 'partner');
+            $imagePathResolver->resolveProfileMany(
+                $conversations, 
+                'partner'
+            );
 
             $directMessageDAO = DAOFactory::getDirectMessage();
-            $directMessages = $directMessageDAO->getAllByConversationId($conversation->getId());
+            $directMessages = $directMessageDAO->getAllByConversationId($validatedData['id']->getId());
 
             $followDAO = DAOFactory::getFollowDAO();
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
             $imagePathResolver->resolveProfileMany($followers, null);
             
             return new HTMLRenderer('page/message', [
-                'conversation' => $conversation,
+                'conversation' => $validatedData['id'],
                 'partner' => $partnerProfile,
                 'directMessages' => $directMessages,
                 'authUser' => $authUserProfile,
