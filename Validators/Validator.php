@@ -63,7 +63,7 @@ class Validator
 
         if ($table === 'users') {
             $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUsername($value);
+            $profile = $profileDAO->getByUserId($value);
             $validatedData[$field] = isset($profile) ? $profile : throw new \InvalidArgumentException("{$value} is not exists.");
         }
         else if ($table === 'posts') {
