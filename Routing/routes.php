@@ -90,7 +90,7 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
             
             $requiredFields = [
-                'user' => 'required|string|exists:users,id'
+                'user' => 'required|string|exists:users,username'
             ];
             $validatedData = (new Validator($requiredFields))->validate($_GET);
 

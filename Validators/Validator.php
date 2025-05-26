@@ -3,6 +3,7 @@
 namespace Validators;
 
 use Database\DataAccess\DAOFactory;
+use Exception;
 use Helpers\Authenticate;
 
 class Validator
@@ -59,12 +60,25 @@ class Validator
         return [$field => $value];
     }
     else if (str_starts_with($rule, 'exists:')) {
-        [$_, $table, $_] = explode(':', str_replace(',', ':', $rule));
-
+        [$_, $table, $identifier] = explode(':', str_replace(',', ':', $rule));
+        
         if ($table === 'users') {
-            $profileDAO = DAOFactory::getProfileDAO();
-            $profile = $profileDAO->getByUserId($value);
-            $validatedData[$field] = isset($profile) ? $profile : throw new \InvalidArgumentException("{$value} is not exists.");
+          $profileDAO = DAOFactory::getProfileDAO();
+          $profile = null;
+          
+          switch ($identifier) {
+            case 'id':
+              $profile = $profileDAO->getByUserId($value);
+              break;
+            case 'username':
+              $profile = $profileDAO->getByUsername($value);
+              break;
+            default:
+              throw new Exception('Identifier is not valid: ' . $identifier);
+          }
+          $validatedData[$field] = isset($profile) ? 
+              $profile : 
+              throw new \InvalidArgumentException("{$value} is not exists.");
         }
         else if ($table === 'posts') {
             $user = Authenticate::getAuthenticatedUser();
@@ -77,6 +91,8 @@ class Validator
             $conversation = $conversationDAO->findByConversationId($value);
             $validatedData[$field] = isset($conversation) ? $conversation : throw new \InvalidArgumentException("conversation is not exists.");
         }
+        else throw new Exception('Identifier is not valid: ' . $identifier);
+
         return $validatedData;
     }
 
