@@ -151,23 +151,28 @@ return [
             $imagePathResolver->resolveProfile($authUserProfile);
 
             $requiredFields = [
-                'id' => ValueType::INT
+                'id' => 'required|int|exists:posts,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
+            $validatedData = (new Validator($requiredFields))->validate($_GET);
             
             $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById($validatedData['id'], $authUserProfile->getUserId());
-            if($post === null) return new RedirectRenderer('');
-            $imagePathResolver->resolvePost($post['post']);
-            $imagePathResolver->resolveProfile($post['author']);
             
-            $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());
-            $imagePathResolver->resolveProfileMany($replies, 'author');
+            $imagePathResolver->resolvePost($validatedData['id']['post']);
+            $imagePathResolver->resolveProfile($validatedData['id']['author']);
+            
+            $replies = $postDAO->getReplies(
+                $validatedData['id']['post']->getId(), 
+                $authUserProfile->getUserId()
+            );
+            $imagePathResolver->resolveProfileMany(
+                $replies, 
+                'author'
+            );
             $imagePathResolver->resolvePostMany($replies);
             
             return new HTMLRenderer('page/post', [
                 'authUser' => $authUserProfile,
-                'data' => $post,
+                'data' => $validatedData['id'],
                 'replies' => $replies,
             ]);
         } catch (\InvalidArgumentException $e) {
