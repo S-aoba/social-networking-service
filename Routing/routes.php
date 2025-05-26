@@ -31,6 +31,7 @@ use Services\Image\ImageStorage;
 use Services\Image\ImageUrlBuilder;
 
 use Types\ValueType;
+use Validators\Validator;
 
 return [
     'login' => Route::create('login', function (): HTTPRenderer {
@@ -474,11 +475,11 @@ return [
 
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
-            
+
             $requiredFields = [
-                'content' => ValueType::STRING
+                'content' => 'required|string|min:1|max:144'
             ];            
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $file = File::fromArray($_FILES['upload-file']);          
             if($file->isValid()) {
