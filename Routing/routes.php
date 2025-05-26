@@ -90,37 +90,35 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
             
             $requiredFields = [
-                'user' => ValueType::STRING
+                'user' => 'required|string|exists:users,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
+            $validatedData = (new Validator($requiredFields))->validate($_GET);
 
             $profileDAO = DAOFactory::getProfileDAO();
-            $queryUserProfile = $profileDAO->getByUsername($validatedData['user']);
-            if($queryUserProfile === null) return new RedirectRenderer('login');
-            
+
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
             if($authUserProfile === null) return new RedirectRenderer('login');
 
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
             
-            $imagePathResolver->resolveProfile($queryUserProfile);
+            $imagePathResolver->resolveProfile($validatedData['user']);
             $imagePathResolver->resolveProfile($authUserProfile);
 
             $postDAO = DAOFactory::getPostDAO();
-            $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
+            $posts = $postDAO->getByUserId($validatedData['user']->getUserId());
             $imagePathResolver->resolveProfileMany($posts, 'author');
             $imagePathResolver->resolvePostMany($posts);
 
             $followDAO = DAOFactory::getFollowDAO();
-            $followerCount = $followDAO->getFollowerCount($queryUserProfile->getUserId());
-            $followingCount = $followDAO->getFollowingCount($queryUserProfile->getUserId());
-            $isFollow = $followDAO->isFollowingSelf($authUserProfile->getUserId(), $queryUserProfile->getUserId());
+            $followerCount = $followDAO->getFollowerCount($validatedData['user']->getUserId());
+            $followingCount = $followDAO->getFollowingCount($validatedData['user']->getUserId());
+            $isFollow = $followDAO->isFollowingSelf($authUserProfile->getUserId(), $validatedData['user']->getUserId());
             
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
                 'authUser' => $authUserProfile,
-                'queryUser' => $queryUserProfile,
+                'queryUser' => $validatedData['user'],
                 'posts' => $posts,
                 'followerCount' => $followerCount,
                 'followingCount' => $followingCount,
