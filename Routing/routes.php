@@ -949,13 +949,12 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'conversation_id' => ValueType::INT
+                'conversation_id' => 'required|int|exists:conversations,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $conversationDAO = DAOFactory::getConversationDAO();
-            $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
-            if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
+            $conversation = $validatedData['conversation_id'];
 
             if(Authorizer::isOwnedByUser($conversation->getUser1Id(), $authUser->getId()) === false) throw new Exception('Cannnot the action.');
 
