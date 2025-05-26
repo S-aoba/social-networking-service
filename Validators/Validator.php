@@ -13,10 +13,6 @@ class Validator
   )
   {}
 
-  /**
-   * @param array<int, array{fieldName: string, rules: string[]}>
-   * @return array<int, array{user: Profile, content: string}>
-   */
   public function validate(array $data): array
   {
     $validatedData = [];
