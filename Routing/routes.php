@@ -578,11 +578,13 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'content' => ValueType::STRING,
-                'parent_post_id' => ValueType::INT
+                'content' => 'requreid|string|min:1|max:144',
+                'parent_post_id' => 'required|int|exists:posts,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
             
+            $publicPostImagePath = null;
+
             $file = File::fromArray($_FILES['upload-file']);          
             if($file->isValid()) {
                 $validatedFileData = ValidationHelper::validateFile($file);
@@ -590,7 +592,7 @@ return [
             }
 
             $postDAO = DAOFactory::getPostDAO();
-            $parentPost = $postDAO->findParentPost($validatedData['parent_post_id']);
+            $parentPost = $postDAO->findParentPost($validatedData['parent_post_id']['post']->getId());
             if($parentPost === null) throw new Exception('Parent post is not exits.');
 
             $post = new Post(
@@ -605,7 +607,10 @@ return [
 
             if($file->isValid()) {
                 $imageStorage = new ImageStorage();
-                $isSavedToDir = $imageStorage->save($publicPostImagePath, $validatedFileData->getTmpName());
+                $isSavedToDir = $imageStorage->save(
+                    $publicPostImagePath, 
+                    $validatedFileData->getTmpName()
+                );
                 if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
             }
 
