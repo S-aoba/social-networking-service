@@ -39,6 +39,9 @@ class Validator
     if ($rule === 'required') {
         return isset($value) && $value !== '' ? [$field => $value] : throw new \InvalidArgumentException("{$field} is required.");
     }
+    else if($rule === 'string') {
+        return is_string($value) ? [$field => $value] : throw new \InvalidArgumentException("{$field} must be a string.");
+    }
     else if ($rule === 'int') {
         return filter_var($value, FILTER_VALIDATE_INT) !== false ? [$field => (int)$value] : throw new \InvalidArgumentException("{$field} must be an integer.");
     }
@@ -47,14 +50,23 @@ class Validator
     }
     else if (preg_match('/^min:(\d+)$/', $rule, $matches)) {
         $min = (int)$matches[1];
-        if (isset($value) && mb_strlen($value) < $min) {
+        if (is_int($value) || ctype_digit($value)) {
+            if ((int)$value < $min) {
+                throw new \InvalidArgumentException("{$field} must be at least {$min}.");
+            }
+        } else if (isset($value) && mb_strlen($value) < $min) {
             throw new \InvalidArgumentException("{$field} must be at least {$min} characters.");
         }
         return [$field => $value];
     }
+    // max:144 文字列・数値両対応
     else if (preg_match('/^max:(\d+)$/', $rule, $matches)) {
         $max = (int)$matches[1];
-        if (isset($value) && mb_strlen($value) > $max) {
+        if (is_int($value) || ctype_digit($value)) {
+            if ((int)$value > $max) {
+                throw new \InvalidArgumentException("{$field} must be at most {$max}.");
+            }
+        } else if (isset($value) && mb_strlen($value) > $max) {
             throw new \InvalidArgumentException("{$field} must be at most {$max} characters.");
         }
         return [$field => $value];
