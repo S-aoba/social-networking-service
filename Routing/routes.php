@@ -810,16 +810,14 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'username' => ValueType::STRING,
-                'age' => ValueType::INT,
-                'address' => ValueType::STRING,
-                'hobby' => ValueType::STRING,
-                'self_introduction' => ValueType::STRING
+                'username' => 'required|string|min:1|max:20',
+                'age' => 'required|int|min:1|max:100',
+                'address' => 'required|string|min:1|max:100',
+                'hobby' => 'string|min:1|max:100',
+                'self_introduction' => 'required|string|min:1|max:500'
             ];
-
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
-            // TODO: それぞれのfieldの最大値、最小値のバリデーションを検証する(ビジネスロジック)
-                        
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
+            
             $profile = new Profile(
                 username: $validatedData['username'],
                 userId: $authUser->getId(),
