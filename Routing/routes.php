@@ -752,25 +752,28 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'conversation_id' => ValueType::INT,
-                'content' => ValueType::STRING
+                'conversation_id' => 'required|int|exists:conversations,id',
+                'content' => 'required|string|min:1|max:144'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
-
-            $conversationDAO = DAOFactory::getConversationDAO();
-            $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
-            if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $conversationAuthorizer = new ConversationAuthorizer();
-            $isJoinTheConversation = $conversationAuthorizer->isJoin($authUser->getId(), $conversation);
+            $isJoinTheConversation = $conversationAuthorizer->isJoin(
+                $authUser->getId(), 
+                $validatedData['conversation_id']
+            );
             if($isJoinTheConversation === false) throw new Exception('Cannnot the action.');
 
             $profileDAO = DAOFactory::getProfileDAO();
-            $partnerProfile = $conversationAuthorizer->isExistsPartnerUser($authUser->getId(), $conversation, $profileDAO);
+            $partnerProfile = $conversationAuthorizer->isExistsPartnerUser(
+                $authUser->getId(), 
+                $validatedData['conversation_id'], 
+                $profileDAO
+            );
             if($partnerProfile === false) throw new Exception('Partner User is not exists.');
 
             $directMessage = new DirectMessge(
-                conversationId: $validatedData['conversation_id'],
+                conversationId: $validatedData['conversation_id']->getId(),
                 senderId: $authUser->getId(),
                 content: $validatedData['content']
             );
@@ -781,7 +784,7 @@ return [
             
             return new JSONRenderer([
                 'status' => 'success',
-                'redirect' => 'message?id=' . $conversation->getId()
+                'redirect' => 'message?id=' . $validatedData['conversation_id']->getId()
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
