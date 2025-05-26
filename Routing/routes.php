@@ -641,14 +641,15 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'post_id' => ValueType::INT
+                'post_id' => 'required|int|exists:posts,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
-
+            // $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
+            
             $likeDAO = DAOFactory::getLikeDAO();
             $like = new Like(
                 userId: $authUser->getId(),
-                postId: $validatedData['post_id']
+                postId: $validatedData['post_id']['post']->getId()
             );
 
             $isLiked = $likeDAO->hasLiked($like);
