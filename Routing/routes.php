@@ -31,6 +31,7 @@ use Services\Image\ImageStorage;
 use Services\Image\ImageUrlBuilder;
 
 use Types\ValueType;
+use Validators\Validator;
 
 return [
     'login' => Route::create('login', function (): HTTPRenderer {
@@ -89,37 +90,35 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
             
             $requiredFields = [
-                'user' => ValueType::STRING
+                'user' => 'required|string|exists:users,username'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
+            $validatedData = (new Validator($requiredFields))->validate($_GET);
 
             $profileDAO = DAOFactory::getProfileDAO();
-            $queryUserProfile = $profileDAO->getByUsername($validatedData['user']);
-            if($queryUserProfile === null) return new RedirectRenderer('login');
-            
+
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
             if($authUserProfile === null) return new RedirectRenderer('login');
 
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
             
-            $imagePathResolver->resolveProfile($queryUserProfile);
+            $imagePathResolver->resolveProfile($validatedData['user']);
             $imagePathResolver->resolveProfile($authUserProfile);
 
             $postDAO = DAOFactory::getPostDAO();
-            $posts = $postDAO->getByUserId($queryUserProfile->getUserId());
+            $posts = $postDAO->getByUserId($validatedData['user']->getUserId());
             $imagePathResolver->resolveProfileMany($posts, 'author');
             $imagePathResolver->resolvePostMany($posts);
 
             $followDAO = DAOFactory::getFollowDAO();
-            $followerCount = $followDAO->getFollowerCount($queryUserProfile->getUserId());
-            $followingCount = $followDAO->getFollowingCount($queryUserProfile->getUserId());
-            $isFollow = $followDAO->isFollowingSelf($authUserProfile->getUserId(), $queryUserProfile->getUserId());
+            $followerCount = $followDAO->getFollowerCount($validatedData['user']->getUserId());
+            $followingCount = $followDAO->getFollowingCount($validatedData['user']->getUserId());
+            $isFollow = $followDAO->isFollowingSelf($authUserProfile->getUserId(), $validatedData['user']->getUserId());
             
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
                 'authUser' => $authUserProfile,
-                'queryUser' => $queryUserProfile,
+                'queryUser' => $validatedData['user'],
                 'posts' => $posts,
                 'followerCount' => $followerCount,
                 'followingCount' => $followingCount,
@@ -152,23 +151,28 @@ return [
             $imagePathResolver->resolveProfile($authUserProfile);
 
             $requiredFields = [
-                'id' => ValueType::INT
+                'id' => 'required|int|exists:posts,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
+            $validatedData = (new Validator($requiredFields))->validate($_GET);
             
             $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById($validatedData['id'], $authUserProfile->getUserId());
-            if($post === null) return new RedirectRenderer('');
-            $imagePathResolver->resolvePost($post['post']);
-            $imagePathResolver->resolveProfile($post['author']);
             
-            $replies = $postDAO->getReplies($validatedData['id'], $authUserProfile->getUserId());
-            $imagePathResolver->resolveProfileMany($replies, 'author');
+            $imagePathResolver->resolvePost($validatedData['id']['post']);
+            $imagePathResolver->resolveProfile($validatedData['id']['author']);
+            
+            $replies = $postDAO->getReplies(
+                $validatedData['id']['post']->getId(), 
+                $authUserProfile->getUserId()
+            );
+            $imagePathResolver->resolveProfileMany(
+                $replies, 
+                'author'
+            );
             $imagePathResolver->resolvePostMany($replies);
             
             return new HTMLRenderer('page/post', [
                 'authUser' => $authUserProfile,
-                'data' => $post,
+                'data' => $validatedData['id'],
                 'replies' => $replies,
             ]);
         } catch (\InvalidArgumentException $e) {
@@ -287,17 +291,17 @@ return [
             if($authUserProfile === null)  return new RedirectRenderer('login');
 
             $requiredFields = [
-                'id' => ValueType::INT
+                'id' => 'required|int|exists:conversations,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_GET);
-
-            $conversationDAO = DAOFactory::getConversationDAO();            
-            $conversation = $conversationDAO->findByConversationId($validatedData['id']);
-            if($conversation === null)  return new RedirectRenderer('messages');
+            $validatedData = (new Validator($requiredFields))->validate($_GET);
             
-            $authUserId = $authUserProfile->getUserId();
+            $conversationDAO = DAOFactory::getConversationDAO();            
+            
             $conversationParnerResolver = new ConversationParnerResolver($profileDAO);
-            $partnerProfile = $conversationParnerResolver->resolverPartnerProfile($authUserId, $conversation);
+            $partnerProfile = $conversationParnerResolver->resolverPartnerProfile(
+                $authUserProfile->getUserId(), 
+                $validatedData['id']
+            );
             if($partnerProfile === null) return new RedirectRenderer('login');
             
             $imageUrlBuilder = new ImageUrlBuilder();
@@ -307,17 +311,20 @@ return [
             $imagePathResolver->resolveProfile($partnerProfile);
 
             $conversations = $conversationDAO->findAllByUserId($authUser->getId());
-            $imagePathResolver->resolveProfileMany($conversations, 'partner');
+            $imagePathResolver->resolveProfileMany(
+                $conversations, 
+                'partner'
+            );
 
             $directMessageDAO = DAOFactory::getDirectMessage();
-            $directMessages = $directMessageDAO->getAllByConversationId($conversation->getId());
+            $directMessages = $directMessageDAO->getAllByConversationId($validatedData['id']->getId());
 
             $followDAO = DAOFactory::getFollowDAO();
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
             $imagePathResolver->resolveProfileMany($followers, null);
             
             return new HTMLRenderer('page/message', [
-                'conversation' => $conversation,
+                'conversation' => $validatedData['id'],
                 'partner' => $partnerProfile,
                 'directMessages' => $directMessages,
                 'authUser' => $authUserProfile,
@@ -474,11 +481,11 @@ return [
 
             $authUser = Authenticate::getAuthenticatedUser();
             if($authUser === null) return new RedirectRenderer('login');
-            
+
             $requiredFields = [
-                'content' => ValueType::STRING
+                'content' => 'required|string|min:1|max:144'
             ];            
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $file = File::fromArray($_FILES['upload-file']);          
             if($file->isValid()) {
@@ -532,10 +539,10 @@ return [
             $userId = $authUser->getId();
 
             $requiredFields = [
-                'following_id' => ValueType::INT
+                'following_id' => 'required|int'
             ];
 
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $followDAO = DAOFactory::getFollowDAO();
             $isFollow = $followDAO->isFollowingSelf($userId, $validatedData['following_id']);
@@ -571,11 +578,13 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'content' => ValueType::STRING,
-                'parent_post_id' => ValueType::INT
+                'content' => 'requreid|string|min:1|max:144',
+                'parent_post_id' => 'required|int|exists:posts,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
             
+            $publicPostImagePath = null;
+
             $file = File::fromArray($_FILES['upload-file']);          
             if($file->isValid()) {
                 $validatedFileData = ValidationHelper::validateFile($file);
@@ -583,7 +592,7 @@ return [
             }
 
             $postDAO = DAOFactory::getPostDAO();
-            $parentPost = $postDAO->findParentPost($validatedData['parent_post_id']);
+            $parentPost = $postDAO->findParentPost($validatedData['parent_post_id']['post']->getId());
             if($parentPost === null) throw new Exception('Parent post is not exits.');
 
             $post = new Post(
@@ -598,7 +607,10 @@ return [
 
             if($file->isValid()) {
                 $imageStorage = new ImageStorage();
-                $isSavedToDir = $imageStorage->save($publicPostImagePath, $validatedFileData->getTmpName());
+                $isSavedToDir = $imageStorage->save(
+                    $publicPostImagePath, 
+                    $validatedFileData->getTmpName()
+                );
                 if($isSavedToDir === false) throw new Exception('Failed to save to directory.');
             }
 
@@ -629,14 +641,14 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'post_id' => ValueType::INT
+                'post_id' => 'required|int|exists:posts,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
-
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
+            
             $likeDAO = DAOFactory::getLikeDAO();
             $like = new Like(
                 userId: $authUser->getId(),
-                postId: $validatedData['post_id']
+                postId: $validatedData['post_id']['post']->getId()
             );
 
             $isLiked = $likeDAO->hasLiked($like);
@@ -675,29 +687,32 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'user1_id' => ValueType::INT,
-                'user2_id' => ValueType::INT
+                'user1_id' => 'required|int',
+                'user2_id' => 'required|int|exists:users,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $conversationAuthorizer = new ConversationAuthorizer();
             
             if($conversationAuthorizer->isSameId($validatedData['user1_id'], $authUser->getId()) === false) throw new Exception('Invalid user1_id — not matching authenticated user.');
             
-            if ($conversationAuthorizer->isSameId($validatedData['user1_id'], $validatedData['user2_id'])) throw new Exception('Cannot start a conversation with yourself.');
-            
-            $profileDAO = DAOFactory::getProfileDAO();
-            $partnerProfile = $profileDAO->getByUserId($validatedData['user2_id']);
-            if($partnerProfile === null) throw new Exception('Partner is not exists.');
+            if ($conversationAuthorizer->isSameId(
+                $validatedData['user1_id'], 
+                $validatedData['user2_id']->getUserId()
+            )) throw new Exception('Cannot start a conversation with yourself.');
 
             $followDAO = DAOFactory::getFollowDAO();
-            $isMutualFollow = $conversationAuthorizer->isMutualFollow($followDAO, $authUser->getId(), $partnerProfile->getUserId());
+            $isMutualFollow = $conversationAuthorizer->isMutualFollow(
+                $followDAO, 
+                $authUser->getId(), 
+                $validatedData['user2_id']->getUserId()
+            );
 
             if($isMutualFollow === false) throw new Exception('AuthUser and PartnerUser is not mutualFollow.');
 
             $conversation = new Conversation(
                 user1Id: $authUser->getId(),
-                user2Id: $partnerProfile->getUserId(),
+                user2Id: $validatedData['user2_id']->getUserId(),
             );
             $conversationDAO = DAOFactory::getConversationDAO();
 
@@ -735,25 +750,28 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'conversation_id' => ValueType::INT,
-                'content' => ValueType::STRING
+                'conversation_id' => 'required|int|exists:conversations,id',
+                'content' => 'required|string|min:1|max:144'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
-
-            $conversationDAO = DAOFactory::getConversationDAO();
-            $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
-            if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $conversationAuthorizer = new ConversationAuthorizer();
-            $isJoinTheConversation = $conversationAuthorizer->isJoin($authUser->getId(), $conversation);
+            $isJoinTheConversation = $conversationAuthorizer->isJoin(
+                $authUser->getId(), 
+                $validatedData['conversation_id']
+            );
             if($isJoinTheConversation === false) throw new Exception('Cannnot the action.');
 
             $profileDAO = DAOFactory::getProfileDAO();
-            $partnerProfile = $conversationAuthorizer->isExistsPartnerUser($authUser->getId(), $conversation, $profileDAO);
+            $partnerProfile = $conversationAuthorizer->isExistsPartnerUser(
+                $authUser->getId(), 
+                $validatedData['conversation_id'], 
+                $profileDAO
+            );
             if($partnerProfile === false) throw new Exception('Partner User is not exists.');
 
             $directMessage = new DirectMessge(
-                conversationId: $validatedData['conversation_id'],
+                conversationId: $validatedData['conversation_id']->getId(),
                 senderId: $authUser->getId(),
                 content: $validatedData['content']
             );
@@ -764,7 +782,7 @@ return [
             
             return new JSONRenderer([
                 'status' => 'success',
-                'redirect' => 'message?id=' . $conversation->getId()
+                'redirect' => 'message?id=' . $validatedData['conversation_id']->getId()
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
@@ -792,16 +810,14 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'username' => ValueType::STRING,
-                'age' => ValueType::INT,
-                'address' => ValueType::STRING,
-                'hobby' => ValueType::STRING,
-                'self_introduction' => ValueType::STRING
+                'username' => 'required|string|min:1|max:20',
+                'age' => 'required|int|min:1|max:100',
+                'address' => 'required|string|min:1|max:100',
+                'hobby' => 'string|min:1|max:100',
+                'self_introduction' => 'required|string|min:1|max:500'
             ];
-
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
-            // TODO: それぞれのfieldの最大値、最小値のバリデーションを検証する(ビジネスロジック)
-                        
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
+            
             $profile = new Profile(
                 username: $validatedData['username'],
                 userId: $authUser->getId(),
@@ -894,17 +910,16 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'post_id' => ValueType::INT
+                'post_id' => 'required|int|exists:posts,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById($validatedData['post_id'], $authUser->getId());
-            if($post === null) throw new Exception('Target post is not exits.');
 
-            if(Authorizer::isOwnedByUser($post['post']->getUserId(), $authUser->getId(),) === false) throw new Exception('Cannnot the action.');
+            $post = $validatedData['post_id']['post'];
+            if(Authorizer::isOwnedByUser($post->getUserId(), $authUser->getId(),) === false) throw new Exception('Cannnot the action.');
             
-            $success = $postDAO->deletePost($validatedData['post_id']);
+            $success = $postDAO->deletePost($post->getId());
             if($success === false) throw new Exception('Failed to delete post!');
 
             return new JSONRenderer([
@@ -934,13 +949,12 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'conversation_id' => ValueType::INT
+                'conversation_id' => 'required|int|exists:conversations,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $conversationDAO = DAOFactory::getConversationDAO();
-            $conversation = $conversationDAO->findByConversationId($validatedData['conversation_id']);
-            if($conversation === null) throw new Exception('Do not exists conversation. ID: ' . $validatedData['conversation_id']);
+            $conversation = $validatedData['conversation_id'];
 
             if(Authorizer::isOwnedByUser($conversation->getUser1Id(), $authUser->getId()) === false) throw new Exception('Cannnot the action.');
 
