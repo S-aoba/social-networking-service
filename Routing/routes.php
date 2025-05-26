@@ -688,29 +688,33 @@ return [
             if($authUser === null) return new RedirectRenderer('login');
 
             $requiredFields = [
-                'user1_id' => ValueType::INT,
-                'user2_id' => ValueType::INT
+                'user1_id' => 'required|int',
+                'user2_id' => 'required|int|exists:users,id'
             ];
-            $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            // $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $conversationAuthorizer = new ConversationAuthorizer();
             
             if($conversationAuthorizer->isSameId($validatedData['user1_id'], $authUser->getId()) === false) throw new Exception('Invalid user1_id — not matching authenticated user.');
             
-            if ($conversationAuthorizer->isSameId($validatedData['user1_id'], $validatedData['user2_id'])) throw new Exception('Cannot start a conversation with yourself.');
-            
-            $profileDAO = DAOFactory::getProfileDAO();
-            $partnerProfile = $profileDAO->getByUserId($validatedData['user2_id']);
-            if($partnerProfile === null) throw new Exception('Partner is not exists.');
+            if ($conversationAuthorizer->isSameId(
+                $validatedData['user1_id'], 
+                $validatedData['user2_id']->getUserId()
+            )) throw new Exception('Cannot start a conversation with yourself.');
 
             $followDAO = DAOFactory::getFollowDAO();
-            $isMutualFollow = $conversationAuthorizer->isMutualFollow($followDAO, $authUser->getId(), $partnerProfile->getUserId());
+            $isMutualFollow = $conversationAuthorizer->isMutualFollow(
+                $followDAO, 
+                $authUser->getId(), 
+                $validatedData['user2_id']->getUserId()
+            );
 
             if($isMutualFollow === false) throw new Exception('AuthUser and PartnerUser is not mutualFollow.');
 
             $conversation = new Conversation(
                 user1Id: $authUser->getId(),
-                user2Id: $partnerProfile->getUserId(),
+                user2Id: $validatedData['user2_id']->getUserId(),
             );
             $conversationDAO = DAOFactory::getConversationDAO();
 
