@@ -643,7 +643,6 @@ return [
             $requiredFields = [
                 'post_id' => 'required|int|exists:posts,id'
             ];
-            // $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
             $validatedData = (new Validator($requiredFields))->validate($_POST);
             
             $likeDAO = DAOFactory::getLikeDAO();
@@ -691,7 +690,6 @@ return [
                 'user1_id' => 'required|int',
                 'user2_id' => 'required|int|exists:users,id'
             ];
-            // $validatedData = ValidationHelper::validateFields($requiredFields, $_POST);
             $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $conversationAuthorizer = new ConversationAuthorizer();
