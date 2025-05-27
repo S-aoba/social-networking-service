@@ -49,13 +49,4 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('create-conversation-modal');
-    const closeButton = document.getElementById('close-button');
-
-    closeButton.addEventListener('click', function() {
-      modal.classList.add('hidden');
-    });
-  });
-</script>
+<script src="js/create-conversation-modal.js"></script>
