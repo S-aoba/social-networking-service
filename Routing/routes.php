@@ -487,7 +487,8 @@ return [
             ];            
             $validatedData = (new Validator($requiredFields))->validate($_POST);
 
-            $file = File::fromArray($_FILES['upload-file']);          
+            $file = File::fromArray($_FILES['upload-file']);
+            $publicPostImagePath = null;
             if($file->isValid()) {
                 $validatedFileData = ValidationHelper::validateFile($file);
                 $publicPostImagePath = (new ImagePathGenerator())->generate($validatedFileData->getTypeWithoutPrefix());
