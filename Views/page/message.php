@@ -64,22 +64,8 @@
 
 </div>
 
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    const textarea = document.getElementById('content');
-
-    const defaultHeight = '40';
-
-    const autoResize = () => {
-    textarea.style.height = '40px';
-    const scrollHeight = textarea.scrollHeight;
-    textarea.style.height = Math.max(scrollHeight, defaultHeight) + 'px';
-  };
-
-    textarea.addEventListener('input', autoResize);
-  })
-</script>
 <script src="js/compose-conversation-form.js"></script>
 <script src="js/open-create-conversation-modal.js"></script>
 <script src="js/open-delete-conversation-menu.js"></script>
 <script src="js/open-delete-conversation-modal.js"></script>
+<script src="/js/resize-dm-textarea.js"></script>
