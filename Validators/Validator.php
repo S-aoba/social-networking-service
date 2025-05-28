@@ -6,6 +6,7 @@ use Database\DataAccess\DAOFactory;
 use Exception;
 use Helpers\Authenticate;
 use Validators\Rules\IntRule;
+use Validators\Rules\MinRule;
 use Validators\Rules\NullableRule;
 use Validators\Rules\RequiredRule;
 use Validators\Rules\StringRule;
@@ -54,14 +55,7 @@ class Validator
     }
     else if (str_starts_with($rule, 'min:')) {
         $min = (int)substr($rule, 4);
-        if (is_int($value) || ctype_digit($value)) {
-            if ((int)$value < $min) {
-                throw new \InvalidArgumentException("{$field} must be at least {$min}.");
-            }
-        } else if (isset($value) && mb_strlen($value) < $min) {
-            throw new \InvalidArgumentException("{$field} must be at least {$min} characters.");
-        }
-        return [$field => $value];
+        return MinRule::validate($field, $value, $min);
     }
     else if (str_starts_with($rule, 'max:')) {
         $max = (int)substr($rule, 4);
