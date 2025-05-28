@@ -5,6 +5,7 @@ namespace Validators;
 use Database\DataAccess\DAOFactory;
 use Exception;
 use Helpers\Authenticate;
+use Validators\Rules\RequiredRule;
 
 class Validator
 {
@@ -37,7 +38,7 @@ class Validator
     $validatedData = [];
 
     if ($rule === 'required') {
-        return isset($value) && $value !== '' ? [$field => $value] : throw new \InvalidArgumentException("{$field} is required.");
+        return RequiredRule::validate($field, $value);
     }
     else if($rule === 'string') {
         return is_string($value) ? [$field => $value] : throw new \InvalidArgumentException("{$field} must be a string.");
