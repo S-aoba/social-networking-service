@@ -6,6 +6,7 @@ use Database\DataAccess\DAOFactory;
 use Exception;
 use Helpers\Authenticate;
 use Validators\Rules\IntRule;
+use Validators\Rules\MaxRule;
 use Validators\Rules\MinRule;
 use Validators\Rules\NullableRule;
 use Validators\Rules\RequiredRule;
@@ -59,14 +60,7 @@ class Validator
     }
     else if (str_starts_with($rule, 'max:')) {
         $max = (int)substr($rule, 4);
-        if (is_int($value) || ctype_digit($value)) {
-            if ((int)$value > $max) {
-                throw new \InvalidArgumentException("{$field} must be at most {$max}.");
-            }
-        } else if (isset($value) && mb_strlen($value) > $max) {
-            throw new \InvalidArgumentException("{$field} must be at most {$max} characters.");
-        }
-        return [$field => $value];
+        return MaxRule::validate($field, $value, $max);
     }
     else if (str_starts_with($rule, 'exists:')) {
         [$_, $table, $identifier] = explode(':', str_replace(',', ':', $rule));
