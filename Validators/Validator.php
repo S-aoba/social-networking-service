@@ -2,9 +2,7 @@
 
 namespace Validators;
 
-use Database\DataAccess\DAOFactory;
-use Exception;
-use Helpers\Authenticate;
+use Validators\Rules\ExistsRule;
 use Validators\Rules\IntRule;
 use Validators\Rules\MaxRule;
 use Validators\Rules\MinRule;
@@ -40,8 +38,6 @@ class Validator
 
   private function applyRule(string $field, $value, string $rule): array
   {
-    $validatedData = [];
-
     if ($rule === 'required') {
         return RequiredRule::validate($field, $value);
     }
@@ -65,40 +61,10 @@ class Validator
     else if (str_starts_with($rule, 'exists:')) {
         [$_, $table, $identifier] = explode(':', str_replace(',', ':', $rule));
         
-        if ($table === 'users') {
-          $profileDAO = DAOFactory::getProfileDAO();
-          $profile = null;
-          
-          switch ($identifier) {
-            case 'id':
-              $profile = $profileDAO->getByUserId($value);
-              break;
-            case 'username':
-              $profile = $profileDAO->getByUsername($value);
-              break;
-            default:
-              throw new Exception('Identifier is not valid: ' . $identifier);
-          }
-          $validatedData[$field] = isset($profile) ? 
-              $profile : 
-              throw new \InvalidArgumentException("{$value} is not exists.");
-        }
-        else if ($table === 'posts') {
-            $user = Authenticate::getAuthenticatedUser();
-            $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById($value, $user->getId());
-            $validatedData[$field] = isset($post) ? $post : throw new \InvalidArgumentException("Post is not exists.");
-        }
-        else if ($table === 'conversations') {
-            $conversationDAO = DAOFactory::getConversationDAO();
-            $conversation = $conversationDAO->findByConversationId($value);
-            $validatedData[$field] = isset($conversation) ? $conversation : throw new \InvalidArgumentException("conversation is not exists.");
-        }
-        else throw new Exception('Identifier is not valid: ' . $identifier);
-
-        return $validatedData;
+        return ExistsRule::validate($field, $value, $table, $identifier);
     }
-
-    return $validatedData;
+    else {
+        throw new \InvalidArgumentException("Unknown validation rule: {$rule}");
+    }
   }
 }
