@@ -6,6 +6,7 @@ use Database\DataAccess\DAOFactory;
 use Exception;
 use Helpers\Authenticate;
 use Validators\Rules\IntRule;
+use Validators\Rules\NullableRule;
 use Validators\Rules\RequiredRule;
 use Validators\Rules\StringRule;
 
@@ -49,7 +50,7 @@ class Validator
         return IntRule::validate($field, $value);
     }
     else if ($rule === 'nullable') {
-        return [$field => $value ?? null];
+        return NullableRule::validate($field, $value);
     }
     else if (preg_match('/^min:(\d+)$/', $rule, $matches)) {
         $min = (int)$matches[1];
