@@ -2,9 +2,13 @@
 
 namespace Validators;
 
-use Database\DataAccess\DAOFactory;
-use Exception;
-use Helpers\Authenticate;
+use Validators\Rules\ExistsRule;
+use Validators\Rules\IntRule;
+use Validators\Rules\MaxRule;
+use Validators\Rules\MinRule;
+use Validators\Rules\NullableRule;
+use Validators\Rules\RequiredRule;
+use Validators\Rules\StringRule;
 
 class Validator
 {
@@ -34,80 +38,33 @@ class Validator
 
   private function applyRule(string $field, $value, string $rule): array
   {
-    $validatedData = [];
-
     if ($rule === 'required') {
-        return isset($value) && $value !== '' ? [$field => $value] : throw new \InvalidArgumentException("{$field} is required.");
+        return RequiredRule::validate($field, $value);
     }
     else if($rule === 'string') {
-        return is_string($value) ? [$field => $value] : throw new \InvalidArgumentException("{$field} must be a string.");
+        return StringRule::validate($field, $value);
     }
     else if ($rule === 'int') {
-        return filter_var($value, FILTER_VALIDATE_INT) !== false ? [$field => (int)$value] : throw new \InvalidArgumentException("{$field} must be an integer.");
+        return IntRule::validate($field, $value);
     }
     else if ($rule === 'nullable') {
-        return [$field => $value ?? null];
+        return NullableRule::validate($field, $value);
     }
-    else if (preg_match('/^min:(\d+)$/', $rule, $matches)) {
-        $min = (int)$matches[1];
-        if (is_int($value) || ctype_digit($value)) {
-            if ((int)$value < $min) {
-                throw new \InvalidArgumentException("{$field} must be at least {$min}.");
-            }
-        } else if (isset($value) && mb_strlen($value) < $min) {
-            throw new \InvalidArgumentException("{$field} must be at least {$min} characters.");
-        }
-        return [$field => $value];
+    else if (str_starts_with($rule, 'min:')) {
+        $min = (int)substr($rule, 4);
+        return MinRule::validate($field, $value, $min);
     }
-    // max:144 文字列・数値両対応
-    else if (preg_match('/^max:(\d+)$/', $rule, $matches)) {
-        $max = (int)$matches[1];
-        if (is_int($value) || ctype_digit($value)) {
-            if ((int)$value > $max) {
-                throw new \InvalidArgumentException("{$field} must be at most {$max}.");
-            }
-        } else if (isset($value) && mb_strlen($value) > $max) {
-            throw new \InvalidArgumentException("{$field} must be at most {$max} characters.");
-        }
-        return [$field => $value];
+    else if (str_starts_with($rule, 'max:')) {
+        $max = (int)substr($rule, 4);
+        return MaxRule::validate($field, $value, $max);
     }
     else if (str_starts_with($rule, 'exists:')) {
         [$_, $table, $identifier] = explode(':', str_replace(',', ':', $rule));
         
-        if ($table === 'users') {
-          $profileDAO = DAOFactory::getProfileDAO();
-          $profile = null;
-          
-          switch ($identifier) {
-            case 'id':
-              $profile = $profileDAO->getByUserId($value);
-              break;
-            case 'username':
-              $profile = $profileDAO->getByUsername($value);
-              break;
-            default:
-              throw new Exception('Identifier is not valid: ' . $identifier);
-          }
-          $validatedData[$field] = isset($profile) ? 
-              $profile : 
-              throw new \InvalidArgumentException("{$value} is not exists.");
-        }
-        else if ($table === 'posts') {
-            $user = Authenticate::getAuthenticatedUser();
-            $postDAO = DAOFactory::getPostDAO();
-            $post = $postDAO->getById($value, $user->getId());
-            $validatedData[$field] = isset($post) ? $post : throw new \InvalidArgumentException("Post is not exists.");
-        }
-        else if ($table === 'conversations') {
-            $conversationDAO = DAOFactory::getConversationDAO();
-            $conversation = $conversationDAO->findByConversationId($value);
-            $validatedData[$field] = isset($conversation) ? $conversation : throw new \InvalidArgumentException("conversation is not exists.");
-        }
-        else throw new Exception('Identifier is not valid: ' . $identifier);
-
-        return $validatedData;
+        return ExistsRule::validate($field, $value, $table, $identifier);
     }
-
-    return $validatedData;
+    else {
+        throw new \InvalidArgumentException("Unknown validation rule: {$rule}");
+    }
   }
 }
