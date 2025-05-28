@@ -6,6 +6,7 @@ use Database\DataAccess\DAOFactory;
 use Exception;
 use Helpers\Authenticate;
 use Validators\Rules\RequiredRule;
+use Validators\Rules\StringRule;
 
 class Validator
 {
@@ -41,7 +42,7 @@ class Validator
         return RequiredRule::validate($field, $value);
     }
     else if($rule === 'string') {
-        return is_string($value) ? [$field => $value] : throw new \InvalidArgumentException("{$field} must be a string.");
+        return StringRule::validate($field, $value);
     }
     else if ($rule === 'int') {
         return filter_var($value, FILTER_VALIDATE_INT) !== false ? [$field => (int)$value] : throw new \InvalidArgumentException("{$field} must be an integer.");
