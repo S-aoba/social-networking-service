@@ -49,8 +49,8 @@ class DbWipe extends AbstractCommand
         if ($isExistBackupFile === false) {
             throw new Exception("Do not exists backup file.");
         } else {
-            $username = $username ?? Settings::env('DATABASE_USER');
-            $database = $database ?? Settings::env('DATABASE_NAME');
+            $username = Settings::env('DATABASE_USER');
+            $database = Settings::env('DATABASE_NAME');
 
             $command = "mysql -u {$username} -p {$database} < {$filePath}";
             exec($command, $output, $returnVar);
