@@ -13,7 +13,14 @@
             "Database\\DataAccess\\Interfaces\\": "Database/DataAccess/Interfaces/",
             "Models\\": "Models/",
             "Models\\Interfaces\\": "Models/Interfaces/",
-            "Models\\Traits\\": "Models/Traits/"
+            "Models\\Traits\\": "Models/Traits/",
+            "Models\\ORM\\": "Model/ORM/",
+            "Response\\Render\\": "Response/Render/",
+            "Services\\Conversation\\": "Services/Conversation/",
+            "Services\\Image\\": "Services/Image/",
+            "Types\\": "Types/",
+            "Validators\\": "Validators/",
+            "Validators\\Rules\\": "Validators/Rules/"
         }
     },
     "require": {
