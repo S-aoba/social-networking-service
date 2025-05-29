@@ -25,7 +25,6 @@ class DAOFactory
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
-            'memcached' => new UserDAOImpl(),
             default => new UserDAOImpl(),
         };
     }
@@ -35,7 +34,6 @@ class DAOFactory
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
-            'memcached' => new ProfileDAOImpl(),
             default => new ProfileDAOImpl(),
         };
     }
@@ -45,7 +43,6 @@ class DAOFactory
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
-            'memcached' => new PostDAOImpl(),
             default => new PostDAOImpl(),
         };
     }
@@ -55,7 +52,6 @@ class DAOFactory
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
-            'memcached' => new FollowDAOImpl(),
             default => new FollowDAOImpl(),
         };
     }
@@ -65,7 +61,6 @@ class DAOFactory
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
-            'memcached' => new LikeDAOImpl(),
             default => new LikeDAOImpl(),
         };
     }
@@ -75,7 +70,6 @@ class DAOFactory
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
-            'memcached' => new ConversationDAOImpl(),
             default => new ConversationDAOImpl(),
         };
     }
@@ -85,7 +79,6 @@ class DAOFactory
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
-            'memcached' => new DirectMessageDAOImpl(),
             default => new DirectMessageDAOImpl(),
         };
     }
