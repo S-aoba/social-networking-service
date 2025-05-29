@@ -11,6 +11,7 @@ use Response\Render\RedirectRenderer;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
 use Database\DataAccess\DAOFactory;
+use Exceptions\AuthenticationFailureException;
 use Models\Conversation;
 use Models\DirectMessge;
 use Models\File;
