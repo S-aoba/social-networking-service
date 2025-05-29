@@ -29,17 +29,17 @@ $followerAndFollowingCountList = [
     <div class="w-full p-2 border-b border-slate-200">
       <?php include "Views/component/profile/header.php" ?>
       <div class="py-4 flex flex-col space-y-2">
-        <?php foreach($userInfoList as $key => $val): ?>
+        <?php foreach ($userInfoList as $key => $val): ?>
           <?php include "Views/component/profile/user-info.php" ?>
         <?php endforeach; ?>
       </div>
       <div class="flex items-center justify-start space-x-2">
-        <?php foreach($followerAndFollowingCountList as $key => $data): ?>
+        <?php foreach ($followerAndFollowingCountList as $key => $data): ?>
           <?php include "Views/component/profile/followerAndFollowing.php"; ?>
         <?php endforeach; ?>
       </div>
     </div>
-    <?php if($postCount > 0): ?>
+    <?php if ($postCount > 0): ?>
       <div class="divide-y divide-slate-200">
         <?php foreach ($posts as $data): ?>
           <?php include "Views/component/article.php" ?>

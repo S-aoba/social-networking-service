@@ -5,7 +5,8 @@ namespace Models;
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
 
-class Post implements Model {
+class Post implements Model
+{
     use GenericModel;
 
     public function __construct(
@@ -15,45 +16,56 @@ class Post implements Model {
         private ?string $imagePath = null,
         private ?int $parentPostId = null,
         private ?string $createdAt = null,
-    ) {}
+    ) {
+    }
 
-    public function getId(): ?int {
+    public function getId(): ?int
+    {
         return $this->id;
     }
 
-    public function setId(int $id): void {
+    public function setId(int $id): void
+    {
         $this->id = $id;
     }
 
-    public function getContent(): string {
+    public function getContent(): string
+    {
         return $this->content;
     }
 
-    public function setContent(string $content): void {
+    public function setContent(string $content): void
+    {
         $this->content = $content;
     }
 
-    public function getUserId(): int {
+    public function getUserId(): int
+    {
         return $this->userId;
     }
 
-    public function setUserId(int $userId): void {
+    public function setUserId(int $userId): void
+    {
         $this->userId = $userId;
     }
 
-    public function getImagePath(): ?string {
+    public function getImagePath(): ?string
+    {
         return $this->imagePath;
     }
 
-    public function setImagePath(?string $imagePath): void {
+    public function setImagePath(?string $imagePath): void
+    {
         $this->imagePath = $imagePath;
     }
 
-    public function getParentPostId(): ?int {
+    public function getParentPostId(): ?int
+    {
         return $this->parentPostId;
     }
 
-    public function setParentPostId(int $parentPostId): void {
+    public function setParentPostId(int $parentPostId): void
+    {
         $this->parentPostId = $parentPostId;
     }
 

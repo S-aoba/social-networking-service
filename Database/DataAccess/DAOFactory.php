@@ -21,10 +21,10 @@ use Database\DataAccess\Interfaces\ProfileDAO;
 use Database\DataAccess\Interfaces\UserDAO;
 use Helpers\Settings;
 
-
 class DAOFactory
 {
-    public static function getComputerPartDAO(): ComputerPartDAO{
+    public static function getComputerPartDAO(): ComputerPartDAO
+    {
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
@@ -33,7 +33,8 @@ class DAOFactory
         };
     }
 
-    public static function getUserDAO(): UserDAO{
+    public static function getUserDAO(): UserDAO
+    {
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
@@ -42,7 +43,8 @@ class DAOFactory
         };
     }
 
-    public static function getProfileDAO(): ProfileDAO{
+    public static function getProfileDAO(): ProfileDAO
+    {
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
@@ -51,7 +53,8 @@ class DAOFactory
         };
     }
 
-    public static function getPostDAO(): PostDAO{
+    public static function getPostDAO(): PostDAO
+    {
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
@@ -60,7 +63,8 @@ class DAOFactory
         };
     }
 
-    public static function getFollowDAO(): FollowDAO {
+    public static function getFollowDAO(): FollowDAO
+    {
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
@@ -69,7 +73,8 @@ class DAOFactory
         };
     }
 
-    public static function getLikeDAO(): LikeDAO {
+    public static function getLikeDAO(): LikeDAO
+    {
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
@@ -78,7 +83,8 @@ class DAOFactory
         };
     }
 
-    public static function getConversationDAO(): ConversationDAO {
+    public static function getConversationDAO(): ConversationDAO
+    {
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {
@@ -87,7 +93,8 @@ class DAOFactory
         };
     }
 
-    public static function getDirectMessage(): DirectMessageDAO {
+    public static function getDirectMessage(): DirectMessageDAO
+    {
         $driver = Settings::env('DATABASE_DRIVER');
 
         return match ($driver) {

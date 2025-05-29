@@ -4,14 +4,17 @@ namespace Response\Render;
 
 use Response\HTTPRenderer;
 
-class RedirectRenderer implements HTTPRenderer {
+class RedirectRenderer implements HTTPRenderer
+{
     private string $route;
 
-    public function __construct(string $route) {
+    public function __construct(string $route)
+    {
         $this->route = $route;
     }
 
-    public function getFields(): array {
+    public function getFields(): array
+    {
         $protocol = isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'];
         return [
@@ -19,7 +22,8 @@ class RedirectRenderer implements HTTPRenderer {
         ];
     }
 
-    public function getContent(): string {
+    public function getContent(): string
+    {
         return '';
     }
 }

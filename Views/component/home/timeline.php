@@ -2,7 +2,7 @@
   <?php include "Views/component/home/tab.php" ?>
   <?php include "Views/component/post-form.php" ?>
 
-  <?php if($postsCount > 0): ?>
+  <?php if ($postsCount > 0): ?>
     <div class="divide-y divide-slate-200">
       <?php foreach ($posts as $data): ?>
         <?php include "Views/component/article.php" ?>

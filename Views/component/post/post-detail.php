@@ -67,10 +67,10 @@
   </div>
   <div class="w-full divide-y divide-slate-200">
     <?php
-      if($replies !== null) {
-        foreach ($replies as $data) {
-          include "Views/component/article.php";
-        }
+      if ($replies !== null) {
+          foreach ($replies as $data) {
+              include "Views/component/article.php";
+          }
       }
     ?>
   </div>

@@ -24,7 +24,7 @@ class StateMigrate extends AbstractCommand
         // データベース全体をクリーンアップします
         $this->cleanDatabase();
 
-        $desiredSchema = include('./Database/state.php');  
+        $desiredSchema = include('./Database/state.php');
         foreach ($desiredSchema as $table => $columns) {
             $this->stateToSchema($table, $columns);
         }
@@ -71,7 +71,7 @@ class StateMigrate extends AbstractCommand
 
             if (isset($columnProps['primaryKey']) && $columnProps['primaryKey']) {
 
-        $primaryKeysColumns[] = $columnName;
+                $primaryKeysColumns[] = $columnName;
             }
 
             if (isset($columnProps['foreignKey'])) {
@@ -93,7 +93,10 @@ class StateMigrate extends AbstractCommand
         $createTableQuery = "CREATE TABLE IF NOT EXISTS `$table` ($columnSQL, $keysSQL)";
 
         $result = $mysqli->query($createTableQuery);
-        if ($result === false) throw new \Exception("Failed to ensure table $table matches desired state.");
-        else $this->log("Ensured table $table matches desired state.");
+        if ($result === false) {
+            throw new \Exception("Failed to ensure table $table matches desired state.");
+        } else {
+            $this->log("Ensured table $table matches desired state.");
+        }
     }
 }

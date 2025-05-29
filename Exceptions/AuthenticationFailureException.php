@@ -4,4 +4,6 @@ namespace Exceptions;
 
 use Exception;
 
-class AuthenticationFailureException extends Exception{};
+class AuthenticationFailureException extends Exception
+{
+};

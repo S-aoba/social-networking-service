@@ -8,11 +8,13 @@ class Argument
     private string $description = '';
     private bool $required = true;
     private bool $allowAsShort = false;
-    public function __construct(string $argument){
+    public function __construct(string $argument)
+    {
         $this->argument = $argument;
     }
 
-    public function getArgument(): string{
+    public function getArgument(): string
+    {
         return $this->argument;
     }
 

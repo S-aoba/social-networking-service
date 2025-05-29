@@ -1,4 +1,4 @@
-<?php 
+<?php
 $navigationList = [
     [
         'label' => 'Home',

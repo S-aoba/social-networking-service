@@ -4,4 +4,6 @@ namespace Exceptions;
 
 use Exception;
 
-class ReadAndParseEnvException extends Exception{};
+class ReadAndParseEnvException extends Exception
+{
+};

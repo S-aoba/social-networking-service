@@ -11,24 +11,30 @@ class ComputerPartDAOImpl implements ComputerPartDAO
 {
     public function create(ComputerPart $partData): bool
     {
-        if($partData->getId() !== null) throw new \Exception('Cannot create a computer part with an existing ID. id: ' . $partData->getId());
+        if ($partData->getId() !== null) {
+            throw new \Exception('Cannot create a computer part with an existing ID. id: ' . $partData->getId());
+        }
         return $this->createOrUpdate($partData);
     }
 
     public function getById(int $id): ?ComputerPart
     {
         $mysqli = DatabaseManager::getMysqliConnection();
-        $computerPart = $mysqli->prepareAndFetchAll("SELECT * FROM computer_parts WHERE id = ?",'i',[$id])[0]??null;
+        $computerPart = $mysqli->prepareAndFetchAll("SELECT * FROM computer_parts WHERE id = ?", 'i', [$id])[0] ?? null;
 
         return $computerPart === null ? null : $this->resultToComputerPart($computerPart);
     }
 
     public function update(ComputerPart $partData): bool
     {
-        if($partData->getId() === null) throw new \Exception('Computer part specified has no ID.');
+        if ($partData->getId() === null) {
+            throw new \Exception('Computer part specified has no ID.');
+        }
 
         $current = $this->getById($partData->getId());
-        if($current === null) throw new \Exception(sprintf("Computer part %s does not exist.", $partData->getId()));
+        if ($current === null) {
+            throw new \Exception(sprintf("Computer part %s does not exist.", $partData->getId()));
+        }
 
         return $this->createOrUpdate($partData);
     }
@@ -42,7 +48,7 @@ class ComputerPartDAOImpl implements ComputerPartDAO
     public function getRandom(): ?ComputerPart
     {
         $mysqli = DatabaseManager::getMysqliConnection();
-        $computerPart = $mysqli->prepareAndFetchAll("SELECT * FROM computer_parts ORDER BY RAND() LIMIT 1",'',[])[0]??null;
+        $computerPart = $mysqli->prepareAndFetchAll("SELECT * FROM computer_parts ORDER BY RAND() LIMIT 1", '', [])[0] ?? null;
 
         return $computerPart === null ? null : $this->resultToComputerPart($computerPart);
     }
@@ -117,19 +123,22 @@ class ComputerPartDAOImpl implements ComputerPartDAO
             ],
         );
 
-        if(!$result) return false;
+        if (!$result) {
+            return false;
+        }
 
         // insert_id returns the last inserted ID.
-        if($partData->getId() === null){
+        if ($partData->getId() === null) {
             $partData->setId($mysqli->insert_id);
-            $timeStamp = $partData->getTimeStamp()??new DataTimeStamp(date('Y-m-h'), date('Y-m-h'));
+            $timeStamp = $partData->getTimeStamp() ?? new DataTimeStamp(date('Y-m-h'), date('Y-m-h'));
             $partData->setTimeStamp($timeStamp);
         }
 
         return true;
     }
 
-    private function resultToComputerPart(array $data): ComputerPart{
+    private function resultToComputerPart(array $data): ComputerPart
+    {
         return new ComputerPart(
             name: $data['name'],
             type: $data['type'],
@@ -151,10 +160,11 @@ class ComputerPartDAOImpl implements ComputerPartDAO
         );
     }
 
-    private function resultsToComputerParts(array $results): array{
+    private function resultsToComputerParts(array $results): array
+    {
         $computerParts = [];
 
-        foreach($results as $result){
+        foreach ($results as $result) {
             $computerParts[] = $this->resultToComputerPart($result);
         }
 

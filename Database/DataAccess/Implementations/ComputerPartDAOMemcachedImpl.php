@@ -18,7 +18,8 @@ class ComputerPartDAOMemcachedImpl implements ComputerPartDAO
         $this->memcached = DatabaseManager::getMemcachedConnection();
     }
 
-    private function computerPartToResult(ComputerPart $part): array{
+    private function computerPartToResult(ComputerPart $part): array
+    {
         return [
             'name' => $part->getName(),
             'type' => $part->getType(),
@@ -40,7 +41,8 @@ class ComputerPartDAOMemcachedImpl implements ComputerPartDAO
         ];
     }
 
-    private function resultToComputerPart(array $data): ComputerPart {
+    private function resultToComputerPart(array $data): ComputerPart
+    {
         $timestamp = isset($data['created_at']) && isset($data['updated_at']) ? new DataTimeStamp(
             $data['created_at'],
             $data['updated_at']
@@ -68,12 +70,16 @@ class ComputerPartDAOMemcachedImpl implements ComputerPartDAO
 
     public function create(ComputerPart $partData): bool
     {
-        if($partData->getId() !== null) throw new \Exception('Cannot create a computer part with an existing ID. id: ' . $partData->getId());
+        if ($partData->getId() !== null) {
+            throw new \Exception('Cannot create a computer part with an existing ID. id: ' . $partData->getId());
+        }
 
         // 保存されたアイテム数に基づくid
         $stats = $this->memcached->getStats();
         $firstServerKey = key($stats);
-        if($stats === false) throw new \Exception("Failed to retrieve cache stats.");
+        if ($stats === false) {
+            throw new \Exception("Failed to retrieve cache stats.");
+        }
         $itemCount = $stats[$firstServerKey]['curr_items'];
 
         $partData->setId($itemCount);
@@ -90,7 +96,9 @@ class ComputerPartDAOMemcachedImpl implements ComputerPartDAO
 
     public function update(ComputerPart $partData): bool
     {
-        if($partData->getId() === null) throw new \Exception('Computer part specified has no ID.');
+        if ($partData->getId() === null) {
+            throw new \Exception('Computer part specified has no ID.');
+        }
 
         $partData->getTimeStamp()->setUpdatedAt((new DateTime())->format('Y-m-d H:i:s'));
         return $this->memcached->set("ComputerPart_{$partData->getId()}", json_encode($this->computerPartToResult($partData)));
@@ -103,17 +111,22 @@ class ComputerPartDAOMemcachedImpl implements ComputerPartDAO
 
     public function createOrUpdate(ComputerPart $partData): bool
     {
-        if($partData->getId() !== null) return $this->update($partData);
-        else return $this->create($partData);
+        if ($partData->getId() !== null) {
+            return $this->update($partData);
+        } else {
+            return $this->create($partData);
+        }
     }
 
     public function getRandom(): ?ComputerPart
     {
         // クエリを使わないので、単純なO(n)アプローチです。
         $keys = $this->memcached->getAllKeys();
-        $computerPartKeys = array_filter($keys, fn($key) => str_starts_with($key, "ComputerPart_"));
+        $computerPartKeys = array_filter($keys, fn ($key) => str_starts_with($key, "ComputerPart_"));
 
-        if (empty($computerPartKeys)) return null;
+        if (empty($computerPartKeys)) {
+            return null;
+        }
 
         $randomKey = $computerPartKeys[array_rand($computerPartKeys)];
         $result = $this->memcached->get($randomKey);
@@ -127,23 +140,23 @@ class ComputerPartDAOMemcachedImpl implements ComputerPartDAO
     {
         $memcached = $this->memcached;
         $keys = $memcached->getAllKeys();
-        $computerPartKeys = array_filter($keys, fn($key) => str_starts_with($key, "ComputerPart_"));
+        $computerPartKeys = array_filter($keys, fn ($key) => str_starts_with($key, "ComputerPart_"));
 
         $keys = sort($keys, SORT_STRING);
 
         $selectedKeys = array_slice($computerPartKeys, $offset, $limit);
-        $parts = array_map(function($key) use ($memcached) {
+        $parts = array_map(function ($key) use ($memcached) {
             $result = $memcached->get($key);
             return $result ? $this->resultToComputerPart(json_decode($result)) : null;
         }, $selectedKeys);
 
-        return array_filter($parts, fn($part) => $part !== false);
+        return array_filter($parts, fn ($part) => $part !== false);
     }
 
     public function getAllByType(string $type, int $offset, int $limit): array
     {
         $allParts = $this->getAll(0, PHP_INT_MAX);
-        $filteredParts = array_filter($allParts, fn(ComputerPart $part) => $part->getType() === $type);
+        $filteredParts = array_filter($allParts, fn (ComputerPart $part) => $part->getType() === $type);
 
         return array_slice($filteredParts, $offset, $limit);
     }

@@ -4,29 +4,39 @@ namespace Response\Render;
 
 use Response\HTTPRenderer;
 
-class MediaRenderer implements HTTPRenderer {
-    public function __construct(private string $filepathBase, private string $type) {}
+class MediaRenderer implements HTTPRenderer
+{
+    public function __construct(private string $filepathBase, private string $type)
+    {
+    }
 
-    public function getFields(): array {
+    public function getFields(): array
+    {
         return [
             'Content-Type' => $this->getTypeDetails()['content_type']
         ];
     }
 
-    public function getFileName(): string{
+    public function getFileName(): string
+    {
         $base = __DIR__ . '/../..';
         $filename = sprintf("%s/%s.%s", $base, $this->filepathBase, $this->getTypeDetails()['extension']);
-        if(file_exists($filename)) return $filename;
-        else return sprintf("%s/%s", $base, "public/images/file-not-found.jpg");
+        if (file_exists($filename)) {
+            return $filename;
+        } else {
+            return sprintf("%s/%s", $base, "public/images/file-not-found.jpg");
+        }
     }
 
-    public function getContent(): string {
+    public function getContent(): string
+    {
         ob_start();
         readfile($this->getFileName());
         return ob_get_clean();
     }
 
-    private function getTypeDetails(): array{
+    private function getTypeDetails(): array
+    {
         $supportedContentTypes = [
             'jpg' => [
                 'content_type' => 'image/jpeg',

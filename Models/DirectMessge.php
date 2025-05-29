@@ -5,7 +5,8 @@ namespace Models;
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
 
-class DirectMessge implements Model {
+class DirectMessge implements Model
+{
     use GenericModel;
 
     public function __construct(
@@ -15,7 +16,8 @@ class DirectMessge implements Model {
         private ?int $id = null,
         private ?string $read_at = null,
         private ?string $createdAt = null,
-    ) {}
+    ) {
+    }
 
     public function getConversationId(): int
     {

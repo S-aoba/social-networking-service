@@ -3,16 +3,14 @@
 namespace Services\Image;
 
 use Exception;
-
 use Helpers\Settings;
 
 class ImageStorage
 {
     public function __construct(
-      private string $dirPath = ''
-    )
-    {
-      $this->dirPath = $this->dirPath ?: Settings::env('FILE_DIR_PATH');
+        private string $dirPath = ''
+    ) {
+        $this->dirPath = $this->dirPath ?: Settings::env('FILE_DIR_PATH');
     }
 
     public function save(string $imagePath, string $tmpPath): bool

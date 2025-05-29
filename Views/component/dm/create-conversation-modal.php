@@ -17,7 +17,7 @@
           
         <div id="conversation-error-message" class="hidden my-2 py-2 text-center text-red-600 bg-red-100"></div>
 
-        <?php if($followers === null): ?>
+        <?php if ($followers === null): ?>
           <div class="flex flex-col space-y-2 items-center justify-center pt-10">
             <p class="text-2xl font-semibold">
               まだフォロワーがいません
@@ -25,7 +25,7 @@
             <p class="text-sm text-slate-400">フォローされるとここに表示されます</p>
           </div>
         <?php else: ?>
-          <?php foreach($followers as $data): ?>
+          <?php foreach ($followers as $data): ?>
             <form class="create-conversation-form flex p-4 cursor-pointer transition duration-300 hover:bg-slate-100">
               <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
               <input type="hidden" name="user1_id" value="<?= $authUser->getUserId(); ?>">

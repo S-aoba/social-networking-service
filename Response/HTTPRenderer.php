@@ -2,7 +2,8 @@
 
 namespace Response;
 
-interface HTTPRenderer {
+interface HTTPRenderer
+{
     public function getFields(): array;
     public function getContent(): string;
 }

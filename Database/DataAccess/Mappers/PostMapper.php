@@ -14,7 +14,7 @@ class PostMapper
      */
     public static function toPostDetails(array $rowData): array
     {
-      return array_map(function($data) {
+        return array_map(function ($data) {
             $post = new Post(
                 content: $data['content'] ?? '',
                 imagePath: $data['post_image_path'] ?? null,
@@ -45,7 +45,7 @@ class PostMapper
      */
     public static function toOwnPosts(array $rowData): array
     {
-        return array_map(function($data) {
+        return array_map(function ($data) {
             $post = new Post(
                 content: $data['content'] ?? '',
                 imagePath: $data['post_image_path'] ?? null,

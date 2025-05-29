@@ -14,7 +14,7 @@
   <div class="py-2 flex items-end justify-between">
     <img src="<?= $queryUser->getImagePath(); ?>" alt="user-icon" class="size-32 rounded-full">
 
-    <?php if($authUser->getUserId() === $queryUser->getUserId()): ?>
+    <?php if ($authUser->getUserId() === $queryUser->getUserId()): ?>
       <button 
           id="edit-profile-button" 
           class="p-2 border border-slate-200 text-xs rounded-3xl font-semibold hover:bg-slate-100/70 cursor-pointer"
@@ -25,7 +25,7 @@
       <form method="POST" id="follow-form">
         <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
         <input type="hidden" name="following_id" value=<?= $queryUser->getUserId(); ?>>
-        <?php if($isFollow): ?>
+        <?php if ($isFollow): ?>
           <button 
             class="px-6 py-2 text-sm bg-white font-mono border border-slate-200 rounded-3xl font-semibold hover:brightness-90 cursor-pointer"
           >
