@@ -5,7 +5,8 @@ namespace Models;
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
 
-class Profile implements Model {
+class Profile implements Model
+{
     use GenericModel;
 
     public function __construct(
@@ -17,71 +18,88 @@ class Profile implements Model {
         private ?string $age = null,
         private ?string $hobby = null,
         private ?string $selfIntroduction = null,
-    ) {}
+    ) {
+    }
 
     // Getters
-    public function getUsername(): string {
+    public function getUsername(): string
+    {
         return $this->username;
     }
 
-    public function getUserId(): int {
+    public function getUserId(): int
+    {
         return $this->userId;
     }
 
-    public function getId(): ?int {
+    public function getId(): ?int
+    {
         return $this->id;
     }
 
-    public function getImagePath(): ?string {
+    public function getImagePath(): ?string
+    {
         return $this->imagePath;
     }
 
-    public function getAddress(): ?string {
+    public function getAddress(): ?string
+    {
         return $this->address;
     }
 
-    public function getAge(): ?string {
+    public function getAge(): ?string
+    {
         return $this->age;
     }
 
-    public function getHobby(): ?string {
+    public function getHobby(): ?string
+    {
         return $this->hobby;
     }
 
-    public function getSelfIntroduction(): ?string {
+    public function getSelfIntroduction(): ?string
+    {
         return $this->selfIntroduction;
     }
 
     // Setters
-    public function setUsername(string $username): void {
+    public function setUsername(string $username): void
+    {
         $this->username = $username;
     }
 
-    public function setUserId(int $userId): void {
+    public function setUserId(int $userId): void
+    {
         $this->userId = $userId;
     }
 
-    public function setId(?int $id): void {
+    public function setId(?int $id): void
+    {
         $this->id = $id;
     }
 
-    public function setImagePath(?string $imagePath): void {
+    public function setImagePath(?string $imagePath): void
+    {
         $this->imagePath = $imagePath;
     }
 
-    public function setAddress(?string $address): void {
+    public function setAddress(?string $address): void
+    {
         $this->address = $address;
     }
 
-    public function setAge(?string $age): void {
+    public function setAge(?string $age): void
+    {
         $this->age = $age;
     }
 
-    public function setHobby(?string $hobby): void {
+    public function setHobby(?string $hobby): void
+    {
         $this->hobby = $hobby;
     }
 
-    public function setSelfIntroduction(?string $selfIntroduction): void {
+    public function setSelfIntroduction(?string $selfIntroduction): void
+    {
         $this->selfIntroduction = $selfIntroduction;
     }
 }

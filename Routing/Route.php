@@ -7,7 +7,6 @@ use Helpers\Settings;
 
 class Route
 {
-
     private string $path;
     /**
      * @var string[]
@@ -15,7 +14,8 @@ class Route
     private array $middleware;
     private Closure $callback;
 
-    public function __construct(string $path, callable $callback){
+    public function __construct(string $path, callable $callback)
+    {
         $this->path = $path;
         // これは、Closure::fromCallable($callable) の代替構文です
         // クロージャはコールバックをクラスにカプセル化し、そのスコープをカプセル化します。元のスコープの変数を使用するにはuseキーワードを使用します
@@ -24,16 +24,19 @@ class Route
 
     // ルートを作成するための静的関数
     // (new Route($callback))->setMiddleware(...)の代わりに、Route::create($callback)->setMiddleware(...)を実行できます
-    public static function create(string $path, callable $callback): Route{
+    public static function create(string $path, callable $callback): Route
+    {
         return new self($path, $callback);
     }
 
-    public function setMiddleware(array $middleware): Route{
+    public function setMiddleware(array $middleware): Route
+    {
         $this->middleware = $middleware;
         return $this;
     }
 
-    public function getMiddleware(): array{
+    public function getMiddleware(): array
+    {
         return $this->middleware ?? [];
     }
 
@@ -47,14 +50,18 @@ class Route
         return $this->path;
     }
 
-    private function getBaseURL(): string{
-        if(!isset($_SERVER)) return $this->getPath();
+    private function getBaseURL(): string
+    {
+        if (!isset($_SERVER)) {
+            return $this->getPath();
+        }
 
         $host = $_SERVER['HTTP_HOST'];
         return sprintf("%s/%s", $host, $this->getPath()) ;
     }
 
-    private function getSecretKey(): string{
+    private function getSecretKey(): string
+    {
         return Settings::env("SIGNATURE_SECRET_KEY");
     }
 
@@ -75,14 +82,18 @@ class Route
     {
         // URLデータを含む連想配列を返すparse_url組み込み関数を使用して、URLから署名を抽出します。
         $parsedUrl = parse_url($url);
-        if(!isset($parsedUrl['query'])) return false;
+        if (!isset($parsedUrl['query'])) {
+            return false;
+        }
 
         $queryParams = [];
 
         // $parsedUrl['query']は、"param1=value1&param2=value2 "の形式でキーと値のペアを返し、parse_strはそれらを配列に挿入するために文字列をパースすることができます。
         parse_str($parsedUrl['query'], $queryParams);
 
-        if(!isset($queryParams['signature'])) return false;
+        if (!isset($queryParams['signature'])) {
+            return false;
+        }
 
         $signature = $queryParams['signature'];
 

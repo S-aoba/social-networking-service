@@ -5,45 +5,50 @@ namespace Database\DataAccess\Implementations;
 use Database\DatabaseManager;
 use Database\DataAccess\Interfaces\ConversationDAO;
 use Database\DataAccess\Mappers\ConversationMapper;
-
 use Models\Conversation;
 
-class ConversationDAOImpl implements ConversationDAO 
+class ConversationDAOImpl implements ConversationDAO
 {
     public function create(Conversation $conversation): bool
     {
-      if($conversation->getId() !== null) throw new \Exception('Cannot create a conversation with an existing ID. id: ' . $conversation->getId());
-      
-      $mysqli = DatabaseManager::getMysqliConnection();
+        if ($conversation->getId() !== null) {
+            throw new \Exception('Cannot create a conversation with an existing ID. id: ' . $conversation->getId());
+        }
 
-      $query = "INSERT INTO conversations (user1_id, user2_id) VALUES (?, ?)";
+        $mysqli = DatabaseManager::getMysqliConnection();
 
-      $result = $mysqli->prepareAndExecute($query, 'ii', [
-        $conversation->getUser1Id(),
-        $conversation->getUser2Id()
-      ]);
+        $query = "INSERT INTO conversations (user1_id, user2_id) VALUES (?, ?)";
 
-      if($result === false) return false;
+        $result = $mysqli->prepareAndExecute($query, 'ii', [
+          $conversation->getUser1Id(),
+          $conversation->getUser2Id()
+        ]);
 
-      $conversation->setId($mysqli->insert_id);
-      
-      return true;    
+        if ($result === false) {
+            return false;
+        }
+
+        $conversation->setId($mysqli->insert_id);
+
+        return true;
     }
 
     public function findAllByUserId(int $userId): ?array
     {
-      $conversationsRowData = $this->fetchAllByUserId($userId);
+        $conversationsRowData = $this->fetchAllByUserId($userId);
 
-      if($conversationsRowData === null) return null;
+        if ($conversationsRowData === null) {
+            return null;
+        }
 
-      return ConversationMapper::toConversationDetails($conversationsRowData);
+        return ConversationMapper::toConversationDetails($conversationsRowData);
     }
 
-    private function fetchAllByUserId(int $userId): ?array 
+    private function fetchAllByUserId(int $userId): ?array
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+        $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT 
+        $query = "SELECT 
                   c.id AS conversation_id,
                   c.user1_id,
                   c.user2_id,
@@ -78,30 +83,34 @@ class ConversationDAOImpl implements ConversationDAO
                 LEFT JOIN profiles p ON p.user_id = c.partner_id;
                 ";
 
-      $result = $mysqli->prepareAndFetchAll($query, 'iii', [
-        $userId,
-        $userId,
-        $userId
-      ]);
+        $result = $mysqli->prepareAndFetchAll($query, 'iii', [
+          $userId,
+          $userId,
+          $userId
+        ]);
 
-      if(empty($result)) return null;
-      
-      return $result;
+        if (empty($result)) {
+            return null;
+        }
+
+        return $result;
     }
 
     public function findByConversationId(int $id): ?Conversation
     {
-      $conversationRowData = $this->fetchById($id);
+        $conversationRowData = $this->fetchById($id);
 
-      if($conversationRowData === null) return null;
-      return ConversationMapper::toConversation($conversationRowData);
+        if ($conversationRowData === null) {
+            return null;
+        }
+        return ConversationMapper::toConversation($conversationRowData);
     }
 
-    private function fetchById(int $id): ?array 
+    private function fetchById(int $id): ?array
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+        $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT 
+        $query = "SELECT 
                   id,
                   user1_id,
                   user2_id,
@@ -109,54 +118,60 @@ class ConversationDAOImpl implements ConversationDAO
                 FROM conversations
                 WHERE id = ?
                 ";
-      
-      $result = $mysqli->prepareAndFetchAll($query, 'i', [$id]);
 
-      if(empty($result)) return null;
-      
-      return $result[0];
+        $result = $mysqli->prepareAndFetchAll($query, 'i', [$id]);
+
+        if (empty($result)) {
+            return null;
+        }
+
+        return $result[0];
     }
 
     public function hasConversationWith(Conversation $conversation): bool
     {
-      $conversationRowData = $this->checkConversationExistsWith($conversation);
+        $conversationRowData = $this->checkConversationExistsWith($conversation);
 
-      if($conversationRowData === false) return false;
+        if ($conversationRowData === false) {
+            return false;
+        }
 
-      return true;
+        return true;
     }
 
-    private function checkConversationExistsWith(Conversation $conversation): bool 
+    private function checkConversationExistsWith(Conversation $conversation): bool
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+        $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT 1
+        $query = "SELECT 1
                 FROM conversations
                 WHERE (user1_id = ? AND user2_id = ?)
                   OR (user1_id = ? AND user2_id = ?)
                 LIMIT 1
               ";
-      
-      $result = $mysqli->prepareAndFetchAll($query, 'iiii', [
-        $conversation->getUser1Id(),
-        $conversation->getUser2Id(),
-        $conversation->getUser2Id(),
-        $conversation->getUser1Id(),
-      ]);
 
-      return !empty($result);
+        $result = $mysqli->prepareAndFetchAll($query, 'iiii', [
+          $conversation->getUser1Id(),
+          $conversation->getUser2Id(),
+          $conversation->getUser2Id(),
+          $conversation->getUser1Id(),
+        ]);
+
+        return !empty($result);
     }
 
     public function delete(int $id): bool
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+        $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "DELETE FROM conversations WHERE id = ?";
+        $query = "DELETE FROM conversations WHERE id = ?";
 
-      $result = $mysqli->prepareAndExecute($query, 'i', [$id]);
+        $result = $mysqli->prepareAndExecute($query, 'i', [$id]);
 
-      if($result === false) return false;
-      
-      return true;
+        if ($result === false) {
+            return false;
+        }
+
+        return true;
     }
 }

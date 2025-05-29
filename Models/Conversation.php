@@ -5,7 +5,8 @@ namespace Models;
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
 
-class Conversation implements Model {
+class Conversation implements Model
+{
     use GenericModel;
 
     public function __construct(
@@ -13,7 +14,8 @@ class Conversation implements Model {
         private int $user2Id,
         private ?int $id = null,
         private ?string $createdAt = null,
-    ) {}
+    ) {
+    }
 
     public function getUser1Id(): int
     {

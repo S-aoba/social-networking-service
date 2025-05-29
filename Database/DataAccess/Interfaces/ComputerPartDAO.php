@@ -4,7 +4,8 @@ namespace Database\DataAccess\Interfaces;
 
 use Models\ComputerPart;
 
-interface ComputerPartDAO {
+interface ComputerPartDAO
+{
     public function create(ComputerPart $partData): bool;
     public function getById(int $id): ?ComputerPart;
     public function update(ComputerPart $partData): bool;

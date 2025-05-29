@@ -111,8 +111,8 @@ $profileInfoList = [
         <div class="pt-3 flex flex-col space-y-4 border-t border-slate-200">
           <div id="update-profile-error-message" class="hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
           <!-- data -->
-          <?php foreach($profileInfoList as $key => $data): ?>
-            <?php if($key === 'selfIntroduction') : ?>
+          <?php foreach ($profileInfoList as $key => $data): ?>
+            <?php if ($key === 'selfIntroduction') : ?>
               <label for="<?= $data['name']; ?>" class="text-slate-500">
                 <?= $data['label']; ?>
                 <textarea 

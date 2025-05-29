@@ -27,8 +27,7 @@ class CodeGeneration extends AbstractCommand
         if ($codeGenType === 'migration') {
             $migrationName = $this->getArgumentValue('name');
             $this->generateMigrationFile($migrationName);
-        }
-        else if ($codeGenType === 'seeder') {
+        } elseif ($codeGenType === 'seeder') {
             $seederName = $this->getArgumentValue('name');
             $this->generateSeederFile($seederName);
         }
@@ -36,23 +35,25 @@ class CodeGeneration extends AbstractCommand
         return 0;
     }
 
-    private function generateSeederFile(string $seederName) : void {
+    private function generateSeederFile(string $seederName): void
+    {
         $seederName = $this->pascalCase($seederName);
         $seederName = $this->addSeederWord($seederName);
         $filename = sprintf(
             '%s.php',
             $seederName
         );
-        
+
         $seederContent = $this->getSeederContent($seederName);
-        
-        $path = sprintf("%s/../../Database/Seeds/%s", __DIR__,$filename);
+
+        $path = sprintf("%s/../../Database/Seeds/%s", __DIR__, $filename);
 
         file_put_contents($path, $seederContent);
         $this->log("Seeder file {$filename} has been generated!");
     }
 
-    private function getSeederContent(string $seederName): string {
+    private function getSeederContent(string $seederName): string
+    {
         return <<<SEEDER
 <?php
 namespace Database\Seeds;
@@ -76,12 +77,12 @@ class {$seederName} extends AbstractSeeder {
 SEEDER;
     }
 
-    private function addSeederWord(string $seederName): string {
+    private function addSeederWord(string $seederName): string
+    {
         // 入力された$seederNameの後ろにSeederがついているかどうかをチェックし、ついていれば何もせず、ついていなければSeederを付けて返す
-        if(str_contains($seederName, 'Seeder')) {
+        if (str_contains($seederName, 'Seeder')) {
             return $seederName;
-        }
-        else if(str_contains($seederName, 'seeder')) {
+        } elseif (str_contains($seederName, 'seeder')) {
             return str_replace('seeder', 'Seeder', $seederName);
         }
 
@@ -100,7 +101,7 @@ SEEDER;
         $migrationContent = $this->getMigrationContent($migrationName);
 
         // 移行ファイルを保存するパスを指定します
-        $path = sprintf("%s/../../Database/Migrations/%s", __DIR__,$filename);
+        $path = sprintf("%s/../../Database/Migrations/%s", __DIR__, $filename);
 
         file_put_contents($path, $migrationContent);
         $this->log("Migration file {$filename} has been generated!");
@@ -133,7 +134,8 @@ class {$className} implements SchemaMigration
 MIGRATION;
     }
 
-    private function pascalCase(string $string): string{
+    private function pascalCase(string $string): string
+    {
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
     }
 }

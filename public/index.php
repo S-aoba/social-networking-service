@@ -3,9 +3,11 @@
 
 set_include_path(get_include_path() . PATH_SEPARATOR . realpath(__DIR__ . '/..'));
 spl_autoload_extensions(".php");
-spl_autoload_register(function($class) {
+spl_autoload_register(function ($class) {
     $file = realpath(__DIR__ . '/..') . '/'  . str_replace('\\', '/', $class). '.php';
-    if (file_exists(stream_resolve_include_path($file))) include($file);
+    if (file_exists(stream_resolve_include_path($file))) {
+        include($file);
+    }
 });
 
 require 'vendor/autoload.php';
@@ -27,14 +29,16 @@ $path = ltrim($path, '/');
 if (isset($routes[$path])) {
     // ルートの取得
     $route = $routes[$path];
-    try{
-        if(!($route instanceof Routing\Route)) throw new InvalidArgumentException("Invalid route type");
+    try {
+        if (!($route instanceof Routing\Route)) {
+            throw new InvalidArgumentException("Invalid route type");
+        }
 
         // 配列連結ミドルウェア
         $middlewareRegister = include('Middleware/middleware-register.php');
         $middlewares = array_merge($middlewareRegister['global'], array_map(fn ($routeAlias) => $middlewareRegister['aliases'][$routeAlias], $route->getMiddleware()));
 
-        $middlewareHandler = new \Middleware\MiddlewareHandler(array_map(fn($middlewareClass) => new $middlewareClass(), $middlewares));
+        $middlewareHandler = new \Middleware\MiddlewareHandler(array_map(fn ($middlewareClass) => new $middlewareClass(), $middlewares));
 
         // チェーンの最後のcallableは、HTTPRendererを返す現在の$route callableとなります。
         $renderer = $middlewareHandler->run($route->getCallback());
@@ -50,17 +54,20 @@ if (isset($routes[$path])) {
                 // ヘッダー設定に失敗した場合のログまたは処理
                 // エラー処理によっては、例外をスローするか、デフォルトのまま続行することもできます。
                 http_response_code(500);
-                if($DEBUG) print("Failed setting header - original: '$value', sanitized: '$sanitized_value'");
+                if ($DEBUG) {
+                    print("Failed setting header - original: '$value', sanitized: '$sanitized_value'");
+                }
                 exit;
             }
 
             print($renderer->getContent());
         }
-    }
-    catch (Exception $e){
+    } catch (Exception $e) {
         http_response_code(500);
         print("Internal error, please contact the admin.<br>");
-        if($DEBUG) print($e->getMessage());
+        if ($DEBUG) {
+            print($e->getMessage());
+        }
     }
 } else {
     // 一致するルートがない場合、404エラーを表示します

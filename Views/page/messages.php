@@ -10,9 +10,9 @@
     <?php include "Views/component/dm/search-bar.php" ?>
 
     <!-- Conversations -->
-    <?php if($conversations !== null): ?>
+    <?php if ($conversations !== null): ?>
       <div class="flex-1 py-4">
-        <?php foreach($conversations as $data): ?>
+        <?php foreach ($conversations as $data): ?>
           <?php include "Views/component/dm/conversation-item.php" ?>
         <?php endforeach; ?>
       </div>

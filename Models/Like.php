@@ -5,7 +5,8 @@ namespace Models;
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
 
-class Like implements Model {
+class Like implements Model
+{
     use GenericModel;
 
     public function __construct(
@@ -13,31 +14,40 @@ class Like implements Model {
         private int $postId,
         private ?int $id = null,
         private ?string $createdAt = null,
-    ) {}
+    ) {
+    }
 
-    public function getId(): ?int {
+    public function getId(): ?int
+    {
         return $this->id;
     }
-    public function setId(int $id): void {
+    public function setId(int $id): void
+    {
         $this->id = $id;
     }
-    public function getUserId(): int {
+    public function getUserId(): int
+    {
         return $this->userId;
     }
-    public function setUserId(int $userId): void {
+    public function setUserId(int $userId): void
+    {
         $this->userId = $userId;
     }
-    public function getPostId(): int {
+    public function getPostId(): int
+    {
         return $this->postId;
     }
-    public function setPostId(int $postId): void {
+    public function setPostId(int $postId): void
+    {
         $this->postId = $postId;
-    } 
-    public function getCreatedAt(): ?string {
+    }
+    public function getCreatedAt(): ?string
+    {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(string $createdAt): void {
+    public function setCreatedAt(string $createdAt): void
+    {
         $this->createdAt = $createdAt;
     }
 }

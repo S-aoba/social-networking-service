@@ -12,7 +12,7 @@ class GuestMiddleware implements Middleware
     {
         error_log('Running authentication check...');
         // ユーザーがログインしている場合は、メッセージなしでランダムパーツのページにリダイレクトします
-        if(Authenticate::isLoggedIn()){
+        if (Authenticate::isLoggedIn()) {
             return new RedirectRenderer('');
         }
 

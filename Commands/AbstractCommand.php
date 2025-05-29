@@ -15,7 +15,8 @@ abstract class AbstractCommand implements Command
     /**
      * @throws Exception
      */
-    public function __construct(){
+    public function __construct()
+    {
         $this->setUpArgsMap();
     }
 
@@ -25,39 +26,48 @@ abstract class AbstractCommand implements Command
      * すべての引数は短縮バージョンでは'-'で、完全なバージョンでは'--'で始まります。
      */
 
-    private function setUpArgsMap(): void{
+    private function setUpArgsMap(): void
+    {
         //オリジナルのマッピングを設定
         $args = $GLOBALS['argv'];
         // エイリアスのインデックスが見つかるまで探索
         $startIndex  = array_search($this->getAlias(), $args);
 
-        if($startIndex === false) throw new Exception(sprintf("Could not find alias %s", $this->getAlias()));
-        else $startIndex++;
+        if ($startIndex === false) {
+            throw new Exception(sprintf("Could not find alias %s", $this->getAlias()));
+        } else {
+            $startIndex++;
+        }
 
         $shellArgs = [];
 
         // メインコマンドの値である初期値を取得
-        if(!isset($args[$startIndex]) || ($args[$startIndex][0] === '-')){
-            if($this->isCommandValueRequired()) throw new Exception(sprintf("%s's value is required.", $this->getAlias()));
-        }
-        else{
+        if (!isset($args[$startIndex]) || ($args[$startIndex][0] === '-')) {
+            if ($this->isCommandValueRequired()) {
+                throw new Exception(sprintf("%s's value is required.", $this->getAlias()));
+            }
+        } else {
             $this->argsMap[$this->getAlias()] = $args[$startIndex];
             $startIndex++;
         }
 
         // すべての引数を$argsハッシュに格納
-        for($i = $startIndex; $i < count($args); $i++){
+        for ($i = $startIndex; $i < count($args); $i++) {
             $arg = $args[$i];
 
-            if($arg[0].$arg[1] === '--') $key = substr($arg,2);
-            else if($arg[0] === '-') $key = substr($arg,1);
-            else throw new Exception('Options must start with - or --');
+            if ($arg[0].$arg[1] === '--') {
+                $key = substr($arg, 2);
+            } elseif ($arg[0] === '-') {
+                $key = substr($arg, 1);
+            } else {
+                throw new Exception('Options must start with - or --');
+            }
 
             $shellArgs[$key] = true;
 
             // 次のargsエントリがオプションでない場合は、引数値となります。iも同様にインクリメントします。
-            if(isset($args[$i+1]) && $args[$i+1] !== '-') {
-                $shellArgs[$key] = $args[$i+1];
+            if (isset($args[$i + 1]) && $args[$i + 1] !== '-') {
+                $shellArgs[$key] = $args[$i + 1];
                 $i++;
             }
         }
@@ -67,14 +77,21 @@ abstract class AbstractCommand implements Command
             $argString = $argument->getArgument();
             $value = null;
 
-            if($argument->isShortAllowed() && isset($shellArgs[$argString[0]])) $value = $shellArgs[$argString[0]];
-            else if(isset($shellArgs[$argString])) $value = $shellArgs[$argString];
-
-            if($value === null){
-                if($argument->isRequired()) throw new Exception(sprintf('Could not find the required argument %s', $argString));
-                else $this->argsMap[$argString] = false;
+            if ($argument->isShortAllowed() && isset($shellArgs[$argString[0]])) {
+                $value = $shellArgs[$argString[0]];
+            } elseif (isset($shellArgs[$argString])) {
+                $value = $shellArgs[$argString];
             }
-            else $this->argsMap[$argString] = $value;
+
+            if ($value === null) {
+                if ($argument->isRequired()) {
+                    throw new Exception(sprintf('Could not find the required argument %s', $argString));
+                } else {
+                    $this->argsMap[$argString] = false;
+                }
+            } else {
+                $this->argsMap[$argString] = $value;
+            }
         }
 
         $this->log(json_encode($this->argsMap));
@@ -82,10 +99,12 @@ abstract class AbstractCommand implements Command
 
     public static function getHelp(): string
     {
-        $helpString = "Command: " . static::getAlias() . (static::isCommandValueRequired()?" {value}":"") . PHP_EOL;
+        $helpString = "Command: " . static::getAlias() . (static::isCommandValueRequired() ? " {value}" : "") . PHP_EOL;
 
         $arguments = static::getArguments();
-        if(empty($arguments)) return $helpString;
+        if (empty($arguments)) {
+            return $helpString;
+        }
 
         $helpString .= "Arguments:" . PHP_EOL;
 
@@ -109,12 +128,14 @@ abstract class AbstractCommand implements Command
         return static::$alias !== null ? static::$alias : static::class;
     }
 
-    public static function isCommandValueRequired(): bool{
+    public static function isCommandValueRequired(): bool
+    {
         return static::$requiredCommandValue;
     }
 
-    public function getCommandValue(): string{
-        return $this->argsMap[static::getAlias()]??"";
+    public function getCommandValue(): string
+    {
+        return $this->argsMap[static::getAlias()] ?? "";
     }
 
     // 引数の値の文字列を返し、存在するが値が設定されていない場合はtrue、存在しない場合はfalseを返します。
@@ -130,6 +151,6 @@ abstract class AbstractCommand implements Command
     }
 
     /** @return Argument[]  */
-    public abstract static function getArguments(): array;
-    public abstract function execute(): int;
+    abstract public static function getArguments(): array;
+    abstract public function execute(): int;
 }

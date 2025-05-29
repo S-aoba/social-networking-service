@@ -28,13 +28,13 @@
             <?= $data['post']->getFormattedCreatedAt(); ?>
           </div>
         </div>
-        <?php if($authUser->getUserId() === $data['author']->getUserId()): ?>
+        <?php if ($authUser->getUserId() === $data['author']->getUserId()): ?>
           <?php include "Views/component/post-menu-action.php" ?>
         <?php endif ;?>
       </div>
       <div id="post-content" class="w-full py-2 flex flex-col items-start justify-center space-y-4">
         <p class="text-sm"><?php echo $data['post']->getContent() ?></p>
-        <?php if($data['post']->getImagePath() !== null): ?>
+        <?php if ($data['post']->getImagePath() !== null): ?>
           <div class="size-full rounded-lg overflow-hidden">
             <img 
               src="<?php echo $data['post']->getImagePath() ?>" 
@@ -51,7 +51,7 @@
             alt="comment-icon" 
             class="size-4"
           >
-          <?php if($data['replyCount']): ?>
+          <?php if ($data['replyCount']): ?>
             <p class="text-sm text-gray-400">
               <?php echo $data['replyCount'] ?>
             </p>

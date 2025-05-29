@@ -5,7 +5,8 @@ namespace Models;
 use Models\Interfaces\Model;
 use Models\Traits\GenericModel;
 
-class User implements Model {
+class User implements Model
+{
     use GenericModel;
 
     public function __construct(
@@ -13,29 +14,36 @@ class User implements Model {
         private ?int $id = null,
         private ?string $company = null,
         private ?DataTimeStamp $timeStamp = null,
-    ) {}
+    ) {
+    }
 
-    public function getId(): ?int {
+    public function getId(): ?int
+    {
         return $this->id;
     }
 
-    public function setId(int $id): void {
+    public function setId(int $id): void
+    {
         $this->id = $id;
     }
 
-    public function getEmail(): string {
+    public function getEmail(): string
+    {
         return $this->email;
     }
 
-    public function setEmail(string $email): void {
+    public function setEmail(string $email): void
+    {
         $this->email = $email;
     }
 
-    public function getCompany(): ?string {
+    public function getCompany(): ?string
+    {
         return $this->company;
     }
 
-    public function setCompany(?string $company): void {
+    public function setCompany(?string $company): void
+    {
         $this->company = $company;
     }
 

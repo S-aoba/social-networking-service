@@ -2,8 +2,7 @@
   <div id="dm-error-message" class="hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
 
   <form id="direct-message-form" method="POST" class="relative">
-    <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken
-    () ?>">
+    <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
     <input type="hidden" name="conversation_id" value="<?= $conversation->getId(); ?>">
     <textarea 
       id="content"

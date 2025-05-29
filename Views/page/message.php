@@ -11,7 +11,7 @@
 
     <!-- Conversations -->
     <div class="flex-1 py-4">
-      <?php foreach($conversations as $data): ?>
+      <?php foreach ($conversations as $data): ?>
         <?php include "Views/component/dm/conversation-item.php" ?>
       <?php endforeach; ?>
     </div>
@@ -33,9 +33,9 @@
 
     <!-- Direct Message Content -->
     <div class="flex-1 overflow-y-auto px-4 py-2 space-y-4">
-      <?php if($directMessages !== null): ?>
-        <?php foreach($directMessages as $m): ?>
-          <?php if($authUser->getUserId() === $m->getSenderId()): ?>
+      <?php if ($directMessages !== null): ?>
+        <?php foreach ($directMessages as $m): ?>
+          <?php if ($authUser->getUserId() === $m->getSenderId()): ?>
             <!-- AuthUser -->
             <div class="p-3 flex flex-col items-end justify-center space-y-2">
               <span class="font-semibold"><?= $authUser->getUsername(); ?></span>

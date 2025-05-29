@@ -32,37 +32,37 @@ class ConversationMapper
      */
     public static function toConversationDetails(array $rowData): array
     {
-        return array_map(function($data) {
-          $conversation = new Conversation(
-              user1Id: $data['user1_id'],
-              user2Id: $data['user2_id'],
-              id: $data['conversation_id'],
-              createdAt: $data['conversation_created_at']
-          );
-  
-          $directMessage = null;
-          if (isset($data['dm_conversation_id']) && $data['dm_conversation_id'] !== null) {
-              $directMessage = new DirectMessge(
-                  conversationId: $data['dm_conversation_id'],
-                  senderId: $data['sender_id'],
-                  content: $data['content'],
-                  id: $data['dm_id'],
-                  read_at: $data['read_at'],
-                  createdAt: $data['dm_created_at']
-              );
-          }
-  
-          $partner = new Profile(
-              username: $data['username'],
-              userId: $data['user_id'],
-              imagePath: $data['image_path']
-          );
-  
-          return [
-              'conversation' => $conversation,
-              'directMessage' => $directMessage,
-              'partner' => $partner,
-          ];
+        return array_map(function ($data) {
+            $conversation = new Conversation(
+                user1Id: $data['user1_id'],
+                user2Id: $data['user2_id'],
+                id: $data['conversation_id'],
+                createdAt: $data['conversation_created_at']
+            );
+
+            $directMessage = null;
+            if (isset($data['dm_conversation_id']) && $data['dm_conversation_id'] !== null) {
+                $directMessage = new DirectMessge(
+                    conversationId: $data['dm_conversation_id'],
+                    senderId: $data['sender_id'],
+                    content: $data['content'],
+                    id: $data['dm_id'],
+                    read_at: $data['read_at'],
+                    createdAt: $data['dm_created_at']
+                );
+            }
+
+            $partner = new Profile(
+                username: $data['username'],
+                userId: $data['user_id'],
+                imagePath: $data['image_path']
+            );
+
+            return [
+                'conversation' => $conversation,
+                'directMessage' => $directMessage,
+                'partner' => $partner,
+            ];
         }, $rowData);
     }
 }

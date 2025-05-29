@@ -4,3 +4,5 @@ vendor
 log
 
 public/uploads
+
+.php-cs-fixer.cache

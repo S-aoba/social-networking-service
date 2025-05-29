@@ -5,50 +5,55 @@ namespace Database\DataAccess\Implementations;
 use Database\DatabaseManager;
 use Database\DataAccess\Interfaces\PostDAO;
 use Database\DataAccess\Mappers\PostMapper;
-
 use Models\Post;
 
 class PostDAOImpl implements PostDAO
 {
     public function create(Post $post): bool
     {
-      if($post->getId() !== null) throw new \Exception('Cannnot create a post with an existing ID. id: ' . $post->getId());
+        if ($post->getId() !== null) {
+            throw new \Exception('Cannnot create a post with an existing ID. id: ' . $post->getId());
+        }
 
-      $mysqli = DatabaseManager::getMysqliConnection();
+        $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "INSERT INTO posts (content, image_path, user_id, parent_post_id) VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO posts (content, image_path, user_id, parent_post_id) VALUES (?, ?, ?, ?)";
 
-      $result = $mysqli->prepareAndExecute(
-        $query,
-        'ssii',
-        [
-          $post->getContent(),
-          $post->getImagePath(),
-          $post->getUserId(),
-          $post->getParentPostId()
+        $result = $mysqli->prepareAndExecute(
+            $query,
+            'ssii',
+            [
+            $post->getContent(),
+            $post->getImagePath(),
+            $post->getUserId(),
+            $post->getParentPostId()
         ]
-      );
+        );
 
-      if($result === false) return false;
+        if ($result === false) {
+            return false;
+        }
 
-      $post->setId($mysqli->insert_id);
+        $post->setId($mysqli->insert_id);
 
-      return true;
+        return true;
     }
 
     public function getFollowingPosts(int $userId): ?array
     {
-      $rowFollowingPosts = $this->fetchFollowingPosts($userId);
-      if($rowFollowingPosts === null) return null;
-      
-      return PostMapper::toPostDetails($rowFollowingPosts);
+        $rowFollowingPosts = $this->fetchFollowingPosts($userId);
+        if ($rowFollowingPosts === null) {
+            return null;
+        }
+
+        return PostMapper::toPostDetails($rowFollowingPosts);
     }
 
     private function fetchFollowingPosts(int $userId): ?array
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+        $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT 
+        $query = "SELECT 
                   posts.*, 
                   posts.image_path AS post_image_path,
                   profiles.username, 
@@ -78,26 +83,30 @@ class PostDAOImpl implements PostDAO
                 ORDER BY posts.created_at DESC
                 LIMIT 10;
                 ";
-      $result = $mysqli->prepareAndFetchAll($query, 'iii', [$userId, $userId, $userId]);
+        $result = $mysqli->prepareAndFetchAll($query, 'iii', [$userId, $userId, $userId]);
 
-      if(empty($result)) return null;
-      return $result;
+        if (empty($result)) {
+            return null;
+        }
+        return $result;
     }
 
     public function getById(int $postId, int $userId): ?array
     {
-      $rowPost = $this->fetchById($postId, $userId);
+        $rowPost = $this->fetchById($postId, $userId);
 
-      if($rowPost === null) return null;
+        if ($rowPost === null) {
+            return null;
+        }
 
-      return PostMapper::toPostDetails($rowPost)[0];
+        return PostMapper::toPostDetails($rowPost)[0];
     }
 
-    private function fetchById(int $postId, int $userId): ?array 
+    private function fetchById(int $postId, int $userId): ?array
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+        $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT 
+        $query = "SELECT 
                   posts.*, 
                   posts.image_path AS post_image_path,
                   profiles.username, 
@@ -125,27 +134,31 @@ class PostDAOImpl implements PostDAO
                 WHERE posts.id = ?
               ";
 
-      $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $postId]);
+        $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $postId]);
 
-      if(empty($result)) return null;
+        if (empty($result)) {
+            return null;
+        }
 
-      return $result;
+        return $result;
     }
 
     public function getReplies(int $parentPostId, int $userId): ?array
     {
-      $repliesRow = $this->fetchReplies($parentPostId, $userId);
+        $repliesRow = $this->fetchReplies($parentPostId, $userId);
 
-      if($repliesRow === null) return null;
+        if ($repliesRow === null) {
+            return null;
+        }
 
-      return PostMapper::toPostDetails($repliesRow);
+        return PostMapper::toPostDetails($repliesRow);
     }
 
-    private function fetchReplies(int $parentPostId, int $userId): ?array 
+    private function fetchReplies(int $parentPostId, int $userId): ?array
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+        $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT 
+        $query = "SELECT 
                     posts.*, 
                     posts.image_path AS post_image_path,
                     profiles.username, 
@@ -174,26 +187,30 @@ class PostDAOImpl implements PostDAO
                 ORDER BY posts.created_at DESC;
               ";
 
-      $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $parentPostId]);
-      if(empty($result)) return null;
+        $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $parentPostId]);
+        if (empty($result)) {
+            return null;
+        }
 
-      return $result;
+        return $result;
     }
 
     public function getByUserId(int $userId): ?array
     {
-      $postRow = $this->fetchByUserId($userId);
+        $postRow = $this->fetchByUserId($userId);
 
-      if($postRow === null) return null;
+        if ($postRow === null) {
+            return null;
+        }
 
-      return PostMapper::toOwnPosts($postRow);
+        return PostMapper::toOwnPosts($postRow);
     }
 
-    private function fetchByUserId(int $userId): ?array 
+    private function fetchByUserId(int $userId): ?array
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+        $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT
+        $query = "SELECT
                 posts.id AS post_id,
                 posts.user_id AS post_user_id,
                 posts.image_path AS post_image_path,
@@ -232,47 +249,55 @@ class PostDAOImpl implements PostDAO
                 ORDER BY posts.created_at DESC 
                 LIMIT 10";
 
-      $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $userId]);
-      if(empty($result)) return null;
-      
-      return $result;
+        $result = $mysqli->prepareAndFetchAll($query, 'ii', [$userId, $userId]);
+        if (empty($result)) {
+            return null;
+        }
+
+        return $result;
     }
 
     public function findParentPost(int $postId): ?Post
     {
-      $rowPost = $this->fetchParentPost($postId);
+        $rowPost = $this->fetchParentPost($postId);
 
-      if($rowPost === null) return null;
+        if ($rowPost === null) {
+            return null;
+        }
 
-      return PostMapper::toPost($rowPost);
+        return PostMapper::toPost($rowPost);
     }
- 
-    private function fetchParentPost(int $postId): ?array 
-    {
-      $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "SELECT *
+    private function fetchParentPost(int $postId): ?array
+    {
+        $mysqli = DatabaseManager::getMysqliConnection();
+
+        $query = "SELECT *
                 FROM posts
                 WHERE id = ?
               ";
-      
-      $result = $mysqli->prepareAndFetchAll($query, 'i', [$postId]);
 
-      if(empty($result)) return null;
+        $result = $mysqli->prepareAndFetchAll($query, 'i', [$postId]);
 
-      return $result;
+        if (empty($result)) {
+            return null;
+        }
+
+        return $result;
     }
 
     public function deletePost(int $postId): bool
     {
-      $mysqli = DatabaseManager::getMysqliConnection();
+        $mysqli = DatabaseManager::getMysqliConnection();
 
-      $query = "DELETE FROM posts WHERE id = ?";
+        $query = "DELETE FROM posts WHERE id = ?";
 
-      $result = $mysqli->prepareAndExecute($query, 'i', [$postId]);
+        $result = $mysqli->prepareAndExecute($query, 'i', [$postId]);
 
-      if($result === false) return false;
+        if ($result === false) {
+            return false;
+        }
 
-      return true;
+        return true;
     }
 }

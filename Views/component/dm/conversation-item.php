@@ -15,20 +15,20 @@
       <div class="flex items-center space-x-4 text-sm">
         <p class="font-semibold"><?= $data['partner']->getUsername(); ?></p>
         <span class="text-slate-400">
-          <?= $data['directMessage'] === null ? 
+          <?= $data['directMessage'] === null ?
                 $data['conversation']->getCreatedAt()
-                :  
+                :
                 $data['directMessage']->getCreatedAt()?>
         </span>
       </div>
 
-      <?php if($data['conversation']->getUser1Id() === $authUser->getUserId()): ?>
+      <?php if ($data['conversation']->getUser1Id() === $authUser->getUserId()): ?>
         <?php include "Views/component/dm/conversation-menu-action.php" ?>
       <?php endif; ?>
       
     </div>
 
-    <?php if($data['directMessage'] !== null): ?>
+    <?php if ($data['directMessage'] !== null): ?>
       <div class="text-sm">
         <p class="truncate overflow-hidden whitespace-nowrap text-ellipsis">
           <?= $data['directMessage']->getContent(); ?>

@@ -4,7 +4,8 @@ namespace Middleware;
 
 use Response\HTTPRenderer;
 
-class MiddlewareC implements Middleware{
+class MiddlewareC implements Middleware
+{
     public function handle(callable $next): HTTPRenderer
     {
         // 前処理

@@ -22,7 +22,8 @@ class Seed extends AbstractCommand
         return 0;
     }
 
-    function runAllSeeds(): void {
+    public function runAllSeeds(): void
+    {
         $directoryPath = __DIR__ . '/../../Database/Seeds';
 
         // ディレクトリをスキャンしてすべてのファイルを取得します。
@@ -41,8 +42,9 @@ class Seed extends AbstractCommand
                 if (class_exists($className) && is_subclass_of($className, Seeder::class)) {
                     $seeder = new $className(new MySQLWrapper());
                     $seeder->seed();
+                } else {
+                    throw new \Exception('Seeder must be a class that subclasses the seeder interface');
                 }
-                else throw new \Exception('Seeder must be a class that subclasses the seeder interface');
             }
         }
     }

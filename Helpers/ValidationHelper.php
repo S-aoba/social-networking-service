@@ -3,31 +3,37 @@
 namespace Helpers;
 
 use Models\File;
-
 use Types\ValueType;
 
 class ValidationHelper
 {
     public static function integer($value, float $min = -INF, float $max = INF): ?int
     {
-        if($value === '') return null;
-        
+        if ($value === '') {
+            return null;
+        }
+
         // PHPには、データを検証する組み込み関数があります。詳細は https://www.php.net/manual/en/filter.filters.validate.php を参照ください。
-        $value = filter_var($value, FILTER_VALIDATE_INT, ["min_range" => (int) $min, "max_range"=>(int) $max]);
+        $value = filter_var($value, FILTER_VALIDATE_INT, ["min_range" => (int) $min, "max_range" => (int) $max]);
 
         // 結果がfalseの場合、フィルターは失敗したことになります。
-        if ($value === false) throw new \InvalidArgumentException("The provided value is not a valid integer.");
+        if ($value === false) {
+            throw new \InvalidArgumentException("The provided value is not a valid integer.");
+        }
 
         // 値がすべてのチェックをパスしたら、そのまま返します。
         return $value;
     }
 
-    public static function string ($value): ?string {
-        if($value === '') return null;
+    public static function string($value): ?string
+    {
+        if ($value === '') {
+            return null;
+        }
 
         return is_string($value) ? $value : throw new \InvalidArgumentException("The provided value is not a valid string.");
     }
-    
+
     public static function validateDate(string $date, string $format = 'Y-m-d'): string
     {
         $d = \DateTime::createFromFormat($format, $date);
@@ -89,7 +95,7 @@ class ValidationHelper
 
             $validatedValue = match ($type) {
                 ValueType::STRING => self::string($value),
-                ValueType::INT => self::integer($value), 
+                ValueType::INT => self::integer($value),
                 ValueType::FLOAT => filter_var($value, FILTER_VALIDATE_FLOAT),
                 ValueType::DATE => self::validateDate($value)
             };
@@ -103,16 +109,19 @@ class ValidationHelper
 
         return $validatedData;
     }
-    
-    public static function validateFile(File $file): File {
+
+    public static function validateFile(File $file): File
+    {
         $availableTypeList = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp'];
 
         $type = $file->getType();
         $type = in_array($type, $availableTypeList, true) ? $type : false;
-        if($type === false) throw new \InvalidArgumentException('The provided value is not a valid type.');
-        
+        if ($type === false) {
+            throw new \InvalidArgumentException('The provided value is not a valid type.');
+        }
+
         $maxSize = 2 * 1024 * 1024; // 2MB
-        if($file->getSize() > $maxSize) {
+        if ($file->getSize() > $maxSize) {
             throw new \InvalidArgumentException('The uploaded file exceeds the maximum allowed size of 2MB.');
         }
 

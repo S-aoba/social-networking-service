@@ -10,18 +10,21 @@ class HTMLRenderer implements HTTPRenderer
     private string $viewFile;
     private array $data;
 
-    public function __construct(string $viewFile, array $data = []) {
+    public function __construct(string $viewFile, array $data = [])
+    {
         $this->viewFile = $viewFile;
         $this->data = $data;
     }
 
-    public function getFields(): array {
+    public function getFields(): array
+    {
         return [
             'Content-Type' => 'text/html; charset=UTF-8',
         ];
     }
 
-    public function getContent(): string {
+    public function getContent(): string
+    {
         $viewPath = $this->getViewPath($this->viewFile);
 
         if (!file_exists($viewPath)) {
@@ -37,7 +40,8 @@ class HTMLRenderer implements HTTPRenderer
         return $this->getHeader() . ob_get_clean() . $this->getFooter();
     }
 
-    private function getHeader(): string{
+    private function getHeader(): string
+    {
         ob_start();
         // ユーザーへのアクセスを提供します
         $user = Authenticate::getAuthenticatedUser();
@@ -45,13 +49,15 @@ class HTMLRenderer implements HTTPRenderer
         return ob_get_clean();
     }
 
-    private function getFooter(): string{
+    private function getFooter(): string
+    {
         ob_start();
         require $this->getViewPath('layout/footer');
         return ob_get_clean();
     }
 
-    private function getViewPath(string $path): string{
-        return sprintf("%s/%s/Views/%s.php",__DIR__, '../..',$path);
+    private function getViewPath(string $path): string
+    {
+        return sprintf("%s/%s/Views/%s.php", __DIR__, '../..', $path);
     }
 }

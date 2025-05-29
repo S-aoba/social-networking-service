@@ -2,8 +2,10 @@
 
 namespace Helpers;
 
-class CrossSiteForgeryProtection{
-    public static function getToken(){
+class CrossSiteForgeryProtection
+{
+    public static function getToken()
+    {
         return $_SESSION['csrf_token'];
     }
 }

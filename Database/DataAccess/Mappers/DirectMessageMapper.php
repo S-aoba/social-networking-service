@@ -32,7 +32,9 @@ class DirectMessageMapper
      */
     public static function toDirectMessages(array $rows): array
     {
-        if (empty($rows)) return [];
+        if (empty($rows)) {
+            return [];
+        }
 
         return array_map([self::class, 'toDirectMessage'], $rows);
     }

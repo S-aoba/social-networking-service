@@ -31,19 +31,23 @@ abstract class ORM
     {
         // カラムは{カラム名}-{データ型}のキーと値のペアです。
         // PHPは順序付きハッシュテーブルを使用しているので、連想配列を順番に保持することに注意してください。
-        if (static::$columnTypes === null) static::$columnTypes = $this->fetchColumnTypes();
+        if (static::$columnTypes === null) {
+            static::$columnTypes = $this->fetchColumnTypes();
+        }
 
         foreach ($data as $key => $value) {
             if (array_key_exists($key, static::$columnTypes) || $key === static::$primaryKey) {
                 $this->attributes[$key] = $value;
+            } else {
+                throw new InvalidArgumentException(sprintf("%s does not exist as %'s column", $key, static::class));
             }
-            else throw new InvalidArgumentException(sprintf("%s does not exist as %'s column", $key, static::class));
         }
     }
 
-    protected static function getTableName(): string{
+    protected static function getTableName(): string
+    {
         $classname = strtolower(basename(str_replace('\\', DIRECTORY_SEPARATOR, static::class)));
-        $last_letter = strtolower($classname)[strlen($classname)-1];
+        $last_letter = strtolower($classname)[strlen($classname) - 1];
         $plural = ($last_letter === 'y' ? 'ies' : ($last_letter === 's' ? 'es' : 's'));
         return $classname . $plural;
     }
@@ -56,7 +60,9 @@ abstract class ORM
         // これを使って、{列名}-{データ型}の連想配列をセットアップします。
         $result = $db->query("SHOW COLUMNS FROM {$this->getTableName()}");
         while ($row = $result->fetch_assoc()) {
-            if($row['Field'] === static::$primaryKey) continue;
+            if ($row['Field'] === static::$primaryKey) {
+                continue;
+            }
             $columnTypes[$row['Field']] = $this->getColumnType($row['Type']);
         }
         return $columnTypes;
@@ -64,9 +70,13 @@ abstract class ORM
 
     protected function getColumnType($type): string
     {
-        if (str_contains($type, 'int')) return 'i';
-        else if (str_contains($type, 'double') || str_contains($type, 'float') || str_contains($type, 'decimal')) return 'd';
-        else return 's';
+        if (str_contains($type, 'int')) {
+            return 'i';
+        } elseif (str_contains($type, 'double') || str_contains($type, 'float') || str_contains($type, 'decimal')) {
+            return 'd';
+        } else {
+            return 's';
+        }
     }
 
     public static function create(array $data): ORM
@@ -79,7 +89,9 @@ abstract class ORM
 
         $stmt = $db->prepare("INSERT INTO {$object->getTableName()} ({$columnNames}) VALUES ({$placeholders})");
 
-        if (!$stmt) throw new RuntimeException(sprintf("Failed to create row for %s", static::class));
+        if (!$stmt) {
+            throw new RuntimeException(sprintf("Failed to create row for %s", static::class));
+        }
 
         // PHPの連想配列は順序付きハッシュテーブルなので、array_valuesやarray_keysは挿入された順番で項目を返します。
         $stmt->bind_param(implode(array_values(static::$columnTypes)), ...array_values($object->attributes));
@@ -97,7 +109,9 @@ abstract class ORM
 
         $stmt = $db->prepare("SELECT * FROM {$tableName} WHERE {$primaryKey} = ?");
 
-        if (!$stmt) throw new RuntimeException(sprintf("Failed to find row for %s id %s", static::class));
+        if (!$stmt) {
+            throw new RuntimeException(sprintf("Failed to find row for %s id %s", static::class));
+        }
 
         $stmt->bind_param('i', $id);
         $stmt->execute();
@@ -126,7 +140,9 @@ abstract class ORM
         $sql = "UPDATE {$this->getTableName()} SET " . implode(', ', $columns) . " WHERE {$primaryKey} = ?";
         $stmt = $db->prepare($sql);
 
-        if (!$stmt) throw new RuntimeException(sprintf("Failed to update data for %s id %s", static::class, $this->id));
+        if (!$stmt) {
+            throw new RuntimeException(sprintf("Failed to update data for %s id %s", static::class, $this->id));
+        }
 
         // 主キーを追加します。
         $types .= 'i';
@@ -141,14 +157,18 @@ abstract class ORM
         $tableName = static::getTableName();
         $primaryKey = static::$primaryKey;
 
-        if (!isset($this->attributes[static::$primaryKey])) return false;
+        if (!isset($this->attributes[static::$primaryKey])) {
+            return false;
+        }
 
         $primaryKeyValue = $this->attributes[$primaryKey];
         $db = DatabaseManager::getMysqliConnection();
 
         $stmt = $db->prepare("DELETE FROM {$tableName} WHERE {$primaryKey} = ?");
 
-        if (!$stmt) throw new RuntimeException(sprintf("Failed to prepare to delete row for %s id %s", static::class, $primaryKeyValue));
+        if (!$stmt) {
+            throw new RuntimeException(sprintf("Failed to prepare to delete row for %s id %s", static::class, $primaryKeyValue));
+        }
 
         $stmt->bind_param('i', $primaryKeyValue);
         return $stmt->execute();

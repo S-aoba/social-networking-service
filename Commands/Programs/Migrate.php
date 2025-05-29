@@ -24,7 +24,9 @@ class Migrate extends AbstractCommand
     {
         $rollback = $this->getArgumentValue('rollback');
 
-        if ($this->getArgumentValue('init')) $this->createMigrationsTable();
+        if ($this->getArgumentValue('init')) {
+            $this->createMigrationsTable();
+        }
 
         if ($rollback === false) {
             $this->log("Starting migration......");
@@ -52,7 +54,9 @@ class Migrate extends AbstractCommand
             );
         ");
 
-        if ($result === false) throw new \Exception("Failed to create migration table.");
+        if ($result === false) {
+            throw new \Exception("Failed to create migration table.");
+        }
 
         $this->log("Done setting up migration tables.");
     }
@@ -76,7 +80,9 @@ class Migrate extends AbstractCommand
             $migration = new $migrationClass();
             $this->log(sprintf("Processing up migration for %s", $migrationClass));
             $queries = $migration->up();
-            if (empty($queries)) throw new \Exception("Must have queries to run for . " . $migrationClass);
+            if (empty($queries)) {
+                throw new \Exception("Must have queries to run for . " . $migrationClass);
+            }
 
             $this->processQueries($queries);
             $this->insertMigration($filename);
@@ -92,8 +98,11 @@ class Migrate extends AbstractCommand
         // ([^_]+): "_"以外のすべての文字を一致させます。()はグループをキャプチャするためのもので、[^abc]はabc以外を意味します。キャプチャグループは個別に一致させるために使用されます。
         // \.php: "."が"\"でエスケープされているので、これは終端が'.php'に一致しなければならないことを意味します。
         // 正規表現の練習やチートシートについては、https://regexr.com/ を参照してください。
-        if (preg_match('/([^_]+)\.php$/', $filename, $matches)) return sprintf("%s\%s", 'Database\Migrations', $matches[1]);
-        else throw new \Exception("Unexpected migration filename format: " . $filename);
+        if (preg_match('/([^_]+)\.php$/', $filename, $matches)) {
+            return sprintf("%s\%s", 'Database\Migrations', $matches[1]);
+        } else {
+            throw new \Exception("Unexpected migration filename format: " . $filename);
+        }
     }
 
     private function getLastMigration(): ?string
@@ -133,8 +142,11 @@ class Migrate extends AbstractCommand
         $mysqli = new MySQLWrapper();
         foreach ($queries as $query) {
             $result = $mysqli->query($query);
-            if ($result === false) throw new \Exception(sprintf("Query {%s} failed.", $query));
-            else $this->log('Ran query: ' . $query);
+            if ($result === false) {
+                throw new \Exception(sprintf("Query {%s} failed.", $query));
+            } else {
+                $this->log('Ran query: ' . $query);
+            }
         }
     }
 
@@ -160,7 +172,8 @@ class Migrate extends AbstractCommand
         $statement->close();
     }
 
-    private function rollback(int $n = 1): void {
+    private function rollback(int $n = 1): void
+    {
         $this->log("Rolling back {$n} migration(s)...");
 
         $lastMigration = $this->getLastMigration();
@@ -188,7 +201,9 @@ class Migrate extends AbstractCommand
             $migration = new $migrationClass();
 
             $queries = $migration->down();
-            if (empty($queries)) throw new \Exception("Must have queries to run for . " . $migrationClass);
+            if (empty($queries)) {
+                throw new \Exception("Must have queries to run for . " . $migrationClass);
+            }
 
             $this->processQueries($queries);
             $this->removeMigration($filename);
@@ -198,14 +213,19 @@ class Migrate extends AbstractCommand
         $this->log("Rollback completed.\n");
     }
 
-    private function removeMigration(string $filename): void {
+    private function removeMigration(string $filename): void
+    {
         $mysqli = new MySQLWrapper();
         $statement = $mysqli->prepare("DELETE FROM migrations WHERE filename = ?");
 
-        if (!$statement) throw new \Exception("Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error);
+        if (!$statement) {
+            throw new \Exception("Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error);
+        }
 
         $statement->bind_param("s", $filename);
-        if (!$statement->execute()) throw new \Exception("Execute failed: (" . $statement->errno . ") " . $statement->error);
+        if (!$statement->execute()) {
+            throw new \Exception("Execute failed: (" . $statement->errno . ") " . $statement->error);
+        }
 
         $statement->close();
     }
