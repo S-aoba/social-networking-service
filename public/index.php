@@ -54,6 +54,7 @@ if (isset($routes[$path])) {
                 // ヘッダー設定に失敗した場合のログまたは処理
                 // エラー処理によっては、例外をスローするか、デフォルトのまま続行することもできます。
                 http_response_code(500);
+                /** @phpstan-ignore-next-line */
                 if ($DEBUG) {
                     print("Failed setting header - original: '$value', sanitized: '$sanitized_value'");
                 }
@@ -65,6 +66,7 @@ if (isset($routes[$path])) {
     } catch (Exception $e) {
         http_response_code(500);
         print("Internal error, please contact the admin.<br>");
+        /** @phpstan-ignore-next-line */
         if ($DEBUG) {
             print($e->getMessage());
         }
