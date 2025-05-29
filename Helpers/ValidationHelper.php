@@ -97,7 +97,8 @@ class ValidationHelper
                 ValueType::STRING => self::string($value),
                 ValueType::INT => self::integer($value),
                 ValueType::FLOAT => filter_var($value, FILTER_VALIDATE_FLOAT),
-                ValueType::DATE => self::validateDate($value)
+                ValueType::DATE => self::validateDate($value),
+                default => throw new \InvalidArgumentException(sprintf("Invalid type for field: %s, with type %s", $field, $type)),
             };
 
             if ($validatedValue === false) {

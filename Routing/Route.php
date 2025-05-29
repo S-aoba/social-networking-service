@@ -52,7 +52,7 @@ class Route
 
     private function getBaseURL(): string
     {
-        if (!isset($_SERVER)) {
+        if (!isset($_SERVER['HTTP_HOST'])) {
             return $this->getPath();
         }
 

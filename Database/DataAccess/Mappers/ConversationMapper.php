@@ -41,7 +41,7 @@ class ConversationMapper
             );
 
             $directMessage = null;
-            if (isset($data['dm_conversation_id']) && $data['dm_conversation_id'] !== null) {
+            if (isset($data['dm_conversation_id'])) {
                 $directMessage = new DirectMessge(
                     conversationId: $data['dm_conversation_id'],
                     senderId: $data['sender_id'],

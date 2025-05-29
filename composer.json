@@ -6,14 +6,19 @@
             "Commands\\": "Commands/",
             "Commands\\Programs\\": "Commands/Programs/",
             "Database\\": "Database/",
-            "Database\\Examples\\": "Database/Examples/",
             "Database\\Migrations\\": "Database/Migrations/",
             "Database\\Seeds\\": "Database/Seeds/",
             "Database\\DataAccess\\": "Database/DataAccess/",
             "Database\\DataAccess\\Interfaces\\": "Database/DataAccess/Interfaces/",
             "Models\\": "Models/",
             "Models\\Interfaces\\": "Models/Interfaces/",
-            "Models\\Traits\\": "Models/Traits/"
+            "Models\\Traits\\": "Models/Traits/",
+            "Response\\Render\\": "Response/Render/",
+            "Services\\Conversation\\": "Services/Conversation/",
+            "Services\\Image\\": "Services/Image/",
+            "Types\\": "Types/",
+            "Validators\\": "Validators/",
+            "Validators\\Rules\\": "Validators/Rules/"
         }
     },
     "require": {
@@ -22,6 +27,7 @@
         "phpmailer/phpmailer": "^6.9"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.75"
+        "friendsofphp/php-cs-fixer": "^3.75",
+        "phpstan/phpstan": "^2.1"
     }
 }

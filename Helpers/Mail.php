@@ -34,7 +34,7 @@ class Mail
             // HTMLコンテンツ
             $mail->isHTML(); // メール形式をHTMLに設定します。
             ob_start();
-            include('Views/mail/mail-template.php');
+            // include('Views/mail/mail-template.php');
             $mail->Body = ob_get_clean();
 
             // 本文は、相手のメールプロバイダーがHTMLをサポートしていない場合に備えて、シンプルなテキストで構成されています。
