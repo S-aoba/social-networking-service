@@ -413,7 +413,7 @@ return [
 
             return new JSONRenderer([
                 'status' => 'error',
-                'message' => 'Invalid Data.'
+                'message' => json_decode($e->getMessage())
             ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
@@ -506,7 +506,7 @@ return [
 
             return new JSONRenderer([
                 'status' => 'error',
-                'message' => 'Invalid Data.'
+                'message' => json_decode($e->getMessage())
             ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
@@ -572,7 +572,7 @@ return [
 
             return new JSONRenderer([
                 'status' => 'error',
-                'message' => 'Invalid Data.'
+                'message' => json_decode($e->getMessage())
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -691,7 +691,7 @@ return [
 
             return new JSONRenderer([
                 'status' => 'error',
-                'message' => 'Invalid data.'
+                'message' => json_decode($e->getMessage())
             ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
@@ -820,7 +820,7 @@ return [
 
             return new JSONRenderer([
                 'status' => 'error',
-                'message' => 'Invalid data.'
+                'message' => json_decode($e->getMessage())
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -888,7 +888,7 @@ return [
 
             return new JSONRenderer([
                 'status' => 'error',
-                'message' => 'Invalid data.'
+                'message' => json_decode($e->getMessage())
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -945,7 +945,7 @@ return [
 
             return new JSONRenderer([
                 'status' => 'error',
-                'message' => 'Invalid data.'
+                'message' => json_decode($e->getMessage())
             ]);
         } catch (Exception $e) {
             error_log($e->getMessage());
@@ -1053,7 +1053,7 @@ return [
 
             return new JSONRenderer([
                 'status' => 'error',
-                'message' => 'Invalid data.'
+                'message' => json_decode($e->getMessage())
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -1102,7 +1102,7 @@ return [
 
             return new JSONRenderer([
                 'status' => 'error',
-                'message' => 'Invalid data.'
+                'message' => json_decode($e->getMessage())
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
