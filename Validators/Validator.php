@@ -26,7 +26,7 @@ class Validator
                 
                 if($result === null) {
                     $this->errors[$field] = $cls->message();
-                    continue;
+                    break;
                 }
                 
                 $validatedData[$field] = $result[$field];
