@@ -19,7 +19,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (data.status === "success") {
       window.location.href = data.redirect;
     } else {
-      errorMessage.textContent = data.message;
+      const messages = data.message;
+ 
+      errorMessage.innerHTML = "<ul>" + Object.values(messages).map(msg => `<li>${msg}</li>`).join("") + "</ul>";
       errorMessage.classList.remove("hidden");
     }
   });
