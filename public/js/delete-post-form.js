@@ -22,8 +22,10 @@ document.addEventListener('DOMContentLoaded', function() {
           window.location.reload();
         }
         else {
-          errorMessage.textContent = data.message;
-          errorMessage.classList.remove('hidden');
+          const messages = data.message;
+ 
+          errorMessage.innerHTML = "<ul>" + Object.values(messages).map(msg => `<li>${msg}</li>`).join("") + "</ul>";
+          errorMessage.classList.remove("hidden");
         }
       })
     })
