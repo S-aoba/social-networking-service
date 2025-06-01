@@ -23,7 +23,8 @@ class Rule
       'int' => $this->int(),
       'min' => $this->min(),
       'max' => $this->max(),
-      'exists' => $this->exists()
+      'exists' => $this->exists(),
+      default => throw new \InvalidArgumentException("Unknown validation rule: {$ruleName}")
     };
   }
 
@@ -35,7 +36,8 @@ class Rule
       'int' => $this->intMessage(),
       'min' => $this->minMessage(),
       'max' => $this->maxMessage(),
-      'exists' => $this->existsMessage()
+      'exists' => $this->existsMessage(),
+      default => throw new \InvalidArgumentException("Unknown validation rule: {$ruleName}")
     };
   }
 
