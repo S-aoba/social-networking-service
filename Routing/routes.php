@@ -914,10 +914,10 @@ return [
 
             $requiredFields = [
                 'username' => 'required|string|min:1|max:20',
-                'age' => 'required|int|min:1|max:100',
-                'address' => 'required|string|min:1|max:100',
+                'age' => 'int|min:1|max:100',
+                'address' => 'string|min:1|max:100',
                 'hobby' => 'string|min:1|max:100',
-                'self_introduction' => 'required|string|min:1|max:500'
+                'self_introduction' => 'string|min:1|max:500'
             ];
             $validatedData = (new Validator($requiredFields))->validate($_POST);
 
