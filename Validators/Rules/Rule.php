@@ -14,7 +14,8 @@ class Rule
         'min'      => 'min',
         'max'      => 'max',
         'exists'   => 'exists',
-        'email'    => 'email'
+        'email'    => 'email',
+        'password' => 'password'
     ];
 
     private const MESSAGE_METHODS = [
@@ -24,7 +25,8 @@ class Rule
         'min'      => 'minMessage',
         'max'      => 'maxMessage',
         'exists'   => 'existsMessage',
-        'email'    => 'emailMessage'
+        'email'    => 'emailMessage',
+        'password' => 'passwordMessage'
     ];
 
     public function __construct(
@@ -210,5 +212,22 @@ class Rule
     {
         return "{$this->field} must be a valid email address.";
     }
+    
+    private function password(): ?array
+    {
+        return is_string($this->data) &&
+               strlen($this->data) >= 8 && // Minimum 8 characters
+               preg_match('/[A-Z]/', $this->data) && // 少なくとも1文字の大文字
+               preg_match('/[a-z]/', $this->data) && // 少なくとも1文字の小文字
+               preg_match('/\d/', $this->data) && // 少なくとも1桁
+               preg_match('/[\W_]/', $this->data) // 少なくとも1つの特殊文字（アルファベット以外の文字）
+                ? [$this->field => $this->data] : null;
+    }
+
+    private function passwordMessage(): string
+    {
+        return "The provided value is not a valid password.";
+    }
+
 
 }
