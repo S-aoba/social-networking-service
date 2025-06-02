@@ -438,7 +438,7 @@ return [
             ];
 
             $validatedData = (new Validator($requiredFields))->validate($_POST);
-            
+
             if ($validatedData['confirm_password'] !== $validatedData['password']) {
                 return new JSONRenderer([
                     'status' => 'error',
