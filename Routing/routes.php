@@ -385,12 +385,12 @@ return [
                 throw new Exception('Invalid request method!');
             }
 
-            $required_fields = [
-                'email' => ValueType::EMAIL,
-                'password' => ValueType::STRING,
+            $requiredFields = [
+                'email' => 'required|email',
+                'password' => 'required|password',
             ];
 
-            $validatedData = ValidationHelper::validateAuth($required_fields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             Authenticate::authenticate($validatedData['email'], $validatedData['password']);
 
@@ -430,17 +430,15 @@ return [
                 throw new Exception('Invalid request method!');
             }
 
-            $required_fields = [
-                'username' => ValueType::STRING,
-                'email' => ValueType::EMAIL,
-                'password' => ValueType::PASSWORD,
-                'confirm_password' => ValueType::PASSWORD,
+            $requiredFields = [
+                'username' => 'required|string|min:1|max:20',
+                'email' => 'required|email',
+                'password' => 'required|password',
+                'confirm_password' => 'required|password'
             ];
 
-            $userDao = DAOFactory::getUserDAO();
-
-            $validatedData = ValidationHelper::validateAuth($required_fields, $_POST);
-
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
+            
             if ($validatedData['confirm_password'] !== $validatedData['password']) {
                 return new JSONRenderer([
                     'status' => 'error',
@@ -448,6 +446,7 @@ return [
                 ]);
             }
 
+            $userDao = DAOFactory::getUserDAO();
             if ($userDao->getByEmail($validatedData['email'])) {
                 return new JSONRenderer([
                     'status' => 'error',
