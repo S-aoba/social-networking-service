@@ -52,4 +52,16 @@ class ImagePathResolver
             $this->resolvePost($item['post']);
         }
     }
+
+    public function resolveDirectMessageMany(?array $data): void
+    {
+        if(empty($data)){
+            return;
+        }
+
+        foreach ($data as $dm) {
+            $publicImagePath = $this->imageUrlBuilder->buildPostImageUrl($dm->getImagePath());
+            $dm->setImagePath($publicImagePath);
+        }
+    }
 }
