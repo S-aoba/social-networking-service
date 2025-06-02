@@ -14,6 +14,7 @@ class DirectMessge implements Model
         private int $senderId,
         private string $content,
         private ?int $id = null,
+        private ?string $imagePath = null,
         private ?string $read_at = null,
         private ?string $createdAt = null,
     ) {
@@ -57,6 +58,16 @@ class DirectMessge implements Model
     public function setId(?int $id): void
     {
         $this->id = $id;
+    }
+
+    public function getImagePath(): ?string
+    {
+        return $this->imagePath;
+    }
+
+    public function setImagePath(?string $imagePath): void
+    {
+        $this->imagePath = $imagePath;
     }
 
     public function getReadAt(): ?string
