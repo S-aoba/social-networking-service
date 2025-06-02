@@ -114,11 +114,11 @@ class Rule
             return "{$this->field} must be at least {$min} characters.";
         }
 
-        if (is_int($value) || ctype_digit((string)$value)) {
+        if (is_int($this->data) || ctype_digit((string)$this->data)) {
             return "{$this->field} must be at least {$min}.";
         }
 
-        throw new \InvalidArgumentException("{$field} must be a string or integer for min validation.");
+        throw new \InvalidArgumentException("{$this->field} must be a string or integer for min validation.");
     }
 
     private function max(): ?array
@@ -150,11 +150,11 @@ class Rule
             return "{$this->field} must be at most {$max} characters.";
         }
 
-        if (is_int($value) || ctype_digit((string)$value)) {
+        if (is_int($this->data) || ctype_digit((string)$this->data)) {
             return "{$this->field} must be at most {$max}.";
         }
 
-        throw new \InvalidArgumentException("{$field} must be a string or integer for min validation.");
+        throw new \InvalidArgumentException("{$this->field} must be a string or integer for min validation.");
     }
 
     private function exists(): ?array
