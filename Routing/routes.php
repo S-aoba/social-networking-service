@@ -354,6 +354,7 @@ return [
 
             $directMessageDAO = DAOFactory::getDirectMessage();
             $directMessages = $directMessageDAO->getAllByConversationId($validatedData['id']->getId());
+            $imagePathResolver->resolveDirectMessageMany($directMessages);
 
             $followDAO = DAOFactory::getFollowDAO();
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
