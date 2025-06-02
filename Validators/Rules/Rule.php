@@ -14,6 +14,7 @@ class Rule
         'min'      => 'min',
         'max'      => 'max',
         'exists'   => 'exists',
+        'email'    => 'email'
     ];
 
     private const MESSAGE_METHODS = [
@@ -23,6 +24,7 @@ class Rule
         'min'      => 'minMessage',
         'max'      => 'maxMessage',
         'exists'   => 'existsMessage',
+        'email'    => 'emailMessage'
     ];
 
     public function __construct(
@@ -197,6 +199,16 @@ class Rule
             throw new \InvalidArgumentException("Invalid table specified in validation rule: {$table}.");
         }
 
+    }
+
+    private function email(): ?array
+    {
+        return filter_var($this->data, FILTER_VALIDATE_EMAIL) ? [$this->field => $this->data] : null;
+    }
+
+    private function emailMessage(): string
+    {
+        return "{$this->field} must be a valid email address.";
     }
 
 }
