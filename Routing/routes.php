@@ -385,12 +385,12 @@ return [
                 throw new Exception('Invalid request method!');
             }
 
-            $required_fields = [
-                'email' => ValueType::EMAIL,
-                'password' => ValueType::STRING,
+            $requiredFields = [
+                'email' => 'required|email',
+                'password' => 'required|password',
             ];
 
-            $validatedData = ValidationHelper::validateAuth($required_fields, $_POST);
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             Authenticate::authenticate($validatedData['email'], $validatedData['password']);
 
