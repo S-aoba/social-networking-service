@@ -847,6 +847,15 @@ return [
             ];
             $validatedData = (new Validator($requiredFields))->validate($_POST);
 
+            $file = File::fromArray($_FILES['upload-file']);
+            if ($file->isValid() === false) {
+                return new JSONRenderer(['status' => 'File upload is invalid.']);
+            }
+
+            $validatedFileData = ValidationHelper::validateFile($file);
+
+            $publicMessageImagePath = (new ImagePathGenerator())->generate($validatedFileData->getTypeWithoutPrefix());
+
             $conversationAuthorizer = new ConversationAuthorizer();
             $isJoinTheConversation = $conversationAuthorizer->isJoin(
                 $authUser->getId(),
