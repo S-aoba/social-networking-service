@@ -95,9 +95,9 @@ class DbWipe extends AbstractCommand
     {
         $this->log('Creating backup file....');
 
-        $username = $username ?? Settings::env('DATABASE_USER');
-        $password = $password ?? Settings::env('DATABASE_USER_PASSWORD');
-        $database = $database ?? Settings::env('DATABASE_NAME');
+        $username = Settings::env('DATABASE_USER');
+        $password = Settings::env('DATABASE_USER_PASSWORD');
+        $database = Settings::env('DATABASE_NAME');
 
         $backupDir = dirname(__DIR__, 2) . "/Database/Backup/";
         $backupFile = $backupDir . "backup" . ".sql";
