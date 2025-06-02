@@ -12,17 +12,15 @@ class DirectMessageMapper
      * @return DirectMessge|null
      */
     public static function toDirectMessage(array $rowData): ?DirectMessge
-    {
-        $data = is_array($rowData[0]) ? $rowData[0] : $rowData;
-
+    {        
         return new DirectMessge(
-            conversationId: $data['conversation_id'],
-            senderId: $data['sender_id'],
-            content: $data['content'],
-            id: $data['id'],
-            imagePath: $data['image_path'],
-            readAt: $data['read_at'],
-            createdAt: $data['created_at']
+            conversationId: $rowData['conversation_id'],
+            senderId: $rowData['sender_id'],
+            content: $rowData['content'],
+            id: $rowData['id'],
+            imagePath: $rowData['image_path'],
+            readAt: $rowData['read_at'],
+            createdAt: $rowData['created_at']
         );
     }
 
