@@ -23,17 +23,19 @@ class Validator
             foreach ($rules as $rule) {
                 $cls = new Rule($field, $data[$field], $rule);
                 $result = $this->applyRule($cls);
-                
-                if($result === null) {
+
+                if ($result === null) {
                     $this->errors[$field] = $cls->message();
                     break;
                 }
-                
+
                 $validatedData[$field] = $result[$field];
             }
         }
 
-        if(empty($this->errors) === false) throw new \InvalidArgumentException(json_encode($this->errors));
+        if (empty($this->errors) === false) {
+            throw new \InvalidArgumentException(json_encode($this->errors));
+        }
         return $validatedData;
     }
 

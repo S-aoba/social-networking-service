@@ -29,9 +29,11 @@ class Rule
         private string $field,
         private $data,
         private string $rule
-    ) {}
+    ) {
+    }
 
-    public function passes(): ?array {
+    public function passes(): ?array
+    {
         $ruleName = explode(':', $this->rule)[0];
         $method = self::RULE_METHODS[$ruleName] ?? null;
         if (!$method || !method_exists($this, $method)) {
@@ -40,7 +42,8 @@ class Rule
         return $this->$method();
     }
 
-    public function message(): string {
+    public function message(): string
+    {
         $ruleName = explode(':', $this->rule)[0];
         $method = self::MESSAGE_METHODS[$ruleName] ?? null;
         if (!$method || !method_exists($this, $method)) {
@@ -49,34 +52,41 @@ class Rule
         return $this->$method();
     }
 
-    private function requiredMessage(): string {
+    private function requiredMessage(): string
+    {
         return "{$this->field} is required.";
     }
 
-    private function required() : ?array {
+    private function required(): ?array
+    {
         return isset($this->data) && $this->data !== '' ? [$this->field => $this->data] : null;
     }
 
-    private function string(): ?array {
+    private function string(): ?array
+    {
         return is_string($this->data) ? [$this->field => $this->data] : null;
     }
 
-    private function stringMessage(): string {
+    private function stringMessage(): string
+    {
         return "{$this->field} must be a string.";
     }
 
-    private function int(): ?array {
+    private function int(): ?array
+    {
         return filter_var($this->data, FILTER_VALIDATE_INT) !== false ?
                     [$this->field => (int)$this->data]
                     :
                     null;
     }
 
-    private function intMessage(): string {
+    private function intMessage(): string
+    {
         return "{$this->field} must be an integer.";
     }
 
-    private function min(): ?array {
+    private function min(): ?array
+    {
         $min = explode(':', $this->rule)[1];
 
         if (is_string($this->data)) {
@@ -96,21 +106,23 @@ class Rule
         throw new \InvalidArgumentException("{$this->field} must be a string or integer for min validation.");
     }
 
-    private function minMessage(): string {
+    private function minMessage(): string
+    {
         $min = explode(':', $this->rule)[1];
 
-        if(is_string($this->data)) {      
-          return "{$this->field} must be at least {$min} characters.";
+        if (is_string($this->data)) {
+            return "{$this->field} must be at least {$min} characters.";
         }
 
         if (is_int($value) || ctype_digit((string)$value)) {
-          return "{$this->field} must be at least {$min}.";
+            return "{$this->field} must be at least {$min}.";
         }
 
         throw new \InvalidArgumentException("{$field} must be a string or integer for min validation.");
     }
-    
-    private function max(): ?array {
+
+    private function max(): ?array
+    {
         $max = explode(':', $this->rule)[1];
 
         if (is_string($this->data)) {
@@ -130,21 +142,23 @@ class Rule
         throw new \InvalidArgumentException("{$this->field} must be a string or integer for min validation.");
     }
 
-    private function maxMessage(): string {
+    private function maxMessage(): string
+    {
         $max = explode(':', $this->rule)[1];
 
-        if(is_string($this->data)) {      
-          return "{$this->field} must be at most {$max} characters.";
+        if (is_string($this->data)) {
+            return "{$this->field} must be at most {$max} characters.";
         }
 
         if (is_int($value) || ctype_digit((string)$value)) {
-          return "{$this->field} must be at most {$max}.";
+            return "{$this->field} must be at most {$max}.";
         }
 
         throw new \InvalidArgumentException("{$field} must be a string or integer for min validation.");
     }
 
-    private function exists(): ?array {
+    private function exists(): ?array
+    {
         [$_, $table, $identifier] = explode(':', str_replace(',', ':', $this->rule));
 
         if ($table === 'users') {
@@ -169,20 +183,18 @@ class Rule
         }
     }
 
-    private function existsMessage(): string {
+    private function existsMessage(): string
+    {
         [$_, $table, $_] = explode(':', str_replace(',', ':', $this->rule));
 
-        if($table === 'users') {
-          return "{$this->data} does not exist.";
-        }
-        else if($table === 'posts') {
-          return "Post does not exist.";
-        }
-        else if($table === 'conversations') {
-          return "Conversation does not exist.";
-        }
-        else {
-          throw new \InvalidArgumentException("Invalid table specified in validation rule: {$table}.");
+        if ($table === 'users') {
+            return "{$this->data} does not exist.";
+        } elseif ($table === 'posts') {
+            return "Post does not exist.";
+        } elseif ($table === 'conversations') {
+            return "Conversation does not exist.";
+        } else {
+            throw new \InvalidArgumentException("Invalid table specified in validation rule: {$table}.");
         }
 
     }
