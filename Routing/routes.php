@@ -878,7 +878,8 @@ return [
             $directMessage = new DirectMessge(
                 conversationId: $validatedData['conversation_id']->getId(),
                 senderId: $authUser->getId(),
-                content: $validatedData['content']
+                content: $validatedData['content'],
+                imagePath: $publicMessageImagePath
             );
 
             $directMessageDAO = DAOFactory::getDirectMessage();
