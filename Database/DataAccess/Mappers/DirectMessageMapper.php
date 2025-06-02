@@ -20,7 +20,7 @@ class DirectMessageMapper
             senderId: $data['sender_id'],
             content: $data['content'],
             id: $data['id'],
-            read_at: $data['read_at'],
+            readAt: $data['read_at'],
             createdAt: $data['created_at']
         );
     }
