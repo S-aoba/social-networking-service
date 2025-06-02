@@ -15,7 +15,9 @@ class Rule
         'max'      => 'max',
         'exists'   => 'exists',
         'email'    => 'email',
-        'password' => 'password'
+        'password' => 'password',
+        'date' => 'date'
+
     ];
 
     private const MESSAGE_METHODS = [
@@ -26,7 +28,8 @@ class Rule
         'max'      => 'maxMessage',
         'exists'   => 'existsMessage',
         'email'    => 'emailMessage',
-        'password' => 'passwordMessage'
+        'password' => 'passwordMessage',
+        'date'    => 'dateMessage'
     ];
 
     public function __construct(
@@ -212,7 +215,7 @@ class Rule
     {
         return "{$this->field} must be a valid email address.";
     }
-    
+
     private function password(): ?array
     {
         return is_string($this->data) &&
@@ -227,6 +230,22 @@ class Rule
     private function passwordMessage(): string
     {
         return "The provided value is not a valid password.";
+    }
+
+    private function date(): ?array
+    {
+        $format = 'Y-m-d';
+        $d = \DateTime::createFromFormat($format, $this->data);
+        if ($d && $d->format($format) === $this->data) {
+            return [$this->field => $this->data];
+        }
+
+        return null;
+    }
+
+    private function dateMessage(): string
+    {
+        return "Invalid date format for {$this->data}. Required format: Y-m-d";
     }
 
 
