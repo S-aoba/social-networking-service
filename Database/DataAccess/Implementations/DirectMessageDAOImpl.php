@@ -17,12 +17,13 @@ class DirectMessageDAOImpl implements DirectMessageDAO
 
         $mysqli = DatabaseManager::getMysqliConnection();
 
-        $query = "INSERT INTO direct_messages (conversation_id, sender_id, content) VALUES (?, ?, ?)";
+        $query = "INSERT INTO direct_messages (conversation_id, sender_id, content, image_path) VALUES (?, ?, ?, ?)";
 
-        $result = $mysqli->prepareAndExecute($query, 'iis', [
+        $result = $mysqli->prepareAndExecute($query, 'iiss', [
           $directMessage->getConversationId(),
           $directMessage->getSenderId(),
-          $directMessage->getContent()
+          $directMessage->getContent(),
+          $directMessage->getImagePath()
         ]);
 
         if ($result === false) {
