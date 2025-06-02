@@ -15,7 +15,7 @@ class DirectMessge implements Model
         private string $content,
         private ?int $id = null,
         private ?string $imagePath = null,
-        private ?string $read_at = null,
+        private ?string $readAt = null,
         private ?string $createdAt = null,
     ) {
     }
@@ -72,12 +72,12 @@ class DirectMessge implements Model
 
     public function getReadAt(): ?string
     {
-        return $this->read_at;
+        return $this->readAt;
     }
 
-    public function setReadAt(?string $read_at): void
+    public function setReadAt(?string $readAt): void
     {
-        $this->read_at = $read_at;
+        $this->readAt = $readAt;
     }
 
     public function getCreatedAt(): ?string
