@@ -39,6 +39,11 @@
             <!-- AuthUser -->
             <div class="p-3 flex flex-col items-end justify-center space-y-2">
               <span class="font-semibold"><?= $authUser->getUsername(); ?></span>
+              <?php if ($m->getImagePath() !== null): ?>
+                <div>
+                  <img src="<?= $m->getImagePath(); ?>" alt="dm-image" class="size-40 rounded-2xl">
+                </div>
+              <?php endif; ?>
               <div class="max-w-96 break-all p-4 bg-slate-100 rounded-3xl mb-2">
                 <p><?= $m->getContent(); ?></p>
               </div>
