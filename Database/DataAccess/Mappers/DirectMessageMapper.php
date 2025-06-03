@@ -12,7 +12,7 @@ class DirectMessageMapper
      * @return DirectMessge|null
      */
     public static function toDirectMessage(array $rowData): ?DirectMessge
-    {        
+    {
         return new DirectMessge(
             conversationId: $rowData['conversation_id'],
             senderId: $rowData['sender_id'],

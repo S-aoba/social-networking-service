@@ -55,7 +55,7 @@ class ImagePathResolver
 
     public function resolveDirectMessageMany(?array $data): void
     {
-        if(empty($data)){
+        if (empty($data)) {
             return;
         }
 
