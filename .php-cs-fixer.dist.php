@@ -11,5 +11,6 @@ $finder = Finder::create()
 return (new Config())
     ->setRules([
         '@PSR12' => true,
+        'no_unused_imports' => true,
     ])
     ->setFinder($finder);
