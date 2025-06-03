@@ -378,6 +378,37 @@ return [
             return new RedirectRenderer('login');
         }
     }),
+    'notification' => Route::create('notification', function (): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+                throw new Exception('Invalid request method!');
+            }
+
+            $authUser = Authenticate::getAuthenticatedUser();
+            if ($authUser === null) {
+                return new RedirectRenderer('login');
+            }
+
+            $profileDAO = DAOFactory::getProfileDAO();
+            $authUserProfile = $profileDAO->getByUserId($authUser->getId());
+            if ($authUserProfile === null) {
+                return new RedirectRenderer('login');
+            }
+
+            $imageUrlBuilder = new ImageUrlBuilder();
+            $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
+
+            $imagePathResolver->resolveProfile($authUserProfile);
+
+            return new HTMLRenderer('page/notification', [
+                'authUser' => $authUserProfile
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+
+            return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['auth']),
 
     // Auth
     'api/login' => Route::create('api/login', function (): HTTPRenderer {

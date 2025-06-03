@@ -8,7 +8,7 @@ $navigationList = [
     [
         'label' => '通知',
         'imagePath' => '/images/notification.svg',
-        'linkPath' => '#'
+        'linkPath' => '/notification'
 
     ],
     [
