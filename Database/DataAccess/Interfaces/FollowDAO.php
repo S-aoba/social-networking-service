@@ -2,8 +2,6 @@
 
 namespace Database\DataAccess\Interfaces;
 
-use Models\Follow;
-
 interface FollowDAO
 {
     public function follow(int $userId, int $followUserId): bool;

@@ -24,7 +24,6 @@ use Services\Image\ImagePathGenerator;
 use Services\Image\ImagePathResolver;
 use Services\Image\ImageStorage;
 use Services\Image\ImageUrlBuilder;
-use Types\ValueType;
 use Validators\Validator;
 
 return [

@@ -2,8 +2,6 @@
 
 namespace Database;
 
-use Database\MySQLWrapper;
-
 abstract class AbstractSeeder implements Seeder
 {
     protected MySQLWrapper $conn;
