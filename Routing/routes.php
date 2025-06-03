@@ -849,13 +849,11 @@ return [
             $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $file = File::fromArray($_FILES['upload-file']);
-            if ($file->isValid() === false) {
-                return new JSONRenderer(['status' => 'File upload is invalid.']);
+            $publicMessageImagePath = null;
+            if ($file->isValid()) {
+                $validatedFileData = ValidationHelper::validateFile($file);
+                $publicMessageImagePath = (new ImagePathGenerator())->generate($validatedFileData->getTypeWithoutPrefix());
             }
-
-            $validatedFileData = ValidationHelper::validateFile($file);
-
-            $publicMessageImagePath = (new ImagePathGenerator())->generate($validatedFileData->getTypeWithoutPrefix());
 
             $conversationAuthorizer = new ConversationAuthorizer();
             $isJoinTheConversation = $conversationAuthorizer->isJoin(
@@ -889,8 +887,10 @@ return [
                 throw new Exception('Failed to create direct message.');
             }
 
-            $imageStorage = new ImageStorage();
-            $imageStorage->save($publicMessageImagePath, $validatedFileData->getTmpName());
+            if ($file->isValid()) {
+                $imageStorage = new ImageStorage();
+                $imageStorage->save($publicMessageImagePath, $validatedFileData->getTmpName());
+            }
 
             return new JSONRenderer([
                 'status' => 'success',
