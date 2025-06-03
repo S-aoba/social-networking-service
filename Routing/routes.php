@@ -378,6 +378,9 @@ return [
             return new RedirectRenderer('login');
         }
     }),
+    'notification' => Route::create('notification', function (): HTTPRenderer {
+        return new HTMLRenderer('page/notification');
+    })->setMiddleware(['auth']),
 
     // Auth
     'api/login' => Route::create('api/login', function (): HTTPRenderer {
