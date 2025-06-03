@@ -889,6 +889,9 @@ return [
                 throw new Exception('Failed to create direct message.');
             }
 
+            $imageStorage = new ImageStorage();
+            $imageStorage->save($publicMessageImagePath, $validatedFileData->getTmpName());
+
             return new JSONRenderer([
                 'status' => 'success',
                 'redirect' => 'message?id=' . $validatedData['conversation_id']->getId()
