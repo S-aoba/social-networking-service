@@ -69,10 +69,14 @@ return [
             $imagePathResolver->resolveProfileMany($posts, 'author');
             $imagePathResolver->resolvePostMany($posts);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $notifications = $notificationDAO->getNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/home', [
                 'authUser' => $authUserProfile,
                 'posts' => $posts,
-                'postsCount' => $posts === null ? 0 : count($posts)
+                'postsCount' => $posts === null ? 0 : count($posts),
+                'notifications' => $notifications
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -119,6 +123,9 @@ return [
             $followingCount = $followDAO->getFollowingCount($validatedData['user']->getUserId());
             $isFollow = $followDAO->isFollowingSelf($authUserProfile->getUserId(), $validatedData['user']->getUserId());
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $notifications = $notificationDAO->getNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
                 'authUser' => $authUserProfile,
@@ -126,6 +133,7 @@ return [
                 'posts' => $posts,
                 'followerCount' => $followerCount,
                 'followingCount' => $followingCount,
+                'notifications' => $notifications
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
@@ -180,10 +188,14 @@ return [
             );
             $imagePathResolver->resolvePostMany($replies);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $notifications = $notificationDAO->getNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/post', [
                 'authUser' => $authUserProfile,
                 'data' => $validatedData['id'],
                 'replies' => $replies,
+                'notifications' => $notifications
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
@@ -222,9 +234,13 @@ return [
             $following = $followDAO->getFollowing($authUserProfile->getUserId());
             $imagePathResolver->resolveProfileMany($following, null);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $notifications = $notificationDAO->getNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/following', [
                 'authUser' => $authUserProfile,
                 'data' => $following,
+                'notifications' => $notifications
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -256,9 +272,13 @@ return [
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
             $imagePathResolver->resolveProfileMany($followers, null);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $notifications = $notificationDAO->getNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/follower', [
                 'authUser' => $authUserProfile,
                 'data' => $followers,
+                'notifications' => $notifications
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -296,10 +316,14 @@ return [
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
             $imagePathResolver->resolveProfileMany($followers, null);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $notifications = $notificationDAO->getNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/messages', [
                 'authUser' => $authUserProfile,
                 'conversations' => $conversations,
-                'followers' => $followers
+                'followers' => $followers,
+                'notifications' => $notifications
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -360,13 +384,17 @@ return [
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
             $imagePathResolver->resolveProfileMany($followers, null);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $notifications = $notificationDAO->getNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/message', [
                 'conversation' => $validatedData['id'],
                 'partner' => $partnerProfile,
                 'directMessages' => $directMessages,
                 'authUser' => $authUserProfile,
                 'conversations' => $conversations,
-                'followers' => $followers
+                'followers' => $followers,
+                'notifications' => $notifications
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
@@ -400,8 +428,12 @@ return [
 
             $imagePathResolver->resolveProfile($authUserProfile);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $notifications = $notificationDAO->getNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/notification', [
-                'authUser' => $authUserProfile
+                'authUser' => $authUserProfile,
+                'notifications' => $notifications
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
