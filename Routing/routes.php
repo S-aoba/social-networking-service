@@ -684,7 +684,7 @@ return [
                 $profile = $profileDAO->getByUserId($authUser->getId());
                 $data = [
                         'message' => "{$profile->getUsername()}さんにフォローされました。",
-                        'redirect' => "/profile/?user={$profile->getUsername()}"
+                        'redirect' => "/profile?user={$profile->getUsername()}"
                 ];
     
                 $notification = new Notification(
