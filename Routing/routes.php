@@ -785,10 +785,11 @@ return [
             ];
             $validatedData = (new Validator($requiredFields))->validate($_POST);
 
+            $post = $validatedData['post_id']['post'];
             $likeDAO = DAOFactory::getLikeDAO();
             $like = new Like(
                 userId: $authUser->getId(),
-                postId: $validatedData['post_id']['post']->getId()
+                postId: $post->getId()
             );
 
             $isLiked = $likeDAO->hasLiked($like);
@@ -799,6 +800,24 @@ return [
             }
 
             $likeCount = $likeDAO->getLikeCount($like);
+
+            if($authUser->getId() !== $post->getUserId() && $isLiked === false) {
+                // TODO: 同じユーザが同じPostに何度もいいねを押すとその度にNotificationが作成されるのを防ぐ処理を追加
+                $profileDAO = DAOFactory::getProfileDAO();
+                $profile= $profileDAO->getByUserId($authUser->getId());
+                $data = json_encode([
+                    'message' => "{$profile->getUsername()}さんがあなたのポストにいいねをしました。",
+                    'redirect' => "/post?id={$post->getId()}"
+                ]);
+                $notification = new Notification(
+                    userId: $authUser->getId(),
+                    type: 'like',
+                    data: $data
+                );
+                $notificationDAO = DAOFactory::getNotificationDAO();
+                $success = $notificationDAO->notifyUser($notification);
+                if($success === false) throw new Exception('Failed to create notification.');
+            }
 
             return new JSONRenderer([
                 'status' => 'success',
