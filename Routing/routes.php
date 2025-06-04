@@ -652,7 +652,7 @@ return [
                 ]);
     
                 $notification = new Notification(
-                    userId: $authUser->getId(),
+                    userId: $validatedData['following_id'],
                     type: 'follow',
                     data: $data,
                 );
@@ -741,7 +741,7 @@ return [
                     'redirect' => "/post?id={$parentPost->getId()}"
                 ]);
                 $notification = new Notification(
-                    userId: $authUser->getId(),
+                    userId: $parentPost->getUserId(),
                     type: 'reply',
                     data: $data
                 );
@@ -810,7 +810,7 @@ return [
                     'redirect' => "/post?id={$post->getId()}"
                 ]);
                 $notification = new Notification(
-                    userId: $authUser->getId(),
+                    userId: $post->getUserId(),
                     type: 'like',
                     data: $data
                 );
