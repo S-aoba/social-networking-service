@@ -690,7 +690,7 @@ return [
             }
 
             $requiredFields = [
-                'content' => 'requreid|string|min:1|max:144',
+                'content' => 'required|string|min:1|max:144',
                 'parent_post_id' => 'required|int|exists:posts,id'
             ];
             $validatedData = (new Validator($requiredFields))->validate($_POST);
@@ -730,6 +730,23 @@ return [
                 if ($isSavedToDir === false) {
                     throw new Exception('Failed to save to directory.');
                 }
+            }
+
+            if($authUser->getId() !== $parentPost->getUserId()) {
+                $profileDAO = DAOFactory::getProfileDAO();
+                $profile = $profileDAO->getByUserId($authUser->getId());
+                $data = json_encode([
+                    'message' => "{$profile->getUsername()}さんから返信がありました。",
+                    'redirect' => "/post?id={$parentPost->getId()}"
+                ]);
+                $notification = new Notification(
+                    userId: $authUser->getId(),
+                    type: 'reply',
+                    data: $data
+                );
+                $notificationDAO = DAOFactory::getNotificationDAO();
+                $success = $notificationDAO->notifyUser($notification);
+                if($success === false) throw new Exception('Failed to create notification.');
             }
 
             return new JSONRenderer([
