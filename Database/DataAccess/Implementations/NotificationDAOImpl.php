@@ -35,6 +35,24 @@ class NotificationDAOImpl implements NotificationDAO
         return true;
     }
 
+    public function hasNotification(int $userId): bool
+    {
+        $hasNotification = $this->checkNotification($userId);
+        
+        return $hasNotification;
+    }
+
+    private function checkNotification(int $userId): bool
+    {
+        $mysqli = DatabaseManager::getMysqliConnection();
+
+        $query = "SELECT COUNT(*) AS notification_count FROM notifications WHERE user_id = ?";
+
+        $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
+        
+        return $result[0]['notification_count'];
+    }
+
     public function getNotification(int $userId): ?array
     {
         $notificationRow = $this->fetchNotification($userId);
