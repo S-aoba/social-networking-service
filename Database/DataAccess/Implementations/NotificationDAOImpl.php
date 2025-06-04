@@ -5,6 +5,7 @@ namespace Database\DataAccess\Implementations;
 use Database\DataAccess\Interfaces\NotificationDAO;
 use Database\DatabaseManager;
 use Exception;
+use Models\DataTimeStamp;
 use Models\Notification;
 
 class NotificationDAOImpl implements NotificationDAO
@@ -40,7 +41,7 @@ class NotificationDAOImpl implements NotificationDAO
 
         if($notificationRow === null) return null;
 
-        return $notificationRow;
+        return $this->rowDataToNotifications($notificationRow);
     }
 
     private function fetchNotification(int $userId): ?array
@@ -50,11 +51,27 @@ class NotificationDAOImpl implements NotificationDAO
         $query = "SELECT * FROM notifications WHERE user_id = ?";
 
         $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
-
+        
         if(empty($result)) return null;
 
-        error_log(var_export($result,true));
+        return $result;
+    }
 
-        return [];
+    private function rowDataToNotifications(array $rowData): array
+    {
+        $notifications = [];
+
+        foreach ($rowData as $data) {
+            $notifications[] = new Notification(
+                userId: $data['user_id'],
+                type: $data['type'],
+                id: $data['id'],
+                data: $data['data'],
+                readAt: $data['read_at'],
+                timestamp: new DataTimeStamp($data['created_at'], $data['updated_at'])
+            );
+        }
+
+        return $notifications;
     }
 }
