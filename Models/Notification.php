@@ -17,7 +17,7 @@ class Notification implements Model
         private string $type,
         private ?int $id = null,
         private ?string $data = null,
-        private ?string $reatAt = null,
+        private ?string $readAt = null,
         private ?DataTimeStamp $timestamp = null
     ) {
         $this->checkType();
@@ -63,14 +63,14 @@ class Notification implements Model
         $this->data = $data;
     }
 
-    public function getReatAt(): ?string
+    public function getReadAt(): ?string
     {
-        return $this->reatAt;
+        return $this->readAt;
     }
 
-    public function setReatAt(?string $reatAt): void
+    public function setReadAt(?string $readAt): void
     {
-        $this->reatAt = $reatAt;
+        $this->readAt = $readAt;
     }
 
     public function getTimestamp(): ?DataTimeStamp
