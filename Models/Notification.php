@@ -23,7 +23,7 @@ class Notification implements Model
         $this->checkType();
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
