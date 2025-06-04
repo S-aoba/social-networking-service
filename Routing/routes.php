@@ -646,14 +646,15 @@ return [
             if($isFollow === false) {
                 $profileDAO = DAOFactory::getProfileDAO();
                 $profile = $profileDAO->getByUserId($authUser->getId());
-                $data = [
-                        'message' => "{$profile->getUsername()}さんにフォローされました。"
-                ];
+                $data = json_encode([
+                        'message' => "{$profile->getUsername()}さんにフォローされました。",
+                        'redirect' => "/profile/?user={$profile->getUsername()}"
+                ]);
     
                 $notification = new Notification(
                     userId: $authUser->getId(),
                     type: 'follow',
-                    data: json_encode($data),
+                    data: $data,
                 );
     
                 $notificationDAO = DAOFactory::getNotificationDAO();
