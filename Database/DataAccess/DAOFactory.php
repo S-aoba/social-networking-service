@@ -76,7 +76,7 @@ class DAOFactory
         };
     }
 
-    public static function getDirectMessage(): DirectMessageDAO
+    public static function getDirectMessageDAO(): DirectMessageDAO
     {
         $driver = Settings::env('DATABASE_DRIVER');
 
@@ -85,7 +85,7 @@ class DAOFactory
         };
     }
 
-    public static function getNotification(): NotificationDAO
+    public static function getNotificationDAO(): NotificationDAO
     {
         $driver = Settings::env('DATABASE_DRIVER');
 
