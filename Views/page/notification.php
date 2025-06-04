@@ -11,15 +11,18 @@
 
     <!-- クリックするとLink先に飛べるようにする -->
 
-    <!-- Follow -->
-    <?php include "Views/component/notification/follow.php" ?>
-
-    <!-- Like -->
-    <?php include "Views/component/notification/like.php" ?>
-
-    <!-- Reply -->
-    <?php include "Views/component/notification/reply.php" ?>
-
+    <?php foreach ($notifications as $notification):  ?>
+      <?php if($notification->getType() === 'follow'): ?>
+        <!-- Follow -->
+        <?php include "Views/component/notification/follow.php" ?>
+      <?php elseif($notification->getType() === 'like'): ?>
+        <!-- Like -->
+        <?php include "Views/component/notification/like.php" ?>
+      <?php elseif($notification->getType() === 'reply'): ?>
+        <!-- Reply -->
+        <?php include "Views/component/notification/reply.php" ?>
+      <?php endif; ?>
+    <?php endforeach; ?>
     </div>
   </div>
 
