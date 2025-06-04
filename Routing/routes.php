@@ -330,7 +330,7 @@ return [
 
             return new RedirectRenderer('login');
         }
-    }),
+    })->setMiddleware(['auth']),
     'message' => Route::create('message', function (): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -405,7 +405,7 @@ return [
 
             return new RedirectRenderer('login');
         }
-    }),
+    })->setMiddleware(['auth']),
     'notification' => Route::create('notification', function (): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
