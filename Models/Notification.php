@@ -16,7 +16,7 @@ class Notification implements Model
         private int $userId,
         private string $type,
         private ?int $id = null,
-        private ?string $data = null,
+        private ?array $data = null,
         private ?string $readAt = null,
         private ?DataTimeStamp $timestamp = null
     ) {
@@ -53,12 +53,12 @@ class Notification implements Model
         $this->type = $type;
     }
 
-    public function getData(): ?string
+    public function getData(): ?array
     {
         return $this->data;
     }
 
-    public function setData(?string $data): void
+    public function setData(?array $data): void
     {
         $this->data = $data;
     }

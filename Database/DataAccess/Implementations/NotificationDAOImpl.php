@@ -20,10 +20,11 @@ class NotificationDAOImpl implements NotificationDAO
 
         $query = "INSERT INTO notifications (user_id, type, data) VALUES (?, ?, ?)";
 
+        $encodedData = json_encode($notification->getData());
         $result = $mysqli->prepareAndExecute($query, 'iss', [
           $notification->getUserId(),
           $notification->getType(),
-          $notification->getData()
+          $encodedData
         ]);
 
         if ($result === false) {
@@ -80,11 +81,13 @@ class NotificationDAOImpl implements NotificationDAO
         $notifications = [];
 
         foreach ($rowData as $data) {
+            $decodedData = json_decode($data['data'], true);
+            
             $notifications[] = new Notification(
                 userId: $data['user_id'],
                 type: $data['type'],
                 id: $data['id'],
-                data: $data['data'],
+                data: $decodedData,
                 readAt: $data['read_at'],
                 timestamp: new DataTimeStamp($data['created_at'], $data['updated_at'])
             );

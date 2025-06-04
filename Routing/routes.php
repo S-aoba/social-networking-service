@@ -682,10 +682,10 @@ return [
             if($isFollow === false) {
                 $profileDAO = DAOFactory::getProfileDAO();
                 $profile = $profileDAO->getByUserId($authUser->getId());
-                $data = json_encode([
+                $data = [
                         'message' => "{$profile->getUsername()}さんにフォローされました。",
                         'redirect' => "/profile/?user={$profile->getUsername()}"
-                ]);
+                ];
     
                 $notification = new Notification(
                     userId: $validatedData['following_id'],
@@ -772,10 +772,10 @@ return [
             if($authUser->getId() !== $parentPost->getUserId()) {
                 $profileDAO = DAOFactory::getProfileDAO();
                 $profile = $profileDAO->getByUserId($authUser->getId());
-                $data = json_encode([
+                $data = [
                     'message' => "{$profile->getUsername()}さんから返信がありました。",
                     'redirect' => "/post?id={$parentPost->getId()}"
-                ]);
+                ];
                 $notification = new Notification(
                     userId: $parentPost->getUserId(),
                     type: 'reply',
@@ -841,10 +841,10 @@ return [
                 // TODO: 同じユーザが同じPostに何度もいいねを押すとその度にNotificationが作成されるのを防ぐ処理を追加
                 $profileDAO = DAOFactory::getProfileDAO();
                 $profile= $profileDAO->getByUserId($authUser->getId());
-                $data = json_encode([
+                $data = [
                     'message' => "{$profile->getUsername()}さんがあなたのポストにいいねをしました。",
                     'redirect' => "/post?id={$post->getId()}"
-                ]);
+                ];
                 $notification = new Notification(
                     userId: $post->getUserId(),
                     type: 'like',
