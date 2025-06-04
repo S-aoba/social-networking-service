@@ -33,4 +33,28 @@ class NotificationDAOImpl implements NotificationDAO
 
         return true;
     }
+
+    public function getNotification(int $userId): ?array
+    {
+        $notificationRow = $this->fetchNotification($userId);
+
+        if($notificationRow === null) return null;
+
+        return $notificationRow;
+    }
+
+    private function fetchNotification(int $userId): ?array
+    {
+        $mysqli = DatabaseManager::getMysqliConnection();
+
+        $query = "SELECT * FROM notifications WHERE user_id = ?";
+
+        $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
+
+        if(empty($result)) return null;
+
+        error_log(var_export($result,true));
+
+        return [];
+    }
 }
