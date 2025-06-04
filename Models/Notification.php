@@ -16,7 +16,7 @@ class Notification implements Model
         private int $userId,
         private string $type,
         private ?int $id = null,
-        private ?string $data,
+        private ?string $data = null,
         private ?string $reatAt = null,
         private ?DataTimeStamp $timestamp = null
     ) {
