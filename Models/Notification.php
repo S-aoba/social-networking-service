@@ -15,11 +15,22 @@ class Notification implements Model
     public function __construct(
         private int $userId,
         private string $type,
+        private ?int $id = null,
         private ?string $data,
         private ?string $reatAt = null,
         private ?DataTimeStamp $timestamp = null
     ) {
         $this->checkType();
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     public function getUserId(): int
