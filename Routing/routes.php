@@ -16,6 +16,7 @@ use Models\Conversation;
 use Models\DirectMessge;
 use Models\File;
 use Models\Like;
+use Models\Notification;
 use Models\Post;
 use Models\Profile;
 use Models\User;
@@ -640,6 +641,24 @@ return [
 
             if (!$success) {
                 throw new Exception('Failed follow');
+            }
+
+            if($isFollow === false) {
+                $profileDAO = DAOFactory::getProfileDAO();
+                $profile = $profileDAO->getByUserId($authUser->getId());
+                $data = [
+                        'message' => "{$profile->getUsername()}さんにフォローされました。"
+                ];
+    
+                $notification = new Notification(
+                    userId: $authUser->getId(),
+                    type: 'follow',
+                    data: json_encode($data),
+                );
+    
+                $notificationDAO = DAOFactory::getNotificationDAO();
+                $success = $notificationDAO->notifyUser($notification);
+                if($success === false) throw new Exception('Failed to create notification.');
             }
 
             return new JSONRenderer(['status' => 'success']);
