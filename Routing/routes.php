@@ -25,6 +25,7 @@ use Services\Image\ImagePathGenerator;
 use Services\Image\ImagePathResolver;
 use Services\Image\ImageStorage;
 use Services\Image\ImageUrlBuilder;
+use Services\Notification\NotificationService;
 use Validators\Validator;
 
 return [
@@ -431,9 +432,17 @@ return [
             $imagePathResolver->resolveProfile($authUserProfile);
 
             $notificationDAO = DAOFactory::getNotificationDAO();
-            $notifications = $notificationDAO->getNotification($authUserProfile->getUserId());
             $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
-
+            $notifications = $notificationDAO->getNotification($authUserProfile->getUserId());
+            
+            if($notifications !== null) {
+                NotificationService::enrichNotificationsWithProfileImage(
+                    $notifications,
+                    $profileDAO,
+                    $imagePathResolver
+                );
+            }
+                
             return new HTMLRenderer('page/notification', [
                 'authUser' => $authUserProfile,
                 'hasNotification' => $hasNotification,
@@ -684,7 +693,8 @@ return [
                 $profile = $profileDAO->getByUserId($authUser->getId());
                 $data = [
                         'message' => "{$profile->getUsername()}さんにフォローされました。",
-                        'redirect' => "/profile?user={$profile->getUsername()}"
+                        'redirect' => "/profile?user={$profile->getUsername()}",
+                        'userId' => $profile->getUserId()
                 ];
     
                 $notification = new Notification(
@@ -774,7 +784,8 @@ return [
                 $profile = $profileDAO->getByUserId($authUser->getId());
                 $data = [
                     'message' => "{$profile->getUsername()}さんから返信がありました。",
-                    'redirect' => "/post?id={$parentPost->getId()}"
+                    'redirect' => "/post?id={$parentPost->getId()}",
+                    'userId' => $profile->getUserId()
                 ];
                 $notification = new Notification(
                     userId: $parentPost->getUserId(),
@@ -843,7 +854,8 @@ return [
                 $profile= $profileDAO->getByUserId($authUser->getId());
                 $data = [
                     'message' => "{$profile->getUsername()}さんがあなたのポストにいいねをしました。",
-                    'redirect' => "/post?id={$post->getId()}"
+                    'redirect' => "/post?id={$post->getId()}",
+                    'userId' => $profile->getUserId()
                 ];
                 $notification = new Notification(
                     userId: $post->getUserId(),
