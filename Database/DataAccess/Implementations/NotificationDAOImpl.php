@@ -35,6 +35,28 @@ class NotificationDAOImpl implements NotificationDAO
 
         return true;
     }
+    
+    public function getNotification(int $id): ?Notification
+    {
+        $notificationRow = $this->fetchNotification($id);
+
+        if($notificationRow === null) return null;
+
+        return $this->rowDataToNotification($notificationRow);
+    }
+
+    private function fetchNotification(int $id): ?array
+    {
+        $mysqli = DatabaseManager::getMysqliConnection();
+
+        $query = "SELECT * FROM notifications WHERE id = ?";
+
+        $result = $mysqli->prepareAndFetchAll($query, 'i', [$id]);
+
+        if(empty($result)) return null;
+
+        return $result;
+    }
 
     public function markAsRead(int $id): bool
     {
@@ -100,15 +122,16 @@ class NotificationDAOImpl implements NotificationDAO
 
     private function rowDataToNotification(array $rowData): ?Notification
     {
-        $decodedData = json_decode($rowData['data'], true);
-
+        $data = $rowData[0];
+        $decodedData = json_decode($data['data'], true);
+        
         return new Notification(
-            userId: $rowData['user_id'],
-            type: $rowData['type'],
-            id: $rowData['id'],
+            userId: $data['user_id'],
+            type: $data['type'],
+            id: $data['id'],
             data: $decodedData,
-            readAt: $rowData['read_at'],
-            timestamp: new DataTimeStamp($rowData['created_at'], $rowData['updated_at'])
+            readAt: $data['read_at'],
+            timestamp: new DataTimeStamp($data['created_at'], $data['updated_at'])
         );
     }
 }

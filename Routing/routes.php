@@ -1180,12 +1180,17 @@ return [
             ];
             $validatedData = (new Validator($requiredFields))->validate($_POST);
 
-            if($validatedData['notification_id']['notification']->getUserId() !== $authUser->getId()) {
+            $notification = $validatedData['notification_id'];
+            if($notification->getUserId() !== $authUser->getId()) {
                 throw new Exception('Cannot mark notification as read.');
             }
 
+            if($notification->getReadAt() !== null) {
+                throw new Exception('Notification is already read.');
+            }
+
             $notificationDAO = DAOFactory::getNotificationDAO();
-            $success = $notificationDAO->markAsRead($validatedData['notification_id']['notification']->getId());
+            $success = $notificationDAO->markAsRead($notification->getId());
             if ($success === false) {
                 throw new Exception('Failed to mark notification as read.');
             }
