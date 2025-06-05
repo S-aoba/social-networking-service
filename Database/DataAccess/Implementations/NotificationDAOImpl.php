@@ -67,7 +67,7 @@ class NotificationDAOImpl implements NotificationDAO
     {
         $mysqli = DatabaseManager::getMysqliConnection();
 
-        $query = "SELECT * FROM notifications WHERE user_id = ?";
+        $query = "SELECT * FROM notifications WHERE user_id = ? AND read_at IS NULL ORDER BY created_at DESC";
 
         $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
         
