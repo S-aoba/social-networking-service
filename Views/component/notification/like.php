@@ -1,6 +1,7 @@
 <?php
 $message = $notification->getData()['message'];
 $redirect = $notification->getData()['redirect'];
+$imagePath = $notification->getData()['imagePath'];
 ?>
 
 <a href="<?= htmlspecialchars($redirect) ?>">
@@ -9,7 +10,7 @@ $redirect = $notification->getData()['redirect'];
       <img src="/images/like-icon.svg" alt="like-icon" class="size-7">
     </div>
     <div class="pl-2 flex flex-col space-y-2">
-      <img src="/images/default-icon.png" alt="user-icon" class="size-8">
+      <img src="<?= htmlspecialchars($imagePath) ?>" alt="user-icon" class="size-8">
       <span class="text-sm"><?= htmlspecialchars($message); ?></span>
     </div>
   </div>
