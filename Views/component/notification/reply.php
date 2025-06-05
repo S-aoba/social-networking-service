@@ -12,10 +12,11 @@ $content = $notification->getData()['content'];
     <div class="w-16 flex justify-end">
       <img src="/images/comment-icon.svg" alt="comment-icon" class="size-7">
     </div>
-    <div class="pl-2 flex flex-col space-y-2">
+    <div class="w-96 pl-2 flex flex-col space-y-2">
       <img src="<?= htmlspecialchars($imagePath) ?>" alt="user-icon" class="size-8">
       <span class="text-sm"><?= htmlspecialchars($message); ?></span>
       <span class="truncate text-xs text-gray-500"><?= htmlspecialchars($content); ?></span>
+      <div class="notification-error-message hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
     </div>
   </div>
 </form>

@@ -14,6 +14,7 @@ $imagePath = $notification->getData()['imagePath'];
     <div class="pl-2 flex flex-col space-y-2">
       <img src="<?= htmlspecialchars($imagePath) ?>" alt="user-icon" class="size-8">
       <span class="text-sm"><?= htmlspecialchars($message); ?></span>
+      <div class="notification-error-message hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
     </div>
   </div>
 </form>

@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
 
       const formData = new FormData(form);
+      const errorMessage = document.querySelector('.notification-error-message');
+      errorMessage.textContent = '';
+      errorMessage.classList.add('hidden');
+
       const res = await fetch("/api/notification/read", {
         method: "POST",
         body: formData,
@@ -16,7 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (data.status === "success") {
         window.location.href = data.redirect;
       } else {
-        cosnole.log("error.");
+        const message = data.message;
+
+        errorMessage.textContent = message;
+        errorMessage.classList.remove('hidden');
       }
     });
   });

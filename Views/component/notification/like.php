@@ -16,6 +16,7 @@ $content = $notification->getData()['content'];
       <img src="<?= htmlspecialchars($imagePath) ?>" alt="user-icon" class="size-8">
       <span class="text-sm"><?= htmlspecialchars($message); ?></span>
       <span class="truncate text-xs text-gray-500"><?= htmlspecialchars($content); ?></span>
+      <div class="notification-error-message hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
     </div>
   </div>
 </form>
