@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const data = await res.json();
 
       if (data.status === "success") {
-        console.log(data.status);
+        window.location.href = data.redirect;
       } else {
         cosnole.log("error.");
       }

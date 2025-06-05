@@ -1196,7 +1196,8 @@ return [
             }
 
             return new JSONRenderer([
-                'status' => 'success'
+                'status' => 'success',
+                'redirect' => $notification->getData()['redirect']
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
