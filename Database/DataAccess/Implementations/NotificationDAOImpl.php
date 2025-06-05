@@ -80,7 +80,7 @@ class NotificationDAOImpl implements NotificationDAO
     {
         $mysqli = DatabaseManager::getMysqliConnection();
 
-        $query = "SELECT COUNT(*) AS notification_count FROM notifications WHERE user_id = ?";
+        $query = "SELECT COUNT(*) AS notification_count FROM notifications WHERE user_id = ? AND read_at IS NULL";
 
         $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
         
