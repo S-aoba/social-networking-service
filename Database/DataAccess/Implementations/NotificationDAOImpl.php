@@ -92,18 +92,23 @@ class NotificationDAOImpl implements NotificationDAO
         $notifications = [];
 
         foreach ($rowData as $data) {
-            $decodedData = json_decode($data['data'], true);
-            
-            $notifications[] = new Notification(
-                userId: $data['user_id'],
-                type: $data['type'],
-                id: $data['id'],
-                data: $decodedData,
-                readAt: $data['read_at'],
-                timestamp: new DataTimeStamp($data['created_at'], $data['updated_at'])
-            );
+            $notifications[] = $this->rowDataToNotification($data);
         }
 
         return $notifications;
+    }
+
+    private function rowDataToNotification(array $rowData): ?Notification
+    {
+        $decodedData = json_decode($rowData['data'], true);
+
+        return new Notification(
+            userId: $rowData['user_id'],
+            type: $rowData['type'],
+            id: $rowData['id'],
+            data: $decodedData,
+            readAt: $rowData['read_at'],
+            timestamp: new DataTimeStamp($rowData['created_at'], $rowData['updated_at'])
+        );
     }
 }
