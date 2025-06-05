@@ -29,3 +29,5 @@
 
   <?php include "Views/component/sidebar.php" ?>
 </div>
+
+<script src="/js/read-notification.js"></script>
