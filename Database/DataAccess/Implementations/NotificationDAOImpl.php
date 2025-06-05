@@ -65,16 +65,16 @@ class NotificationDAOImpl implements NotificationDAO
         return $result[0]['notification_count'];
     }
 
-    public function getNotification(int $userId): ?array
+    public function getAllNotifications(int $userId): ?array
     {
-        $notificationRow = $this->fetchNotification($userId);
+        $notificationRow = $this->fetchAllNotifications($userId);
 
         if($notificationRow === null) return null;
 
         return $this->rowDataToNotifications($notificationRow);
     }
 
-    private function fetchNotification(int $userId): ?array
+    private function fetchAllNotifications(int $userId): ?array
     {
         $mysqli = DatabaseManager::getMysqliConnection();
 

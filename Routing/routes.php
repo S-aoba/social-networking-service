@@ -433,7 +433,7 @@ return [
 
             $notificationDAO = DAOFactory::getNotificationDAO();
             $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
-            $notifications = $notificationDAO->getNotification($authUserProfile->getUserId());
+            $notifications = $notificationDAO->getAllNotifications($authUserProfile->getUserId());
             
             if($notifications !== null) {
                 NotificationService::enrichNotificationsWithProfileImage(
