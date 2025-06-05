@@ -42,7 +42,7 @@ class NotificationDAOImpl implements NotificationDAO
 
         if($notificationRow === null) return null;
 
-        return $this->rowDataToNotification($notificationRow);
+        return $this->rowDataToNotification($notificationRow[0]);
     }
 
     private function fetchNotification(int $id): ?array
