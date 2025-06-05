@@ -36,6 +36,17 @@ class NotificationDAOImpl implements NotificationDAO
         return true;
     }
 
+    public function markAsRead(int $id): bool
+    {
+        $mysqli = DatabaseManager::getMysqliConnection();
+
+        $query = "UPDATE notifications SET read_at = NOW() WHERE id = ?";
+
+        $result = $mysqli->prepareAndExecute($query, 'i', [$id]);
+
+        return $result !== false;
+    }
+
     public function hasNotification(int $userId): bool
     {
         $hasNotification = $this->checkNotification($userId);

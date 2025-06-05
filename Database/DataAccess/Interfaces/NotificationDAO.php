@@ -9,4 +9,5 @@ interface NotificationDAO
     public function notifyUser(Notification $notification): bool;
     public function getNotification(int $userId): ?array;
     public function hasNotification(int $userId): bool;
+    public function markAsRead(int $id): bool;
 }

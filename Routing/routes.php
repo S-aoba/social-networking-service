@@ -1164,6 +1164,51 @@ return [
             ]);
         }
     })->setMiddleware(['auth']),
+    'api/notification' => Route::create('api/notification', function (): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new Exception('Invalid request method!');
+            }
+
+            $authUser = Authenticate::getAuthenticatedUser();
+            if ($authUser === null) {
+                return new RedirectRenderer('login');
+            }
+
+            $requiredFields = [
+                'notification_id' => 'required|int|exists:notifications,id'
+            ];
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
+
+            if($validatedData['notification_id']['notification']->getUserId() !== $authUser->getId()) {
+                throw new Exception('Cannot mark notification as read.');
+            }
+
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $success = $notificationDAO->markAsRead($validatedData['notification_id']['notification']->getId());
+            if ($success === false) {
+                throw new Exception('Failed to mark notification as read.');
+            }
+
+            return new JSONRenderer([
+                'status' => 'success'
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => json_decode($e->getMessage())
+            ]);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
+        }
+    })->setMiddleware(['auth']),
 
     // Delete
     'api/delete/post' => Route::create('api/delete/post', function (): HTTPRenderer {
