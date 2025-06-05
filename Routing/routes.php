@@ -785,7 +785,8 @@ return [
                 $data = [
                     'message' => "{$profile->getUsername()}さんから返信がありました。",
                     'redirect' => "/post?id={$parentPost->getId()}",
-                    'userId' => $profile->getUserId()
+                    'userId' => $profile->getUserId(),
+                    'content' => $parentPost->getContent(),
                 ];
                 $notification = new Notification(
                     userId: $parentPost->getUserId(),
@@ -855,7 +856,8 @@ return [
                 $data = [
                     'message' => "{$profile->getUsername()}さんがあなたのポストにいいねをしました。",
                     'redirect' => "/post?id={$post->getId()}",
-                    'userId' => $profile->getUserId()
+                    'userId' => $profile->getUserId(),
+                    'content' => $post->getContent(),
                 ];
                 $notification = new Notification(
                     userId: $post->getUserId(),
