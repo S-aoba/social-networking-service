@@ -10,19 +10,20 @@
     <div id="notification-item-list" class="divide-y divide-slate-200">
 
     <!-- クリックするとLink先に飛べるようにする -->
-
-    <?php foreach ($notifications as $notification):  ?>
-      <?php if($notification->getType() === 'follow'): ?>
-        <!-- Follow -->
-        <?php include "Views/component/notification/follow.php" ?>
-      <?php elseif($notification->getType() === 'like'): ?>
-        <!-- Like -->
-        <?php include "Views/component/notification/like.php" ?>
-      <?php elseif($notification->getType() === 'reply'): ?>
-        <!-- Reply -->
-        <?php include "Views/component/notification/reply.php" ?>
-      <?php endif; ?>
-    <?php endforeach; ?>
+    <?php if($notifications !== null): ?>
+      <?php foreach ($notifications as $notification):  ?>
+        <?php if($notification->getType() === 'follow'): ?>
+          <!-- Follow -->
+          <?php include "Views/component/notification/follow.php" ?>
+        <?php elseif($notification->getType() === 'like'): ?>
+          <!-- Like -->
+          <?php include "Views/component/notification/like.php" ?>
+        <?php elseif($notification->getType() === 'reply'): ?>
+          <!-- Reply -->
+          <?php include "Views/component/notification/reply.php" ?>
+        <?php endif; ?>
+      <?php endforeach; ?>
+    <?php endif; ?>
     </div>
   </div>
 
