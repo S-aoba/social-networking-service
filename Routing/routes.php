@@ -1164,7 +1164,7 @@ return [
             ]);
         }
     })->setMiddleware(['auth']),
-    'api/notification' => Route::create('api/notification', function (): HTTPRenderer {
+    'api/notification/read' => Route::create('api/notification/read', function (): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 throw new Exception('Invalid request method!');
