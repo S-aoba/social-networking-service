@@ -122,16 +122,15 @@ class NotificationDAOImpl implements NotificationDAO
 
     private function rowDataToNotification(array $rowData): ?Notification
     {
-        $data = $rowData[0];
-        $decodedData = json_decode($data['data'], true);
+        $decodedData = json_decode($rowData['data'], true);
         
         return new Notification(
-            userId: $data['user_id'],
-            type: $data['type'],
-            id: $data['id'],
+            userId: $rowData['user_id'],
+            type: $rowData['type'],
+            id: $rowData['id'],
             data: $decodedData,
-            readAt: $data['read_at'],
-            timestamp: new DataTimeStamp($data['created_at'], $data['updated_at'])
+            readAt: $rowData['read_at'],
+            timestamp: new DataTimeStamp($rowData['created_at'], $rowData['updated_at'])
         );
     }
 }
