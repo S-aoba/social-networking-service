@@ -77,7 +77,7 @@ return [
                 'authUser' => $authUserProfile,
                 'posts' => $posts,
                 'postsCount' => $posts === null ? 0 : count($posts),
-                'hasNotification' => $hasNotification
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -127,7 +127,6 @@ return [
             $notificationDAO = DAOFactory::getNotificationDAO();
             $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
 
-
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
                 'authUser' => $authUserProfile,
@@ -135,7 +134,7 @@ return [
                 'posts' => $posts,
                 'followerCount' => $followerCount,
                 'followingCount' => $followingCount,
-                'hasNotification' => $hasNotification
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
@@ -193,12 +192,11 @@ return [
             $notificationDAO = DAOFactory::getNotificationDAO();
             $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
 
-
             return new HTMLRenderer('page/post', [
                 'authUser' => $authUserProfile,
                 'data' => $validatedData['id'],
                 'replies' => $replies,
-                'hasNotification' => $hasNotification
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
@@ -243,7 +241,7 @@ return [
             return new HTMLRenderer('page/following', [
                 'authUser' => $authUserProfile,
                 'data' => $following,
-                'hasNotification' => $hasNotification
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -281,7 +279,7 @@ return [
             return new HTMLRenderer('page/follower', [
                 'authUser' => $authUserProfile,
                 'data' => $followers,
-                'hasNotification' => $hasNotification
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -326,7 +324,7 @@ return [
                 'authUser' => $authUserProfile,
                 'conversations' => $conversations,
                 'followers' => $followers,
-                'hasNotification' => $hasNotification
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -397,7 +395,7 @@ return [
                 'authUser' => $authUserProfile,
                 'conversations' => $conversations,
                 'followers' => $followers,
-                'hasNotification' => $hasNotification
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
@@ -445,7 +443,7 @@ return [
                 
             return new HTMLRenderer('page/notification', [
                 'authUser' => $authUserProfile,
-                'hasNotification' => $hasNotification,
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification,
                 'notifications' => $notifications
             ]);
         } catch (\Exception $e) {

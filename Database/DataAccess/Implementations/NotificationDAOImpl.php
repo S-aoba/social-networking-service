@@ -69,14 +69,14 @@ class NotificationDAOImpl implements NotificationDAO
         return $result !== false;
     }
 
-    public function hasNotification(int $userId): bool
+    public function hasNotification(int $userId): int
     {
         $hasNotification = $this->checkNotification($userId);
         
         return $hasNotification;
     }
 
-    private function checkNotification(int $userId): bool
+    private function checkNotification(int $userId): int
     {
         $mysqli = DatabaseManager::getMysqliConnection();
 

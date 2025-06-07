@@ -2,7 +2,7 @@
     <div class="relative w-fit p-3 flex space-x-2 justify-start items-center rounded-3xl hover:cursor-pointer hover:bg-slate-100 transition duration-300">
 
         <?php if($item['label'] === 'notification'): ?>
-            <?php if($hasNotification): ?>
+            <?php if($hasNotification !== null): ?>
                 <?php include "Views/component/indicator.php" ?>
             <?php endif; ?>
         <?php endif; ?>

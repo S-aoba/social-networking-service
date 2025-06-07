@@ -4,5 +4,5 @@
     style="box-shadow: 0 0 8px 2px rgba(59,130,246,0.5);"
     title="新着通知あり"
 >
-2
+<?= $hasNotification ?>
 </div>
