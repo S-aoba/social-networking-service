@@ -16,6 +16,7 @@ use Models\Conversation;
 use Models\DirectMessge;
 use Models\File;
 use Models\Like;
+use Models\Notification;
 use Models\Post;
 use Models\Profile;
 use Models\User;
@@ -24,6 +25,7 @@ use Services\Image\ImagePathGenerator;
 use Services\Image\ImagePathResolver;
 use Services\Image\ImageStorage;
 use Services\Image\ImageUrlBuilder;
+use Services\Notification\NotificationService;
 use Validators\Validator;
 
 return [
@@ -68,10 +70,14 @@ return [
             $imagePathResolver->resolveProfileMany($posts, 'author');
             $imagePathResolver->resolvePostMany($posts);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
+            
             return new HTMLRenderer('page/home', [
                 'authUser' => $authUserProfile,
                 'posts' => $posts,
-                'postsCount' => $posts === null ? 0 : count($posts)
+                'postsCount' => $posts === null ? 0 : count($posts),
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -118,6 +124,9 @@ return [
             $followingCount = $followDAO->getFollowingCount($validatedData['user']->getUserId());
             $isFollow = $followDAO->isFollowingSelf($authUserProfile->getUserId(), $validatedData['user']->getUserId());
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/profile', [
                 'isFollow' => $isFollow,
                 'authUser' => $authUserProfile,
@@ -125,6 +134,7 @@ return [
                 'posts' => $posts,
                 'followerCount' => $followerCount,
                 'followingCount' => $followingCount,
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
@@ -179,10 +189,14 @@ return [
             );
             $imagePathResolver->resolvePostMany($replies);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/post', [
                 'authUser' => $authUserProfile,
                 'data' => $validatedData['id'],
                 'replies' => $replies,
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
@@ -221,9 +235,13 @@ return [
             $following = $followDAO->getFollowing($authUserProfile->getUserId());
             $imagePathResolver->resolveProfileMany($following, null);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/following', [
                 'authUser' => $authUserProfile,
                 'data' => $following,
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -255,9 +273,13 @@ return [
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
             $imagePathResolver->resolveProfileMany($followers, null);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/follower', [
                 'authUser' => $authUserProfile,
                 'data' => $followers,
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -295,17 +317,21 @@ return [
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
             $imagePathResolver->resolveProfileMany($followers, null);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/messages', [
                 'authUser' => $authUserProfile,
                 'conversations' => $conversations,
-                'followers' => $followers
+                'followers' => $followers,
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
 
             return new RedirectRenderer('login');
         }
-    }),
+    })->setMiddleware(['auth']),
     'message' => Route::create('message', function (): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -359,13 +385,17 @@ return [
             $followers = $followDAO->getFollower($authUserProfile->getUserId());
             $imagePathResolver->resolveProfileMany($followers, null);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
+
             return new HTMLRenderer('page/message', [
                 'conversation' => $validatedData['id'],
                 'partner' => $partnerProfile,
                 'directMessages' => $directMessages,
                 'authUser' => $authUserProfile,
                 'conversations' => $conversations,
-                'followers' => $followers
+                'followers' => $followers,
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
@@ -376,7 +406,7 @@ return [
 
             return new RedirectRenderer('login');
         }
-    }),
+    })->setMiddleware(['auth']),
     'notification' => Route::create('notification', function (): HTTPRenderer {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -399,8 +429,22 @@ return [
 
             $imagePathResolver->resolveProfile($authUserProfile);
 
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
+            $notifications = $notificationDAO->getAllNotifications($authUserProfile->getUserId());
+            
+            if($notifications !== null) {
+                NotificationService::enrichNotificationsWithProfileImage(
+                    $notifications,
+                    $profileDAO,
+                    $imagePathResolver
+                );
+            }
+                
             return new HTMLRenderer('page/notification', [
-                'authUser' => $authUserProfile
+                'authUser' => $authUserProfile,
+                'hasNotification' => $hasNotification === 0 ? null : $hasNotification,
+                'notifications' => $notifications
             ]);
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -642,6 +686,26 @@ return [
                 throw new Exception('Failed follow');
             }
 
+            if($isFollow === false) {
+                $profileDAO = DAOFactory::getProfileDAO();
+                $profile = $profileDAO->getByUserId($authUser->getId());
+                $data = [
+                        'message' => "{$profile->getUsername()}さんにフォローされました。",
+                        'redirect' => "/profile?user={$profile->getUsername()}",
+                        'userId' => $profile->getUserId()
+                ];
+    
+                $notification = new Notification(
+                    userId: $validatedData['following_id'],
+                    type: 'follow',
+                    data: $data,
+                );
+    
+                $notificationDAO = DAOFactory::getNotificationDAO();
+                $success = $notificationDAO->notifyUser($notification);
+                if($success === false) throw new Exception('Failed to create notification.');
+            }
+
             return new JSONRenderer(['status' => 'success']);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
@@ -671,7 +735,7 @@ return [
             }
 
             $requiredFields = [
-                'content' => 'requreid|string|min:1|max:144',
+                'content' => 'required|string|min:1|max:144',
                 'parent_post_id' => 'required|int|exists:posts,id'
             ];
             $validatedData = (new Validator($requiredFields))->validate($_POST);
@@ -713,6 +777,25 @@ return [
                 }
             }
 
+            if($authUser->getId() !== $parentPost->getUserId()) {
+                $profileDAO = DAOFactory::getProfileDAO();
+                $profile = $profileDAO->getByUserId($authUser->getId());
+                $data = [
+                    'message' => "{$profile->getUsername()}さんから返信がありました。",
+                    'redirect' => "/post?id={$parentPost->getId()}",
+                    'userId' => $profile->getUserId(),
+                    'content' => $parentPost->getContent(),
+                ];
+                $notification = new Notification(
+                    userId: $parentPost->getUserId(),
+                    type: 'reply',
+                    data: $data
+                );
+                $notificationDAO = DAOFactory::getNotificationDAO();
+                $success = $notificationDAO->notifyUser($notification);
+                if($success === false) throw new Exception('Failed to create notification.');
+            }
+
             return new JSONRenderer([
                 'status' => 'success'
             ]);
@@ -748,10 +831,11 @@ return [
             ];
             $validatedData = (new Validator($requiredFields))->validate($_POST);
 
+            $post = $validatedData['post_id']['post'];
             $likeDAO = DAOFactory::getLikeDAO();
             $like = new Like(
                 userId: $authUser->getId(),
-                postId: $validatedData['post_id']['post']->getId()
+                postId: $post->getId()
             );
 
             $isLiked = $likeDAO->hasLiked($like);
@@ -762,6 +846,26 @@ return [
             }
 
             $likeCount = $likeDAO->getLikeCount($like);
+
+            if($authUser->getId() !== $post->getUserId() && $isLiked === false) {
+                // TODO: 同じユーザが同じPostに何度もいいねを押すとその度にNotificationが作成されるのを防ぐ処理を追加
+                $profileDAO = DAOFactory::getProfileDAO();
+                $profile= $profileDAO->getByUserId($authUser->getId());
+                $data = [
+                    'message' => "{$profile->getUsername()}さんがあなたのポストにいいねをしました。",
+                    'redirect' => "/post?id={$post->getId()}",
+                    'userId' => $profile->getUserId(),
+                    'content' => $post->getContent(),
+                ];
+                $notification = new Notification(
+                    userId: $post->getUserId(),
+                    type: 'like',
+                    data: $data
+                );
+                $notificationDAO = DAOFactory::getNotificationDAO();
+                $success = $notificationDAO->notifyUser($notification);
+                if($success === false) throw new Exception('Failed to create notification.');
+            }
 
             return new JSONRenderer([
                 'status' => 'success',
@@ -1048,6 +1152,57 @@ return [
             return new JSONRenderer([
                 'status' => 'error',
                 'message' => 'Invalid error.'
+            ]);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => 'An error occurred.'
+            ]);
+        }
+    })->setMiddleware(['auth']),
+    'api/notification/read' => Route::create('api/notification/read', function (): HTTPRenderer {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new Exception('Invalid request method!');
+            }
+
+            $authUser = Authenticate::getAuthenticatedUser();
+            if ($authUser === null) {
+                return new RedirectRenderer('login');
+            }
+
+            $requiredFields = [
+                'notification_id' => 'required|int|exists:notifications,id'
+            ];
+            $validatedData = (new Validator($requiredFields))->validate($_POST);
+
+            $notification = $validatedData['notification_id'];
+            if($notification->getUserId() !== $authUser->getId()) {
+                throw new Exception('Cannot mark notification as read.');
+            }
+
+            if($notification->getReadAt() !== null) {
+                throw new Exception('Notification is already read.');
+            }
+
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $success = $notificationDAO->markAsRead($notification->getId());
+            if ($success === false) {
+                throw new Exception('Failed to mark notification as read.');
+            }
+
+            return new JSONRenderer([
+                'status' => 'success',
+                'redirect' => $notification->getData()['redirect']
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            error_log($e->getMessage());
+
+            return new JSONRenderer([
+                'status' => 'error',
+                'message' => json_decode($e->getMessage())
             ]);
         } catch (Exception $e) {
             error_log($e->getMessage());

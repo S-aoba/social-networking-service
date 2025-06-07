@@ -2,22 +2,25 @@
 $navigationList = [
     [
         'label' => 'Home',
+        'name' => 'ホーム',
         'imagePath' => '/images/home.svg',
         'linkPath' => '/'
     ],
     [
-        'label' => '通知',
+        'label' => 'notification',
+        'name' => '通知',
         'imagePath' => '/images/notification.svg',
         'linkPath' => '/notification'
-
     ],
     [
-        'label' => 'メッセージ',
+        'label' => 'message',
+        'name' => 'メッセージ',
         'imagePath' => '/images/message.svg',
         'linkPath' => '/messages'
     ],
     [
-        'label' => 'プロフィール',
+        'label' => 'profile',
+        'name' => 'プロフィール',
         'imagePath' => '/images/profile.svg',
         'linkPath' => "/profile?user={$authUser->getUsername()}"
     ]

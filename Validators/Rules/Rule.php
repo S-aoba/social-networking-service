@@ -181,6 +181,10 @@ class Rule
             $postDAO = DAOFactory::getPostDAO();
             $post = $postDAO->getById($this->data, $user->getId());
             return isset($post) ? [$this->field => $post] : null;
+        } else if ($table === 'notifications') {
+            $notificationDAO = DAOFactory::getNotificationDAO();
+            $notification = $notificationDAO->getNotification($this->data);
+            return isset($notification) ? [$this->field => $notification] : null;
         } elseif ($table === 'conversations') {
             $conversationDAO = DAOFactory::getConversationDAO();
             $conversation = $conversationDAO->findByConversationId($this->data);
@@ -200,6 +204,8 @@ class Rule
             return "Post does not exist.";
         } elseif ($table === 'conversations') {
             return "Conversation does not exist.";
+        } elseif ($table === 'notifications') {
+            return "Notification does not exist.";
         } else {
             throw new \InvalidArgumentException("Invalid table specified in validation rule: {$table}.");
         }
