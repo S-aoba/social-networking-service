@@ -43,8 +43,28 @@
             
             if(data.status === 'success') window.location.href = data.redirect;
             else {
-                errorMessage.textContent = data.message;
-                errorMessage.classList.remove('hidden');
+                const message = data.message;
+                const type = typeof message;
+
+                if(type === 'string') {
+                    errorMessage.textContent = data.message;
+                    errorMessage.classList.remove('hidden');
+                }
+                else if(type === 'object') {
+                    const ul = document.createElement('ul');
+                    Object.keys(message).forEach((key) => {
+                        const li = document.createElement('li');
+                        li.classList.add('list-none');
+                        li.innerText = message[key];
+                        ul.appendChild(li);
+                    });
+                    errorMessage.appendChild(ul);
+                    errorMessage.classList.remove('hidden');
+                }
+                else {
+                    errorMessage.textContent = 'Something went wrong on our end. Please try again later.';
+                    errorMessage.classList.remove('hidden');
+                }
             }
         })
     })
