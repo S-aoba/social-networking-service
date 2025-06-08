@@ -22,7 +22,7 @@
                 <label for="confirm-password"">Confirm Password</label>
                 <input class="text-sm p-2 border border-slate-200 rounded-md focus:outline-none" type="password" id="confirm-password" name="confirm_password" required>
             </div>
-            <button type="submit" class="text-sm py-2 px-3 bg-slate-800/50 text-white rounded-md hover:cursor-pointer hover:bg-slate-800 focus:bg-slate-800 transition duration-300 disabled:pointer-events-none">Register</button>
+            <button id="register-btn" type="submit" class="min-h-10 text-sm py-2 px-3 bg-slate-800/50 text-white rounded-md hover:cursor-pointer hover:bg-slate-800 focus:bg-slate-800 transition duration-300 disabled:pointer-events-none">Register</button>
         </form>
         <div class="mt-4 w-full text-end">
             <a href="/login" class="text-sm hover:underline hover:underline-offset-4">Have you a account? Login</a>
@@ -33,6 +33,42 @@
     document.addEventListener('DOMContentLoaded', function() {
         const registerForm = document.getElementById('register-form');
         const errorMessage = document.getElementById('register-error-message');
+
+        const registerBtn = document.getElementById('register-btn');
+
+        function showLoading() {
+            registerBtn.innerHTML = '';
+            const loadingImg = document.createElement('img');
+            loadingImg.src = '/images/loading-icon.svg';
+            loadingImg.alt = 'loading';
+            loadingImg.classList.add('animate-spin');
+            registerBtn.appendChild(loadingImg);
+            registerBtn.classList.add('flex', 'items-center', 'justify-center');
+        }
+
+        function resetButton() {
+            registerBtn.innerHTML = 'Register';
+            registerBtn.classList.remove('flex', 'items-center', 'justify-center');
+        }
+
+        function showError(message) {
+            errorMessage.innerHTML = '';
+            if (typeof message === 'string') {
+                errorMessage.textContent = message;
+            } else if (typeof message === 'object') {
+                const ul = document.createElement('ul');
+                Object.keys(message).forEach((key) => {
+                    const li = document.createElement('li');
+                    li.classList.add('list-none');
+                    li.innerText = message[key];
+                    ul.appendChild(li);
+                });
+                errorMessage.appendChild(ul);
+            } else {
+                errorMessage.textContent = 'Something went wrong on our end. Please try again later.';
+            }
+            errorMessage.classList.remove('hidden');
+        }
         
         registerForm.addEventListener('submit', async(e) => {
             e.preventDefault();
@@ -41,6 +77,8 @@
             errorMessage.classList.add('hidden');
             errorMessage.textContent = '';
 
+            showLoading();
+
             const res = await fetch('api/register', {
                 method: 'POST',
                 body: formData
@@ -48,10 +86,11 @@
 
             const data = await res.json();
             
-            if(data.status === 'success') window.location.href = data.redirect;
-            else {
-                errorMessage.textContent = data.message;
-                errorMessage.classList.remove('hidden');
+            if(data.status === 'success') {
+                window.location.href = data.redirect;
+            } else {
+                showError(data.message);
+                resetButton();
             }
         })
     })
