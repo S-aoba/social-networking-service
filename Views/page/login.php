@@ -14,7 +14,7 @@
                 <label for="password"">Password</label>
                 <input class="text-sm p-2 border border-slate-200 rounded-md focus:outline-none" type="password" id="password" name="password" required>
             </div>
-            <button type="submit" class="text-sm py-2 px-3 bg-slate-800/50 text-white rounded-md hover:cursor-pointer hover:bg-slate-800 focus:bg-slate-800 transition duration-300 disabled:pointer-events-none">Login</button>
+            <button id="login-btn" type="submit" class="min-h-10 text-sm py-2 px-3 bg-slate-800/50 text-white rounded-md hover:cursor-pointer hover:bg-slate-800 focus:bg-slate-800 transition duration-300 disabled:pointer-events-none">Login</button>
         </form>
         <div class="mt-4 w-full text-end">
             <a href="/register" class="text-sm hover:underline hover:underline-offset-4">Don't have an account? Register</a>
@@ -23,49 +23,67 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const loginForm = document.getElementById('login-form');
-        const errorMessage = document.getElementById('login-error-message');
-        
-        loginForm.addEventListener('submit', async(e) => {
-            e.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('login-form');
+    const errorMessage = document.getElementById('login-error-message');
+    const loginBtn = document.getElementById('login-btn');
 
-            const formData = new FormData(loginForm);
-            errorMessage.classList.add('hidden');
-            errorMessage.textContent = '';
+    function showLoading() {
+        loginBtn.innerHTML = '';
+        const loadingImg = document.createElement('img');
+        loadingImg.src = '/images/loading-icon.svg';
+        loadingImg.alt = 'loading';
+        loadingImg.classList.add('animate-spin');
+        loginBtn.appendChild(loadingImg);
+        loginBtn.classList.add('flex', 'items-center', 'justify-center');
+    }
 
-            const res = await fetch('api/login', {
-                method: 'POST',
-                body: formData
+    function resetButton() {
+        loginBtn.innerHTML = 'Login';
+        loginBtn.classList.remove('flex', 'items-center', 'justify-center');
+    }
+
+    function showError(message) {
+        errorMessage.innerHTML = '';
+        if (typeof message === 'string') {
+            errorMessage.textContent = message;
+        } else if (typeof message === 'object') {
+            const ul = document.createElement('ul');
+            Object.keys(message).forEach((key) => {
+                const li = document.createElement('li');
+                li.classList.add('list-none');
+                li.innerText = message[key];
+                ul.appendChild(li);
             });
+            errorMessage.appendChild(ul);
+        } else {
+            errorMessage.textContent = 'Something went wrong on our end. Please try again later.';
+        }
+        errorMessage.classList.remove('hidden');
+    }
 
-            const data = await res.json();
-            
-            if(data.status === 'success') window.location.href = data.redirect;
-            else {
-                const message = data.message;
-                const type = typeof message;
+    loginForm.addEventListener('submit', async(e) => {
+        e.preventDefault();
 
-                if(type === 'string') {
-                    errorMessage.textContent = data.message;
-                    errorMessage.classList.remove('hidden');
-                }
-                else if(type === 'object') {
-                    const ul = document.createElement('ul');
-                    Object.keys(message).forEach((key) => {
-                        const li = document.createElement('li');
-                        li.classList.add('list-none');
-                        li.innerText = message[key];
-                        ul.appendChild(li);
-                    });
-                    errorMessage.appendChild(ul);
-                    errorMessage.classList.remove('hidden');
-                }
-                else {
-                    errorMessage.textContent = 'Something went wrong on our end. Please try again later.';
-                    errorMessage.classList.remove('hidden');
-                }
-            }
-        })
-    })
+        const formData = new FormData(loginForm);
+        errorMessage.classList.add('hidden');
+        errorMessage.textContent = '';
+
+        showLoading();
+
+        const res = await fetch('api/login', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.status === 'success') {
+            window.location.href = data.redirect;
+        } else {
+            showError(data.message);
+            resetButton();
+        }
+    });
+});
 </script>
