@@ -36,12 +36,13 @@
 
         const registerBtn = document.getElementById('register-btn');
 
+        const loadingImg = document.createElement('img');
+        loadingImg.src = '/images/loading-icon.svg';
+        loadingImg.alt = 'loading';
+        loadingImg.classList.add('animate-spin');
+        
         function showLoading() {
             registerBtn.innerHTML = '';
-            const loadingImg = document.createElement('img');
-            loadingImg.src = '/images/loading-icon.svg';
-            loadingImg.alt = 'loading';
-            loadingImg.classList.add('animate-spin');
             registerBtn.appendChild(loadingImg);
             registerBtn.classList.add('flex', 'items-center', 'justify-center');
         }

@@ -23,67 +23,70 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.getElementById('login-form');
-    const errorMessage = document.getElementById('login-error-message');
-    const loginBtn = document.getElementById('login-btn');
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.getElementById('login-form');
+        const errorMessage = document.getElementById('login-error-message');
+        const loginBtn = document.getElementById('login-btn');
 
-    function showLoading() {
-        loginBtn.innerHTML = '';
+        // 先にloading iconを読み込むことで、Login送信時に表示できるようになる
+        // showLoading内で読み込むと遅延が発生して空白のままのUIになってしまう
         const loadingImg = document.createElement('img');
         loadingImg.src = '/images/loading-icon.svg';
         loadingImg.alt = 'loading';
         loadingImg.classList.add('animate-spin');
-        loginBtn.appendChild(loadingImg);
-        loginBtn.classList.add('flex', 'items-center', 'justify-center');
-    }
 
-    function resetButton() {
-        loginBtn.innerHTML = 'Login';
-        loginBtn.classList.remove('flex', 'items-center', 'justify-center');
-    }
+        function showLoading() {
+            loginBtn.innerHTML = '';
+            loginBtn.appendChild(loadingImg);
+            loginBtn.classList.add('flex', 'items-center', 'justify-center');
+        }
 
-    function showError(message) {
-        errorMessage.innerHTML = '';
-        if (typeof message === 'string') {
-            errorMessage.textContent = message;
-        } else if (typeof message === 'object') {
-            const ul = document.createElement('ul');
-            Object.keys(message).forEach((key) => {
-                const li = document.createElement('li');
-                li.classList.add('list-none');
-                li.innerText = message[key];
-                ul.appendChild(li);
+        function resetButton() {
+            loginBtn.innerHTML = 'Login';
+            loginBtn.classList.remove('flex', 'items-center', 'justify-center');
+        }
+
+        function showError(message) {
+            errorMessage.innerHTML = '';
+            if (typeof message === 'string') {
+                errorMessage.textContent = message;
+            } else if (typeof message === 'object') {
+                const ul = document.createElement('ul');
+                Object.keys(message).forEach((key) => {
+                    const li = document.createElement('li');
+                    li.classList.add('list-none');
+                    li.innerText = message[key];
+                    ul.appendChild(li);
+                });
+                errorMessage.appendChild(ul);
+            } else {
+                errorMessage.textContent = 'Something went wrong on our end. Please try again later.';
+            }
+            errorMessage.classList.remove('hidden');
+        }
+
+        loginForm.addEventListener('submit', async(e) => {
+            e.preventDefault();
+
+            const formData = new FormData(loginForm);
+            errorMessage.classList.add('hidden');
+            errorMessage.textContent = '';
+
+            showLoading();
+
+            const res = await fetch('api/login', {
+                method: 'POST',
+                body: formData
             });
-            errorMessage.appendChild(ul);
-        } else {
-            errorMessage.textContent = 'Something went wrong on our end. Please try again later.';
-        }
-        errorMessage.classList.remove('hidden');
-    }
 
-    loginForm.addEventListener('submit', async(e) => {
-        e.preventDefault();
+            const data = await res.json();
 
-        const formData = new FormData(loginForm);
-        errorMessage.classList.add('hidden');
-        errorMessage.textContent = '';
-
-        showLoading();
-
-        const res = await fetch('api/login', {
-            method: 'POST',
-            body: formData
+            if (data.status === 'success') {
+                window.location.href = data.redirect;
+            } else {
+                showError(data.message);
+                resetButton();
+            }
         });
-
-        const data = await res.json();
-
-        if (data.status === 'success') {
-            window.location.href = data.redirect;
-        } else {
-            showError(data.message);
-            resetButton();
-        }
     });
-});
 </script>
