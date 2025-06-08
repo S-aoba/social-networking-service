@@ -10,7 +10,7 @@
     >
       <div class="flex items-center justify-center space-x-2">
         <img src="<?= $authUser->getImagePath() ?>" alt="user-icon" class="size-8 rounded-full">
-        <span class="text-xs font-semibold"><?php echo $authUser->getUsername() ?></span>
+        <span class="text-xs font-semibold"><?= $authUser->getUsername() ?></span>
         <svg 
           class="-mr-1 size-5 text-gray-400" 
           viewBox="0 0 20 20" 

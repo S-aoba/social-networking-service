@@ -33,11 +33,11 @@
         <?php endif ;?>
       </div>
       <div id="post-content" class="w-full py-2 flex flex-col items-start justify-center space-y-4">
-        <p class="text-sm"><?php echo $data['post']->getContent() ?></p>
+        <p class="text-sm"><?= $data['post']->getContent() ?></p>
         <?php if ($data['post']->getImagePath() !== null): ?>
           <div class="size-full rounded-lg overflow-hidden">
             <img 
-              src="<?php echo $data['post']->getImagePath() ?>" 
+              src="<?= $data['post']->getImagePath() ?>" 
               alt="post-image" 
               class="size-full object-contain rounded-lg"
             >
@@ -53,7 +53,7 @@
           >
           <?php if ($data['replyCount']): ?>
             <p class="text-sm text-gray-400">
-              <?php echo $data['replyCount'] ?>
+              <?= $data['replyCount'] ?>
             </p>
           <?php endif; ?>
         </div>

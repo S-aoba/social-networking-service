@@ -6,7 +6,7 @@
         <?= $queryUser->getUsername() ?>
       </span>
       <span class="text-xs text-slate-400 font-mono">
-        <?php echo $postCount ?> 件のポスト
+        <?= $postCount ?> 件のポスト
       </span>
     </div>
   </div>
