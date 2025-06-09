@@ -34,5 +34,3 @@
     </button>
   </div>
 </form>
-
-<script src="js/delete-conversation-form.js"></script>
