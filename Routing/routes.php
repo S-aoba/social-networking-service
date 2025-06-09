@@ -377,7 +377,7 @@ return [
                 'partner'
             );
 
-            $directMessageDAO = DAOFactory::getDirectMessage();
+            $directMessageDAO = DAOFactory::getDirectMessageDAO();
             $directMessages = $directMessageDAO->getAllByConversationId($validatedData['id']->getId());
             $imagePathResolver->resolveDirectMessageMany($directMessages);
 
@@ -1021,7 +1021,7 @@ return [
                 imagePath: $publicMessageImagePath
             );
 
-            $directMessageDAO = DAOFactory::getDirectMessage();
+            $directMessageDAO = DAOFactory::getDirectMessageDAO();
             $success = $directMessageDAO->create($directMessage);
             if ($success === false) {
                 throw new Exception('Failed to create direct message.');
