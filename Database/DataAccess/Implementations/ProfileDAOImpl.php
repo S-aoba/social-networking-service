@@ -5,6 +5,7 @@ namespace Database\DataAccess\Implementations;
 use Database\DatabaseManager;
 use Database\DataAccess\Interfaces\ProfileDAO;
 use Database\DataAccess\Mappers\ProfileMapper;
+use Exception;
 use Models\Profile;
 
 class ProfileDAOImpl implements ProfileDAO
@@ -42,12 +43,12 @@ class ProfileDAOImpl implements ProfileDAO
         return true;
     }
 
-    public function getByUsername(string $username): ?Profile
+    public function getByUsername(string $username): Profile
     {
         $profileRowData = $this->fetchByUsername($username);
 
         if ($profileRowData === null) {
-            return null;
+            throw new Exception("Profile not found for usename: {$username}");
         }
 
         return ProfileMapper::toProfile($profileRowData);
@@ -68,12 +69,12 @@ class ProfileDAOImpl implements ProfileDAO
         return $result;
     }
 
-    public function getByUserId(int $userId): ?Profile
+    public function getByUserId(int $userId): Profile
     {
         $profileRow = $this->fetchByUserId($userId);
 
         if ($profileRow === null) {
-            return null;
+            throw new Exception("Profile not found for userId: {$userId}");
         }
 
         return ProfileMapper::toProfile($profileRow);

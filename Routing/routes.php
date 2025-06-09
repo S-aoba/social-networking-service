@@ -54,9 +54,6 @@ return [
 
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if ($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
 
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
@@ -104,9 +101,6 @@ return [
             $profileDAO = DAOFactory::getProfileDAO();
 
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if ($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
 
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
@@ -160,9 +154,6 @@ return [
 
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if ($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
 
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
@@ -222,9 +213,6 @@ return [
 
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if ($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
 
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
@@ -261,9 +249,6 @@ return [
 
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if ($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
 
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
@@ -345,9 +330,6 @@ return [
 
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if ($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
 
             $requiredFields = [
                 'id' => 'required|int|exists:conversations,id'
@@ -420,9 +402,6 @@ return [
 
             $profileDAO = DAOFactory::getProfileDAO();
             $authUserProfile = $profileDAO->getByUserId($authUser->getId());
-            if ($authUserProfile === null) {
-                return new RedirectRenderer('login');
-            }
 
             $imageUrlBuilder = new ImageUrlBuilder();
             $imagePathResolver = new ImagePathResolver($imageUrlBuilder);
@@ -1132,9 +1111,6 @@ return [
             $profileDAO = DAOFactory::getProfileDAO();
             $profile = $profileDAO->getByUserId($authUser->getId());
             $prevProfileImagePath = $profile->getImagePath();
-            if ($profile === null) {
-                return new RedirectRenderer('login');
-            }
 
             $success = $profileDAO->updataPrpfileIcon($publicProfileIconPath, $authUser->getId());
             if ($success === false) {
