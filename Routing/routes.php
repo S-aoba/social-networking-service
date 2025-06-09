@@ -1272,10 +1272,11 @@ return [
                 throw new Exception('Failed to delete conversation.');
             }
 
+            $remainConversations = $conversationDAO->findAllByUserId($authUser->getId());
+            
             return new JSONRenderer([
                 'status' => 'success',
-                // TODO: 参加している他のconversationが存在していれば、そのページに遷移する.なければ、messages
-                'redirect' => 'messages'
+                'redirect' => $remainConversations === null ? 'messages' : "message?id={$remainConversations[0]['conversation']->getId()}"
             ]);
         } catch (\InvalidArgumentException $e) {
             error_log($e->getMessage());
