@@ -71,6 +71,7 @@ class Rule
 
     private function string(): ?array
     {
+        if($this->data === '') return [$this->field => null];
         return is_string($this->data) ? [$this->field => $this->data] : null;
     }
 
@@ -81,6 +82,7 @@ class Rule
 
     private function int(): ?array
     {
+        if($this->data === '') return [$this->field => null];
         return filter_var($this->data, FILTER_VALIDATE_INT) !== false ?
                     [$this->field => (int)$this->data]
                     :
@@ -94,6 +96,7 @@ class Rule
 
     private function min(): ?array
     {
+        if($this->data === '') return [$this->field => null];
         $min = explode(':', $this->rule)[1];
 
         if (is_string($this->data)) {
@@ -130,6 +133,7 @@ class Rule
 
     private function max(): ?array
     {
+        if($this->data === '') return [$this->field => null];
         $max = explode(':', $this->rule)[1];
 
         if (is_string($this->data)) {

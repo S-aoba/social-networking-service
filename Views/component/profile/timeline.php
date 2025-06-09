@@ -57,3 +57,4 @@ $followerAndFollowingCountList = [
 <script src="/js/follow.js"></script>
 <script src="/js/open-delete-post-menu.js"></script>
 <script src="/js/open-delete-post-modal.js"></script>
+<script src="/js/delete-post-form.js"></script>
