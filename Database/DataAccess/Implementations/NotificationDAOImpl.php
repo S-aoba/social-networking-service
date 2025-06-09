@@ -128,7 +128,7 @@ class NotificationDAOImpl implements NotificationDAO
         return $notifications;
     }
 
-    private function rowDataToNotification(array $rowData): ?Notification
+    private function rowDataToNotification(array $rowData): Notification
     {
         $decodedData = json_decode($rowData['data'], true);
 
