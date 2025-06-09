@@ -35,12 +35,14 @@ class NotificationDAOImpl implements NotificationDAO
 
         return true;
     }
-    
+
     public function getNotification(int $id): ?Notification
     {
         $notificationRow = $this->fetchNotification($id);
 
-        if($notificationRow === null) return null;
+        if ($notificationRow === null) {
+            return null;
+        }
 
         return $this->rowDataToNotification($notificationRow[0]);
     }
@@ -53,7 +55,9 @@ class NotificationDAOImpl implements NotificationDAO
 
         $result = $mysqli->prepareAndFetchAll($query, 'i', [$id]);
 
-        if(empty($result)) return null;
+        if (empty($result)) {
+            return null;
+        }
 
         return $result;
     }
@@ -72,7 +76,7 @@ class NotificationDAOImpl implements NotificationDAO
     public function hasNotification(int $userId): int
     {
         $hasNotification = $this->checkNotification($userId);
-        
+
         return $hasNotification;
     }
 
@@ -83,7 +87,7 @@ class NotificationDAOImpl implements NotificationDAO
         $query = "SELECT COUNT(*) AS notification_count FROM notifications WHERE user_id = ? AND read_at IS NULL";
 
         $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
-        
+
         return $result[0]['notification_count'];
     }
 
@@ -91,7 +95,9 @@ class NotificationDAOImpl implements NotificationDAO
     {
         $notificationRow = $this->fetchAllNotifications($userId);
 
-        if($notificationRow === null) return null;
+        if ($notificationRow === null) {
+            return null;
+        }
 
         return $this->rowDataToNotifications($notificationRow);
     }
@@ -103,8 +109,10 @@ class NotificationDAOImpl implements NotificationDAO
         $query = "SELECT * FROM notifications WHERE user_id = ? AND read_at IS NULL ORDER BY created_at DESC";
 
         $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
-        
-        if(empty($result)) return null;
+
+        if (empty($result)) {
+            return null;
+        }
 
         return $result;
     }
@@ -123,7 +131,7 @@ class NotificationDAOImpl implements NotificationDAO
     private function rowDataToNotification(array $rowData): ?Notification
     {
         $decodedData = json_decode($rowData['data'], true);
-        
+
         return new Notification(
             userId: $rowData['user_id'],
             type: $rowData['type'],

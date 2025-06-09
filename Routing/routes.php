@@ -72,7 +72,7 @@ return [
 
             $notificationDAO = DAOFactory::getNotificationDAO();
             $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
-            
+
             return new HTMLRenderer('page/home', [
                 'authUser' => $authUserProfile,
                 'posts' => $posts,
@@ -432,15 +432,15 @@ return [
             $notificationDAO = DAOFactory::getNotificationDAO();
             $hasNotification = $notificationDAO->hasNotification($authUserProfile->getUserId());
             $notifications = $notificationDAO->getAllNotifications($authUserProfile->getUserId());
-            
-            if($notifications !== null) {
+
+            if ($notifications !== null) {
                 NotificationService::enrichNotificationsWithProfileImage(
                     $notifications,
                     $profileDAO,
                     $imagePathResolver
                 );
             }
-                
+
             return new HTMLRenderer('page/notification', [
                 'authUser' => $authUserProfile,
                 'hasNotification' => $hasNotification === 0 ? null : $hasNotification,
@@ -686,7 +686,7 @@ return [
                 throw new Exception('Failed follow');
             }
 
-            if($isFollow === false) {
+            if ($isFollow === false) {
                 $profileDAO = DAOFactory::getProfileDAO();
                 $profile = $profileDAO->getByUserId($authUser->getId());
                 $data = [
@@ -694,16 +694,18 @@ return [
                         'redirect' => "/profile?user={$profile->getUsername()}",
                         'userId' => $profile->getUserId()
                 ];
-    
+
                 $notification = new Notification(
                     userId: $validatedData['following_id'],
                     type: 'follow',
                     data: $data,
                 );
-    
+
                 $notificationDAO = DAOFactory::getNotificationDAO();
                 $success = $notificationDAO->notifyUser($notification);
-                if($success === false) throw new Exception('Failed to create notification.');
+                if ($success === false) {
+                    throw new Exception('Failed to create notification.');
+                }
             }
 
             return new JSONRenderer(['status' => 'success']);
@@ -777,7 +779,7 @@ return [
                 }
             }
 
-            if($authUser->getId() !== $parentPost->getUserId()) {
+            if ($authUser->getId() !== $parentPost->getUserId()) {
                 $profileDAO = DAOFactory::getProfileDAO();
                 $profile = $profileDAO->getByUserId($authUser->getId());
                 $data = [
@@ -793,7 +795,9 @@ return [
                 );
                 $notificationDAO = DAOFactory::getNotificationDAO();
                 $success = $notificationDAO->notifyUser($notification);
-                if($success === false) throw new Exception('Failed to create notification.');
+                if ($success === false) {
+                    throw new Exception('Failed to create notification.');
+                }
             }
 
             return new JSONRenderer([
@@ -847,10 +851,10 @@ return [
 
             $likeCount = $likeDAO->getLikeCount($like);
 
-            if($authUser->getId() !== $post->getUserId() && $isLiked === false) {
+            if ($authUser->getId() !== $post->getUserId() && $isLiked === false) {
                 // TODO: 同じユーザが同じPostに何度もいいねを押すとその度にNotificationが作成されるのを防ぐ処理を追加
                 $profileDAO = DAOFactory::getProfileDAO();
-                $profile= $profileDAO->getByUserId($authUser->getId());
+                $profile = $profileDAO->getByUserId($authUser->getId());
                 $data = [
                     'message' => "{$profile->getUsername()}さんがあなたのポストにいいねをしました。",
                     'redirect' => "/post?id={$post->getId()}",
@@ -864,7 +868,9 @@ return [
                 );
                 $notificationDAO = DAOFactory::getNotificationDAO();
                 $success = $notificationDAO->notifyUser($notification);
-                if($success === false) throw new Exception('Failed to create notification.');
+                if ($success === false) {
+                    throw new Exception('Failed to create notification.');
+                }
             }
 
             return new JSONRenderer([
@@ -1179,11 +1185,11 @@ return [
             $validatedData = (new Validator($requiredFields))->validate($_POST);
 
             $notification = $validatedData['notification_id'];
-            if($notification->getUserId() !== $authUser->getId()) {
+            if ($notification->getUserId() !== $authUser->getId()) {
                 throw new Exception('Cannot mark notification as read.');
             }
 
-            if($notification->getReadAt() !== null) {
+            if ($notification->getReadAt() !== null) {
                 throw new Exception('Notification is already read.');
             }
 

@@ -1,8 +1,8 @@
 <a href="<?= htmlspecialchars($item['linkPath'], ENT_QUOTES, 'UTF-8') ?>" class="w-full h-fit">
     <div class="relative w-fit p-3 flex space-x-2 justify-start items-center rounded-3xl hover:cursor-pointer hover:bg-slate-100 transition duration-300">
 
-        <?php if($item['label'] === 'notification'): ?>
-            <?php if($hasNotification !== null): ?>
+        <?php if ($item['label'] === 'notification'): ?>
+            <?php if ($hasNotification !== null): ?>
                 <?php include "Views/component/indicator.php" ?>
             <?php endif; ?>
         <?php endif; ?>
