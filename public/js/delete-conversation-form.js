@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const formData = new FormData(form);
 
-      const errorMessage = document.querySelector(
+      const errorMessage = form.querySelector(
         ".delete-conversation-error-message"
       );
       errorMessage.textContent = "";
@@ -25,11 +25,27 @@ document.addEventListener("DOMContentLoaded", function () {
       if (data.status === "success") {
         window.location.href = data.redirect;
       } else {
-        const messages = data.message;
-
-        errorMessage.innerHTML = "<ul>" + Object.values(messages).map(msg => `<li>${msg}</li>`).join("") + "</ul>";
-        errorMessage.classList.remove("hidden");
+        showError(data.message, errorMessage);
       }
     });
   });
+
+  function showError(message, errorMessage) {
+    if (typeof message === "string") {
+      errorMessage.textContent = message;
+    } else if (typeof message === "object") {
+      const ul = document.createElement("ul");
+      Object.keys(message).forEach((key) => {
+        const li = document.createElement("li");
+        li.classList.add("list-none");
+        li.innerText = message[key];
+        ul.appendChild(li);
+      });
+      errorMessage.appendChild(ul);
+    } else {
+      errorMessage.textContent =
+        "Something went wrong on our end. Please try again later.";
+    }
+    errorMessage.classList.remove("hidden");
+  }
 });
