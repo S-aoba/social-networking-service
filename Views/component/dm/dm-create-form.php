@@ -48,5 +48,5 @@
   </form>
 </div>
 
-<script src="js/dm-form.js"></script>
+<script src="js/create-dm-form.js"></script>
 <script src="js/upload-dm-image.js"></script>
