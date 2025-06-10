@@ -78,7 +78,7 @@
 <script src="js/like-form.js"></script>
 <script src="js/open-delete-post-menu.js"></script>
 <script src="js/open-delete-post-modal.js"></script>
-<script src="js/create-reply-form.js"></script>
+<script src="js/form/create-reply-form.js"></script>
 <script src="js/upload-reply-file.js"></script>
 <script src="js/resize-reply-textarea.js"></script>
 <script src="js/delete-post-form.js"></script>

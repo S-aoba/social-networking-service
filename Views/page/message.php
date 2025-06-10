@@ -69,7 +69,7 @@
 
 </div>
 
-<script src="js/create-conversation-form.js"></script>
+<script src="js/form/create-conversation-form.js"></script>
 <script src="js/open-create-conversation-modal.js"></script>
 <script src="js/open-delete-conversation-menu.js"></script>
 <script src="js/open-delete-conversation-modal.js"></script>
