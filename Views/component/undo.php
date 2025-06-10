@@ -3,4 +3,4 @@
     <img id="undoButton" src="/images/undo-icon.svg" alt="undo-icon" class="size-5">
   </div>
 </div>
-<script src="/js/undo.js"></script>
+<script src="js/undo.js"></script>
