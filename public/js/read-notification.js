@@ -6,9 +6,9 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
 
       const formData = new FormData(form);
-      const errorMessage = document.querySelector('.notification-error-message');
-      errorMessage.textContent = '';
-      errorMessage.classList.add('hidden');
+      const errorMessage = form.querySelector(".notification-error-message");
+      errorMessage.textContent = "";
+      errorMessage.classList.add("hidden");
 
       const res = await fetch("/api/notification/read", {
         method: "POST",
@@ -20,11 +20,28 @@ document.addEventListener("DOMContentLoaded", function () {
       if (data.status === "success") {
         window.location.href = data.redirect;
       } else {
-        const message = data.message;
-
-        errorMessage.textContent = message;
-        errorMessage.classList.remove('hidden');
+        showError(data.message, errorMessage);
       }
     });
   });
+
+  function showError(message, errorMessage) {
+    errorMessage.innerHTML = "";
+    if (typeof message === "string") {
+      errorMessage.textContent = message;
+    } else if (typeof message === "object") {
+      const ul = document.createElement("ul");
+      Object.keys(message).forEach((key) => {
+        const li = document.createElement("li");
+        li.classList.add("list-none");
+        li.innerText = message[key];
+        ul.appendChild(li);
+      });
+      errorMessage.appendChild(ul);
+    } else {
+      errorMessage.textContent =
+        "Something went wrong on our end. Please try again later.";
+    }
+    errorMessage.classList.remove("hidden");
+  }
 });
