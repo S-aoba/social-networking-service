@@ -25,4 +25,4 @@
 <script src="js/open-create-conversation-modal.js"></script>
 <script src="js/open-delete-conversation-menu.js"></script>
 <script src="js/open-delete-conversation-modal.js"></script>
-<script src="js/delete-conversation-form.js"></script>
+<script src="js/form/delete-conversation-form.js"></script>

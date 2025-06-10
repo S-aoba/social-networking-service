@@ -30,4 +30,4 @@
   <?php include "Views/component/sidebar.php" ?>
 </div>
 
-<script src="js/read-notification-form.js"></script>
+<script src="js/form/read-notification-form.js"></script>

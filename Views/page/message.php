@@ -74,4 +74,4 @@
 <script src="js/open-delete-conversation-menu.js"></script>
 <script src="js/open-delete-conversation-modal.js"></script>
 <script src="js/resize-dm-textarea.js"></script>
-<script src="js/delete-conversation-form.js"></script>
+<script src="js/form/delete-conversation-form.js"></script>
