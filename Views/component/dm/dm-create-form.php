@@ -49,4 +49,4 @@
 </div>
 
 <script src="js/form/create-dm-form.js"></script>
-<script src="js/upload-dm-image.js"></script>
+<script src="js/file/upload-dm-image.js"></script>

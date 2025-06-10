@@ -49,4 +49,4 @@
   </div>
 </div>
 
-<script src="js/create-conversation-modal.js"></script>
+<script src="js/modal/create-conversation-modal.js"></script>

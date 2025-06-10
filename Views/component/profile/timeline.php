@@ -52,9 +52,9 @@ $followerAndFollowingCountList = [
     <?php endif; ?>
 </div>
 
-<script src="js/open-edit-profile-modal.js"></script>
+<script src="js/modal/open-edit-profile-modal.js"></script>
 <script src="js/form/like-form.js"></script>
 <script src="js/form/follow-form.js"></script>
-<script src="js/open-delete-post-menu.js"></script>
-<script src="js/open-delete-post-modal.js"></script>
+<script src="js/menu/open-delete-post-menu.js"></script>
+<script src="js/modal/open-delete-post-modal.js"></script>
 <script src="js/form/delete-post-form.js"></script>

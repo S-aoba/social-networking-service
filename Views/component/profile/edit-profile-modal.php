@@ -149,4 +149,4 @@ $profileInfoList = [
 
 <script src="js/form/update-profile-form.js"></script>
 <script src="js/form/update-profile-icon-form.js"></script>
-<script src="js/upload-profile-icon-file.js"></script>
+<script src="js/file/upload-profile-icon-file.js"></script>

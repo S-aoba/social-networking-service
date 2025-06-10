@@ -55,5 +55,5 @@
 </div>
 
 <script src="js/form/create-post-form.js"></script>
-<script src="js/upload-post-form.js"></script>
+<script src="js/file/upload-post-form.js"></script>
 <script src="js/resize-post-textarea.js"></script>
