@@ -75,10 +75,10 @@
     ?>
   </div>
 </div>
-<script src="/js/like.js"></script>
-<script src="/js/open-delete-post-menu.js"></script>
-<script src="/js/open-delete-post-modal.js"></script>
-<script src="/js/reply-form.js"></script>
-<script src="/js/upload-reply-file.js"></script>
-<script src="/js/resize-reply-textarea.js"></script>
-<script src="/js/delete-post-form.js"></script>
+<script src="js/like.js"></script>
+<script src="js/open-delete-post-menu.js"></script>
+<script src="js/open-delete-post-modal.js"></script>
+<script src="js/create-reply-form.js"></script>
+<script src="js/upload-reply-file.js"></script>
+<script src="js/resize-reply-textarea.js"></script>
+<script src="js/delete-post-form.js"></script>
