@@ -8,11 +8,11 @@ $imagePath = $notification->getData()['imagePath'];
   <input type="hidden" name="csrf_token" value="<?= Helpers\CrossSiteForgeryProtection::getToken() ?>">
   <input type="hidden" name="notification_id" value="<?= $notification->getId(); ?>">
   <div id="notification-item" class="py-2 flex min-h-20 hover:bg-slate-100 transition duration-300 cursor-pointer">
-    <div class="w-16 flex justify-end">
+    <div class="w-16 flex justify-end rounded-full">
       <img src="/images/follow-icon.svg" alt="follow-icon" class="size-7">
     </div>
     <div class="pl-2 flex flex-col space-y-2">
-      <img src="<?= htmlspecialchars($imagePath) ?>" alt="user-icon" class="size-8">
+      <img src="<?= htmlspecialchars($imagePath) ?>" alt="user-icon" class="size-8 rounded-full">
       <span class="text-sm"><?= htmlspecialchars($message); ?></span>
       <div class="notification-error-message hidden my-2 py-2 text-center text-red-600 bg-red-100 rounded-lg"></div>
     </div>
