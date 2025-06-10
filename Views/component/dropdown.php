@@ -60,4 +60,4 @@
   </div>
 </div>
 
-<script src="js/user-info-dropdown.js"></script>
+<script src="js/open-user-info-dropdown.js"></script>
