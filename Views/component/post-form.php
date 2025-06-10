@@ -54,4 +54,6 @@
   </div>
 </div>
 
-<script src="/js/post-form.js"></script>
+<script src="js/create-post-form.js"></script>
+<script src="js/upload-post-form.js"></script>
+<script src="js/resize-post-textarea.js"></script>
