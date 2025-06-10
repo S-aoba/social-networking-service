@@ -43,8 +43,9 @@
             >
           </label>
           <button 
+            id="submit-btn"
             type="submit" 
-            class="py-2 px-4 rounded-4xl text-sm bg-gray-500/60 text-white font-semibold hover:bg-slate-800 transition duration-300 focus:bg-slate-800 hover:cursor-pointer"
+            class="min-h-10 min-w-24  py-2 px-4 rounded-4xl text-sm bg-gray-500/60 text-white font-semibold hover:bg-slate-800 transition duration-300 focus:bg-slate-800 hover:cursor-pointer"
           >
           ポストする
           </button>

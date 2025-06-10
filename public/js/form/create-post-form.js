@@ -2,12 +2,21 @@ document.addEventListener("DOMContentLoaded", function () {
   const createPostForm = document.getElementById("create-post-form");
   const errorMessage = document.getElementById("create-post-error-message");
 
+  const submitBtn = document.getElementById("submit-btn");
+
+  const loadingImg = document.createElement("img");
+  loadingImg.src = "/images/loading-icon.svg";
+  loadingImg.alt = "loading";
+  loadingImg.classList.add("animate-spin");
+
   createPostForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const formData = new FormData(createPostForm);
     errorMessage.classList.add("hidden");
     errorMessage.textContent = "";
+
+    showLoading();
 
     const res = await fetch("api/post", {
       method: "POST",
@@ -18,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (data.status === "success") window.location.reload();
     else {
       showError(data.message);
+      resetBtn();
     }
   });
 
@@ -38,5 +48,17 @@ document.addEventListener("DOMContentLoaded", function () {
         "Something went wrong on our end. Please try again later.";
     }
     errorMessage.classList.remove("hidden");
+  }
+
+  function showLoading() {
+    submitBtn.textContent = "";
+    submitBtn.append(loadingImg);
+    submitBtn.classList.add("flex", "items-center", "justify-center");
+  }
+
+  function resetBtn() {
+    submitBtn.innerHTML = '';
+    submitBtn.textContent = 'ポストする'
+    submitBtn.classList.remove("flex", "items-center", "justify-center");
   }
 });
